@@ -49,13 +49,13 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
     strategy: "fixed",
     modifiers: [
       { name: "preventOverflow", options: { padding: 8 } },
-      { name: "offset", options: { offset: [-8, 16] } },
+      { name: "offset", options: { offset: [-3, 16] } },
       { name: "arrow", options: { element: arrowElement } },
     ],
   })
 
   const child = Children.only(children) as React.ReactElement & {
-    ref?: React.Ref<any>
+    ref?: React.Ref<unknown>
   }
 
   return (
@@ -85,7 +85,7 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
                 style={styles.arrow}
                 {...attributes.arrow}
               >
-                <Triangle className="h-4 w-4 translate-y-6 fill-blue" />
+                <Triangle className="h-3 w-6 translate-y-6 fill-blue" />
               </span>
             </motion.div>
           </Portal>
