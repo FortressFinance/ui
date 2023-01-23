@@ -13,7 +13,7 @@ export const mainnetFork: Chain = {
   },
   rpcUrls: {
     default: {
-      http: ["http://18.196.63.80:8546"],
+      http: ["/api/anvil"],
     },
   },
 }
@@ -21,7 +21,7 @@ export const mainnetFork: Chain = {
 export const mainnetForkProvider = (): ChainProviderFn =>
   jsonRpcProvider({
     rpc: () => ({
-      http: "http://18.196.63.80:8546",
+      http: "/api/anvil",
       // webSocket: "wss://18.196.63.80:8546",
     }),
   })

@@ -23,6 +23,9 @@ const nextConfig = {
 
     return config
   },
+  async rewrites() {
+    return [{ source: "/api/anvil", destination: "http://18.196.63.80:8546" }]
+  },
 }
 
 module.exports = nextConfig
