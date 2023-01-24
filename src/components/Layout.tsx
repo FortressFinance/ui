@@ -7,6 +7,7 @@ import ExternalLinks from "@/components/ExternalLinks"
 
 import FortressBackground from "~/images/fortress-background.gif"
 import FortressLogo from "~/svg/fortress-logo.svg"
+import NetworkSelector from "@/components/NetworkSelector/NetworkSelector"
 
 const ConnectWalletButton = dynamic(
   () => import("@/components/ConnectWallet/ConnectWalletButton"),
@@ -39,6 +40,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
             </div>
 
             <div className="flex items-center">
+              <NetworkSelector />
               <ConnectWalletButton />
             </div>
           </div>
