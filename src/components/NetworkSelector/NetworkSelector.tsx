@@ -1,28 +1,24 @@
-import { mainnetFork, SupportedChain } from "@/constant/chains"
-import { DEFAULT_CHAIN } from "@/constant/env"
+import { mainnetFork } from "@/constant/chains"
 import { Menu, Transition } from "@headlessui/react"
-import { FC, Fragment, SVGProps, useState } from "react"
+import { FC, Fragment } from "react"
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
-import { arbitrum } from "wagmi/dist/chains"
-import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 import EthereumLogo from "~/svg/ethereum-logo.svg"
 import ArbitrumLogo from "~/svg/arbitrum_logo.svg"
 
 import clsxm from "@/lib/clsxm"
+import { useActiveNetwork } from "@/components/NetworkSelector/NetworkProvider"
 
 type NetworkSelectorProps = {
   className?: string
 }
 
 const NetworkSelector: FC<NetworkSelectorProps> = ({ className }) => {
-  const { chain } = useNetwork()
-  const { chains, error, isLoading, pendingChainId, switchNetwork } =
-    useSwitchNetwork()
+  const { chain, chains, switchActiveNetwork } = useActiveNetwork()
 
   const changeNetwork: MouseEventHandler<HTMLButtonElement> = (e, currentChain) => {
-    if(switchNetwork !== undefined && currentChain !== undefined){
-      switchNetwork(currentChain.id)
+    if (switchActiveNetwork !== undefined && currentChain !== undefined) {
+      switchActiveNetwork(currentChain.id)
     }
   }
 
@@ -65,38 +61,38 @@ const NetworkSelector: FC<NetworkSelectorProps> = ({ className }) => {
               <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-[#F0707B] text-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div className="px-1 py-1 ">
                   {chains.map((curChain, index) => (
-                      <Menu.Item key={index} as={Fragment} disabled={!switchNetwork || chain.id === curChain.id}>
-                        {({ active, disabled }) => (
-                          <button
-                            onClick={(e) => changeNetwork(e, curChain)}
-                            className={clsxm("text-medium group relative flex w-full items-center rounded-md px-2 py-2", {
-                              "bg-black/10": active 
-                            })}
-                          >
-                            {curChain.id === mainnetFork.id ? (                          
-                              <EthereumLogo
-                                className="mr-2 h-5 w-5"
-                                aria-hidden="true"
-                                aria-label="Ethereum"
-                              />
-                            ) : (
-                              <ArbitrumLogo
-                                className="mr-2 h-5 w-5"
-                                aria-hidden="true"
-                                aria-label="Arbitrum one"
-                              />
-                            )}
-                            {curChain.name}
-                            {disabled ? (
-                              <div className="relative right-[-55px] bottom-[5px]">
-                                <div className="py-3 w-5 h-5 flex justify-center align-middle">
-                                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                </div>
+                    <Menu.Item key={index} as={Fragment} disabled={!switchActiveNetwork || chain.id === curChain.id}>
+                      {({ active, disabled }) => (
+                        <button
+                          onClick={(e) => changeNetwork(e, curChain)}
+                          className={clsxm("text-medium group relative flex w-full items-center rounded-md px-2 py-2", {
+                            "bg-black/10": active
+                          })}
+                        >
+                          {curChain.id === mainnetFork.id ? (
+                            <EthereumLogo
+                              className="mr-2 h-5 w-5"
+                              aria-hidden="true"
+                              aria-label="Ethereum"
+                            />
+                          ) : (
+                            <ArbitrumLogo
+                              className="mr-2 h-5 w-5"
+                              aria-hidden="true"
+                              aria-label="Arbitrum one"
+                            />
+                          )}
+                          {curChain.name}
+                          {disabled ? (
+                            <div className="relative right-[-55px] bottom-[5px]">
+                              <div className="py-3 w-5 h-5 flex justify-center align-middle">
+                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                               </div>
-                            ) : null}
-                          </button>
-                        )}
-                      </Menu.Item>
+                            </div>
+                          ) : null}
+                        </button>
+                      )}
+                    </Menu.Item>
                   ))}
                 </div>
               </Menu.Items>

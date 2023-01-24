@@ -1,6 +1,5 @@
 import { ChainProviderFn } from "@wagmi/core"
 import { Chain } from "wagmi"
-import { arbitrum } from "wagmi/chains"
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc"
 
 export const mainnetFork: Chain = {

@@ -2,29 +2,22 @@ import { Inter, VT323 } from "@next/font/google"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { AppProps } from "next/app"
 import { configureChains, createClient, WagmiConfig } from "wagmi"
-import { arbitrum } from "wagmi/chains"
 import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet"
 import { InjectedConnector } from "wagmi/connectors/injected"
 import { MetaMaskConnector } from "wagmi/connectors/metaMask"
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect"
-import { infuraProvider } from "wagmi/providers/infura"
 
 import "@/styles/globals.css"
 
 import ConnectWalletProvider from "@/components/ConnectWallet/ConnectWalletProvider"
 
-import { mainnetFork, mainnetForkProvider, arbitrumFork, arbitrumForkProvider } from "@/constant/chains"
-import { CHAIN_ID, INFURA_KEY } from "@/constant/env"
+import { ENABLE_CHAINS, ENABLE_PROVIDERS } from "@/constant/env"
+import NetworkProvider from "@/components/NetworkSelector/NetworkProvider"
 
 // wagmi configuration
-const isDev = CHAIN_ID === mainnetFork.id
-const enabledChains = isDev ? [mainnetFork, arbitrumFork] : [arbitrum]
-const enabledProviders = isDev
-  ? [mainnetForkProvider(), arbitrumForkProvider()]
-  : [infuraProvider({ apiKey: INFURA_KEY })]
 const { chains, provider, webSocketProvider } = configureChains(
-  enabledChains,
-  enabledProviders
+  ENABLE_CHAINS,
+  ENABLE_PROVIDERS
 )
 const wagmiClient = createClient({
   autoConnect: true,
@@ -73,7 +66,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <QueryClientProvider client={queryClient}>
           <WagmiConfig client={wagmiClient}>
             <ConnectWalletProvider>
-              <Component {...pageProps} />
+              <NetworkProvider>
+                <Component {...pageProps} />
+              </NetworkProvider>
             </ConnectWalletProvider>
           </WagmiConfig>
         </QueryClientProvider>
