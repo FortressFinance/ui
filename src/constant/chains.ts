@@ -49,5 +49,3 @@ export const arbitrumForkProvider = (): ChainProviderFn =>
       http: "http://18.196.63.80:8545"
     }),
   })
-
-export const SupportedChain = [mainnetFork, arbitrum, arbitrumFork]

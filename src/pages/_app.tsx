@@ -13,14 +13,14 @@ import "@/styles/globals.css"
 
 import ConnectWalletProvider from "@/components/ConnectWallet/ConnectWalletProvider"
 
-import { mainnetFork, mainnetForkProvider } from "@/constant/chains"
+import { mainnetFork, mainnetForkProvider, arbitrumFork, arbitrumForkProvider } from "@/constant/chains"
 import { CHAIN_ID, INFURA_KEY } from "@/constant/env"
 
 // wagmi configuration
-const isDev = CHAIN_ID === 31337
-const enabledChains = isDev ? [mainnetFork] : [arbitrum]
+const isDev = CHAIN_ID === mainnetFork.id
+const enabledChains = isDev ? [mainnetFork, arbitrumFork] : [arbitrum]
 const enabledProviders = isDev
-  ? [mainnetForkProvider()]
+  ? [mainnetForkProvider(), arbitrumForkProvider()]
   : [infuraProvider({ apiKey: INFURA_KEY })]
 const { chains, provider, webSocketProvider } = configureChains(
   enabledChains,

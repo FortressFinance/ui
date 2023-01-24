@@ -13,4 +13,3 @@ export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ""
 export const CHAIN_ID = isLocal ? mainnetFork.id : arbitrum.id
 export const REGISTRY_ADDRESS = (process.env.NEXT_PUBLIC_REGISTRY_ADDRESS ??
   "0x") as `0x${string}`
-export const DEFAULT_CHAIN = isLocal ? mainnetFork : arbitrum
