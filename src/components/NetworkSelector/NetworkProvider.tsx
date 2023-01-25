@@ -18,7 +18,9 @@ export function useActiveNetwork(): NetworkContextType {
 
 const NetworkProvider: FC<PropsWithChildren> = ({ children }) => {
   const { chain } = useNetwork()
-  const { chains, isLoading, switchNetwork } = useSwitchNetwork()
+  const { chains, isLoading, switchNetwork } = useSwitchNetwork({
+    throwForSwitchChainNotSupported: true,
+  })
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined)
   const [activeChains, setActiveChains] = useState<(Chain | undefined)[]>([])
 
@@ -27,7 +29,6 @@ const NetworkProvider: FC<PropsWithChildren> = ({ children }) => {
       setActiveChain(activeChains.filter((value) => value !== undefined && value.id === chainId_)?.[0])
     } else {
       switchNetwork?.(chainId_)
-      setActiveChain(chain)
     }
   }, [JSON.stringify(activeChains), isLoading])
 
@@ -41,10 +42,9 @@ const NetworkProvider: FC<PropsWithChildren> = ({ children }) => {
   }, [isLoading, JSON.stringify(ENABLE_CHAINS)])
 
   useEffect(() => {
-    if (activeChain === undefined) {
-      setActiveChain(chain ?? activeChains?.filter((value) => value !== undefined && value.id === CHAIN_ID)?.[0])
-    }
-  }, [chain, JSON.stringify(activeChains), CHAIN_ID])
+    const previousChainId = activeChain !== undefined ? activeChain.id : CHAIN_ID
+    setActiveChain(chain ?? activeChains?.filter((value) => value !== undefined && value.id === previousChainId)?.[0])
+  }, [chain, JSON.stringify(activeChains)])
 
   return (
     <NetworkContext.Provider value={{ chain: activeChain, chains: activeChains, switchActiveNetwork }} >
