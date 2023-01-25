@@ -37,6 +37,27 @@ export type ApiPool = {
   }
 }
 
+export type ApiTokenVault = {
+  vaultId: number
+  vaultName: string
+  platformFee: number
+  withdrawalFee: number
+  token: {
+    ybToken: {
+      address: string
+      decimals: number
+      symbol?: string
+      name?: string
+    }
+    asset: {
+      address: string
+      decimals: number
+      symbol?: string
+      name?: string
+    }
+  }
+}
+
 export interface ApiGetPoolsResult extends ApiResult {
   data?: {
     chainId: number
@@ -45,16 +66,24 @@ export interface ApiGetPoolsResult extends ApiResult {
   message?: string
 }
 
+export interface ApiGetVaultsResult extends ApiResult {
+  data?: {
+    chainId: number
+    pools: ApiTokenVault[]
+  }
+  message?: string
+}
+
 export default function useApiCompounderPools({ type }: { type: VaultType }) {
   const isCurve = useIsCurve(type)
 
   return useQuery(["pools", type], {
-    queryFn: () => fetchApiCompounderPools({ isCurve }),
+    queryFn: () => !isCurve ? fetchApiTokenCompounderPools() : fetchApiCurveCompounderPools({ isCurve }),
     retry: false,
   })
 }
 
-export async function fetchApiCompounderPools({
+export async function fetchApiCurveCompounderPools({
   isCurve,
 }: {
   isCurve: boolean
@@ -64,6 +93,20 @@ export async function fetchApiCompounderPools({
     {
       chainId: CHAIN_ID,
       isCurve,
+    }
+  )
+  if (resp?.data?.data?.pools) {
+    return resp.data.data.pools
+  } else {
+    return null
+  }
+}
+
+export async function fetchApiTokenCompounderPools() {
+  const resp = await fortressApi.post<ApiGetVaultsResult>(
+    "Token_Compounder/getVaultStaticData",
+    {
+      chainId: CHAIN_ID
     }
   )
   if (resp?.data?.data?.pools) {

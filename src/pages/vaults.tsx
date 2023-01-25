@@ -80,6 +80,9 @@ const Vaults: NextPage = () => {
               <Tab.Panel>
                 <VaultTable type="balancer" />
               </Tab.Panel>
+              <Tab.Panel>
+                <VaultTable type="token" />
+              </Tab.Panel>
               <Tab.Panel>Holdings</Tab.Panel>
             </Tab.Panels>
           </Tab.Group>

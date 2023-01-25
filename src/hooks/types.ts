@@ -2,7 +2,7 @@ import { Address } from "wagmi"
 
 import { ApiPool } from "@/hooks/api/useApiCompounderPools"
 
-export type VaultType = "balancer" | "curve"
+export type VaultType = "balancer" | "curve" | "token"
 
 export type VaultProps = {
   address: Address
