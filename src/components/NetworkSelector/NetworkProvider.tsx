@@ -30,7 +30,7 @@ const NetworkProvider: FC<PropsWithChildren> = ({ children }) => {
     } else {
       switchNetwork?.(chainId_)
     }
-  }, [JSON.stringify(activeChains), isLoading])
+  }, [JSON.stringify(activeChains), isLoading, chain])
 
   useEffect(() => {
     if (chains.length === 0) {
