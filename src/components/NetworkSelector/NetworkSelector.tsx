@@ -62,7 +62,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = ({ className }) => {
                 <div className="px-1 py-1 ">
                   {chains.map((curChain, index) => (
                     <Menu.Item key={index} as={Fragment} disabled={!switchActiveNetwork || chain.id === curChain.id}>
-                      {({ active, disabled }) => (
+                      {({ active }) => (
                         <button
                           onClick={(e) => changeNetwork(e, curChain)}
                           className={clsxm("text-medium group relative flex w-full items-center rounded-md px-2 py-2", {
@@ -83,7 +83,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = ({ className }) => {
                             />
                           )}
                           {curChain.name}
-                          {disabled ? (
+                          {chain.id === curChain.id ? (
                             <div className="relative right-[-55px] bottom-[5px]">
                               <div className="py-3 w-5 h-5 flex justify-center align-middle">
                                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>

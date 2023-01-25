@@ -65,11 +65,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       <div className="font-sans">
         <QueryClientProvider client={queryClient}>
           <WagmiConfig client={wagmiClient}>
-            <ConnectWalletProvider>
-              <NetworkProvider>
+            <NetworkProvider>
+              <ConnectWalletProvider>
                 <Component {...pageProps} />
-              </NetworkProvider>
-            </ConnectWalletProvider>
+              </ConnectWalletProvider>
+            </NetworkProvider>
           </WagmiConfig>
         </QueryClientProvider>
       </div>

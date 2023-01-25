@@ -18,17 +18,18 @@ export function useActiveNetwork(): NetworkContextType {
 
 const NetworkProvider: FC<PropsWithChildren> = ({ children }) => {
   const { chain } = useNetwork()
-  const { chains, switchNetwork } = useSwitchNetwork()
+  const { chains, isLoading, switchNetwork } = useSwitchNetwork()
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined)
   const [activeChains, setActiveChains] = useState<(Chain | undefined)[]>([])
+
   const switchActiveNetwork = useCallback((chainId_: number) => {
-    if (chain === undefined) {
-      const dd = activeChains.filter((value) => value !== undefined && value.id === chainId_)?.[0]
-      setActiveChain(chain ?? activeChains.filter((value) => value !== undefined && value.id === chainId_)?.[0])
+    if (chain === undefined) {    // not connected to wallet
+      setActiveChain(activeChains.filter((value) => value !== undefined && value.id === chainId_)?.[0])
     } else {
       switchNetwork?.(chainId_)
+      setActiveChain(chain)
     }
-  }, [switchNetwork, activeChains, chain])
+  }, [JSON.stringify(activeChains), isLoading])
 
   useEffect(() => {
     if (chains.length === 0) {
@@ -37,13 +38,13 @@ const NetworkProvider: FC<PropsWithChildren> = ({ children }) => {
     else {
       setActiveChains(chains)
     }
-  }, [JSON.stringify(chains), JSON.stringify(ENABLE_CHAINS)])
+  }, [isLoading, JSON.stringify(ENABLE_CHAINS)])
 
   useEffect(() => {
     if (activeChain === undefined) {
       setActiveChain(chain ?? activeChains?.filter((value) => value !== undefined && value.id === CHAIN_ID)?.[0])
     }
-  }, [chain, JSON.stringify(activeChains)])
+  }, [chain, JSON.stringify(activeChains), CHAIN_ID])
 
   return (
     <NetworkContext.Provider value={{ chain: activeChain, chains: activeChains, switchActiveNetwork }} >
