@@ -66,9 +66,12 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
 
 export default ConnectWalletModal
 
-export const DisconnectWalletModal: FC<ModalBaseProps> = ({
+type DisconnectWalletModalProps = ModalBaseProps & { onChange: () => void; }
+
+export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
   isOpen,
   onClose,
+  onChange,
 }) => {
   const { address, connector: activeConnector } = useAccount()
   const { disconnect } = useDisconnect()
@@ -76,6 +79,11 @@ export const DisconnectWalletModal: FC<ModalBaseProps> = ({
   const disconnectHandler = () => {
     disconnect()
     onClose()
+  }
+
+  const changeHandler = () => {
+    disconnect()
+    onChange()
   }
 
   return (
@@ -90,18 +98,25 @@ export const DisconnectWalletModal: FC<ModalBaseProps> = ({
         Account
       </Dialog.Title>
 
-      <div className="mt-6 space-y-3 divide-y">
-        <div className="flex items-center justify-between pb-1">
+      <div className="flex flex-col mt-30 space-y divide-y">
+        <div className="flex items-center justify-between py-5">
           <div>
-            <div className="font-mono text-sm">
-              <Address>{address}</Address>
-            </div>
-            <div>Connected to {activeConnector?.name}</div>
+            <div>Connected with {activeConnector?.name}</div>
           </div>
 
-          <Button onClick={disconnectHandler} variant="plain">
+          <Button onClick={disconnectHandler} variant="plain" size="small" className="mr-5">
             Disconnect
           </Button>
+          <Button onClick={changeHandler} variant="plain" size="small" className="mr-0">
+            Change
+          </Button>
+        </div>
+        <div className="flex items-center font-mono text-md py-5">
+          <Address>{address}</Address>
+        </div>
+        <div className="flex items-center justify-between py-5">
+          <div>Copy address</div>
+          <div>View on Explorer</div>
         </div>
       </div>
     </ConnectWalletModalBase>
