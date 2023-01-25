@@ -46,6 +46,17 @@ const Vaults: NextPage = () => {
                     </button>
                   )}
                 </Tab>
+                <Tab as={Fragment}>
+                  {({ selected }) => (
+                    <button
+                      className={clsxm("py-3 px-6", {
+                        "bg-white text-black": selected,
+                      })}
+                    >
+                      Token
+                    </button>
+                  )}
+                </Tab>
               </div>
               <div className="overflow-hidden rounded-md border-2 border-pink/30 bg-black/60">
                 <Tab as={Fragment}>
