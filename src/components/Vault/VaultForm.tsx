@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
-import { FC, useRef } from "react"
+import { FC, useEffect, useRef } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import {
   useAccount,
@@ -11,8 +11,10 @@ import {
 } from "wagmi"
 
 import logger from "@/lib/logger"
+import useCompounderPoolName from "@/hooks/data/useCompounderPoolName"
 import useCompounderUnderlyingAssets from "@/hooks/data/useCompounderUnderlyingAssets"
 import { VaultProps } from "@/hooks/types"
+import useIsCurve from "@/hooks/useIsCurve"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 
@@ -20,7 +22,10 @@ import Button from "@/components/Button"
 import ConnectWalletButton from "@/components/ConnectWallet/ConnectWalletButton"
 import TokenInput from "@/components/TokenInput"
 
+import auraBalCompounderAbi from "@/constant/abi/auraBALCompounder"
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
+import cvxCrvCompounderAbi from "@/constant/abi/cvxCrvCompounderAbi"
+import glpCompounderAbi from "@/constant/abi/glpCompounderAbi"
 
 type VaultDepositFormProps = VaultProps & {
   //
@@ -31,9 +36,33 @@ type DepositFormValues = {
 }
 
 export const VaultDepositForm: FC<VaultDepositFormProps> = (props) => {
-  const functionName = useRef("")
   const { isConnected } = useAccount()
   const { address } = useAccount()
+  const abi = useRef<curveCompounderAbi|auraBalCompounderAbi|cvxCrvCompounderAbi|glpCompounderAbi|undefined>(undefined)
+  const isCurve = useIsCurve(props.type)
+  const { data: vaultName, isLoading } = useCompounderPoolName({
+    address: props.address,
+    type: props.type,
+  })
+
+  useEffect(() => {
+    if(isCurve !== undefined){      
+      abi.current = curveCompounderAbi
+    }
+    else if (vaultName.toLocaleLowerCase().includes('aurabal')) {
+      abi.current = auraBalCompounderAbi
+    }
+    else if (vaultName.toLocaleLowerCase().includes('cvxcrv')) {
+      abi.current = cvxCrvCompounderAbi
+    }
+    else if (vaultName.toLocaleLowerCase().includes('glp')) {
+      abi.current = glpCompounderAbi
+    }
+    else {
+      abi.current = undefined
+    }
+  }, [isCurve, vaultName])
+  
   const { data: underlyingAssets } = useCompounderUnderlyingAssets({
     address: props.address,
     type: props.type,
@@ -68,7 +97,7 @@ export const VaultDepositForm: FC<VaultDepositFormProps> = (props) => {
 
   const { config, isLoading: isLoadingPrepare } = usePrepareContractWrite({
     address: props.address,
-    abi: curveCompounderAbi,
+    abi: abi.current,
     functionName: "depositSingleUnderlying",
     enabled: value.gt(0),
     args: [value, depositToken ?? "0x", address ?? "0x", BigNumber.from(0)],

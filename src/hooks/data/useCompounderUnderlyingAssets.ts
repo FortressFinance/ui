@@ -25,7 +25,10 @@ export default function useCompounderUnderlyingAssets({
 
   if (isCurve === undefined) {
     // for the token compounder, the address here is already the ybtoken
-    return [address]
+    return {
+      ...apiQuery,
+      data: [address]
+    }
   }
 
   // Prioritize API response until it has errored

@@ -18,7 +18,7 @@ export default function useCompounderPoolName({ address, type }: VaultProps) {
         : isCurve
         ? "getCurveCompounderName"
         : "getBalancerCompounderName"
-    fieldKey.current = isCurve === undefined ? "poolName" : "vaultName"
+    fieldKey.current = isCurve !== undefined ? "poolName" : "vaultName"
   }, [isCurve])
 
   // Preferred: API request
