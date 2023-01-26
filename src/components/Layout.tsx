@@ -4,10 +4,10 @@ import Link from "next/link"
 import { FC, PropsWithChildren } from "react"
 
 import ExternalLinks from "@/components/ExternalLinks"
+import NetworkSelector from "@/components/NetworkSelector/NetworkSelector"
 
 import FortressBackground from "~/images/fortress-background.gif"
 import FortressLogo from "~/svg/fortress-logo.svg"
-import NetworkSelector from "@/components/NetworkSelector/NetworkSelector"
 
 const ConnectWalletButton = dynamic(
   () => import("@/components/ConnectWallet/ConnectWalletButton"),

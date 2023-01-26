@@ -2,7 +2,6 @@ import { ChainProviderFn } from "@wagmi/core"
 import { Chain } from "wagmi"
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc"
 
-
 export const mainnetFork: Chain = {
   id: 31_337,
   name: "Mainnet Fork",
@@ -26,7 +25,7 @@ export const arbitrumFork: Chain = {
   nativeCurrency: {
     decimals: 18,
     name: "Wrapped Ether",
-    symbol: "WETH"
+    symbol: "WETH",
   },
   rpcUrls: {
     default: {
