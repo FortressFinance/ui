@@ -1,10 +1,11 @@
-import { CHAIN_ID, ENABLE_CHAINS } from '@/constant/env'
 import React, { Context, createContext, FC, PropsWithChildren, useCallback, useContext, useEffect, useState } from 'react'
 import { Chain, useNetwork, useSwitchNetwork } from 'wagmi'
 
+import { CHAIN_ID, ENABLE_CHAINS } from '@/constant/env'
+
 type NetworkContextType = {
   chain: Chain | undefined
-  chains: Chain[]
+  chains: (Chain | undefined)[]
   switchActiveNetwork: ((chainId_: number) => void) | undefined
 }
 
@@ -30,7 +31,7 @@ const NetworkProvider: FC<PropsWithChildren> = ({ children }) => {
     } else {
       switchNetwork?.(chainId_)
     }
-  }, [JSON.stringify(activeChains), isLoading, chain])
+  }, [chain, activeChains, switchNetwork])
 
   useEffect(() => {
     if (chains.length === 0) {
@@ -39,12 +40,12 @@ const NetworkProvider: FC<PropsWithChildren> = ({ children }) => {
     else {
       setActiveChains(chains)
     }
-  }, [isLoading, JSON.stringify(ENABLE_CHAINS)])
+  }, [chains, isLoading])
 
   useEffect(() => {
     const previousChainId = activeChain !== undefined ? activeChain.id : CHAIN_ID
     setActiveChain(chain ?? activeChains?.filter((value) => value !== undefined && value.id === previousChainId)?.[0])
-  }, [chain, JSON.stringify(activeChains)])
+  }, [activeChain, activeChains, chain])
 
   return (
     <NetworkContext.Provider value={{ chain: activeChain, chains: activeChains, switchActiveNetwork }} >

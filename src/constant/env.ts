@@ -1,7 +1,8 @@
-import { arbitrumFork, arbitrumForkProvider, fortressForkProvider, mainnetFork, mainnetForkProvider } from "@/constant/chains"
 import { ChainProviderFn } from "wagmi"
 import { arbitrum, Chain } from "wagmi/chains"
 import { infuraProvider } from "wagmi/providers/infura"
+
+import { arbitrumFork, fortressForkProvider, mainnetFork } from "@/constant/chains"
 
 export const isProd = process.env.NODE_ENV === "production"
 export const isLocal = process.env.NODE_ENV === "development"
@@ -15,8 +16,8 @@ export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ""
 export const REGISTRY_ADDRESS = (process.env.NEXT_PUBLIC_REGISTRY_ADDRESS ??
   "0x") as `0x${string}`
 
-const ENABLE_CHAINS: Chain[] = []
-const ENABLE_PROVIDERS: ChainProviderFn[] = []
+export const ENABLE_CHAINS: Chain[] = []
+export const ENABLE_PROVIDERS: ChainProviderFn[] = []
 
 const network_declared = [
   { name: "Mainnet fork", supported: process.env.NEXT_PUBLIC_MAINNETFORK_SUPPORTED ?? "false" },
@@ -24,14 +25,16 @@ const network_declared = [
   { name: "Arbitrum One", supported: process.env.NEXT_PUBLIC_ARBITRUM_SUPPORTED ?? "false" }
 ]
 
-let forkProviderAlreadyAdded: boolean = false
+let forkProviderAlreadyAdded = false
 network_declared.map((networkVar) => {
   const isSupported = Boolean(JSON.parse(networkVar.supported));
-  const network = networkVar.name === "Mainnet fork" ? mainnetFork : (networkVar.name === "Arbitrum fork" ? arbitrumFork : arbitrum)
+  const network = networkVar.name.toLocaleUpperCase() === "MAINNET FORK" ? mainnetFork : (networkVar.name.toLocaleUpperCase() === "ARBITRUM FORK" ? arbitrumFork : arbitrum)
   let provider: ChainProviderFn | undefined = undefined
-  if (["Mainnet fork", "Arbitrum fork"].includes(networkVar.name) && !forkProviderAlreadyAdded) {
-    forkProviderAlreadyAdded = true
-    provider = fortressForkProvider()
+  if (["MAINNET FORK", "ARBITRUM FORK"].includes(networkVar.name.toLocaleUpperCase())) {
+    if(!forkProviderAlreadyAdded){
+      forkProviderAlreadyAdded = true
+      provider = fortressForkProvider()
+    }
   }
   else {
     provider = infuraProvider({ apiKey: INFURA_KEY })

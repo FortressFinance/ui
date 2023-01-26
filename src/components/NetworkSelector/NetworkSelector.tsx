@@ -1,13 +1,15 @@
-import { mainnetFork } from "@/constant/chains"
 import { Menu, Transition } from "@headlessui/react"
 import { FC, Fragment } from "react"
-import ChevronDown from "~/svg/icons/chevron-down.svg"
-
-import EthereumLogo from "~/svg/ethereum-logo.svg"
-import ArbitrumLogo from "~/svg/arbitrum_logo.svg"
 
 import clsxm from "@/lib/clsxm"
+
 import { useActiveNetwork } from "@/components/NetworkSelector/NetworkProvider"
+
+import { mainnetFork } from "@/constant/chains"
+
+import ArbitrumLogo from "~/svg/arbitrum_logo.svg"
+import EthereumLogo from "~/svg/ethereum-logo.svg"
+import ChevronDown from "~/svg/icons/chevron-down.svg"
 
 type NetworkSelectorProps = {
   className?: string
@@ -44,7 +46,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = ({ className }) => {
                 )}
                 {chain.name}
                 <ChevronDown
-                  className="ml-2 -mr-1 h-5 w-5 text-violet-200 hover:text-violet-100"
+                  className="ml-2 -mr-1 mt-1 h-4 w-4 text-violet-200 hover:text-violet-100"
                   aria-label="Switch network"
                 />
               </Menu.Button>
@@ -65,28 +67,28 @@ const NetworkSelector: FC<NetworkSelectorProps> = ({ className }) => {
                       {({ active }) => (
                         <button
                           onClick={(e) => changeNetwork(e, curChain)}
-                          className={clsxm("flex justify-between text-medium group relative flex w-full items-center rounded-md px-2 py-2", {
+                          className={clsxm("flex justify-between text-medium group w-full items-center rounded-md px-2 py-2", {
                             "bg-black/10": active
                           })}>
                           <div>
                             {curChain.id === mainnetFork.id ? (
                               <EthereumLogo
-                                className="mr-2 h-5 w-5"
+                                className="mr-2 h-5 w-5 float-left"
                                 aria-hidden="true"
                                 aria-label="Ethereum"
                               />
                             ) : (
                               <ArbitrumLogo
-                                className="mr-2 h-5 w-5"
+                                className="mr-2 h-5 w-5 float-left"
                                 aria-hidden="true"
                                 aria-label="Arbitrum one"
                               />
                             )}
-                            {curChain.name}
+                            <span>{curChain.name}</span>
                           </div>
                           <div>
                             {chain.id === curChain.id &&
-                              <div className="py-3 w-5 h-5 flex justify-center align-middle">
+                              <div className="py-1 w-5 h-5 flex justify-center align-middle">
                                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                               </div>
                             }
