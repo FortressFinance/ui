@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
-import { FC } from "react"
+import { FC, useEffect, useRef } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import {
   useAccount,
@@ -31,6 +31,7 @@ type DepositFormValues = {
 }
 
 export const VaultDepositForm: FC<VaultDepositFormProps> = (props) => {
+  const functionName = useRef("")
   const { isConnected } = useAccount()
   const { address } = useAccount()
   const { data: underlyingAssets } = useCompounderUnderlyingAssets({

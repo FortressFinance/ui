@@ -10,6 +10,11 @@ export default function useCompounderUnderlyingAssets({
   type,
 }: VaultProps) {
   const isCurve = useIsCurve(type)
+
+  if (!isCurve) {
+    // for the token compounder, the address here is already the ybtoken
+    return [address]
+  }
   // Preferred: API request
   const apiQuery = useApiCompounderPools({ type })
   // Fallback: contract request
