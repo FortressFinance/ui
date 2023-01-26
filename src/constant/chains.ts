@@ -2,6 +2,7 @@ import { ChainProviderFn } from "@wagmi/core"
 import { Chain } from "wagmi"
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc"
 
+
 export const mainnetFork: Chain = {
   id: 31_337,
   name: "Mainnet Fork",
@@ -17,14 +18,6 @@ export const mainnetFork: Chain = {
     },
   },
 }
-
-export const mainnetForkProvider = (): ChainProviderFn =>
-  jsonRpcProvider({
-    rpc: () => ({
-      http: "http://18.196.63.80:8546",
-      // webSocket: "wss://18.196.63.80:8546",
-    }),
-  })
 
 export const arbitrumFork: Chain = {
   id: 313_371,
@@ -42,9 +35,12 @@ export const arbitrumFork: Chain = {
   },
 }
 
-export const arbitrumForkProvider = (): ChainProviderFn =>
+export const fortressForkProvider = (): ChainProviderFn =>
   jsonRpcProvider({
-    rpc: () => ({
-      http: "http://18.196.63.80:8545"
+    rpc: (chain: Chain) => ({
+      http:
+        chain.id === 31_337
+          ? "http://18.196.63.80:8546"
+          : "http://18.196.63.80:8545",
     }),
   })
