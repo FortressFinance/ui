@@ -14,7 +14,7 @@ export const mainnetFork: Chain = {
   },
   rpcUrls: {
     default: {
-      http: ["http://18.196.63.80:8546"],
+      http: ["/api/anvil"],
     },
   },
 }

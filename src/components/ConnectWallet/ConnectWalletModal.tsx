@@ -27,6 +27,11 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
       </Dialog.Title>
       <div className="mt-6 space-y-3">
         {connectors.map((connector) => {
+          if (connector.id === "injected" && connector.name === "MetaMask") {
+            // do not show metamask twice
+            // do not show connectors that aren't available
+            return null
+          }
           return (
             <Button
               key={connector.id}
