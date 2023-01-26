@@ -1,10 +1,13 @@
+import { useCallback, useEffect, useRef } from "react"
 import { useContractRead, useQuery } from "wagmi"
 
 import { registryContractConfig } from "@/lib/fortressContracts"
-import { fetchApiCurveCompounderPools, fetchApiTokenCompounderPools } from "@/hooks/api/useApiCompounderPools"
+import {
+  fetchApiCurveCompounderPools,
+  fetchApiTokenCompounderPools,
+} from "@/hooks/api/useApiCompounderPools"
 import { VaultType } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
-import { useCallback, useEffect, useRef } from "react"
 
 export default function useCompounderPoolAddresses({
   type,
@@ -15,9 +18,12 @@ export default function useCompounderPoolAddresses({
   const isCurve = useIsCurve(type)
 
   useEffect(() => {
-    functionName.current = !isCurve ? "getTokenCompoundersList" : (isCurve
-      ? "getCurveCompoundersList"
-      : "getBalancerCompoundersList")
+    functionName.current =
+      isCurve === undefined
+        ? "getTokenCompoundersList"
+        : isCurve
+        ? "getCurveCompoundersList"
+        : "getBalancerCompoundersList"
   }, [isCurve])
 
   const fetchApiCompounderPoolsAsync = useCallback(() => {

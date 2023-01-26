@@ -11,10 +11,6 @@ export default function useCompounderUnderlyingAssets({
 }: VaultProps) {
   const isCurve = useIsCurve(type)
 
-  if (!isCurve) {
-    // for the token compounder, the address here is already the ybtoken
-    return [address]
-  }
   // Preferred: API request
   const apiQuery = useApiCompounderPools({ type })
   // Fallback: contract request
@@ -24,8 +20,13 @@ export default function useCompounderUnderlyingAssets({
       ? "getCurveCompounderUnderlyingAssets"
       : "getBalancerCompounderUnderlyingAssets",
     args: [address],
-    enabled: apiQuery.isError,
+    enabled: apiQuery.isError && isCurve !== undefined,
   })
+
+  if (isCurve === undefined) {
+    // for the token compounder, the address here is already the ybtoken
+    return [address]
+  }
 
   // Prioritize API response until it has errored
   if (!apiQuery.isError && apiQuery.data !== null) {

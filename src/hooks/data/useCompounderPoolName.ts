@@ -1,10 +1,10 @@
+import { useEffect, useRef } from "react"
 import { useContractRead } from "wagmi"
 
 import { registryContractConfig } from "@/lib/fortressContracts"
 import useApiCompounderPools from "@/hooks/api/useApiCompounderPools"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
-import { useEffect, useRef } from "react"
 
 export default function useCompounderPoolName({ address, type }: VaultProps) {
   const functionName = useRef("")
@@ -12,10 +12,13 @@ export default function useCompounderPoolName({ address, type }: VaultProps) {
   const isCurve = useIsCurve(type)
 
   useEffect(() => {
-    functionName.current = !isCurve ? "getTokenCompounderName" : (isCurve
-      ? "getCurveCompounderName"
-      : "getBalancerCompounderName")
-    fieldKey.current = !isCurve ? "poolName" : "vaultName"
+    functionName.current =
+      isCurve === undefined
+        ? "getTokenCompounderName"
+        : isCurve
+        ? "getCurveCompounderName"
+        : "getBalancerCompounderName"
+    fieldKey.current = isCurve === undefined ? "poolName" : "vaultName"
   }, [isCurve])
 
   // Preferred: API request
@@ -31,11 +34,11 @@ export default function useCompounderPoolName({ address, type }: VaultProps) {
   if (!apiQuery.isError && apiQuery.data !== null) {
     return {
       ...apiQuery,
-      data: apiQuery.data?.find((p) => p.token.ybToken.address === address)
-        ?.[fieldKey.current],
+      data: apiQuery.data?.find((p) => p.token.ybToken.address === address)?.[
+        fieldKey.current
+      ],
     }
   }
   // Fallback to contract data after failure
   return registryQuery
 }
-

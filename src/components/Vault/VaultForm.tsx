@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
-import { FC, useEffect, useRef } from "react"
+import { FC, useRef } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import {
   useAccount,

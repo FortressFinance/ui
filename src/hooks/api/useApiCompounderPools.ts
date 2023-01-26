@@ -78,7 +78,10 @@ export default function useApiCompounderPools({ type }: { type: VaultType }) {
   const isCurve = useIsCurve(type)
 
   return useQuery(["pools", type], {
-    queryFn: () => !isCurve ? fetchApiTokenCompounderPools() : fetchApiCurveCompounderPools({ isCurve }),
+    queryFn: () =>
+      isCurve === undefined
+        ? fetchApiTokenCompounderPools()
+        : fetchApiCurveCompounderPools({ isCurve }),
     retry: false,
   })
 }
@@ -106,7 +109,7 @@ export async function fetchApiTokenCompounderPools() {
   const resp = await fortressApi.post<ApiGetVaultsResult>(
     "Token_Compounder/getVaultStaticData",
     {
-      chainId: CHAIN_ID
+      chainId: CHAIN_ID,
     }
   )
   if (resp?.data?.data?.pools) {
