@@ -18,15 +18,6 @@ type NetworkSelectorProps = {
 const NetworkSelector: FC<NetworkSelectorProps> = ({ className }) => {
   const { chain, chains, switchActiveNetwork } = useActiveNetwork()
 
-  const changeNetwork: MouseEventHandler<HTMLButtonElement> = (
-    e,
-    currentChain
-  ) => {
-    if (switchActiveNetwork !== undefined && currentChain !== undefined) {
-      switchActiveNetwork(currentChain.id)
-    }
-  }
-
   return (
     <>
       {chain && (
@@ -65,17 +56,17 @@ const NetworkSelector: FC<NetworkSelectorProps> = ({ className }) => {
             >
               <Menu.Items className="shadow-lg absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-[#F0707B] text-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div className="px-1 py-1 ">
-                  {chains.map((curChain, index) => (
+                  {chains.filter((c) => c !== undefined).map((curChain, index) => (
                     <Menu.Item
                       key={index}
                       as={Fragment}
                       disabled={
-                        !switchActiveNetwork || chain.id === curChain.id
+                        !switchActiveNetwork || chain.id === curChain?.id
                       }
                     >
                       {({ active }) => (
                         <button
-                          onClick={(e) => changeNetwork(e, curChain)}
+                          onClick={() => (curChain !== undefined)? switchActiveNetwork?.(curChain.id) : null}
                           className={clsxm(
                             "text-medium group flex w-full items-center justify-between rounded-md px-2 py-2",
                             {
@@ -84,7 +75,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = ({ className }) => {
                           )}
                         >
                           <div>
-                            {curChain.id === mainnetFork.id ? (
+                            {curChain?.id === mainnetFork.id ? (
                               <EthereumLogo
                                 className="float-left mr-2 h-5 w-5"
                                 aria-hidden="true"
@@ -97,10 +88,10 @@ const NetworkSelector: FC<NetworkSelectorProps> = ({ className }) => {
                                 aria-label="Arbitrum one"
                               />
                             )}
-                            <span>{curChain.name}</span>
+                            <span>{curChain?.name}</span>
                           </div>
                           <div>
-                            {chain.id === curChain.id && (
+                            {chain.id === curChain?.id && (
                               <div className="flex h-5 w-5 justify-center py-1 align-middle">
                                 <div className="h-2 w-2 rounded-full bg-green-500"></div>
                               </div>
