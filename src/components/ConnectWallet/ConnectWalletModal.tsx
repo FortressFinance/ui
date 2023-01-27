@@ -8,15 +8,16 @@ import Button from "@/components/Button"
 import ConnectorLogo from "@/components/ConnectWallet/ConnectorLogo"
 import ModalBase, { ModalBaseProps } from "@/components/Modal/ModalBase"
 import OrangeModal from "@/components/Modal/OrangeModal"
+import { useActiveNetwork } from "@/components/NetworkSelector/NetworkProvider"
 
 import { CHAIN_ID } from "@/constant/env"
 
 export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
-  const chainId = Number(CHAIN_ID)
+  const { chain } = useActiveNetwork()
 
   const { connect, connectors, error, isLoading, pendingConnector } =
     useConnect({
-      chainId,
+      chainId: chain !== undefined ? chain.id : Number(CHAIN_ID),
       onSuccess: () => onClose(),
     })
 
