@@ -1,7 +1,11 @@
 import { Dialog } from "@headlessui/react"
-import { FC, PropsWithChildren } from "react"
-import { BiX } from "react-icons/bi"
+import copy from "copy-to-clipboard"
+import Link from "next/link"
+import { FC, PropsWithChildren, useCallback, useState } from "react"
+import { BiCopy, BiLinkExternal, BiXCircle } from "react-icons/bi"
 import { useAccount, useConnect, useDisconnect } from "wagmi"
+
+import clsxm from "@/lib/clsxm"
 
 import Address from "@/components/Address"
 import Button from "@/components/Button"
@@ -10,6 +14,7 @@ import ModalBase, { ModalBaseProps } from "@/components/Modal/ModalBase"
 import OrangeModal from "@/components/Modal/OrangeModal"
 
 import { CHAIN_ID } from "@/constant/env"
+import { ExplorerDataType, getExplorerLink } from "@/utils/getExplorerLinks"
 
 export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
   const chainId = Number(CHAIN_ID)
@@ -75,6 +80,13 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
 }) => {
   const { address, connector: activeConnector } = useAccount()
   const { disconnect } = useDisconnect()
+  const chainId = Number(CHAIN_ID)
+  const [isCopied, setCopied] = useState(false)
+
+  const staticCopy = useCallback((text: string) => {
+    const didCopy = copy(text)
+    setCopied(didCopy)
+  }, [])
 
   const disconnectHandler = () => {
     disconnect()
@@ -90,7 +102,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
     <ConnectWalletModalBase isOpen={isOpen} onClose={onClose}>
       <div className="flex h-full items-start justify-end">
         <button onClick={onClose} className="p-2">
-          <BiX className="h-8 w-8" />
+          <BiXCircle className="h-8 w-8" />
         </button>
       </div>
 
@@ -115,8 +127,14 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
           <Address>{address}</Address>
         </div>
         <div className="flex items-center justify-between py-5">
-          <div>Copy address</div>
-          <div>View on Explorer</div>
+          <div className={clsxm({ 'text-black': isCopied === true })}>
+            <BiCopy onClick={() => staticCopy(address as string)} className="h-5 w-5 mr-2 inline" />
+            <span>Copy address</span>
+          </div>
+          <Link href={getExplorerLink(chainId, address, ExplorerDataType.ADDRESS)} target="_blank">
+            <BiLinkExternal className="h-5 w-5 mr-2 inline" />
+            <span>View on Explorer</span>
+          </Link>
         </div>
       </div>
     </ConnectWalletModalBase>
