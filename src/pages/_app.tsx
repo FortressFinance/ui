@@ -2,36 +2,32 @@ import { Inter, VT323 } from "@next/font/google"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { AppProps } from "next/app"
 import { configureChains, createClient, WagmiConfig } from "wagmi"
-import { arbitrum } from "wagmi/chains"
 import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet"
 import { InjectedConnector } from "wagmi/connectors/injected"
 import { MetaMaskConnector } from "wagmi/connectors/metaMask"
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect"
-import { infuraProvider } from "wagmi/providers/infura"
 
 import "@/styles/globals.css"
 
 import ConnectWalletProvider from "@/components/ConnectWallet/ConnectWalletProvider"
+import NetworkProvider from "@/components/NetworkSelector/NetworkProvider"
 
-import { mainnetFork, mainnetForkProvider } from "@/constant/chains"
-import { CHAIN_ID, INFURA_KEY } from "@/constant/env"
+import { ENABLE_CHAINS, ENABLE_PROVIDERS } from "@/constant/env"
 
 // wagmi configuration
-const isDev = CHAIN_ID === 31337
-const enabledChains = isDev ? [mainnetFork] : [arbitrum]
-const enabledProviders = isDev
-  ? [mainnetForkProvider()]
-  : [infuraProvider({ apiKey: INFURA_KEY })]
 const { chains, provider, webSocketProvider } = configureChains(
-  enabledChains,
-  enabledProviders
+  ENABLE_CHAINS,
+  ENABLE_PROVIDERS
 )
 const wagmiClient = createClient({
   autoConnect: true,
   provider,
   webSocketProvider,
   connectors: [
-    new MetaMaskConnector({ chains, options: { shimDisconnect: true } }),
+    new MetaMaskConnector({
+      chains,
+      options: { shimDisconnect: true, shimChainChangedDisconnect: false },
+    }),
     new InjectedConnector({ chains }),
     new WalletConnectConnector({ chains, options: { qrcode: true } }),
     new CoinbaseWalletConnector({
@@ -72,9 +68,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       <div className="font-sans">
         <QueryClientProvider client={queryClient}>
           <WagmiConfig client={wagmiClient}>
-            <ConnectWalletProvider>
-              <Component {...pageProps} />
-            </ConnectWalletProvider>
+            <NetworkProvider>
+              <ConnectWalletProvider>
+                <Component {...pageProps} />
+              </ConnectWalletProvider>
+            </NetworkProvider>
           </WagmiConfig>
         </QueryClientProvider>
       </div>
