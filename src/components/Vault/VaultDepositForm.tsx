@@ -146,7 +146,7 @@ const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
           }
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
-          tokenAddreseses={underlyingAssets}
+          tokenAddreseses={[vaultAddress, ...(underlyingAssets || [])]}
         />
       </FormProvider>
     </div>
