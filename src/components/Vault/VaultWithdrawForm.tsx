@@ -11,6 +11,7 @@ import {
 } from "wagmi"
 
 import logger from "@/lib/logger"
+import useCompounderPoolAsset from "@/hooks/data/useCompounderPoolAsset"
 import useCompounderUnderlyingAssets from "@/hooks/data/useCompounderUnderlyingAssets"
 import { VaultProps } from "@/hooks/types"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
@@ -21,6 +22,10 @@ import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
 const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
   const { address: userAddress } = useAccount()
+  const { data: lpToken } = useCompounderPoolAsset({
+    address: vaultAddress,
+    type,
+  })
   const { data: underlyingAssets } = useCompounderUnderlyingAssets({
     address: vaultAddress,
     type,
@@ -32,7 +37,7 @@ const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
       amountIn: "",
       amountOut: "",
       inputToken: vaultAddress,
-      outputToken: underlyingAssets?.[underlyingAssets.length - 1] ?? "0x",
+      outputToken: lpToken ?? "0x",
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -110,7 +115,10 @@ const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
           }
           onSubmit={onSubmitForm}
           submitText="Withdraw"
-          tokenAddreseses={underlyingAssets}
+          tokenAddreseses={[
+            ...(lpToken ? [lpToken] : []),
+            ...(underlyingAssets || []),
+          ]}
         />
       </FormProvider>
     </div>

@@ -13,6 +13,7 @@ import {
 
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
+import useCompounderPoolAsset from "@/hooks/data/useCompounderPoolAsset"
 import useCompounderUnderlyingAssets from "@/hooks/data/useCompounderUnderlyingAssets"
 import { VaultProps } from "@/hooks/types"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
@@ -23,6 +24,10 @@ import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
 const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
   const { address: userAddress } = useAccount()
+  const { data: lpToken } = useCompounderPoolAsset({
+    address: vaultAddress,
+    type,
+  })
   const { data: underlyingAssets } = useCompounderUnderlyingAssets({
     address: vaultAddress,
     type,
@@ -33,7 +38,7 @@ const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
     defaultValues: {
       amountIn: "",
       amountOut: "",
-      inputToken: underlyingAssets?.[underlyingAssets.length - 1] ?? "0x",
+      inputToken: lpToken ?? "0x",
       outputToken: vaultAddress,
     },
     mode: "all",
@@ -146,7 +151,10 @@ const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
           }
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
-          tokenAddreseses={[vaultAddress, ...(underlyingAssets || [])]}
+          tokenAddreseses={[
+            ...(lpToken ? [lpToken] : []),
+            ...(underlyingAssets || []),
+          ]}
         />
       </FormProvider>
     </div>
