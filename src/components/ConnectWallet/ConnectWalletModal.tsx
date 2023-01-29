@@ -1,7 +1,7 @@
 import { Dialog } from "@headlessui/react"
 import copy from "copy-to-clipboard"
 import Link from "next/link"
-import { FC, PropsWithChildren, useCallback, useState } from "react"
+import { FC, MouseEvent, PropsWithChildren, useCallback, useState } from "react"
 import { BiCopy, BiLinkExternal, BiXCircle } from "react-icons/bi"
 import { useAccount, useConnect, useDisconnect } from "wagmi"
 
@@ -15,7 +15,6 @@ import OrangeModal from "@/components/Modal/OrangeModal"
 import { useActiveNetwork } from "@/components/NetworkSelector/NetworkProvider"
 
 import { CHAIN_ID } from "@/constant/env"
-import { ExplorerDataType, getExplorerLink } from "@/utils/getExplorerLinks"
 
 export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
   const { chain } = useActiveNetwork()
@@ -81,8 +80,10 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
 }) => {
   const { address, connector: activeConnector } = useAccount()
   const { disconnect } = useDisconnect()
-  const chainId = Number(CHAIN_ID)
   const [isCopied, setCopied] = useState(false)
+  const { chain } = useActiveNetwork()
+
+  const blockExplorerUrl: string = chain?.blockExplorers?.default.url || ''
 
   const staticCopy = useCallback((text: string) => {
     const didCopy = copy(text)
@@ -97,6 +98,12 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
   const changeHandler = () => {
     disconnect()
     onChange()
+  }
+
+  const validateExplorerLink = (e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>, blockExplorerUrl: string) => {
+    if (blockExplorerUrl === '') {
+      e.preventDefault()
+    }
   }
 
   return (
@@ -117,11 +124,11 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
             <div>Connected with {activeConnector?.name}</div>
           </div>
 
-          <Button onClick={disconnectHandler} variant="plain" size="small" className="mr-5">
-            Disconnect
-          </Button>
-          <Button onClick={changeHandler} variant="plain" size="small" className="mr-0">
+          <Button onClick={changeHandler} variant="plain" size="small" className="mr-5">
             Change
+          </Button>
+          <Button onClick={disconnectHandler} variant="plain-negative" size="small" className="mr-0">
+            Disconnect
           </Button>
         </div>
         <div className="flex items-center font-mono text-md py-5">
@@ -132,7 +139,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
             <BiCopy onClick={() => staticCopy(address as string)} className="h-5 w-5 mr-2 inline" />
             <span>Copy address</span>
           </div>
-          <Link href={getExplorerLink(chainId, address, ExplorerDataType.ADDRESS)} target="_blank">
+          <Link href={blockExplorerUrl + '/address/' + address} onClick={(e) => validateExplorerLink(e, blockExplorerUrl)} target="_blank">
             <BiLinkExternal className="h-5 w-5 mr-2 inline" />
             <span>View on Explorer</span>
           </Link>
