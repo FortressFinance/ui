@@ -50,6 +50,7 @@ const ConnectWalletProvider: FC<PropsWithChildren> = ({ children }) => {
       <DisconnectWalletModal
         isOpen={activeConnectWalletModal === "connected"}
         onClose={() => setActiveConnectWalletModal(null)}
+        onChange={() => setActiveConnectWalletModal("disconnected")}
       />
     </ConnectWalletContext.Provider>
   )

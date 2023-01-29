@@ -12,7 +12,7 @@ import clsxm from "@/lib/clsxm"
 import Spinner from "@/components/Spinner"
 
 type ButtonSize = "base" | "large" | "small"
-type ButtonVariant = "base" | "plain"
+type ButtonVariant = "base" | "plain" | "plain-negative"
 
 interface ButtonProps
   extends DetailedHTMLProps<
@@ -36,6 +36,8 @@ const buttonClasses = (
       "text-xs lg:text-xs": size === "small",
       "bg-gradient-to-r from-orange to-pink": variant === "base",
       "bg-white shadow-[0_0_0_2px_#000] text-black": variant === "plain",
+      "bg-black shadow-[0_0_0_2px_#000] text-white":
+        variant === "plain-negative",
     },
     className
   )
