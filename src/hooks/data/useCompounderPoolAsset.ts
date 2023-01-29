@@ -9,7 +9,7 @@ export default function useCompounderPoolAsset({ address, type }: VaultProps) {
   // Preferred: API request
   const apiQuery = useApiCompounderPools({ type })
   // Fallback: contract request
-  const registryQuery = useContractRead({
+  const contractQuery = useContractRead({
     abi: curveCompounderAbi,
     functionName: "asset",
     address,
@@ -23,5 +23,5 @@ export default function useCompounderPoolAsset({ address, type }: VaultProps) {
     }
   }
   // Fallback to contract data after failure
-  return registryQuery
+  return contractQuery
 }
