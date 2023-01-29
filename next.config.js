@@ -24,7 +24,13 @@ const nextConfig = {
     return config
   },
   async rewrites() {
-    return [{ source: "/api/anvil", destination: "http://18.196.63.80:8546" }]
+    return [
+      { source: "/api/anvil-mainnet", destination: "http://18.196.63.80:8546" },
+      {
+        source: "/api/anvil-arbitrum",
+        destination: "http://18.196.63.80:8545",
+      },
+    ]
   },
 }
 

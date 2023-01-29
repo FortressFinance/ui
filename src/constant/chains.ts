@@ -13,7 +13,7 @@ export const mainnetFork: Chain = {
   },
   rpcUrls: {
     default: {
-      http: ["/api/anvil"],
+      http: ["/api/anvil-mainnet"],
     },
   },
 }
@@ -29,7 +29,7 @@ export const arbitrumFork: Chain = {
   },
   rpcUrls: {
     default: {
-      http: ["http://18.196.63.80:8545"],
+      http: ["/api/anvil-arbitrum"],
     },
   },
 }
@@ -37,9 +37,6 @@ export const arbitrumFork: Chain = {
 export const fortressForkProvider = (): ChainProviderFn =>
   jsonRpcProvider({
     rpc: (chain: Chain) => ({
-      http:
-        chain.id === 31_337
-          ? "http://18.196.63.80:8546"
-          : "http://18.196.63.80:8545",
+      http: chain.id === 31_337 ? "/api/anvil-mainnet" : "/api/anvil-arbitrum",
     }),
   })
