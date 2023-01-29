@@ -1,5 +1,5 @@
-import { Combobox, Dialog } from "@headlessui/react"
-import { FC, Fragment, useState } from "react"
+import { Dialog, RadioGroup } from "@headlessui/react"
+import { FC, Fragment, KeyboardEventHandler, MouseEventHandler } from "react"
 import { UseControllerReturn } from "react-hook-form"
 import { Address } from "wagmi"
 
@@ -21,33 +21,17 @@ type TokenSelectModalProps = ModalBaseProps & {
 const TokenSelectModal: FC<TokenSelectModalProps> = ({
   controller,
   isOpen,
-  onClose: _onClose,
+  onClose,
   tokenAddresses,
 }) => {
-  const [query, setQuery] = useState("")
   const { data: tokens } = useTokensOrNative({ addresses: tokenAddresses })
 
-  const filteredTokens =
-    query === ""
-      ? tokens
-      : tokens?.filter(
-          (token) =>
-            token.name.toLowerCase().includes(query.toLowerCase()) ||
-            token.symbol.toLowerCase().includes(query.toLowerCase()) ||
-            token.address.toLowerCase() === query.trim().toLowerCase()
-        ) ?? []
-  const sortedTokens = filteredTokens?.sort((a, b) =>
-    a.balance.value.lt(b.balance.value) ? 1 : -1
-  )
-
-  const onClose = () => {
-    setQuery("")
-    _onClose()
+  const clickHandler: MouseEventHandler<HTMLDivElement> = () => {
+    onClose()
   }
 
-  const onChange = (value: Address) => {
-    controller.field.onChange(value)
-    onClose()
+  const keyHandler: KeyboardEventHandler<HTMLDivElement> = (e) => {
+    if (e.key === "Enter") onClose()
   }
 
   return (
@@ -60,57 +44,43 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
           </button>
         </header>
 
-        <Combobox as="div" {...controller.field} onChange={onChange}>
-          <Combobox.Input
-            as={Fragment}
-            onChange={(e) => setQuery(e.target.value)}
-            displayValue={() => query}
-          >
-            <input
-              className="mt-4 w-full rounded-md border border-pink-700 bg-transparent px-3 py-2 text-white/80"
-              type="text"
-              value={query}
-              placeholder="Search name or paste address"
-            />
-          </Combobox.Input>
-          <Combobox.Options className="mt-4 space-y-2" static>
-            {sortedTokens?.map((token, index) => (
-              <Combobox.Option
-                as={Fragment}
-                key={`token-${index}`}
-                value={token.address}
-                // disabled={token.balance.formatted === "0.0"}
-              >
-                {({ active, disabled, selected }) => (
-                  <li
-                    ref={controller.field.ref}
-                    className={clsxm(
-                      "grid grid-cols-[auto,1fr] grid-rows-[1fr,auto] items-center gap-x-2 rounded-md p-2",
-                      {
-                        "bg-white/80 text-black": selected,
-                        "bg-black text-white": !selected,
-                        "opacity-50": disabled,
-                        "cursor-pointer": !disabled,
-                        "outline outline-white": active,
-                      }
-                    )}
-                  >
-                    <AssetLogo
-                      className="col-start-1 row-span-2 row-start-1 h-7 w-7"
-                      name="curve"
-                    />
-                    <h2 className="col-start-2 row-start-1 text-sm">
-                      {token.symbol}
-                    </h2>
-                    <h3 className="col-start-2 row-start-2 text-xs">
-                      {token.name}
-                    </h3>
-                  </li>
-                )}
-              </Combobox.Option>
-            ))}
-          </Combobox.Options>
-        </Combobox>
+        <RadioGroup className="mt-3 space-y-1" {...controller.field}>
+          {tokens?.map((token, index) => (
+            <RadioGroup.Option
+              as={Fragment}
+              key={`token-${index}`}
+              value={token.address}
+            >
+              {({ checked, disabled }) => (
+                <div
+                  ref={controller.field.ref}
+                  className={clsxm(
+                    "grid grid-cols-[auto,1fr] grid-rows-[1fr,auto] items-center gap-x-2 rounded-md p-2",
+                    {
+                      "bg-white/80 text-black": checked,
+                      "bg-black text-white": !checked,
+                      "opacity-50": disabled,
+                      "cursor-pointer": !disabled,
+                    }
+                  )}
+                  onClick={clickHandler}
+                  onKeyDown={keyHandler}
+                >
+                  <AssetLogo
+                    className="col-start-1 row-span-2 row-start-1 h-7 w-7"
+                    name="curve"
+                  />
+                  <h2 className="col-start-2 row-start-1 text-sm">
+                    {token.symbol}
+                  </h2>
+                  <h3 className="col-start-2 row-start-2 text-xs">
+                    {token.name}
+                  </h3>
+                </div>
+              )}
+            </RadioGroup.Option>
+          ))}
+        </RadioGroup>
       </PurpleModalContent>
     </PurpleModal>
   )
