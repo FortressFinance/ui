@@ -71,7 +71,7 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
 
 export default ConnectWalletModal
 
-type DisconnectWalletModalProps = ModalBaseProps & { onChange: () => void; }
+type DisconnectWalletModalProps = ModalBaseProps & { onChange: () => void }
 
 export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
   isOpen,
@@ -83,7 +83,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
   const [isCopied, setCopied] = useState(false)
   const { chain } = useActiveNetwork()
 
-  const blockExplorerUrl: string = chain?.blockExplorers?.default.url || ''
+  const blockExplorerUrl: string = chain?.blockExplorers?.default.url || ""
 
   const staticCopy = useCallback((text: string) => {
     const didCopy = copy(text)
@@ -100,8 +100,11 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
     onChange()
   }
 
-  const validateExplorerLink = (e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>, blockExplorerUrl: string) => {
-    if (blockExplorerUrl === '') {
+  const validateExplorerLink = (
+    e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>,
+    blockExplorerUrl: string
+  ) => {
+    if (blockExplorerUrl === "") {
       e.preventDefault()
     }
   }
@@ -118,29 +121,46 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
         Account
       </Dialog.Title>
 
-      <div className="flex flex-col mt-30 space-y divide-y">
+      <div className="mt-30 space-y flex flex-col divide-y">
         <div className="flex items-center justify-between py-5">
           <div>
             <div>Connected with {activeConnector?.name}</div>
           </div>
 
-          <Button onClick={changeHandler} variant="plain" size="small" className="mr-5">
+          <Button
+            onClick={changeHandler}
+            variant="plain"
+            size="small"
+            className="mr-5"
+          >
             Change
           </Button>
-          <Button onClick={disconnectHandler} variant="plain-negative" size="small" className="mr-0">
+          <Button
+            onClick={disconnectHandler}
+            variant="plain-negative"
+            size="small"
+            className="mr-0"
+          >
             Disconnect
           </Button>
         </div>
-        <div className="flex items-center font-mono text-md py-5">
+        <div className="text-md flex items-center py-5 font-mono">
           <Address>{address}</Address>
         </div>
         <div className="flex items-center justify-between py-5">
-          <div className={clsxm({ 'text-black': isCopied === true })}>
-            <BiCopy onClick={() => staticCopy(address as string)} className="h-5 w-5 mr-2 inline" />
+          <div className={clsxm({ "text-black": isCopied === true })}>
+            <BiCopy
+              onClick={() => staticCopy(address as string)}
+              className="mr-2 inline h-5 w-5"
+            />
             <span>Copy address</span>
           </div>
-          <Link href={blockExplorerUrl + '/address/' + address} onClick={(e) => validateExplorerLink(e, blockExplorerUrl)} target="_blank">
-            <BiLinkExternal className="h-5 w-5 mr-2 inline" />
+          <Link
+            href={blockExplorerUrl + "/address/" + address}
+            onClick={(e) => validateExplorerLink(e, blockExplorerUrl)}
+            target="_blank"
+          >
+            <BiLinkExternal className="mr-2 inline h-5 w-5" />
             <span>View on Explorer</span>
           </Link>
         </div>

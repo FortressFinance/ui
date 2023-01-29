@@ -36,7 +36,8 @@ const buttonClasses = (
       "text-xs lg:text-xs": size === "small",
       "bg-gradient-to-r from-orange to-pink": variant === "base",
       "bg-white shadow-[0_0_0_2px_#000] text-black": variant === "plain",
-      "bg-black shadow-[0_0_0_2px_#000] text-white": variant === "plain-negative",
+      "bg-black shadow-[0_0_0_2px_#000] text-white":
+        variant === "plain-negative",
     },
     className
   )
