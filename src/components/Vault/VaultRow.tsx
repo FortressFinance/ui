@@ -2,6 +2,9 @@ import { Disclosure } from "@headlessui/react"
 import { AnimatePresence, easeInOut, motion, MotionConfig } from "framer-motion"
 import { FC, Fragment, MouseEventHandler, useState } from "react"
 
+import clsxm from "@/lib/clsxm"
+import useCompounderPoolAsset from "@/hooks/data/useCompounderPoolAsset"
+import useCompounderUnderlyingAssets from "@/hooks/data/useCompounderUnderlyingAssets"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 
@@ -27,6 +30,12 @@ const VaultRow: FC<VaultProps> = (props) => {
   const [isVaultOpen, setIsVaultOpen] = useState(false)
   const [_isSettingsOpen, setIsSettingsOpen] = useState(false)
 
+  const { isLoading: isLoadingAsset } = useCompounderPoolAsset(props)
+  const { isLoading: isLoadingUnderlying } =
+    useCompounderUnderlyingAssets(props)
+
+  const isLoading = isLoadingAsset || isLoadingUnderlying
+
   const isCurve = useIsCurve(props.type)
 
   const toggleVaultOpen: MouseEventHandler<
@@ -50,6 +59,7 @@ const VaultRow: FC<VaultProps> = (props) => {
           <VaultTableRow
             className="first:rounded-t-none lg:py-6"
             onClick={toggleVaultOpen}
+            disabled={isLoading}
           >
             {/* Row of vault info */}
             <VaultTableCell className="pointer-events-none sm:grid sm:grid-cols-[max-content,auto,max-content] sm:items-center sm:space-x-3">
@@ -80,8 +90,11 @@ const VaultRow: FC<VaultProps> = (props) => {
                   x: isVaultOpen ? 0 : "125%",
                 }}
                 initial={{ x: "125%" }}
-                className="group relative z-[1] h-7 w-7"
+                className={clsxm("group relative z-[1] h-7 w-7", {
+                  "cursor-wait": isLoading,
+                })}
                 onClick={toggleVaultOpen}
+                disabled={isLoading}
               >
                 <ChevronDownCircle
                   className="h-7 w-7"
