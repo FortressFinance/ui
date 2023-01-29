@@ -6,15 +6,11 @@ import {
   fetchApiCurveCompounderPools,
   fetchApiTokenCompounderPools,
 } from "@/hooks/api/useApiCompounderPools"
-import { VaultType } from "@/hooks/types"
+import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
-export default function useCompounderPoolAddresses({
-  type,
-}: {
-  type: VaultType
-}) {
+export default function useCompounderYbTokens({ address, type }: VaultProps) {
   const [functionName, setFunctionName] = useState("")
   const isCurve = useIsCurve(type)
   const isToken = useIsTokenCompounder(type)
@@ -22,10 +18,10 @@ export default function useCompounderPoolAddresses({
   useEffect(() => {
     setFunctionName(
       isToken
-        ? "getTokenCompoundersList"
+        ? "getTokenCompounder"
         : isCurve
-        ? "getCurveCompoundersList"
-        : "getBalancerCompoundersList"
+        ? "getCurveCompounder"
+        : "getBalancerCompounder"
     )
   }, [isCurve, isToken])
 
@@ -46,6 +42,7 @@ export default function useCompounderPoolAddresses({
   const registryQuery = useContractRead({
     ...registryContractConfig,
     functionName: functionName,
+    args: [address],
     enabled: apiQuery.isError,
   })
 
@@ -53,10 +50,13 @@ export default function useCompounderPoolAddresses({
   if (!apiQuery.isError && apiQuery.data !== null) {
     return {
       ...apiQuery,
-      data: !isToken
-        ? apiQuery.data?.map((p) => p.token.LPtoken?.address)
-        : apiQuery.data?.map((p) => p.token.asset.address),
+      data: isToken
+        ? apiQuery.data?.find((p) => p.token.asset?.address === address)?.token
+            .ybToken.address
+        : apiQuery.data?.find((p) => p.token.LPtoken?.address === address)
+            ?.token.ybToken.address,
     }
   }
+
   return registryQuery
 }

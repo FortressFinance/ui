@@ -1,9 +1,11 @@
 import { Disclosure } from "@headlessui/react"
 import { AnimatePresence, easeInOut, motion, MotionConfig } from "framer-motion"
-import { FC, Fragment, MouseEventHandler, useState } from "react"
+import { FC, Fragment, MouseEventHandler, useEffect, useState } from "react"
 
+import useCompounderYbTokens from "@/hooks/data/useCompounderYbTokens"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
+import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
 import AssetLogo from "@/components/AssetLogo"
 import {
@@ -14,6 +16,8 @@ import {
 } from "@/components/Vault/VaultData"
 import {
   VaultDepositForm,
+  VaultTokenDepositForm,
+  VaultTokenWithdrawForm,
   VaultWithdrawForm,
 } from "@/components/Vault/VaultForm"
 import VaultStrategyButton from "@/components/Vault/VaultStrategy"
@@ -28,6 +32,20 @@ import Cog from "~/svg/icons/cog.svg"
 const VaultRow: FC<VaultProps> = (props) => {
   const [isVaultOpen, setIsVaultOpen] = useState(false)
   const [_isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [updatedProps, setUpdatedProps] = useState<VaultProps>(props)
+  const isToken = useIsTokenCompounder(props.type)
+
+  const { data: ybTokenAddress } = useCompounderYbTokens({
+    address: props.address,
+    type: props.type,
+  })
+
+  useEffect(() => {
+    setUpdatedProps({
+      address: (ybTokenAddress ?? "0x") as `0x${string}`,
+      type: props.type,
+    })
+  }, [props.type, ybTokenAddress])
 
   const isCurve = useIsCurve(props.type)
 
@@ -67,17 +85,28 @@ const VaultRow: FC<VaultProps> = (props) => {
                   }
                 />
               </div>
-              <VaultName {...props} />
-              <VaultStrategyButton {...props} />
+              <VaultName
+                key={`name_${updatedProps.address}`}
+                {...updatedProps}
+              />
+              {!isToken && (
+                <VaultStrategyButton
+                  key={`strategy_${updatedProps.address}`}
+                  {...updatedProps}
+                />
+              )}
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultApr {...props} />
+              <VaultApr key={`apr_${updatedProps.address}`} {...updatedProps} />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultTvl {...props} />
+              <VaultTvl key={`tvl_${updatedProps.address}`} {...updatedProps} />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultDepositedLp {...props} />
+              <VaultDepositedLp
+                key={`deposited_${updatedProps.address}`}
+                {...updatedProps}
+              />
             </VaultTableCell>
 
             {/* Action buttons */}
@@ -124,8 +153,29 @@ const VaultRow: FC<VaultProps> = (props) => {
                   >
                     {/* Margins or padding on the motion.div will cause janky animation, use margins inside */}
                     <div className="mt-6 grid gap-3 md:grid-cols-2 md:gap-4">
-                      <VaultDepositForm {...props} />
-                      <VaultWithdrawForm {...props} />
+                      {isToken ? (
+                        <>
+                          <VaultTokenDepositForm
+                            key={`token_deposit_${updatedProps.address}`}
+                            {...updatedProps}
+                          />
+                          <VaultTokenWithdrawForm
+                            key={`token_withdraw_${updatedProps.address}`}
+                            {...updatedProps}
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <VaultDepositForm
+                            key={`deposit_${updatedProps.address}`}
+                            {...updatedProps}
+                          />
+                          <VaultWithdrawForm
+                            key={`withdraw_${updatedProps.address}`}
+                            {...updatedProps}
+                          />
+                        </>
+                      )}
                     </div>
                   </motion.div>
                 </Disclosure.Panel>

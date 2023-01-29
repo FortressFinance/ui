@@ -1,22 +1,15 @@
-import { useEffect, useRef } from "react"
-
 import useApiCompounderPools from "@/hooks/api/useApiCompounderPools"
 import { VaultProps } from "@/hooks/types"
-import useIsCurve from "@/hooks/useIsCurve"
+import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
 export default function useCompounderPoolId({ address, type }: VaultProps) {
-  const fieldKey = useRef("")
-  const isCurve = useIsCurve(type)
-
-  useEffect(() => {
-    fieldKey.current = isCurve !== undefined ? "poolId" : "vaultId"
-  }, [isCurve])
+  const isToken = useIsTokenCompounder(type)
 
   const apiQuery = useApiCompounderPools({ type })
   return {
     ...apiQuery,
-    data: apiQuery.data?.find((p) => p.token.ybToken.address === address)?.[
-      fieldKey.current
-    ],
+    data: isToken
+      ? apiQuery.data?.find((p) => p.token.ybToken.address === address)?.vaultId
+      : apiQuery.data?.find((p) => p.token.ybToken.address === address)?.poolId,
   }
 }

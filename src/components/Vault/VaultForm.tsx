@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
-import { FC, useEffect, useRef } from "react"
+import { FC, useCallback } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import {
   useAccount,
@@ -13,8 +13,8 @@ import {
 import logger from "@/lib/logger"
 import useCompounderPoolName from "@/hooks/data/useCompounderPoolName"
 import useCompounderUnderlyingAssets from "@/hooks/data/useCompounderUnderlyingAssets"
+import useTokenCompounderUnderlyingAssets from "@/hooks/data/useTokenCompounderUnderlyingAssets"
 import { VaultProps } from "@/hooks/types"
-import useIsCurve from "@/hooks/useIsCurve"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 
@@ -22,9 +22,9 @@ import Button from "@/components/Button"
 import ConnectWalletButton from "@/components/ConnectWallet/ConnectWalletButton"
 import TokenInput from "@/components/TokenInput"
 
-import auraBalCompounderAbi from "@/constant/abi/auraBALCompounder"
+import auraBalCompounderAbi from "@/constant/abi/auraBALCompounderAbi"
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
-import cvxCrvCompounderAbi from "@/constant/abi/cvxCrvCompounderAbi"
+import cvxCrvCompounderAbi from "@/constant/abi/cvxCRVCompounderAbi"
 import glpCompounderAbi from "@/constant/abi/glpCompounderAbi"
 
 type VaultDepositFormProps = VaultProps & {
@@ -35,34 +35,234 @@ type DepositFormValues = {
   amount: string
 }
 
-export const VaultDepositForm: FC<VaultDepositFormProps> = (props) => {
+export const VaultTokenDepositForm: FC<VaultDepositFormProps> = (props) => {
   const { isConnected } = useAccount()
   const { address } = useAccount()
-  const abi = useRef<curveCompounderAbi|auraBalCompounderAbi|cvxCrvCompounderAbi|glpCompounderAbi|undefined>(undefined)
-  const isCurve = useIsCurve(props.type)
-  const { data: vaultName, isLoading } = useCompounderPoolName({
+
+  const { data: vaultName } = useCompounderPoolName({
     address: props.address,
     type: props.type,
   })
 
-  useEffect(() => {
-    if(isCurve !== undefined){      
-      abi.current = curveCompounderAbi
+  const { data: underlyingAsset } = useTokenCompounderUnderlyingAssets({
+    address: props.address,
+    type: props.type,
+  })
+  const depositToken = underlyingAsset
+  const { data: balance } = useTokenOrNativeBalance({ address: depositToken })
+  const { data: token } = useTokenOrNative({ address: depositToken })
+
+  const form = useForm<DepositFormValues>({
+    defaultValues: {
+      amount: "",
+    },
+    mode: "all",
+    reValidateMode: "onChange",
+  })
+
+  const value = parseUnits(form.watch("amount") || "0", token?.decimals || 18)
+
+  const getCompounderAbi = useCallback(() => {
+    if (vaultName === undefined) {
+      return undefined
     }
-    else if (vaultName.toLocaleLowerCase().includes('aurabal')) {
-      abi.current = auraBalCompounderAbi
+    if (vaultName.toLocaleLowerCase().includes("aurabal")) {
+      return auraBalCompounderAbi
     }
-    else if (vaultName.toLocaleLowerCase().includes('cvxcrv')) {
-      abi.current = cvxCrvCompounderAbi
+    if (vaultName.toLocaleLowerCase().includes("cvxcrv")) {
+      return cvxCrvCompounderAbi
     }
-    else if (vaultName.toLocaleLowerCase().includes('glp')) {
-      abi.current = glpCompounderAbi
+    if (vaultName.toLocaleLowerCase().includes("glp")) {
+      return glpCompounderAbi
     }
-    else {
-      abi.current = undefined
+    return undefined
+  }, [vaultName])
+
+  const { config, isLoading: isLoadingPrepare } = usePrepareContractWrite({
+    address: props.address,
+    abi: getCompounderAbi(),
+    functionName: "depositSingleUnderlying",
+    enabled: value.gt(0),
+    args: [value, address ?? "0x", BigNumber.from(0)],
+    overrides: { value },
+  })
+  const {
+    data: tx,
+    write: deposit,
+    isLoading: isLoadingDeposit,
+  } = useContractWrite(config)
+  const { isLoading: isTransactionPending } = useWaitForTransaction({
+    hash: tx?.hash,
+    onSuccess: () => form.reset({ amount: "" }),
+  })
+
+  const onClickMax = (amount: string) => {
+    logger("Setting value to max amount", amount)
+    form.setValue("amount", amount, {
+      shouldDirty: true,
+      shouldValidate: true,
+      shouldTouch: true,
+    })
+  }
+
+  const onSubmitForm: SubmitHandler<DepositFormValues> = async ({ amount }) => {
+    if (deposit) {
+      logger("Depositing", amount)
+      deposit()
     }
-  }, [isCurve, vaultName])
-  
+  }
+
+  return (
+    <div className="rounded-md bg-white/10 p-4">
+      <h2 className="mb-3 text-center font-medium">Deposit</h2>
+      <form onSubmit={form.handleSubmit(onSubmitForm)}>
+        <TokenInput
+          onClickMax={onClickMax}
+          address={depositToken ?? "0x"}
+          {...form.register("amount", {
+            validate: {
+              positive: (amount) => Number(amount) > 0 || "Enter an amount",
+              lessThanBalance: (amount) =>
+                parseUnits(amount, token?.decimals).lte(balance?.value ?? 0) ||
+                `Insufficient ${token?.symbol ?? ""} balance`,
+            },
+          })}
+        />
+        {isConnected ? (
+          <Button
+            className="mt-3 grid w-full"
+            disabled={!form.formState.isValid}
+            isLoading={
+              isLoadingPrepare || isLoadingDeposit || isTransactionPending
+            }
+            type="submit"
+          >
+            {form.formState.isDirty
+              ? form.formState.errors.amount?.message ?? "Deposit"
+              : "Enter an amount"}
+          </Button>
+        ) : (
+          <ConnectWalletButton className="mt-3 w-full" />
+        )}
+      </form>
+    </div>
+  )
+}
+
+export const VaultTokenWithdrawForm: FC<VaultDepositFormProps> = (props) => {
+  const { address, isConnected } = useAccount()
+  const { data: vaultName } = useCompounderPoolName({
+    address: props.address,
+    type: props.type,
+  })
+  const { data: underlyingAsset } = useTokenCompounderUnderlyingAssets({
+    address: props.address,
+    type: props.type,
+  })
+  const withdrawToken = underlyingAsset
+  const { data: balance } = useBalance({ address, token: props.address })
+  const { data: token } = useTokenOrNative({ address: props.address })
+
+  const getCompounderAbi = useCallback(() => {
+    if (vaultName === undefined) {
+      return undefined
+    }
+    if (vaultName.toLocaleLowerCase().includes("aurabal")) {
+      return auraBalCompounderAbi
+    }
+    if (vaultName.toLocaleLowerCase().includes("cvxcrv")) {
+      return cvxCrvCompounderAbi
+    }
+    if (vaultName.toLocaleLowerCase().includes("glp")) {
+      return glpCompounderAbi
+    }
+    return undefined
+  }, [vaultName])
+
+  const form = useForm<DepositFormValues>({
+    defaultValues: {
+      amount: "",
+    },
+    mode: "all",
+    reValidateMode: "onChange",
+  })
+
+  const value = parseUnits(form.watch("amount") || "0", token?.decimals || 18)
+
+  const { config, isLoading: isLoadingPrepare } = usePrepareContractWrite({
+    address: props.address,
+    abi: getCompounderAbi(),
+    functionName: "redeemUnderlying",
+    enabled: value.gt(0),
+    args: [value, address ?? "0x", address ?? "0x", BigNumber.from(0)],
+  })
+  const {
+    data: tx,
+    write: withdraw,
+    isLoading: isLoadingWithdraw,
+  } = useContractWrite(config)
+  const { isLoading: isTransactionPending } = useWaitForTransaction({
+    hash: tx?.hash,
+    onSuccess: () => form.reset({ amount: "" }),
+  })
+
+  const onClickMax = (amount: string) => {
+    logger("Setting value to max amount", amount)
+    form.setValue("amount", amount, {
+      shouldDirty: true,
+      shouldValidate: true,
+      shouldTouch: true,
+    })
+  }
+
+  const onSubmitForm: SubmitHandler<DepositFormValues> = ({ amount }) => {
+    if (withdraw) {
+      withdraw()
+      logger("Withdrawing", amount)
+    }
+  }
+
+  return (
+    <div className="rounded-md bg-white/10 p-4">
+      <h2 className="mb-3 text-center font-medium">Withdraw</h2>
+      <form onSubmit={form.handleSubmit(onSubmitForm)}>
+        <TokenInput
+          onClickMax={onClickMax}
+          address={props.address}
+          {...form.register("amount", {
+            validate: {
+              positive: (amount) => Number(amount) > 0 || "Enter an amount",
+              lessThanBalance: (amount) =>
+                parseUnits(amount, token?.decimals).lte(balance?.value ?? 0) ||
+                `Insufficient ${token?.symbol ?? ""} balance`,
+            },
+          })}
+        />
+        {isConnected ? (
+          <Button
+            className="mt-3 grid w-full"
+            disabled={!form.formState.isValid}
+            isLoading={
+              isLoadingPrepare || isLoadingWithdraw || isTransactionPending
+            }
+            type="submit"
+          >
+            {form.formState.isDirty
+              ? form.formState.errors.amount?.message ?? "Withdraw"
+              : "Enter an amount"}
+          </Button>
+        ) : (
+          <ConnectWalletButton className="mt-3 w-full" />
+        )}
+      </form>
+    </div>
+  )
+}
+
+export const VaultDepositForm: FC<VaultDepositFormProps> = (props) => {
+  const { isConnected } = useAccount()
+  const { address } = useAccount()
+
   const { data: underlyingAssets } = useCompounderUnderlyingAssets({
     address: props.address,
     type: props.type,
@@ -97,7 +297,7 @@ export const VaultDepositForm: FC<VaultDepositFormProps> = (props) => {
 
   const { config, isLoading: isLoadingPrepare } = usePrepareContractWrite({
     address: props.address,
-    abi: abi.current,
+    abi: curveCompounderAbi,
     functionName: "depositSingleUnderlying",
     enabled: value.gt(0),
     args: [value, depositToken ?? "0x", address ?? "0x", BigNumber.from(0)],

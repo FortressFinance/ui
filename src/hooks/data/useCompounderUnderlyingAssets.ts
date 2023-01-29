@@ -23,14 +23,6 @@ export default function useCompounderUnderlyingAssets({
     enabled: apiQuery.isError && isCurve !== undefined,
   })
 
-  if (isCurve === undefined) {
-    // for the token compounder, the address here is already the ybtoken
-    return {
-      ...apiQuery,
-      data: [address]
-    }
-  }
-
   // Prioritize API response until it has errored
   if (!apiQuery.isError && apiQuery.data !== null) {
     return {
@@ -43,7 +35,6 @@ export default function useCompounderUnderlyingAssets({
   // Fallback to contract data after failure
   return registryQuery
 }
-
 export type UseCompounderUnderlyingAssetsResult = ReturnType<
   typeof useCompounderUnderlyingAssets
 >

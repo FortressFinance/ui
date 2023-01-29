@@ -20,7 +20,50 @@ const registryAbi = [
       {
         indexed: true,
         internalType: "address",
-        name: "_curveCompounder",
+        name: "_balancerConcentrator",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "_symbol",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "_name",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "address[]",
+        name: "_underlyingAssets",
+        type: "address[]",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_compounder",
+        type: "address",
+      },
+    ],
+    name: "RegisterBalancerAuraBalConcentrator",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_balancerCompounder",
         type: "address",
       },
       {
@@ -49,6 +92,49 @@ const registryAbi = [
       },
     ],
     name: "RegisterBalancerCompounder",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_balancerConcentrator",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "_symbol",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "_name",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "address[]",
+        name: "_underlyingAssets",
+        type: "address[]",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_compounder",
+        type: "address",
+      },
+    ],
+    name: "RegisterBalancerEthConcentrator",
     type: "event",
   },
   {
@@ -87,6 +173,176 @@ const registryAbi = [
     ],
     name: "RegisterCurveCompounder",
     type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_curveConcentrator",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "_symbol",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "_name",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "address[]",
+        name: "_underlyingAssets",
+        type: "address[]",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_compounder",
+        type: "address",
+      },
+    ],
+    name: "RegisterCurveCvxCrvConcentrator",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_curveConcentrator",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "_symbol",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "_name",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "address[]",
+        name: "_underlyingAssets",
+        type: "address[]",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_compounder",
+        type: "address",
+      },
+    ],
+    name: "RegisterCurveEthConcentrator",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_compounder",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "_symbol",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "_name",
+        type: "string",
+      },
+    ],
+    name: "RegisterTokenCompounder",
+    type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "balancerAuraBalConcentrators",
+    outputs: [
+      {
+        internalType: "string",
+        name: "symbol",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "name",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "concentrator",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "compounder",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "balancerAuraBalConcentratorsList",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
@@ -144,6 +400,59 @@ const registryAbi = [
         type: "address",
       },
     ],
+    name: "balancerEthConcentrators",
+    outputs: [
+      {
+        internalType: "string",
+        name: "symbol",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "name",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "concentrator",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "compounder",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "balancerEthConcentratorsList",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
     name: "curveCompounders",
     outputs: [
       {
@@ -179,6 +488,220 @@ const registryAbi = [
         internalType: "address",
         name: "",
         type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "curveCvxCrvConcentrators",
+    outputs: [
+      {
+        internalType: "string",
+        name: "symbol",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "name",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "concentrator",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "compounder",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "curveCvxCrvConcentratorsList",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "curveEthConcentrators",
+    outputs: [
+      {
+        internalType: "string",
+        name: "symbol",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "name",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "concentrator",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "compounder",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "curveEthConcentratorsList",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getBalancerAuraBalConcentrator",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getBalancerAuraBalConcentratorCompounder",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getBalancerAuraBalConcentratorName",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getBalancerAuraBalConcentratorSymbol",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getBalancerAuraBalConcentratorUnderlyingAssets",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getBalancerAuraBalConcentratorsList",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
       },
     ],
     stateMutability: "view",
@@ -274,13 +797,108 @@ const registryAbi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "getBalancerCompoundersListLength",
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getBalancerEthConcentratorCompounder",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "address",
         name: "",
-        type: "uint256",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getBalancerEthConcentrators",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getBalancerEthConcentratorsList",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getBalancerEthConcentratorsName",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getBalancerEthConcentratorsSymbol",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getBalancerEthConcentratorsUnderlyingAssets",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
       },
     ],
     stateMutability: "view",
@@ -376,13 +994,286 @@ const registryAbi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "getCurveCompoundersListLength",
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getCurveCvxCrvConcentrator",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "address",
         name: "",
-        type: "uint256",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getCurveCvxCrvConcentratorCompounder",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getCurveCvxCrvConcentratorName",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getCurveCvxCrvConcentratorSymbol",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getCurveCvxCrvConcentratorUnderlyingAssets",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getCurveCvxCrvConcentratorsList",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getCurveEthConcentrators",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getCurveEthConcentratorsCompounder",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getCurveEthConcentratorsList",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getCurveEthConcentratorsName",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getCurveEthConcentratorsSymbol",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getCurveEthConcentratorsUnderlyingAssets",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getTokenCompounder",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getTokenCompounderName",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "getTokenCompounderSymbol",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getTokenCompoundersList",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
       },
     ],
     stateMutability: "view",
@@ -405,6 +1296,44 @@ const registryAbi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_concentrator",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "_symbol",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_name",
+        type: "string",
+      },
+      {
+        internalType: "address[]",
+        name: "_underlyingAssets",
+        type: "address[]",
+      },
+      {
+        internalType: "address",
+        name: "_compounder",
+        type: "address",
+      },
+    ],
+    name: "registerBalancerAuraBalConcentrator",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -444,6 +1373,44 @@ const registryAbi = [
     inputs: [
       {
         internalType: "address",
+        name: "_concentrator",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "_symbol",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_name",
+        type: "string",
+      },
+      {
+        internalType: "address[]",
+        name: "_underlyingAssets",
+        type: "address[]",
+      },
+      {
+        internalType: "address",
+        name: "_compounder",
+        type: "address",
+      },
+    ],
+    name: "registerBalancerEthConcentrator",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "_compounder",
         type: "address",
       },
@@ -471,6 +1438,158 @@ const registryAbi = [
     name: "registerCurveCompounder",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_concentrator",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "_symbol",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_name",
+        type: "string",
+      },
+      {
+        internalType: "address[]",
+        name: "_underlyingAssets",
+        type: "address[]",
+      },
+      {
+        internalType: "address",
+        name: "_compounder",
+        type: "address",
+      },
+    ],
+    name: "registerCurveCvxCrvConcentrator",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_concentrator",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "_symbol",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_name",
+        type: "string",
+      },
+      {
+        internalType: "address[]",
+        name: "_underlyingAssets",
+        type: "address[]",
+      },
+      {
+        internalType: "address",
+        name: "_compounder",
+        type: "address",
+      },
+    ],
+    name: "registerCurveEthConcentrator",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_compounder",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "_symbol",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_name",
+        type: "string",
+      },
+    ],
+    name: "registerTokenCompounder",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "tokenCompounders",
+    outputs: [
+      {
+        internalType: "string",
+        name: "symbol",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "name",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "compounder",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "tokenCompoundersList",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
