@@ -13,6 +13,7 @@ export default function useCompounderPoolAsset({ address, type }: VaultProps) {
     abi: curveCompounderAbi,
     functionName: "asset",
     address,
+    enabled: apiQuery.isError,
   })
   // Prioritize API response until it has errored
   if (!apiQuery.isError && apiQuery.data !== null) {

@@ -47,44 +47,44 @@ const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
 
   // Watch form values
   const amountIn = form.watch("amountIn")
-  const underlyingTokenAddress = form.watch("inputToken")
+  const inputTokenAddress = form.watch("inputToken")
   // Calculate + fetch information on selected tokens
-  const isUnderlyingEth = isEthTokenAddress(underlyingTokenAddress)
+  const inputIsLp = inputTokenAddress === lpToken
+  const inputIsEth = isEthTokenAddress(inputTokenAddress)
   const { data: ybToken } = useTokenOrNative({ address: vaultAddress })
-  const { data: underlyingToken } = useTokenOrNative({
-    address: underlyingTokenAddress,
+  const { data: inputToken } = useTokenOrNative({
+    address: inputTokenAddress,
   })
-  const value = parseUnits(amountIn || "0", underlyingToken?.decimals || 18)
+  const value = parseUnits(amountIn || "0", inputToken?.decimals || 18)
 
   // Check token approval if necessary
   const { data: allowance, isLoading: isLoadingAllowance } = useContractRead({
     abi: erc20ABI,
-    address: underlyingTokenAddress,
+    address: inputTokenAddress,
     functionName: "allowance",
     args: [userAddress ?? "0x", vaultAddress],
-    enabled: !!userAddress && !isUnderlyingEth,
+    enabled: !!userAddress && !inputIsEth,
     watch: true,
   })
-  const requiresApproval = isUnderlyingEth ? false : allowance?.lt(value)
+  const requiresApproval = inputIsEth ? false : allowance?.lt(value)
+
+  const onDepositSuccess = () => {
+    form.resetField("amountIn")
+    form.resetField("amountOut")
+  }
 
   // Configure approve method
-  const { config: approveConfig, isLoading: isPreparingApproveTx } =
-    usePrepareContractWrite({
-      abi: erc20ABI,
-      address: underlyingTokenAddress,
-      functionName: "approve",
-      args: [vaultAddress, value],
-      enabled: requiresApproval,
-    })
-  const {
-    data: approvalTx,
-    write: approve,
-    isLoading: isBroadcastingApprovalTx,
-  } = useContractWrite(approveConfig)
-  const { isLoading: isApprovalTxPending } = useWaitForTransaction({
-    hash: approvalTx?.hash,
+  const prepareApprove = usePrepareContractWrite({
+    abi: erc20ABI,
+    address: inputTokenAddress,
+    functionName: "approve",
+    args: [vaultAddress, value],
+    enabled: requiresApproval,
   })
-
+  const approve = useContractWrite(prepareApprove.config)
+  const waitApprove = useWaitForTransaction({
+    hash: approve.data?.hash,
+  })
   // Preview deposit method
   const { isLoading: isLoadingPreview } = useContractRead({
     abi: curveCompounderAbi,
@@ -95,42 +95,46 @@ const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
       form.setValue("amountOut", formatUnits(data, ybToken?.decimals || 18))
     },
   })
-
-  // Configure deposit method
-  const { config, isLoading: isPreparingDepositTx } = usePrepareContractWrite({
+  // Configure depositUnderlying method
+  const prepareDepositUnderlying = usePrepareContractWrite({
     abi: curveCompounderAbi,
     address: vaultAddress,
     functionName: "depositSingleUnderlying",
-    enabled: value.gt(0) && !requiresApproval,
-    args: [
-      value,
-      underlyingTokenAddress,
-      userAddress ?? "0x",
-      BigNumber.from(0),
-    ],
+    enabled: value.gt(0) && !requiresApproval && !inputIsLp,
+    args: [value, inputTokenAddress, userAddress ?? "0x", BigNumber.from(0)],
     overrides: { value },
   })
-  const {
-    data: depositTx,
-    write: deposit,
-    isLoading: isBroadcastingDepositTx,
-  } = useContractWrite(config)
-  const { isLoading: isDepositTxPending } = useWaitForTransaction({
-    hash: depositTx?.hash,
-    onSuccess: () => {
-      form.resetField("amountIn")
-      form.resetField("amountOut")
-    },
+  const depositUnderlying = useContractWrite(prepareDepositUnderlying.config)
+  const waitDepositUnderlying = useWaitForTransaction({
+    hash: depositUnderlying.data?.hash,
+    onSuccess: onDepositSuccess,
+  })
+  // Configure depositLp method
+  const prepareDepositLp = usePrepareContractWrite({
+    abi: curveCompounderAbi,
+    address: vaultAddress,
+    functionName: "deposit",
+    enabled: value.gt(0) && !requiresApproval && inputIsLp,
+    args: [value, userAddress ?? "0x"],
+  })
+  const depositLp = useContractWrite(prepareDepositLp.config)
+  const waitDepositLp = useWaitForTransaction({
+    hash: depositLp.data?.hash,
+    onSuccess: onDepositSuccess,
   })
 
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
     if (requiresApproval) {
-      logger("Approving spend", underlyingTokenAddress)
-      approve?.()
+      logger("Approving spend", inputTokenAddress)
+      approve?.write?.()
     } else {
       logger("Depositing", amountIn)
-      deposit?.()
+      depositLp?.write
+        ? depositLp.write()
+        : depositUnderlying?.write
+        ? depositUnderlying.write()
+        : null
     }
   }
 
@@ -142,12 +146,15 @@ const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
           isLoadingPreview={isLoadingPreview}
           isLoadingTransaction={
             isLoadingAllowance ||
-            isPreparingApproveTx ||
-            isBroadcastingApprovalTx ||
-            isApprovalTxPending ||
-            isPreparingDepositTx ||
-            isBroadcastingDepositTx ||
-            isDepositTxPending
+            prepareApprove.isLoading ||
+            prepareDepositLp.isLoading ||
+            prepareDepositUnderlying.isLoading ||
+            approve.isLoading ||
+            depositLp.isLoading ||
+            depositUnderlying.isLoading ||
+            waitApprove.isLoading ||
+            waitDepositLp.isLoading ||
+            waitDepositUnderlying.isLoading
           }
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
