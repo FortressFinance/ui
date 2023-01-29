@@ -44,11 +44,11 @@ export const VaultTokenDepositForm: FC<VaultDepositFormProps> = (props) => {
     type: props.type,
   })
 
-  const { data: underlyingAsset } = useTokenCompounderUnderlyingAssets({
+  const { data: underlyingAssets } = useTokenCompounderUnderlyingAssets({
     address: props.address,
     type: props.type,
   })
-  const depositToken = underlyingAsset
+  const depositToken = underlyingAssets?.[underlyingAssets.length - 1] as `0x${string}`
   const { data: balance } = useTokenOrNativeBalance({ address: depositToken })
   const { data: token } = useTokenOrNative({ address: depositToken })
 
@@ -155,11 +155,7 @@ export const VaultTokenWithdrawForm: FC<VaultDepositFormProps> = (props) => {
     address: props.address,
     type: props.type,
   })
-  const { data: underlyingAsset } = useTokenCompounderUnderlyingAssets({
-    address: props.address,
-    type: props.type,
-  })
-  const withdrawToken = underlyingAsset
+  
   const { data: balance } = useBalance({ address, token: props.address })
   const { data: token } = useTokenOrNative({ address: props.address })
 

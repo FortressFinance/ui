@@ -23,8 +23,8 @@ export default function useTokenCompounderUnderlyingAssets({
   if (!apiQuery.isError && apiQuery.data !== null) {
     return {
       ...apiQuery,
-      data: apiQuery.data?.find((p) => p.token.ybToken.address === address)
-        ?.token.asset.address,
+      data: [apiQuery.data?.find((p) => p.token.ybToken.address === address)
+        ?.token.asset.address],
     }
   }
   // Fallback to contract data after failure
