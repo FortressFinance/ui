@@ -5,12 +5,22 @@ import clsxm from "@/lib/clsxm"
 
 import ModalBase, { ModalBaseProps } from "@/components/Modal/ModalBase"
 
-const PurpleModal: FC<PropsWithChildren<ModalBaseProps>> = ({
+type PurpleModalProps = ModalBaseProps & {
+  className?: string
+}
+
+const PurpleModal: FC<PropsWithChildren<PurpleModalProps>> = ({
   children,
+  className,
   ...modalProps
 }) => (
   <ModalBase {...modalProps}>
-    <Dialog.Panel className="w-full rounded-md border border-pink-700 bg-pink-900 max-xl:max-w-4xl xl:max-w-5xl">
+    <Dialog.Panel
+      className={clsxm(
+        "w-full rounded-md border border-pink-700 bg-pink-900",
+        className
+      )}
+    >
       {children}
     </Dialog.Panel>
   </ModalBase>

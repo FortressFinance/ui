@@ -12,15 +12,13 @@ import {
   VaultName,
   VaultTvl,
 } from "@/components/Vault/VaultData"
-import {
-  VaultDepositForm,
-  VaultWithdrawForm,
-} from "@/components/Vault/VaultForm"
+import VaultDepositForm from "@/components/Vault/VaultDepositForm"
 import VaultStrategyButton from "@/components/Vault/VaultStrategy"
 import {
   VaultTableCell,
   VaultTableRow,
 } from "@/components/Vault/VaultTableNode"
+import VaultWithdrawForm from "@/components/Vault/VaultWithdrawForm"
 
 import ChevronDownCircle from "~/svg/icons/chevron-down-circle.svg"
 import Cog from "~/svg/icons/cog.svg"
