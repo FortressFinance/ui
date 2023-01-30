@@ -23,7 +23,11 @@ import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 import auraBalCompounderAbi from "@/constant/abi/auraBALCompounderAbi"
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
-const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({ address: vaultAddress, type, underlyingAssets }) => {
+const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
+  address: vaultAddress,
+  type,
+  underlyingAssets,
+}) => {
   const isToken = useIsTokenCompounder(type)
   const { address: userAddress } = useAccount()
   const { data: lpTokenOrAsset } = useCompounderPoolAsset({
@@ -113,9 +117,11 @@ const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({ address: vaultAddress
     address: vaultAddress,
     functionName: "depositUnderlying",
     enabled: value.gt(0) && !requiresApproval && !inputIsLp && isToken,
-    args: [value, userAddress ?? "0x", BigNumber.from(0)]
+    args: [value, userAddress ?? "0x", BigNumber.from(0)],
   })
-  const tokenDepositUnderlying = useContractWrite(prepareTokenDepositUnderlying.config)
+  const tokenDepositUnderlying = useContractWrite(
+    prepareTokenDepositUnderlying.config
+  )
   const waitTokenDepositUnderlying = useWaitForTransaction({
     hash: tokenDepositUnderlying.data?.hash,
     onSuccess: onDepositSuccess,
@@ -155,17 +161,17 @@ const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({ address: vaultAddress
       approve?.write?.()
     } else {
       logger("Depositing", amountIn)
-      !isToken? (
-      depositLp?.write
-        ? depositLp.write()
-        : depositUnderlying?.write
-        ? depositUnderlying.write()
-        : null)
-      : (tokenDepositLp?.write
+      !isToken
+        ? depositLp?.write
+          ? depositLp.write()
+          : depositUnderlying?.write
+          ? depositUnderlying.write()
+          : null
+        : tokenDepositLp?.write
         ? tokenDepositLp.write()
         : tokenDepositUnderlying?.write
         ? tokenDepositUnderlying.write()
-        : null)
+        : null
     }
   }
 

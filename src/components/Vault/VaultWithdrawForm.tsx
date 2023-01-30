@@ -21,7 +21,11 @@ import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 import auraBalCompounderAbi from "@/constant/abi/auraBALCompounderAbi"
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
-const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({ address: vaultAddress, type, underlyingAssets }) => {
+const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
+  address: vaultAddress,
+  type,
+  underlyingAssets,
+}) => {
   const isToken = useIsTokenCompounder(type)
   const { address: userAddress } = useAccount()
   const { data: lpTokenOrAsset } = useCompounderPoolAsset({
@@ -92,14 +96,11 @@ const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({ address: vaultAddres
     abi: auraBalCompounderAbi,
     functionName: "redeemUnderlying",
     enabled: value.gt(0) && !outputIsLp && isToken,
-    args: [
-      value,
-      userAddress ?? "0x",
-      userAddress ?? "0x",
-      BigNumber.from(0),
-    ],
+    args: [value, userAddress ?? "0x", userAddress ?? "0x", BigNumber.from(0)],
   })
-  const tokenWithdrawUnderlying = useContractWrite(prepareTokenWithdrawUnderlying.config)
+  const tokenWithdrawUnderlying = useContractWrite(
+    prepareTokenWithdrawUnderlying.config
+  )
   const waitTokenWithdrawUnderlying = useWaitForTransaction({
     hash: tokenWithdrawUnderlying.data?.hash,
     onSuccess: onWithdrawSuccess,
@@ -135,16 +136,17 @@ const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({ address: vaultAddres
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
     logger("Withdrawing", amountIn)
-    !isToken? (withdrawLp?.write
-      ? withdrawLp.write()
-      : withdrawUnderlying?.write
-      ? withdrawUnderlying.write()
-      : null)
-    : (tokenWithdrawLp?.write
+    !isToken
+      ? withdrawLp?.write
+        ? withdrawLp.write()
+        : withdrawUnderlying?.write
+        ? withdrawUnderlying.write()
+        : null
+      : tokenWithdrawLp?.write
       ? tokenWithdrawLp.write()
       : tokenWithdrawUnderlying?.write
       ? tokenWithdrawUnderlying.write()
-      : null)
+      : null
   }
 
   return (

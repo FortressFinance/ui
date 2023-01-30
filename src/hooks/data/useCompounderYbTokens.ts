@@ -30,10 +30,10 @@ export default function useCompounderYbTokens({ address, type }: VaultProps) {
   const registryQuery = useContractRead({
     ...registryContractConfig,
     functionName: isToken
-    ? "getTokenCompounder"
-    : isCurve
-    ? "getCurveCompounder"
-    : "getBalancerCompounder",
+      ? "getTokenCompounder"
+      : isCurve
+      ? "getCurveCompounder"
+      : "getBalancerCompounder",
     args: [address],
     enabled: apiQuery.isError,
   })
