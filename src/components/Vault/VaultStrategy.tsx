@@ -8,7 +8,9 @@ import useCompounderUnderlyingAssets, {
   UseCompounderUnderlyingAssetsResult,
 } from "@/hooks/data/useCompounderUnderlyingAssets"
 import useCompounderWithdrawFeePercentage from "@/hooks/data/useCompounderWithdrawFeePercentage"
+import useTokenCompounderUnderlyingAssets, { UseTokenCompounderUnderlyingAssetsResult } from "@/hooks/data/useTokenCompounderUnderlyingAssets"
 import { VaultProps } from "@/hooks/types"
+import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 
 import Button from "@/components/Button"
@@ -26,10 +28,13 @@ import Close from "~/svg/icons/close.svg"
 import ExternalLink from "~/svg/icons/external-link.svg"
 
 const VaultStrategyButton: FC<VaultProps> = (props) => {
+  const isToken = useIsTokenCompounder(props.type)
   const [isStrategyOpen, setIsStrategyOpen] = useState(false)
 
   const { data: underlyingAssets, ...underlyingAssetsQuery } =
     useCompounderUnderlyingAssets(props)
+  const { data: tokenUnderlyingAssets, ...tokenUnderlyingAssetsQuery } =
+    useTokenCompounderUnderlyingAssets(props)
   const { data: platformFeePercentage, ...platformFeeQuery } =
     useCompounderPlatformFeePercentage(props)
   const { data: withdrawFeePercentage, ...withdrawFeeQuery } =
@@ -39,6 +44,7 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
     platformFeeQuery,
     withdrawFeeQuery,
     underlyingAssetsQuery,
+    tokenUnderlyingAssetsQuery,
   ].some((q) => q.isLoading)
 
   const toggleStrategyOpen: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -73,7 +79,7 @@ export default VaultStrategyButton
 
 type VaultStrategyModalProps = VaultProps &
   ModalBaseProps & {
-    underlyingAssets: UseCompounderUnderlyingAssetsResult["data"]
+    underlyingAssets: UseCompounderUnderlyingAssetsResult["data"] | UseTokenCompounderUnderlyingAssetsResult["data"]
     platformFeePercentage: string | number | undefined
     withdrawFeePercentage: string | number | undefined
   }

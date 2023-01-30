@@ -41,7 +41,6 @@ const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
               key={`pool-${i}`}
               address={address}
               type={type}
-              poolId={i}
             />
           ))
         )}

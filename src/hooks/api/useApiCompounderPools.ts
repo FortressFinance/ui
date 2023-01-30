@@ -4,6 +4,7 @@ import { Address } from "wagmi"
 import fortressApi, { ApiResult } from "@/lib/fortressApi"
 import { VaultType } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
+import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
 import { CHAIN_ID } from "@/constant/env"
 
@@ -76,10 +77,11 @@ export interface ApiGetVaultsResult extends ApiResult {
 
 export default function useApiCompounderPools({ type }: { type: VaultType }) {
   const isCurve = useIsCurve(type)
+  const isToken = useIsTokenCompounder(type)
 
   return useQuery(["pools", type], {
     queryFn: () =>
-      isCurve === undefined
+      isToken
         ? fetchApiTokenCompounderPools()
         : fetchApiCurveCompounderPools({ isCurve }),
     retry: false,

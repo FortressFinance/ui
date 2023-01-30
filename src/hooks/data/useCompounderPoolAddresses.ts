@@ -1,4 +1,3 @@
-import { useCallback } from "react"
 import { useContractRead, useQuery } from "wagmi"
 
 import { registryContractConfig } from "@/lib/fortressContracts"
@@ -18,17 +17,17 @@ export default function useCompounderPoolAddresses({
   const isCurve = useIsCurve(type)
   const isToken = useIsTokenCompounder(type)
 
-  const fetchApiCompounderPoolsAsync = useCallback(() => {
-    if (isToken) {
-      return fetchApiTokenCompounderPools()
-    }
-    return fetchApiCurveCompounderPools({ isCurve })
-  }, [isCurve, isToken])
-
   // Preferred: API request
   const apiQuery = useQuery(["pools", type], {
-    queryFn: () => fetchApiCompounderPoolsAsync(),
+    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve?? true }),
     retry: false,
+    enabled: !isToken
+  })
+
+  const apiTokenQuery = useQuery(["pools", type], {
+    queryFn: () => fetchApiTokenCompounderPools(),
+    retry: false,
+    enabled: isToken
   })
 
   // Fallback: contract request
@@ -43,12 +42,17 @@ export default function useCompounderPoolAddresses({
   })
 
   // Prioritize API response until it has errored
-  if (!apiQuery.isError && apiQuery.data !== null) {
+  if (!apiQuery.isError && apiQuery.data !== null && !isToken) {
     return {
       ...apiQuery,
-      data: !isToken
-        ? apiQuery.data?.map((p) => p.token.LPtoken?.address)
-        : apiQuery.data?.map((p) => p.token.asset.address),
+      data: apiQuery.data?.map((p) => p.token.LPtoken?.address),
+    }
+  }
+
+  if (!apiTokenQuery.isError && apiTokenQuery.data !== null && isToken) {
+    return {
+      ...apiTokenQuery,
+      data: apiTokenQuery.data?.map((p) => p.token.asset.address),
     }
   }
   return registryQuery

@@ -103,25 +103,23 @@ const VaultRow: FC<VaultProps> = (props) => {
                 />
               </div>
               <VaultName
-                key={`name_${updatedProps.address}`}
+                key={`name_${updatedProps.type}_${updatedProps.address}`}
                 {...updatedProps}
               />
-              {!isToken && (
-                <VaultStrategyButton
-                  key={`strategy_${updatedProps.address}`}
-                  {...updatedProps}
-                />
-              )}
+              <VaultStrategyButton
+                key={`strategy_${updatedProps.type}_${updatedProps.address}`}
+                {...updatedProps}
+              />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultApr key={`apr_${updatedProps.address}`} {...updatedProps} />
+              <VaultApr key={`apr_${updatedProps.type}_${updatedProps.address}`} {...updatedProps} />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultTvl key={`tvl_${updatedProps.address}`} {...updatedProps} />
+              <VaultTvl key={`tvl_${updatedProps.type}_${updatedProps.address}`} {...updatedProps} />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
               <VaultDepositedLp
-                key={`deposited_${updatedProps.address}`}
+                key={`deposited_${updatedProps.type}_${updatedProps.address}`}
                 {...updatedProps}
               />
             </VaultTableCell>
@@ -205,7 +203,7 @@ const VaultRow: FC<VaultProps> = (props) => {
                     {/* Margins or padding on the motion.div will cause janky animation, use margins inside */}
                     <div className="mt-6 grid gap-3 md:grid-cols-2 md:gap-4">
                       <VaultDepositForm
-                        key={`deposit_${updatedProps.address}`}
+                        key={`deposit_${updatedProps.type}_${updatedProps.address}`}
                         underlyingAssets={
                           isToken ? tokenUnderlyingAssets : underlyingAssets
                         }
@@ -213,7 +211,7 @@ const VaultRow: FC<VaultProps> = (props) => {
                         address={updatedProps.address}
                       />
                       <VaultWithdrawForm
-                        key={`withdraw_${updatedProps.address}`}
+                        key={`withdraw_${updatedProps.type}_${updatedProps.address}`}
                         underlyingAssets={
                           isToken ? tokenUnderlyingAssets : underlyingAssets
                         }
