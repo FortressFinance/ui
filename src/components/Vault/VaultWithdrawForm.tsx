@@ -19,7 +19,11 @@ import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
-const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({ address: vaultAddress, type, underlyingAssets }) => {
+const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
+  address: vaultAddress,
+  type,
+  underlyingAssets,
+}) => {
   const { address: userAddress } = useAccount()
   const { data: lpToken } = useCompounderPoolAsset({
     address: vaultAddress,

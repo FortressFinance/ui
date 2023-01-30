@@ -23,17 +23,19 @@ export default function useTokenCompounderUnderlyingAssets({
     enabled: apiQuery.isError && isToken,
   })
 
-  if(!isToken){
+  if (!isToken) {
     return {
-      data: [undefined]
+      data: [undefined],
     }
   }
   // Prioritize API response until it has errored
   if (!apiQuery.isError && apiQuery.data !== null) {
     return {
       ...apiQuery,
-      data: [apiQuery.data?.find((p) => p.token.ybToken.address === address)
-        ?.token.asset.address],
+      data: [
+        apiQuery.data?.find((p) => p.token.ybToken.address === address)?.token
+          .asset.address,
+      ],
     }
   }
   // Fallback to contract data after failure

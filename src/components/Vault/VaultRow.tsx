@@ -61,10 +61,13 @@ const VaultRow: FC<VaultProps> = (props) => {
   }, [props.type, ybTokenAddress])
 
   const { isLoading: isLoadingAsset } = useCompounderPoolAsset(updatedProps)
-  const { data: tokenUnderlyingAssets, isLoading: isLoadingTokenUnderlying } = useTokenCompounderUnderlyingAssets(updatedProps)  
-  const { data: underlyingAssets, isLoading: isLoadingUnderlying } = useCompounderUnderlyingAssets(updatedProps)
+  const { data: tokenUnderlyingAssets, isLoading: isLoadingTokenUnderlying } =
+    useTokenCompounderUnderlyingAssets(updatedProps)
+  const { data: underlyingAssets, isLoading: isLoadingUnderlying } =
+    useCompounderUnderlyingAssets(updatedProps)
 
-  const isLoading = isLoadingAsset || isLoadingUnderlying || isLoadingTokenUnderlying
+  const isLoading =
+    isLoadingAsset || isLoadingUnderlying || isLoadingTokenUnderlying
 
   const isCurve = useIsCurve(props.type)
 
@@ -203,13 +206,17 @@ const VaultRow: FC<VaultProps> = (props) => {
                     <div className="mt-6 grid gap-3 md:grid-cols-2 md:gap-4">
                       <VaultDepositForm
                         key={`deposit_${updatedProps.address}`}
-                        underlyingAssets={isToken? tokenUnderlyingAssets : underlyingAssets}
+                        underlyingAssets={
+                          isToken ? tokenUnderlyingAssets : underlyingAssets
+                        }
                         type={updatedProps.type}
                         address={updatedProps.address}
                       />
                       <VaultWithdrawForm
-                        key={`withdraw_${updatedProps.address}`}                        
-                        underlyingAssets={isToken? tokenUnderlyingAssets : underlyingAssets}
+                        key={`withdraw_${updatedProps.address}`}
+                        underlyingAssets={
+                          isToken ? tokenUnderlyingAssets : underlyingAssets
+                        }
                         type={updatedProps.type}
                         address={updatedProps.address}
                       />
