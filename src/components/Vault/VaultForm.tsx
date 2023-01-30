@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
-import { FC, useCallback } from "react"
+import { FC } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import {
   useAccount,
@@ -11,7 +11,6 @@ import {
 } from "wagmi"
 
 import logger from "@/lib/logger"
-import useCompounderPoolName from "@/hooks/data/useCompounderPoolName"
 import useCompounderUnderlyingAssets from "@/hooks/data/useCompounderUnderlyingAssets"
 import useTokenCompounderUnderlyingAssets from "@/hooks/data/useTokenCompounderUnderlyingAssets"
 import { VaultProps } from "@/hooks/types"
@@ -24,8 +23,6 @@ import TokenInput from "@/components/TokenInput"
 
 import auraBalCompounderAbi from "@/constant/abi/auraBALCompounderAbi"
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
-import cvxCrvCompounderAbi from "@/constant/abi/cvxCRVCompounderAbi"
-import glpCompounderAbi from "@/constant/abi/glpCompounderAbi"
 
 type VaultDepositFormProps = VaultProps & {
   //
@@ -38,11 +35,6 @@ type DepositFormValues = {
 export const VaultTokenDepositForm: FC<VaultDepositFormProps> = (props) => {
   const { isConnected } = useAccount()
   const { address } = useAccount()
-
-  const { data: vaultName } = useCompounderPoolName({
-    address: props.address,
-    type: props.type,
-  })
 
   const { data: underlyingAssets } = useTokenCompounderUnderlyingAssets({
     address: props.address,
@@ -62,29 +54,12 @@ export const VaultTokenDepositForm: FC<VaultDepositFormProps> = (props) => {
 
   const value = parseUnits(form.watch("amount") || "0", token?.decimals || 18)
 
-  const getCompounderAbi = useCallback(() => {
-    if (vaultName === undefined) {
-      return undefined
-    }
-    if (vaultName.toLocaleLowerCase().includes("aurabal")) {
-      return auraBalCompounderAbi
-    }
-    if (vaultName.toLocaleLowerCase().includes("cvxcrv")) {
-      return cvxCrvCompounderAbi
-    }
-    if (vaultName.toLocaleLowerCase().includes("glp")) {
-      return glpCompounderAbi
-    }
-    return undefined
-  }, [vaultName])
-
   const { config, isLoading: isLoadingPrepare } = usePrepareContractWrite({
     address: props.address,
-    abi: getCompounderAbi(),
-    functionName: "depositSingleUnderlying",
+    abi: auraBalCompounderAbi,    // should use cvxCrvCompounderAbi/glpCompounderAbi depending the token compounder we use
+    functionName: "depositUnderlying",
     enabled: value.gt(0),
-    args: [value, address ?? "0x", BigNumber.from(0)],
-    overrides: { value },
+    args: [value, address ?? "0x", BigNumber.from(0)]
   })
   const {
     data: tx,
@@ -151,29 +126,9 @@ export const VaultTokenDepositForm: FC<VaultDepositFormProps> = (props) => {
 
 export const VaultTokenWithdrawForm: FC<VaultDepositFormProps> = (props) => {
   const { address, isConnected } = useAccount()
-  const { data: vaultName } = useCompounderPoolName({
-    address: props.address,
-    type: props.type,
-  })
   
   const { data: balance } = useBalance({ address, token: props.address })
   const { data: token } = useTokenOrNative({ address: props.address })
-
-  const getCompounderAbi = useCallback(() => {
-    if (vaultName === undefined) {
-      return undefined
-    }
-    if (vaultName.toLocaleLowerCase().includes("aurabal")) {
-      return auraBalCompounderAbi
-    }
-    if (vaultName.toLocaleLowerCase().includes("cvxcrv")) {
-      return cvxCrvCompounderAbi
-    }
-    if (vaultName.toLocaleLowerCase().includes("glp")) {
-      return glpCompounderAbi
-    }
-    return undefined
-  }, [vaultName])
 
   const form = useForm<DepositFormValues>({
     defaultValues: {
@@ -187,7 +142,7 @@ export const VaultTokenWithdrawForm: FC<VaultDepositFormProps> = (props) => {
 
   const { config, isLoading: isLoadingPrepare } = usePrepareContractWrite({
     address: props.address,
-    abi: getCompounderAbi(),
+    abi: auraBalCompounderAbi,
     functionName: "redeemUnderlying",
     enabled: value.gt(0),
     args: [value, address ?? "0x", address ?? "0x", BigNumber.from(0)],

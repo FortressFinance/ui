@@ -74,8 +74,8 @@ export default VaultStrategyButton
 type VaultStrategyModalProps = VaultProps &
   ModalBaseProps & {
     underlyingAssets: UseCompounderUnderlyingAssetsResult["data"]
-    platformFeePercentage: string | undefined
-    withdrawFeePercentage: string | undefined
+    platformFeePercentage: string | number | undefined
+    withdrawFeePercentage: string | number | undefined
   }
 
 const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
