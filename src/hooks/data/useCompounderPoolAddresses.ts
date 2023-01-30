@@ -35,10 +35,10 @@ export default function useCompounderPoolAddresses({
   const registryQuery = useContractRead({
     ...registryContractConfig,
     functionName: isToken
-    ? "getTokenCompoundersList"
-    : isCurve
-    ? "getCurveCompoundersList"
-    : "getBalancerCompoundersList",
+      ? "getTokenCompoundersList"
+      : isCurve
+      ? "getCurveCompoundersList"
+      : "getBalancerCompoundersList",
     enabled: apiQuery.isError,
   })
 

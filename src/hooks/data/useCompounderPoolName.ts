@@ -16,10 +16,10 @@ export default function useCompounderPoolName({ address, type }: VaultProps) {
   const registryQuery = useContractRead({
     ...registryContractConfig,
     functionName: isToken
-    ? "getTokenCompounderName"
-    : isCurve
-    ? "getCurveCompounderName"
-    : "getBalancerCompounderName",
+      ? "getTokenCompounderName"
+      : isCurve
+      ? "getCurveCompounderName"
+      : "getBalancerCompounderName",
     args: [address],
     enabled: apiQuery.isError,
   })

@@ -26,7 +26,7 @@ export default function useTokenCompounderUnderlyingAssets({
   if (!isToken) {
     return {
       data: [undefined],
-      isLoading: false
+      isLoading: false,
     }
   }
   // Prioritize API response until it has errored
