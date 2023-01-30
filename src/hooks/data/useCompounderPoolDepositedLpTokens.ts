@@ -11,6 +11,6 @@ export default function useCompounderPoolDepositedLpTokens({
   // TODO: Fallbacks?
   return {
     ...apiQuery,
-    data: apiQuery.data?.poolDepositedLPTokens,
+    data: apiQuery.data?.poolDepositedLPtokens,
   }
 }

@@ -12,7 +12,7 @@ export type ApiPoolDynamic = {
   chainId?: number
   isCurve?: boolean
   poolId?: number
-  poolDepositedLPTokens: string
+  poolDepositedLPtokens: string
   TVL: number
   APY: number
   APR: {
@@ -45,12 +45,19 @@ export function useApiCompounderPoolDynamic({
   const isCurve = useIsCurve(type)
   const { address } = useAccount()
 
-  return useQuery(["pools", isCurve ? "curve" : "balancer", "data", address], {
-    queryFn: () =>
-      fetchApiCompounderPoolDynamic({ isCurve, poolId, user: address || "0x" }),
-    retry: false,
-    enabled: !!poolId,
-  })
+  return useQuery(
+    ["pools", isCurve ? "curve" : "balancer", "data", poolId, address],
+    {
+      queryFn: () =>
+        fetchApiCompounderPoolDynamic({
+          isCurve,
+          poolId,
+          user: address || "0x",
+        }),
+      retry: false,
+      enabled: poolId !== undefined,
+    }
+  )
 }
 
 async function fetchApiCompounderPoolDynamic({
@@ -62,7 +69,6 @@ async function fetchApiCompounderPoolDynamic({
   poolId: number | undefined
   user: Address | undefined
 }) {
-  if (!poolId) return null
   const resp = await fortressApi.post<ApiGetPoolDynamicResult>(
     "AMM_Compounder/getPoolDynamicData",
     {
