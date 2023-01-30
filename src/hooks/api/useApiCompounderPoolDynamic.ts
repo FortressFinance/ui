@@ -78,7 +78,6 @@ async function fetchApiCompounderPoolDynamic({
       user,
     }
   )
-  console.log(resp)
   if (resp?.data?.data) return resp.data.data
   return null
 }
