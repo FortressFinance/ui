@@ -1,14 +1,16 @@
 import { Address, useToken } from "wagmi"
 
+import isEthTokenAddress from "@/lib/isEthTokenAddress"
+
 export default function useTokenOrNative({
   address,
 }: {
   address: Address | undefined
 }) {
-  const isEth = address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+  const isEth = isEthTokenAddress(address)
   const token = useToken({
     address,
-    enabled: !isEth,
+    enabled: !isEth && address !== "0x",
   })
   if (isEth) {
     return {

@@ -5,6 +5,7 @@ import fortressApi, { ApiResult } from "@/lib/fortressApi"
 import { ApiPool } from "@/hooks/api/useApiCompounderPools"
 import { VaultType } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
+import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
 import { CHAIN_ID } from "@/constant/env"
 
@@ -12,7 +13,7 @@ export type ApiPoolDynamic = {
   chainId?: number
   isCurve?: boolean
   poolId?: number
-  poolDepositedLPTokens: string
+  poolDepositedLPtokens: string
   TVL: number
   APY: number
   APR: {
@@ -67,13 +68,15 @@ export function useApiCompounderPoolDynamic({
   poolId: ApiPool["poolId"]
 }) {
   const isCurve = useIsCurve(type)
+  const isToken = useIsTokenCompounder(type)
   const { address } = useAccount()
 
   return useQuery(
     [
       "pools",
-      isCurve === undefined ? "token" : isCurve ? "curve" : "balancer",
+      isToken ? "token" : isCurve ? "curve" : "balancer",
       "data",
+      poolId,
       address,
     ],
     {
@@ -89,6 +92,7 @@ export function useApiCompounderPoolDynamic({
               user: address || "0x",
             }),
       retry: false,
+      enabled: poolId !== undefined,
     }
   )
 }
@@ -102,7 +106,6 @@ async function fetchApiCompounderPoolDynamic({
   poolId: number | undefined
   user: Address | undefined
 }) {
-  if (!poolId) return null
   const resp = await fortressApi.post<ApiGetPoolDynamicResult>(
     "AMM_Compounder/getPoolDynamicData",
     {

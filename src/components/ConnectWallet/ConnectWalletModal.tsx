@@ -1,22 +1,27 @@
 import { Dialog } from "@headlessui/react"
-import { FC, PropsWithChildren } from "react"
-import { BiX } from "react-icons/bi"
+import copy from "copy-to-clipboard"
+import Link from "next/link"
+import { FC, MouseEvent, PropsWithChildren, useCallback, useState } from "react"
+import { BiCopy, BiLinkExternal, BiXCircle } from "react-icons/bi"
 import { useAccount, useConnect, useDisconnect } from "wagmi"
+
+import clsxm from "@/lib/clsxm"
 
 import Address from "@/components/Address"
 import Button from "@/components/Button"
 import ConnectorLogo from "@/components/ConnectWallet/ConnectorLogo"
 import ModalBase, { ModalBaseProps } from "@/components/Modal/ModalBase"
 import OrangeModal from "@/components/Modal/OrangeModal"
+import { useActiveNetwork } from "@/components/NetworkSelector/NetworkProvider"
 
 import { CHAIN_ID } from "@/constant/env"
 
 export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
-  const chainId = Number(CHAIN_ID)
+  const { chain } = useActiveNetwork()
 
   const { connect, connectors, error, isLoading, pendingConnector } =
     useConnect({
-      chainId,
+      chainId: chain !== undefined ? chain.id : Number(CHAIN_ID),
       onSuccess: () => onClose(),
     })
 
@@ -66,23 +71,49 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
 
 export default ConnectWalletModal
 
-export const DisconnectWalletModal: FC<ModalBaseProps> = ({
+type DisconnectWalletModalProps = ModalBaseProps & { onChange: () => void }
+
+export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
   isOpen,
   onClose,
+  onChange,
 }) => {
   const { address, connector: activeConnector } = useAccount()
   const { disconnect } = useDisconnect()
+  const [isCopied, setCopied] = useState(false)
+  const { chain } = useActiveNetwork()
+
+  const blockExplorerUrl: string = chain?.blockExplorers?.default.url || ""
+
+  const staticCopy = useCallback((text: string) => {
+    const didCopy = copy(text)
+    setCopied(didCopy)
+  }, [])
 
   const disconnectHandler = () => {
     disconnect()
     onClose()
   }
 
+  const changeHandler = () => {
+    disconnect()
+    onChange()
+  }
+
+  const validateExplorerLink = (
+    e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>,
+    blockExplorerUrl: string
+  ) => {
+    if (blockExplorerUrl === "") {
+      e.preventDefault()
+    }
+  }
+
   return (
     <ConnectWalletModalBase isOpen={isOpen} onClose={onClose}>
       <div className="flex h-full items-start justify-end">
         <button onClick={onClose} className="p-2">
-          <BiX className="h-8 w-8" />
+          <BiXCircle className="h-8 w-8" />
         </button>
       </div>
 
@@ -90,18 +121,48 @@ export const DisconnectWalletModal: FC<ModalBaseProps> = ({
         Account
       </Dialog.Title>
 
-      <div className="mt-6 space-y-3 divide-y">
-        <div className="flex items-center justify-between pb-1">
+      <div className="mt-30 space-y flex flex-col divide-y">
+        <div className="flex items-center justify-between py-5">
           <div>
-            <div className="font-mono text-sm">
-              <Address>{address}</Address>
-            </div>
-            <div>Connected to {activeConnector?.name}</div>
+            <div>Connected with {activeConnector?.name}</div>
           </div>
 
-          <Button onClick={disconnectHandler} variant="plain">
+          <Button
+            onClick={changeHandler}
+            variant="plain"
+            size="small"
+            className="mr-5"
+          >
+            Change
+          </Button>
+          <Button
+            onClick={disconnectHandler}
+            variant="plain-negative"
+            size="small"
+            className="mr-0"
+          >
             Disconnect
           </Button>
+        </div>
+        <div className="text-md flex items-center py-5 font-mono">
+          <Address>{address}</Address>
+        </div>
+        <div className="flex items-center justify-between py-5">
+          <div className={clsxm({ "text-black": isCopied === true })}>
+            <BiCopy
+              onClick={() => staticCopy(address as string)}
+              className="mr-2 inline h-5 w-5"
+            />
+            <span>Copy address</span>
+          </div>
+          <Link
+            href={blockExplorerUrl + "/address/" + address}
+            onClick={(e) => validateExplorerLink(e, blockExplorerUrl)}
+            target="_blank"
+          >
+            <BiLinkExternal className="mr-2 inline h-5 w-5" />
+            <span>View on Explorer</span>
+          </Link>
         </div>
       </div>
     </ConnectWalletModalBase>

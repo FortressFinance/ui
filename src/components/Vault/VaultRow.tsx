@@ -1,37 +1,50 @@
-import { Disclosure } from "@headlessui/react"
+import { Disclosure, Popover, Portal } from "@headlessui/react"
 import { AnimatePresence, easeInOut, motion, MotionConfig } from "framer-motion"
 import { FC, Fragment, MouseEventHandler, useEffect, useState } from "react"
+import { usePopper } from "react-popper"
 
+import clsxm from "@/lib/clsxm"
+import useCompounderPoolAsset from "@/hooks/data/useCompounderPoolAsset"
+import useCompounderUnderlyingAssets from "@/hooks/data/useCompounderUnderlyingAssets"
 import useCompounderYbTokens from "@/hooks/data/useCompounderYbTokens"
+import useTokenCompounderUnderlyingAssets from "@/hooks/data/useTokenCompounderUnderlyingAssets"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
 import AssetLogo from "@/components/AssetLogo"
+import TxSettingsForm from "@/components/TxSettingsForm"
 import {
   VaultApr,
   VaultDepositedLp,
   VaultName,
   VaultTvl,
 } from "@/components/Vault/VaultData"
-import {
-  VaultDepositForm,
-  VaultTokenDepositForm,
-  VaultTokenWithdrawForm,
-  VaultWithdrawForm,
-} from "@/components/Vault/VaultForm"
+import VaultDepositForm from "@/components/Vault/VaultDepositForm"
 import VaultStrategyButton from "@/components/Vault/VaultStrategy"
 import {
   VaultTableCell,
   VaultTableRow,
 } from "@/components/Vault/VaultTableNode"
+import VaultWithdrawForm from "@/components/Vault/VaultWithdrawForm"
 
 import ChevronDownCircle from "~/svg/icons/chevron-down-circle.svg"
 import Cog from "~/svg/icons/cog.svg"
 
 const VaultRow: FC<VaultProps> = (props) => {
   const [isVaultOpen, setIsVaultOpen] = useState(false)
-  const [_isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [txSettingsCog, setTxSettingsCog] = useState<HTMLButtonElement | null>(
+    null
+  )
+  const [txSettingsPopover, setTxSettingsPopover] =
+    useState<HTMLDivElement | null>(null)
+  const { styles, attributes } = usePopper(txSettingsCog, txSettingsPopover, {
+    placement: "bottom-end",
+    modifiers: [
+      { name: "preventOverflow", options: { padding: 8 } },
+      { name: "offset", options: { offset: [-3, 4] } },
+    ],
+  })
   const [updatedProps, setUpdatedProps] = useState<VaultProps>(props)
   const isToken = useIsTokenCompounder(props.type)
 
@@ -47,6 +60,12 @@ const VaultRow: FC<VaultProps> = (props) => {
     })
   }, [props.type, ybTokenAddress])
 
+  const { isLoading: isLoadingAsset } = useCompounderPoolAsset(updatedProps)
+  const { data: tokenUnderlyingAssets, isLoading: isLoadingTokenUnderlying } = useTokenCompounderUnderlyingAssets(updatedProps)  
+  const { data: underlyingAssets, isLoading: isLoadingUnderlying } = useCompounderUnderlyingAssets(updatedProps)
+
+  const isLoading = isLoadingAsset || isLoadingUnderlying || isLoadingTokenUnderlying
+
   const isCurve = useIsCurve(props.type)
 
   const toggleVaultOpen: MouseEventHandler<
@@ -57,12 +76,6 @@ const VaultRow: FC<VaultProps> = (props) => {
     setIsVaultOpen((v) => !v)
   }
 
-  const toggleSettingsOpen: MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setIsSettingsOpen(true)
-  }
-
   return (
     <>
       <MotionConfig transition={{ duration: 0.2, ease: easeInOut }}>
@@ -70,6 +83,7 @@ const VaultRow: FC<VaultProps> = (props) => {
           <VaultTableRow
             className="first:rounded-t-none lg:py-6"
             onClick={toggleVaultOpen}
+            disabled={isLoading}
           >
             {/* Row of vault info */}
             <VaultTableCell className="pointer-events-none sm:grid sm:grid-cols-[max-content,auto,max-content] sm:items-center sm:space-x-3">
@@ -117,8 +131,11 @@ const VaultRow: FC<VaultProps> = (props) => {
                   x: isVaultOpen ? 0 : "125%",
                 }}
                 initial={{ x: "125%" }}
-                className="group relative z-[1] h-7 w-7"
+                className={clsxm("group relative z-[1] h-7 w-7", {
+                  "cursor-wait": isLoading,
+                })}
                 onClick={toggleVaultOpen}
+                disabled={isLoading}
               >
                 <ChevronDownCircle
                   className="h-7 w-7"
@@ -127,16 +144,47 @@ const VaultRow: FC<VaultProps> = (props) => {
               </motion.button>
               <AnimatePresence initial={false}>
                 {isVaultOpen && (
-                  <motion.button
-                    className="relative z-[1] flex h-7 w-7 items-center justify-center"
-                    initial={{ x: "100%", opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    exit={{ x: "100%", opacity: 0 }}
-                    whileHover={{ rotate: 270 }}
-                    onClick={toggleSettingsOpen}
-                  >
-                    <Cog className="h-6 w-6" />
-                  </motion.button>
+                  <Popover className="relative">
+                    {({ open }) => (
+                      <>
+                        <Popover.Button as={Fragment}>
+                          <motion.button
+                            ref={setTxSettingsCog}
+                            className="relative z-[1] flex h-7 w-7 items-center justify-center"
+                            initial={{ x: "100%", opacity: 0 }}
+                            animate={{
+                              x: 0,
+                              opacity: 1,
+                              rotate: open ? -180 : 0,
+                            }}
+                            exit={{ x: "100%", opacity: 0 }}
+                          >
+                            <Cog className="h-6 w-6" />
+                          </motion.button>
+                        </Popover.Button>
+
+                        <AnimatePresence>
+                          {open && (
+                            <Portal>
+                              <Popover.Panel as={Fragment} static>
+                                <motion.div
+                                  ref={setTxSettingsPopover}
+                                  className="z-20 w-full max-w-xs rounded-md bg-orange-400 p-4 shadow-lg"
+                                  style={styles.popper}
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  {...attributes.popper}
+                                >
+                                  <TxSettingsForm />
+                                </motion.div>
+                              </Popover.Panel>
+                            </Portal>
+                          )}
+                        </AnimatePresence>
+                      </>
+                    )}
+                  </Popover>
                 )}
               </AnimatePresence>
             </VaultTableCell>
@@ -153,29 +201,18 @@ const VaultRow: FC<VaultProps> = (props) => {
                   >
                     {/* Margins or padding on the motion.div will cause janky animation, use margins inside */}
                     <div className="mt-6 grid gap-3 md:grid-cols-2 md:gap-4">
-                      {isToken ? (
-                        <>
-                          <VaultTokenDepositForm
-                            key={`token_deposit_${updatedProps.address}`}
-                            {...updatedProps}
-                          />
-                          <VaultTokenWithdrawForm
-                            key={`token_withdraw_${updatedProps.address}`}
-                            {...updatedProps}
-                          />
-                        </>
-                      ) : (
-                        <>
-                          <VaultDepositForm
-                            key={`deposit_${updatedProps.address}`}
-                            {...updatedProps}
-                          />
-                          <VaultWithdrawForm
-                            key={`withdraw_${updatedProps.address}`}
-                            {...updatedProps}
-                          />
-                        </>
-                      )}
+                      <VaultDepositForm
+                        key={`deposit_${updatedProps.address}`}
+                        underlyingAssets={isToken? tokenUnderlyingAssets : underlyingAssets}
+                        type={updatedProps.type}
+                        address={updatedProps.address}
+                      />
+                      <VaultWithdrawForm
+                        key={`withdraw_${updatedProps.address}`}                        
+                        underlyingAssets={isToken? tokenUnderlyingAssets : underlyingAssets}
+                        type={updatedProps.type}
+                        address={updatedProps.address}
+                      />
                     </div>
                   </motion.div>
                 </Disclosure.Panel>

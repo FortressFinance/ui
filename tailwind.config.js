@@ -6,6 +6,10 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      boxShadow: {
+        "button-glow":
+          "inset 0 0 0 1px theme(colors.pink.400), 0 0 16px 1px theme(colors.pink.300)",
+      },
       fontFamily: {
         sans: ["var(--font-inter)", ...fontFamily.sans],
         display: ["var(--font-vt323)", ...fontFamily.sans],
@@ -19,7 +23,7 @@ module.exports = {
           100: "#F4E1D7",
           200: "#EBC9B7",
           300: "#E3B197",
-          400: "#DA9977",
+          400: "#F0707B",
           500: "#D18157",
           600: "#BC6334",
           700: "#904C28",
@@ -40,10 +44,6 @@ module.exports = {
           900: "#1e0d1c",
         },
       },
-    },
-    boxShadow: {
-      "button-glow":
-        "inset 0 0 0 1px theme(colors.pink.400), 0 0 16px 1px theme(colors.pink.300)",
     },
   },
   plugins: [],

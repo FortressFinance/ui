@@ -12,7 +12,7 @@ import clsxm from "@/lib/clsxm"
 import Spinner from "@/components/Spinner"
 
 type ButtonSize = "base" | "large" | "small"
-type ButtonVariant = "base" | "plain"
+type ButtonVariant = "base" | "plain" | "plain-negative"
 
 interface ButtonProps
   extends DetailedHTMLProps<
@@ -26,16 +26,21 @@ interface ButtonProps
 
 const buttonClasses = (
   className?: string,
+  isLoading?: boolean,
   size: ButtonSize = "base",
   variant: ButtonVariant = "base"
 ) =>
   clsxm(
-    "inline-grid grid-cols-1 grid-rows-1 items-center justify-center rounded-md px-5 py-3 disabled:opacity-75 disabled:cursor-not-allowed",
+    "inline-grid grid-cols-1 grid-rows-1 items-center justify-center rounded-md px-5 py-3 disabled:opacity-75",
     {
       "text-lg lg:text-xl": size === "large",
       "text-xs lg:text-xs": size === "small",
       "bg-gradient-to-r from-orange to-pink": variant === "base",
       "bg-white shadow-[0_0_0_2px_#000] text-black": variant === "plain",
+      "bg-black shadow-[0_0_0_2px_#000] text-white":
+        variant === "plain-negative",
+      "cursor-wait": isLoading,
+      "disabled:cursor-not-allowed": !isLoading,
     },
     className
   )
@@ -52,7 +57,7 @@ const Button: FC<ButtonProps> = ({
   return (
     <button
       aria-disabled={disabled || isLoading}
-      className={buttonClasses(className, size, variant)}
+      className={buttonClasses(className, isLoading, size, variant)}
       disabled={disabled || isLoading}
       {...props}
     >
@@ -92,7 +97,7 @@ export const ButtonLink: FC<PropsWithChildren<ButtonLinkProps>> = ({
   ...props
 }) => {
   return (
-    <Link className={buttonClasses(className, size, variant)} {...props}>
+    <Link className={buttonClasses(className, false, size, variant)} {...props}>
       {children}
     </Link>
   )

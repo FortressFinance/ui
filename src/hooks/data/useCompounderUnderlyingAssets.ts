@@ -4,11 +4,13 @@ import { registryContractConfig } from "@/lib/fortressContracts"
 import useApiCompounderPools from "@/hooks/api/useApiCompounderPools"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
+import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
 export default function useCompounderUnderlyingAssets({
   address,
   type,
 }: VaultProps) {
+  const isToken = useIsTokenCompounder(type)
   const isCurve = useIsCurve(type)
 
   // Preferred: API request
@@ -20,8 +22,14 @@ export default function useCompounderUnderlyingAssets({
       ? "getCurveCompounderUnderlyingAssets"
       : "getBalancerCompounderUnderlyingAssets",
     args: [address],
-    enabled: apiQuery.isError && isCurve !== undefined,
+    enabled: apiQuery.isError && !isToken,
   })
+
+  if(isToken){
+    return {
+      data: [undefined]
+    }
+  }
 
   // Prioritize API response until it has errored
   if (!apiQuery.isError && apiQuery.data !== null) {
@@ -35,6 +43,7 @@ export default function useCompounderUnderlyingAssets({
   // Fallback to contract data after failure
   return registryQuery
 }
+
 export type UseCompounderUnderlyingAssetsResult = ReturnType<
   typeof useCompounderUnderlyingAssets
 >

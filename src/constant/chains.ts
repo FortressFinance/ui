@@ -13,15 +13,30 @@ export const mainnetFork: Chain = {
   },
   rpcUrls: {
     default: {
-      http: ["/api/anvil"],
+      http: ["/api/anvil-mainnet"],
     },
   },
 }
 
-export const mainnetForkProvider = (): ChainProviderFn =>
+export const arbitrumFork: Chain = {
+  id: 313_371,
+  name: "Arbitrum Fork",
+  network: "arbitrumFork",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Wrapped Ether",
+    symbol: "WETH",
+  },
+  rpcUrls: {
+    default: {
+      http: ["/api/anvil-arbitrum"],
+    },
+  },
+}
+
+export const fortressForkProvider = (): ChainProviderFn =>
   jsonRpcProvider({
-    rpc: () => ({
-      http: "/api/anvil",
-      // webSocket: "wss://18.196.63.80:8546",
+    rpc: (chain: Chain) => ({
+      http: chain.id === 31_337 ? "/api/anvil-mainnet" : "/api/anvil-arbitrum",
     }),
   })

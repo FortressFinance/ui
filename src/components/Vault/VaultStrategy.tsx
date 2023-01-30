@@ -97,7 +97,7 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
   }
 
   return (
-    <PurpleModal {...modalProps}>
+    <PurpleModal className="max-xl:max-w-4xl xl:max-w-5xl" {...modalProps}>
       <PurpleModalHeader className="flex justify-between space-x-4">
         <div className="flex space-x-4">
           {!!connector && !!connector.watchAsset && (

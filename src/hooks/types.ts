@@ -12,3 +12,7 @@ export type VaultProps = {
 export type VaultDynamicProps = VaultProps & {
   poolId: ApiPool["poolId"] | undefined
 }
+
+export type VaultDepositWithdrawProps = VaultProps & {
+  underlyingAssets: Address[]
+}
