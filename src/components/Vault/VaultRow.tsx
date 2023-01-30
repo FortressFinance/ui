@@ -1,6 +1,7 @@
-import { Disclosure } from "@headlessui/react"
+import { Disclosure, Popover, Portal } from "@headlessui/react"
 import { AnimatePresence, easeInOut, motion, MotionConfig } from "framer-motion"
 import { FC, Fragment, MouseEventHandler, useState } from "react"
+import { usePopper } from "react-popper"
 
 import clsxm from "@/lib/clsxm"
 import useCompounderPoolAsset from "@/hooks/data/useCompounderPoolAsset"
@@ -9,6 +10,7 @@ import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 
 import AssetLogo from "@/components/AssetLogo"
+import TxSettingsForm from "@/components/TxSettingsForm"
 import {
   VaultApr,
   VaultDepositedLp,
@@ -28,7 +30,18 @@ import Cog from "~/svg/icons/cog.svg"
 
 const VaultRow: FC<VaultProps> = (props) => {
   const [isVaultOpen, setIsVaultOpen] = useState(false)
-  const [_isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [txSettingsCog, setTxSettingsCog] = useState<HTMLButtonElement | null>(
+    null
+  )
+  const [txSettingsPopover, setTxSettingsPopover] =
+    useState<HTMLDivElement | null>(null)
+  const { styles, attributes } = usePopper(txSettingsCog, txSettingsPopover, {
+    placement: "bottom-end",
+    modifiers: [
+      { name: "preventOverflow", options: { padding: 8 } },
+      { name: "offset", options: { offset: [-3, 4] } },
+    ],
+  })
 
   const { isLoading: isLoadingAsset } = useCompounderPoolAsset(props)
   const { isLoading: isLoadingUnderlying } =
@@ -44,12 +57,6 @@ const VaultRow: FC<VaultProps> = (props) => {
     e.preventDefault()
     e.stopPropagation()
     setIsVaultOpen((v) => !v)
-  }
-
-  const toggleSettingsOpen: MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setIsSettingsOpen(true)
   }
 
   return (
@@ -103,16 +110,47 @@ const VaultRow: FC<VaultProps> = (props) => {
               </motion.button>
               <AnimatePresence initial={false}>
                 {isVaultOpen && (
-                  <motion.button
-                    className="relative z-[1] flex h-7 w-7 items-center justify-center"
-                    initial={{ x: "100%", opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    exit={{ x: "100%", opacity: 0 }}
-                    whileHover={{ rotate: 270 }}
-                    onClick={toggleSettingsOpen}
-                  >
-                    <Cog className="h-6 w-6" />
-                  </motion.button>
+                  <Popover className="relative">
+                    {({ open }) => (
+                      <>
+                        <Popover.Button as={Fragment}>
+                          <motion.button
+                            ref={setTxSettingsCog}
+                            className="relative z-[1] flex h-7 w-7 items-center justify-center"
+                            initial={{ x: "100%", opacity: 0 }}
+                            animate={{
+                              x: 0,
+                              opacity: 1,
+                              rotate: open ? -180 : 0,
+                            }}
+                            exit={{ x: "100%", opacity: 0 }}
+                          >
+                            <Cog className="h-6 w-6" />
+                          </motion.button>
+                        </Popover.Button>
+
+                        <AnimatePresence>
+                          {open && (
+                            <Portal>
+                              <Popover.Panel as={Fragment} static>
+                                <motion.div
+                                  ref={setTxSettingsPopover}
+                                  className="z-20 w-full max-w-xs rounded-md bg-orange-400 p-4 shadow-lg"
+                                  style={styles.popper}
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  {...attributes.popper}
+                                >
+                                  <TxSettingsForm />
+                                </motion.div>
+                              </Popover.Panel>
+                            </Portal>
+                          )}
+                        </AnimatePresence>
+                      </>
+                    )}
+                  </Popover>
                 )}
               </AnimatePresence>
             </VaultTableCell>
