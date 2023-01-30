@@ -24,7 +24,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = ({ className }) => {
         <div className="min-w-30 mr-3 text-right">
           <Menu as="div" className="relative inline-block text-left">
             <div>
-              <Menu.Button className="text-medium inline-flex w-full justify-center rounded-md bg-black bg-opacity-20 px-4 py-3 font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+              <Menu.Button className="text-medium inline-flex w-full items-center justify-center space-x-2 rounded-md bg-black bg-opacity-20 px-4 py-3 font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
                 {chain.id === mainnetFork.id ? (
                   <EthereumLogo
                     className="mr-2 h-5 w-5"
@@ -40,7 +40,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = ({ className }) => {
                 )}
                 {chain.name}
                 <ChevronDown
-                  className="ml-2 -mr-1 mt-1 h-4 w-4 text-violet-200 hover:text-violet-100"
+                  className="h-3.5 w-3.5 fill-violet-200"
                   aria-label="Switch network"
                 />
               </Menu.Button>
