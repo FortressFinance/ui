@@ -15,15 +15,15 @@ export default function useCompounderYbTokens({ address, type }: VaultProps) {
 
   // Preferred: API request
   const apiQuery = useQuery(["pools", type], {
-    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve?? true }),
+    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve ?? true }),
     retry: false,
-    enabled: !isToken
+    enabled: !isToken,
   })
 
   const apiTokenQuery = useQuery(["pools", type], {
     queryFn: () => fetchApiTokenCompounderPools(),
     retry: false,
-    enabled: isToken
+    enabled: isToken,
   })
 
   // Fallback: contract request
@@ -43,15 +43,15 @@ export default function useCompounderYbTokens({ address, type }: VaultProps) {
     return {
       ...apiQuery,
       data: apiQuery.data?.find((p) => p.token.LPtoken?.address === address)
-      ?.token.ybToken.address
+        ?.token.ybToken.address,
     }
   }
 
   if (!apiTokenQuery.isError && apiTokenQuery.data !== null && isToken) {
     return {
       ...apiTokenQuery,
-      data: apiTokenQuery.data?.find((p) => p.token.asset?.address === address)?.token
-            .ybToken.address
+      data: apiTokenQuery.data?.find((p) => p.token.asset?.address === address)
+        ?.token.ybToken.address,
     }
   }
 

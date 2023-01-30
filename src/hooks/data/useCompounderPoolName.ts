@@ -1,7 +1,10 @@
 import { useContractRead, useQuery } from "wagmi"
 
 import { registryContractConfig } from "@/lib/fortressContracts"
-import { fetchApiCurveCompounderPools, fetchApiTokenCompounderPools } from "@/hooks/api/useApiCompounderPools"
+import {
+  fetchApiCurveCompounderPools,
+  fetchApiTokenCompounderPools,
+} from "@/hooks/api/useApiCompounderPools"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
@@ -12,17 +15,17 @@ export default function useCompounderPoolName({ address, type }: VaultProps) {
 
   // Preferred: API request
   const apiQuery = useQuery(["pools", type], {
-    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve?? true }),
+    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve ?? true }),
     retry: false,
-    enabled: !isToken
+    enabled: !isToken,
   })
 
   const apiTokenQuery = useQuery(["pools", type], {
     queryFn: () => fetchApiTokenCompounderPools(),
     retry: false,
-    enabled: isToken
+    enabled: isToken,
   })
-  
+
   // Fallback: contract request
   const registryQuery = useContractRead({
     ...registryContractConfig,
@@ -39,14 +42,14 @@ export default function useCompounderPoolName({ address, type }: VaultProps) {
     return {
       ...apiQuery,
       data: apiQuery.data?.find((p) => p.token.ybToken.address === address)
-      ?.poolName,
+        ?.poolName,
     }
   }
   if (!apiTokenQuery.isError && apiTokenQuery.data !== null && isToken) {
     return {
       ...apiTokenQuery,
       data: apiTokenQuery.data?.find((p) => p.token.ybToken.address === address)
-            ?.vaultName,
+        ?.vaultName,
     }
   }
   // Fallback to contract data after failure

@@ -8,7 +8,9 @@ import useCompounderUnderlyingAssets, {
   UseCompounderUnderlyingAssetsResult,
 } from "@/hooks/data/useCompounderUnderlyingAssets"
 import useCompounderWithdrawFeePercentage from "@/hooks/data/useCompounderWithdrawFeePercentage"
-import useTokenCompounderUnderlyingAssets, { UseTokenCompounderUnderlyingAssetsResult } from "@/hooks/data/useTokenCompounderUnderlyingAssets"
+import useTokenCompounderUnderlyingAssets, {
+  UseTokenCompounderUnderlyingAssetsResult,
+} from "@/hooks/data/useTokenCompounderUnderlyingAssets"
 import { VaultProps } from "@/hooks/types"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
@@ -79,7 +81,9 @@ export default VaultStrategyButton
 
 type VaultStrategyModalProps = VaultProps &
   ModalBaseProps & {
-    underlyingAssets: UseCompounderUnderlyingAssetsResult["data"] | UseTokenCompounderUnderlyingAssetsResult["data"]
+    underlyingAssets:
+      | UseCompounderUnderlyingAssetsResult["data"]
+      | UseTokenCompounderUnderlyingAssetsResult["data"]
     platformFeePercentage: string | number | undefined
     withdrawFeePercentage: string | number | undefined
   }

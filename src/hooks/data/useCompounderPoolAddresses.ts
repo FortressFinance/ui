@@ -19,15 +19,15 @@ export default function useCompounderPoolAddresses({
 
   // Preferred: API request
   const apiQuery = useQuery(["pools", type], {
-    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve?? true }),
+    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve ?? true }),
     retry: false,
-    enabled: !isToken
+    enabled: !isToken,
   })
 
   const apiTokenQuery = useQuery(["pools", type], {
     queryFn: () => fetchApiTokenCompounderPools(),
     retry: false,
-    enabled: isToken
+    enabled: isToken,
   })
 
   // Fallback: contract request
