@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers"
+import { BigNumber, ethers } from "ethers"
 import { formatUnits, parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
@@ -78,7 +78,7 @@ const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
     abi: erc20ABI,
     address: inputTokenAddress,
     functionName: "approve",
-    args: [vaultAddress, value],
+    args: [vaultAddress, ethers.constants.MaxUint256],
     enabled: requiresApproval,
   })
   const approve = useContractWrite(prepareApprove.config)
