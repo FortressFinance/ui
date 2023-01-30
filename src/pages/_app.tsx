@@ -9,7 +9,6 @@ import { WalletConnectConnector } from "wagmi/connectors/walletConnect"
 
 import "@/styles/globals.css"
 
-import ConnectWalletProvider from "@/components/ConnectWallet/ConnectWalletProvider"
 import NetworkProvider from "@/components/NetworkSelector/NetworkProvider"
 
 import { ENABLE_CHAINS, ENABLE_PROVIDERS } from "@/constant/env"
@@ -69,9 +68,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <QueryClientProvider client={queryClient}>
           <WagmiConfig client={wagmiClient}>
             <NetworkProvider>
-              <ConnectWalletProvider>
-                <Component {...pageProps} />
-              </ConnectWalletProvider>
+              <Component {...pageProps} />
             </NetworkProvider>
           </WagmiConfig>
         </QueryClientProvider>

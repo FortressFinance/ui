@@ -3,8 +3,13 @@ import Image from "next/image"
 import Link from "next/link"
 import { FC, PropsWithChildren } from "react"
 
+import ConnectWalletModal, {
+  DisconnectWalletModal,
+} from "@/components/ConnectWallet/ConnectWalletModal"
 import ExternalLinks from "@/components/ExternalLinks"
 import NetworkSelector from "@/components/NetworkSelector/NetworkSelector"
+
+import { useConnectWallet } from "@/store/connectWallet"
 
 import FortressBackground from "~/images/fortress-background.gif"
 import FortressLogo from "~/svg/fortress-logo.svg"
@@ -15,6 +20,11 @@ const ConnectWalletButton = dynamic(
 )
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
+  const [connectModal, setConnectModal] = useConnectWallet((state) => [
+    state.connectModal,
+    state.setConnectModal,
+  ])
+
   return (
     <>
       <div className="relative z-[1] grid min-h-screen grid-cols-1 grid-rows-[auto,1fr,auto]">
@@ -61,6 +71,16 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
           alt=""
         />
       </div>
+
+      <ConnectWalletModal
+        isOpen={connectModal === "disconnected"}
+        onClose={() => setConnectModal(null)}
+      />
+      <DisconnectWalletModal
+        isOpen={connectModal === "connected"}
+        onClose={() => setConnectModal(null)}
+        onChange={() => setConnectModal("disconnected")}
+      />
     </>
   )
 }
