@@ -25,7 +25,7 @@ export default function useCompounderUnderlyingAssets({
     enabled: apiQuery.isError && !isToken,
   })
 
-  if(isToken){
+  if (isToken) {
     return {
       data: [undefined],
       isLoading: false
