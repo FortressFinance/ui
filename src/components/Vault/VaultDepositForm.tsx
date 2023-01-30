@@ -15,13 +15,16 @@ import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
 import useCompounderPoolAsset from "@/hooks/data/useCompounderPoolAsset"
 import { VaultDepositWithdrawProps } from "@/hooks/types"
+import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
+import auraBalCompounderAbi from "@/constant/abi/auraBALCompounderAbi"
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
 const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({ address: vaultAddress, type, underlyingAssets }) => {
+  const isToken = useIsTokenCompounder(type)
   const { address: userAddress } = useAccount()
   const { data: lpTokenOrAsset } = useCompounderPoolAsset({
     address: vaultAddress,
@@ -95,7 +98,7 @@ const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({ address: vaultAddress
     abi: curveCompounderAbi,
     address: vaultAddress,
     functionName: "depositSingleUnderlying",
-    enabled: value.gt(0) && !requiresApproval && !inputIsLp,
+    enabled: value.gt(0) && !requiresApproval && !inputIsLp && !isToken,
     args: [value, inputTokenAddress, userAddress ?? "0x", BigNumber.from(0)],
     overrides: { value },
   })
@@ -104,17 +107,44 @@ const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({ address: vaultAddress
     hash: depositUnderlying.data?.hash,
     onSuccess: onDepositSuccess,
   })
+
+  const prepareTokenDepositUnderlying = usePrepareContractWrite({
+    abi: auraBalCompounderAbi,
+    address: vaultAddress,
+    functionName: "depositUnderlying",
+    enabled: value.gt(0) && !requiresApproval && !inputIsLp && isToken,
+    args: [value, userAddress ?? "0x", BigNumber.from(0)]
+  })
+  const tokenDepositUnderlying = useContractWrite(prepareTokenDepositUnderlying.config)
+  const waitTokenDepositUnderlying = useWaitForTransaction({
+    hash: tokenDepositUnderlying.data?.hash,
+    onSuccess: onDepositSuccess,
+  })
+
   // Configure depositLp method
   const prepareDepositLp = usePrepareContractWrite({
     abi: curveCompounderAbi,
     address: vaultAddress,
     functionName: "deposit",
-    enabled: value.gt(0) && !requiresApproval && inputIsLp,
+    enabled: value.gt(0) && !requiresApproval && inputIsLp && !isToken,
     args: [value, userAddress ?? "0x"],
   })
   const depositLp = useContractWrite(prepareDepositLp.config)
   const waitDepositLp = useWaitForTransaction({
     hash: depositLp.data?.hash,
+    onSuccess: onDepositSuccess,
+  })
+
+  const prepareTokenDepositLp = usePrepareContractWrite({
+    abi: auraBalCompounderAbi,
+    address: vaultAddress,
+    functionName: "deposit",
+    enabled: value.gt(0) && !requiresApproval && inputIsLp && isToken,
+    args: [value, userAddress ?? "0x"],
+  })
+  const tokenDepositLp = useContractWrite(prepareTokenDepositLp.config)
+  const waitTokenDepositLp = useWaitForTransaction({
+    hash: tokenDepositLp.data?.hash,
     onSuccess: onDepositSuccess,
   })
 
@@ -125,11 +155,17 @@ const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({ address: vaultAddress
       approve?.write?.()
     } else {
       logger("Depositing", amountIn)
+      !isToken? (
       depositLp?.write
         ? depositLp.write()
         : depositUnderlying?.write
         ? depositUnderlying.write()
-        : null
+        : null)
+      : (tokenDepositLp?.write
+        ? tokenDepositLp.write()
+        : tokenDepositUnderlying?.write
+        ? tokenDepositUnderlying.write()
+        : null)
     }
   }
 
@@ -147,8 +183,12 @@ const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({ address: vaultAddress
             approve.isLoading ||
             depositLp.isLoading ||
             depositUnderlying.isLoading ||
+            tokenDepositLp.isLoading ||
+            tokenDepositUnderlying.isLoading ||
             waitApprove.isLoading ||
             waitDepositLp.isLoading ||
+            waitDepositUnderlying.isLoading ||
+            waitTokenDepositLp.isLoading ||
             waitDepositUnderlying.isLoading
           }
           onSubmit={onSubmitForm}

@@ -27,7 +27,8 @@ export default function useCompounderUnderlyingAssets({
 
   if(isToken){
     return {
-      data: [undefined]
+      data: [undefined],
+      isLoading: false
     }
   }
 

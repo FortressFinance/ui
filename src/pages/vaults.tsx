@@ -31,6 +31,39 @@ const Vaults: NextPage = () => {
                         "bg-white text-black": selected,
                       })}
                     >
+                      Featured
+                    </button>
+                  )}
+                </Tab>
+                <Tab as={Fragment}>
+                  {({ selected }) => (
+                    <button
+                      className={clsxm("py-3 px-6", {
+                        "bg-white text-black": selected,
+                      })}
+                    >
+                      Crypto
+                    </button>
+                  )}
+                </Tab>
+                <Tab as={Fragment}>
+                  {({ selected }) => (
+                    <button
+                      className={clsxm("py-3 px-6", {
+                        "bg-white text-black": selected,
+                      })}
+                    >
+                      Stable
+                    </button>
+                  )}
+                </Tab>
+                <Tab as={Fragment}>
+                  {({ selected }) => (
+                    <button
+                      className={clsxm("py-3 px-6", {
+                        "bg-white text-black": selected,
+                      })}
+                    >
                       Curve
                     </button>
                   )}
@@ -43,17 +76,6 @@ const Vaults: NextPage = () => {
                       })}
                     >
                       Balancer
-                    </button>
-                  )}
-                </Tab>
-                <Tab as={Fragment}>
-                  {({ selected }) => (
-                    <button
-                      className={clsxm("py-3 px-6", {
-                        "bg-white text-black": selected,
-                      })}
-                    >
-                      Token
                     </button>
                   )}
                 </Tab>
@@ -75,13 +97,19 @@ const Vaults: NextPage = () => {
 
             <Tab.Panels className="mt-6">
               <Tab.Panel>
+                <VaultTable type="featured" />
+              </Tab.Panel>
+              <Tab.Panel>
+                <VaultTable type="crypto" />
+              </Tab.Panel>
+              <Tab.Panel>
+                <VaultTable type="stable" />
+              </Tab.Panel>
+              <Tab.Panel>
                 <VaultTable type="curve" />
               </Tab.Panel>
               <Tab.Panel>
                 <VaultTable type="balancer" />
-              </Tab.Panel>
-              <Tab.Panel>
-                <VaultTable type="token" />
               </Tab.Panel>
               <Tab.Panel>Holdings</Tab.Panel>
             </Tab.Panels>
