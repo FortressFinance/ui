@@ -49,6 +49,7 @@ export function useApiCompounderPoolDynamic({
     queryFn: () =>
       fetchApiCompounderPoolDynamic({ isCurve, poolId, user: address || "0x" }),
     retry: false,
+    enabled: !!poolId,
   })
 }
 

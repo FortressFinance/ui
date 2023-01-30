@@ -18,6 +18,11 @@ const curveCompounderAbi = [
       },
       {
         internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
+      {
+        internalType: "address",
         name: "_platform",
         type: "address",
       },
@@ -62,6 +67,11 @@ const curveCompounderAbi = [
   },
   {
     inputs: [],
+    name: "HarvestAlreadyCalled",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "InsufficientAllowance",
     type: "error",
   },
@@ -73,6 +83,11 @@ const curveCompounderAbi = [
   {
     inputs: [],
     name: "InsufficientBalance",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InsufficientDepositCap",
     type: "error",
   },
   {
@@ -218,24 +233,17 @@ const curveCompounderAbi = [
       {
         indexed: false,
         internalType: "bool",
-        name: "_pause",
+        name: "_pauseDeposit",
         type: "bool",
       },
-    ],
-    name: "PausePoolDeposit",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
       {
         indexed: false,
         internalType: "bool",
-        name: "_pause",
+        name: "_pauseWithdraw",
         type: "bool",
       },
     ],
-    name: "PausePoolWithdraw",
+    name: "PauseInteractions",
     type: "event",
   },
   {
@@ -268,77 +276,30 @@ const curveCompounderAbi = [
     inputs: [
       {
         indexed: false,
-        internalType: "uint256",
-        name: "_percentage",
-        type: "uint256",
-      },
-    ],
-    name: "UpdateHarvestBountyPercentage",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "_owner",
-        type: "address",
-      },
-    ],
-    name: "UpdateOwner",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "_platform",
-        type: "address",
-      },
-    ],
-    name: "UpdatePlatform",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "_feePercentage",
-        type: "uint256",
-      },
-    ],
-    name: "UpdatePlatformFeePercentage",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
         internalType: "address[]",
         name: "_rewardAssets",
         type: "address[]",
       },
-    ],
-    name: "UpdatePoolRewardAssets",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
-        name: "_swap",
+        name: "_booster",
         type: "address",
       },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_crvRewards",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_boosterPoolId",
+        type: "uint256",
+      },
     ],
-    name: "UpdateSwap",
+    name: "UpdateExternalUtils",
     type: "event",
   },
   {
@@ -347,11 +308,54 @@ const curveCompounderAbi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "_feePercentage",
+        name: "_withdrawFeePercentage",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_platformFeePercentage",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_harvestBountyPercentage",
         type: "uint256",
       },
     ],
-    name: "UpdateWithdrawalFeePercentage",
+    name: "UpdateFees",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_platform",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_swap",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_depositCap",
+        type: "uint256",
+      },
+    ],
+    name: "UpdateInternalUtils",
     type: "event",
   },
   {
@@ -599,6 +603,19 @@ const curveCompounderAbi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "depositCap",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -695,6 +712,57 @@ const curveCompounderAbi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "lastHarvestBlock",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "maxDeposit",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "maxMint",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -824,24 +892,16 @@ const curveCompounderAbi = [
     inputs: [
       {
         internalType: "bool",
-        name: "_pause",
+        name: "_pauseDeposit",
         type: "bool",
       },
-    ],
-    name: "pausePoolDeposit",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "bool",
-        name: "_pause",
+        name: "_pauseWithdraw",
         type: "bool",
       },
     ],
-    name: "pausePoolWithdraw",
+    name: "pauseInteractions",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -932,7 +992,7 @@ const curveCompounderAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "assets",
+        name: "_assets",
         type: "uint256",
       },
     ],
@@ -951,7 +1011,7 @@ const curveCompounderAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "shares",
+        name: "_shares",
         type: "uint256",
       },
     ],
@@ -1218,12 +1278,27 @@ const curveCompounderAbi = [
   {
     inputs: [
       {
+        internalType: "address[]",
+        name: "_rewardAssets",
+        type: "address[]",
+      },
+      {
+        internalType: "address",
+        name: "_booster",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_crvRewards",
+        type: "address",
+      },
+      {
         internalType: "uint256",
-        name: "_feePercentage",
+        name: "_boosterPoolId",
         type: "uint256",
       },
     ],
-    name: "updateHarvestBountyPercentage",
+    name: "updateExternalUtils",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1231,12 +1306,22 @@ const curveCompounderAbi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_owner",
-        type: "address",
+        internalType: "uint256",
+        name: "_withdrawFeePercentage",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_platformFeePercentage",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_harvestBountyPercentage",
+        type: "uint256",
       },
     ],
-    name: "updateOwner",
+    name: "updateFees",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1248,60 +1333,23 @@ const curveCompounderAbi = [
         name: "_platform",
         type: "address",
       },
-    ],
-    name: "updatePlatform",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_feePercentage",
-        type: "uint256",
-      },
-    ],
-    name: "updatePlatformFeePercentage",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address[]",
-        name: "_rewardAssets",
-        type: "address[]",
-      },
-    ],
-    name: "updatePoolRewardAssets",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "address",
         name: "_swap",
         type: "address",
       },
-    ],
-    name: "updateSwap",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
+      {
+        internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
       {
         internalType: "uint256",
-        name: "_feePercentage",
+        name: "_depositCap",
         type: "uint256",
       },
     ],
-    name: "updateWithdrawFeePercentage",
+    name: "updateInternalUtils",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
