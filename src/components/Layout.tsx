@@ -18,7 +18,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <>
       <div className="relative z-[1] grid min-h-screen grid-cols-1 grid-rows-[auto,1fr,auto]">
-        <header className="shadow-2xl sticky top-0 z-10 border-b-2 border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] py-4 backdrop-blur-lg">
+        <header className="sticky top-0 z-10 border-b-2 border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] py-4 shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
             <div className="flex items-center space-x-10">
               <Link className="group" href="/">
