@@ -11,6 +11,7 @@ import {
 } from "wagmi"
 
 import logger from "@/lib/logger"
+import useCompounderPoolAsset from "@/hooks/data/useCompounderPoolAsset"
 import useCompounderUnderlyingAssets from "@/hooks/data/useCompounderUnderlyingAssets"
 import { VaultProps } from "@/hooks/types"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
@@ -21,6 +22,10 @@ import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
 const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
   const { address: userAddress } = useAccount()
+  const { data: lpToken } = useCompounderPoolAsset({
+    address: vaultAddress,
+    type,
+  })
   const { data: underlyingAssets } = useCompounderUnderlyingAssets({
     address: vaultAddress,
     type,
@@ -32,7 +37,7 @@ const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
       amountIn: "",
       amountOut: "",
       inputToken: vaultAddress,
-      outputToken: underlyingAssets?.[underlyingAssets.length - 1] ?? "0x",
+      outputToken: lpToken ?? "0x",
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -40,13 +45,19 @@ const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
 
   // Watch form values
   const amountIn = form.watch("amountIn")
-  const underlyingTokenAddress = form.watch("outputToken")
+  const outputTokenAddress = form.watch("outputToken")
   // Calculate + fetch information on selected tokens
+  const outputIsLp = outputTokenAddress === lpToken
   const { data: ybToken } = useTokenOrNative({ address: vaultAddress })
-  const { data: underlyingToken } = useTokenOrNative({
-    address: underlyingTokenAddress,
+  const { data: outputToken } = useTokenOrNative({
+    address: outputTokenAddress,
   })
   const value = parseUnits(amountIn || "0", ybToken?.decimals || 18)
+
+  const onWithdrawSuccess = () => {
+    form.resetField("amountIn")
+    form.resetField("amountOut")
+  }
 
   // Preview redeem method
   const { isLoading: isLoadingPreview } = useContractRead({
@@ -55,44 +66,50 @@ const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
     functionName: "previewRedeem",
     args: [value],
     onSuccess: (data) => {
-      form.setValue(
-        "amountOut",
-        formatUnits(data, underlyingToken?.decimals || 18)
-      )
+      form.setValue("amountOut", formatUnits(data, outputToken?.decimals || 18))
     },
   })
-  // Configure redeem method
-  const { config: withdrawConfig, isLoading: isPreparingWithdrawTx } =
-    usePrepareContractWrite({
-      address: vaultAddress,
-      abi: curveCompounderAbi,
-      functionName: "redeemSingleUnderlying",
-      enabled: value.gt(0),
-      args: [
-        value,
-        underlyingTokenAddress,
-        userAddress ?? "0x",
-        userAddress ?? "0x",
-        BigNumber.from(0),
-      ],
-    })
-  const {
-    data: tx,
-    write: withdraw,
-    isLoading: isBroadcastingWithdrawTx,
-  } = useContractWrite(withdrawConfig)
-  const { isLoading: isWithdrawTxPending } = useWaitForTransaction({
-    hash: tx?.hash,
-    onSuccess: () => {
-      form.resetField("amountIn")
-      form.resetField("amountOut")
-    },
+  // Configure redeemUnderlying method
+  const prepareWithdrawUnderlying = usePrepareContractWrite({
+    address: vaultAddress,
+    abi: curveCompounderAbi,
+    functionName: "redeemSingleUnderlying",
+    enabled: value.gt(0) && !outputIsLp,
+    args: [
+      value,
+      outputTokenAddress,
+      userAddress ?? "0x",
+      userAddress ?? "0x",
+      BigNumber.from(0),
+    ],
+  })
+  const withdrawUnderlying = useContractWrite(prepareWithdrawUnderlying.config)
+  const waitWithdrawUnderlying = useWaitForTransaction({
+    hash: withdrawUnderlying.data?.hash,
+    onSuccess: onWithdrawSuccess,
+  })
+  // Configure redeemLp method
+  const prepareWithdrawLp = usePrepareContractWrite({
+    address: vaultAddress,
+    abi: curveCompounderAbi,
+    functionName: "redeem",
+    enabled: value.gt(0) && outputIsLp,
+    args: [value, userAddress ?? "0x", userAddress ?? "0x"],
+  })
+  const withdrawLp = useContractWrite(prepareWithdrawLp.config)
+  const waitWithdrawLp = useWaitForTransaction({
+    hash: withdrawLp.data?.hash,
+    onSuccess: onWithdrawSuccess,
   })
 
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
     logger("Withdrawing", amountIn)
-    withdraw?.()
+    withdrawLp?.write
+      ? withdrawLp.write()
+      : withdrawUnderlying?.write
+      ? withdrawUnderlying.write()
+      : null
   }
 
   return (
@@ -104,13 +121,19 @@ const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
           isLoadingPreview={isLoadingPreview}
           isLoadingTransaction={
             isLoadingPreview ||
-            isPreparingWithdrawTx ||
-            isBroadcastingWithdrawTx ||
-            isWithdrawTxPending
+            prepareWithdrawLp.isLoading ||
+            prepareWithdrawUnderlying.isLoading ||
+            withdrawLp.isLoading ||
+            withdrawUnderlying.isLoading ||
+            waitWithdrawLp.isLoading ||
+            waitWithdrawUnderlying.isLoading
           }
           onSubmit={onSubmitForm}
           submitText="Withdraw"
-          tokenAddreseses={underlyingAssets}
+          tokenAddreseses={[
+            ...(lpToken ? [lpToken] : []),
+            ...(underlyingAssets || []),
+          ]}
         />
       </FormProvider>
     </div>

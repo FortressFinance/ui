@@ -45,19 +45,12 @@ export function useApiCompounderPoolDynamic({
   const isCurve = useIsCurve(type)
   const { address } = useAccount()
 
-  return useQuery(
-    ["pools", isCurve ? "curve" : "balancer", "data", poolId, address],
-    {
-      queryFn: () =>
-        fetchApiCompounderPoolDynamic({
-          isCurve,
-          poolId,
-          user: address || "0x",
-        }),
-      retry: false,
-      enabled: poolId !== undefined,
-    }
-  )
+  return useQuery(["pools", isCurve ? "curve" : "balancer", "data", address], {
+    queryFn: () =>
+      fetchApiCompounderPoolDynamic({ isCurve, poolId, user: address || "0x" }),
+    retry: false,
+    enabled: poolId !== undefined,
+  })
 }
 
 async function fetchApiCompounderPoolDynamic({

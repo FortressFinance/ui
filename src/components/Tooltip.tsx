@@ -46,7 +46,6 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "top",
-    strategy: "fixed",
     modifiers: [
       { name: "preventOverflow", options: { padding: 8 } },
       { name: "offset", options: { offset: [-3, 16] } },
