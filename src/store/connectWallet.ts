@@ -8,6 +8,6 @@ export interface ConnectWalletStore {
 }
 
 export const useConnectWallet = create<ConnectWalletStore>((set, _get) => ({
-  connectModal: "connected",
+  connectModal: null,
   setConnectModal: (connectModal) => set({ connectModal }),
 }))
