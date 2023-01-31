@@ -61,5 +61,9 @@ export default function useCompounderPoolAddresses({
       data: apiTokenQuery.data?.map((p) => p.token.asset.address).filter((a) => filterTab.includes(a)),
     }
   }
-  return registryQuery
+  const filterRegistryQuery = {
+    ...registryQuery,
+    data: registryQuery.data?.filter((a) => filterTab.includes(a))
+  }
+  return filterRegistryQuery
 }
