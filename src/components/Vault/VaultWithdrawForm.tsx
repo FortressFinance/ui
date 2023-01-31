@@ -39,7 +39,7 @@ const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
       amountIn: "",
       amountOut: "",
       inputToken: vaultAddress,
-      outputToken: (lpTokenOrAsset ?? "0x") as `0x${string}`,
+      outputToken: lpTokenOrAsset ?? "0x",
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -136,17 +136,15 @@ const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
     logger("Withdrawing", amountIn)
-    !isToken
-      ? withdrawLp?.write
-        ? withdrawLp.write()
-        : withdrawUnderlying?.write
-        ? withdrawUnderlying.write()
-        : null
-      : tokenWithdrawLp?.write
-      ? tokenWithdrawLp.write()
-      : tokenWithdrawUnderlying?.write
-      ? tokenWithdrawUnderlying.write()
-      : null
+    withdrawLp?.write
+    ? withdrawLp.write()
+    : withdrawUnderlying?.write
+    ? withdrawUnderlying.write()
+    : tokenWithdrawLp?.write
+    ? tokenWithdrawLp.write()
+    : tokenWithdrawUnderlying?.write
+    ? tokenWithdrawUnderlying.write()
+    : null
   }
 
   return (
@@ -173,7 +171,7 @@ const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
           submitText="Withdraw"
           tokenAddreseses={[
             ...(lpTokenOrAsset
-              ? [(lpTokenOrAsset ?? "0x") as `0x${string}`]
+              ? [lpTokenOrAsset ?? "0x"]
               : []),
             ...(underlyingAssets?.filter((a) => a !== lpTokenOrAsset) || []),
           ]}

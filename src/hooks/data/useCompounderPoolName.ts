@@ -35,7 +35,7 @@ export default function useCompounderPoolName({ address, type }: VaultProps) {
       ? "getCurveCompounderName"
       : "getBalancerCompounderName",
     args: [address],
-    enabled: apiQuery.isError,
+    enabled: apiQuery.isError || apiTokenQuery.isError,
   })
   // Prioritize API response until it has errored
   if (!apiQuery.isError && apiQuery.data !== null && !isToken) {

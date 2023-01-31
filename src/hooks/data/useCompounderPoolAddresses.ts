@@ -42,7 +42,7 @@ export default function useCompounderPoolAddresses({
       : isCurve
       ? "getCurveCompoundersList"
       : "getBalancerCompoundersList",
-    enabled: apiQuery.isError,
+    enabled: apiQuery.isError || apiTokenQuery.isError,
   })
 
   // Prioritize API response until it has errored

@@ -146,7 +146,7 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
               and can also deposit the LP to Curve's gauges to earn CRV
               emissions. This Curve v2 crypto pool contains{" "}
               {underlyingAssets?.map(
-                (address: string | undefined, index: number) => (
+                (address, index) => (
                   <Fragment key={`underlying-asset-${index}`}>
                     {underlyingAssets.length > 2 &&
                     index > 0 &&

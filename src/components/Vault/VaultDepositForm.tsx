@@ -40,7 +40,7 @@ const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     defaultValues: {
       amountIn: "",
       amountOut: "",
-      inputToken: (lpTokenOrAsset ?? "0x") as `0x${string}`,
+      inputToken: lpTokenOrAsset ?? "0x",
       outputToken: vaultAddress,
     },
     mode: "all",
@@ -161,17 +161,15 @@ const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
       approve?.write?.()
     } else {
       logger("Depositing", amountIn)
-      !isToken
-        ? depositLp?.write
-          ? depositLp.write()
-          : depositUnderlying?.write
-          ? depositUnderlying.write()
-          : null
-        : tokenDepositLp?.write
-        ? tokenDepositLp.write()
-        : tokenDepositUnderlying?.write
-        ? tokenDepositUnderlying.write()
-        : null
+      depositLp?.write
+      ? depositLp.write()
+      : depositUnderlying?.write
+      ? depositUnderlying.write()
+      : tokenDepositLp?.write
+      ? tokenDepositLp.write()
+      : tokenDepositUnderlying?.write
+      ? tokenDepositUnderlying.write()
+      : null
     }
   }
 
@@ -202,7 +200,7 @@ const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
           submitText={requiresApproval ? "Approve" : "Deposit"}
           tokenAddreseses={[
             ...(lpTokenOrAsset
-              ? [(lpTokenOrAsset ?? "0x") as `0x${string}`]
+              ? [lpTokenOrAsset ?? "0x"]
               : []),
             ...(underlyingAssets?.filter((a) => a !== lpTokenOrAsset) || []),
           ]}

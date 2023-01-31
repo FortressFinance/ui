@@ -1,6 +1,6 @@
 import { Disclosure, Popover, Portal } from "@headlessui/react"
 import { AnimatePresence, easeInOut, motion, MotionConfig } from "framer-motion"
-import { FC, Fragment, MouseEventHandler, useEffect, useState } from "react"
+import { FC, Fragment, MouseEventHandler, useState } from "react"
 import { usePopper } from "react-popper"
 
 import clsxm from "@/lib/clsxm"
@@ -45,7 +45,6 @@ const VaultRow: FC<VaultProps> = (props) => {
       { name: "offset", options: { offset: [-3, 4] } },
     ],
   })
-  const [updatedProps, setUpdatedProps] = useState<VaultProps>(props)
   const isToken = useIsTokenCompounder(props.type)
 
   const { data: ybTokenAddress } = useCompounderYbTokens({
@@ -53,18 +52,16 @@ const VaultRow: FC<VaultProps> = (props) => {
     type: props.type,
   })
 
-  useEffect(() => {
-    setUpdatedProps({
-      address: (ybTokenAddress ?? "0x") as `0x${string}`,
-      type: props.type,
-    })
-  }, [props.type, ybTokenAddress])
+  const childProps = {
+    address: ybTokenAddress ?? "0x",
+    type: props.type
+  }
 
-  const { isLoading: isLoadingAsset } = useCompounderPoolAsset(updatedProps)
+  const { isLoading: isLoadingAsset } = useCompounderPoolAsset(childProps)
   const { data: tokenUnderlyingAssets, isLoading: isLoadingTokenUnderlying } =
-    useTokenCompounderUnderlyingAssets(updatedProps)
+    useTokenCompounderUnderlyingAssets(childProps)
   const { data: underlyingAssets, isLoading: isLoadingUnderlying } =
-    useCompounderUnderlyingAssets(updatedProps)
+    useCompounderUnderlyingAssets(childProps)
 
   const isLoading =
     isLoadingAsset || isLoadingUnderlying || isLoadingTokenUnderlying
@@ -102,31 +99,21 @@ const VaultRow: FC<VaultProps> = (props) => {
                   }
                 />
               </div>
-              <VaultName
-                key={`name_${updatedProps.type}_${updatedProps.address}`}
-                {...updatedProps}
+              <VaultName {...props}
               />
-              <VaultStrategyButton
-                key={`strategy_${updatedProps.type}_${updatedProps.address}`}
-                {...updatedProps}
+              <VaultStrategyButton {...childProps}
               />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultApr
-                key={`apr_${updatedProps.type}_${updatedProps.address}`}
-                {...updatedProps}
+              <VaultApr {...childProps}
               />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultTvl
-                key={`tvl_${updatedProps.type}_${updatedProps.address}`}
-                {...updatedProps}
+              <VaultTvl {...childProps}
               />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultDepositedLp
-                key={`deposited_${updatedProps.type}_${updatedProps.address}`}
-                {...updatedProps}
+              <VaultDepositedLp {...childProps}
               />
             </VaultTableCell>
 
@@ -209,20 +196,18 @@ const VaultRow: FC<VaultProps> = (props) => {
                     {/* Margins or padding on the motion.div will cause janky animation, use margins inside */}
                     <div className="mt-6 grid gap-3 md:grid-cols-2 md:gap-4">
                       <VaultDepositForm
-                        key={`deposit_${updatedProps.type}_${updatedProps.address}`}
                         underlyingAssets={
                           isToken ? tokenUnderlyingAssets : underlyingAssets
                         }
-                        type={updatedProps.type}
-                        address={updatedProps.address}
+                        type={childProps.type}
+                        address={childProps.address}
                       />
                       <VaultWithdrawForm
-                        key={`withdraw_${updatedProps.type}_${updatedProps.address}`}
                         underlyingAssets={
                           isToken ? tokenUnderlyingAssets : underlyingAssets
                         }
-                        type={updatedProps.type}
-                        address={updatedProps.address}
+                        type={childProps.type}
+                        address={childProps.address}
                       />
                     </div>
                   </motion.div>
