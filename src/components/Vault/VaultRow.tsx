@@ -54,7 +54,7 @@ const VaultRow: FC<VaultProps> = (props) => {
 
   const childProps = {
     address: ybTokenAddress ?? "0x",
-    type: props.type
+    type: props.type,
   }
 
   const { isLoading: isLoadingAsset } = useCompounderPoolAsset(childProps)
@@ -99,22 +99,17 @@ const VaultRow: FC<VaultProps> = (props) => {
                   }
                 />
               </div>
-              <VaultName {...props}
-              />
-              <VaultStrategyButton {...childProps}
-              />
+              <VaultName {...props} />
+              <VaultStrategyButton {...childProps} />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultApr {...childProps}
-              />
+              <VaultApr {...childProps} />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultTvl {...childProps}
-              />
+              <VaultTvl {...childProps} />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultDepositedLp {...childProps}
-              />
+              <VaultDepositedLp {...childProps} />
             </VaultTableCell>
 
             {/* Action buttons */}

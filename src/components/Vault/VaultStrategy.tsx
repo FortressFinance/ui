@@ -145,23 +145,21 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
               liquidity pool. Holders earn fees from users trading in the pool,
               and can also deposit the LP to Curve's gauges to earn CRV
               emissions. This Curve v2 crypto pool contains{" "}
-              {underlyingAssets?.map(
-                (address, index) => (
-                  <Fragment key={`underlying-asset-${index}`}>
-                    {underlyingAssets.length > 2 &&
-                    index > 0 &&
-                    index !== underlyingAssets.length - 1
-                      ? ", "
-                      : index > 0
-                      ? " and "
-                      : null}
-                    <TokenSymbol
-                      key={`token-symbol-${index}`}
-                      address={(address ?? "0x") as `0x${string}`}
-                    />
-                  </Fragment>
-                )
-              )}
+              {underlyingAssets?.map((address, index) => (
+                <Fragment key={`underlying-asset-${index}`}>
+                  {underlyingAssets.length > 2 &&
+                  index > 0 &&
+                  index !== underlyingAssets.length - 1
+                    ? ", "
+                    : index > 0
+                    ? " and "
+                    : null}
+                  <TokenSymbol
+                    key={`token-symbol-${index}`}
+                    address={(address ?? "0x") as `0x${string}`}
+                  />
+                </Fragment>
+              ))}
               .
             </p>
           </div>
