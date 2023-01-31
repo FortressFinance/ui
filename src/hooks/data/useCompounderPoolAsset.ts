@@ -1,6 +1,9 @@
 import { useContractRead, useQuery } from "wagmi"
 
-import { fetchApiCurveCompounderPools, fetchApiTokenCompounderPools } from "@/hooks/api/useApiCompounderPools"
+import {
+  fetchApiCurveCompounderPools,
+  fetchApiTokenCompounderPools,
+} from "@/hooks/api/useApiCompounderPools"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
@@ -12,15 +15,15 @@ export default function useCompounderPoolAsset({ address, type }: VaultProps) {
   const isToken = useIsTokenCompounder(type)
   // Preferred: API request
   const apiQuery = useQuery(["pools", type], {
-    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve?? true }),
+    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve ?? true }),
     retry: false,
-    enabled: !isToken
+    enabled: !isToken,
   })
 
   const apiTokenQuery = useQuery(["pools", type], {
     queryFn: () => fetchApiTokenCompounderPools(),
     retry: false,
-    enabled: isToken
+    enabled: isToken,
   })
   // Fallback: contract request
   const contractQuery = useContractRead({
@@ -33,15 +36,15 @@ export default function useCompounderPoolAsset({ address, type }: VaultProps) {
   if (!apiQuery.isError && apiQuery.data !== null && !isToken) {
     return {
       ...apiQuery,
-      data: apiQuery.data?.find((p) => p.token.ybToken.address === address)?.token
-            .LPtoken.address,
+      data: apiQuery.data?.find((p) => p.token.ybToken.address === address)
+        ?.token.LPtoken.address,
     }
   }
   if (!apiTokenQuery.isError && apiTokenQuery.data !== null && isToken) {
     return {
       ...apiTokenQuery,
-      data: apiTokenQuery.data?.find((p) => p.token.ybToken.address === address)?.token
-            .asset.address,
+      data: apiTokenQuery.data?.find((p) => p.token.ybToken.address === address)
+        ?.token.asset.address,
     }
   }
   // Fallback to contract data after failure

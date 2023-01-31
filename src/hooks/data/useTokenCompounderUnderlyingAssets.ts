@@ -35,7 +35,7 @@ export default function useTokenCompounderUnderlyingAssets({
       ...apiQuery,
       data: [
         (apiQuery.data?.find((p) => p.token.ybToken.address === address)?.token
-          .asset.address?? "0x") as `0x${string}`
+          .asset.address ?? "0x") as `0x${string}`,
       ],
     }
   }

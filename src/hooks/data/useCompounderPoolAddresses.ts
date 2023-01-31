@@ -53,12 +53,19 @@ export default function useCompounderPoolAddresses({
     }
   }
 
-  const filterTab = type === "stable"? stableRelevant : type === "crypto"? crypto : [...crypto, ...stableRelevant];
+  const filterTab =
+    type === "stable"
+      ? stableRelevant
+      : type === "crypto"
+      ? crypto
+      : [...crypto, ...stableRelevant]
 
   if (!apiTokenQuery.isError && apiTokenQuery.data !== null && isToken) {
     return {
       ...apiTokenQuery,
-      data: apiTokenQuery.data?.map((p) => p.token.asset.address).filter((a) => filterTab.includes(a)),
+      data: apiTokenQuery.data
+        ?.map((p) => p.token.asset.address)
+        .filter((a) => filterTab.includes(a)),
     }
   }
   return registryQuery

@@ -68,7 +68,7 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
       <VaultStrategyModal
         isOpen={isStrategyOpen}
         onClose={() => setIsStrategyOpen(false)}
-        underlyingAssets={!isToken? underlyingAssets : tokenUnderlyingAssets}
+        underlyingAssets={!isToken ? underlyingAssets : tokenUnderlyingAssets}
         platformFeePercentage={platformFeePercentage}
         withdrawFeePercentage={withdrawFeePercentage}
         {...props}
@@ -145,21 +145,23 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
               liquidity pool. Holders earn fees from users trading in the pool,
               and can also deposit the LP to Curve's gauges to earn CRV
               emissions. This Curve v2 crypto pool contains{" "}
-              {underlyingAssets?.map((address: string | undefined, index: number) => (
-                <Fragment key={`underlying-asset-${index}`}>
-                  {underlyingAssets.length > 2 &&
-                  index > 0 &&
-                  index !== underlyingAssets.length - 1
-                    ? ", "
-                    : index > 0
-                    ? " and "
-                    : null}
-                  <TokenSymbol
-                    key={`token-symbol-${index}`}
-                    address={(address ?? "0x") as `0x${string}`}
-                  />
-                </Fragment>
-              ))}
+              {underlyingAssets?.map(
+                (address: string | undefined, index: number) => (
+                  <Fragment key={`underlying-asset-${index}`}>
+                    {underlyingAssets.length > 2 &&
+                    index > 0 &&
+                    index !== underlyingAssets.length - 1
+                      ? ", "
+                      : index > 0
+                      ? " and "
+                      : null}
+                    <TokenSymbol
+                      key={`token-symbol-${index}`}
+                      address={(address ?? "0x") as `0x${string}`}
+                    />
+                  </Fragment>
+                )
+              )}
               .
             </p>
           </div>
