@@ -204,7 +204,7 @@ const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
             ...(lpTokenOrAsset
               ? [(lpTokenOrAsset ?? "0x") as `0x${string}`]
               : []),
-            ...(underlyingAssets || []),
+            ...(underlyingAssets?.filter((a) => a !== lpTokenOrAsset) || []),
           ]}
         />
       </FormProvider>
