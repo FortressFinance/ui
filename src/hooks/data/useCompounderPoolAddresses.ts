@@ -10,8 +10,8 @@ import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
 // HARDCODE HERE AT THE MOMENT, THE BE SHOULD CLASSIFY THEM
-const stableRelevant = ["0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7"]
-const crypto = ["0x616e8BfA43F920657B3497DBf40D6b1A02D4608d"]
+const STABLE = ["0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7"]
+const CRYPTO = ["0x616e8BfA43F920657B3497DBf40D6b1A02D4608d"]
 
 export default function useCompounderPoolAddresses({
   type,
@@ -55,10 +55,10 @@ export default function useCompounderPoolAddresses({
 
   const filterTab =
     type === "stable"
-      ? stableRelevant
+      ? STABLE
       : type === "crypto"
-      ? crypto
-      : [...crypto, ...stableRelevant]
+      ? CRYPTO
+      : [...CRYPTO, ...STABLE]
 
   if (!apiTokenQuery.isError && apiTokenQuery.data !== null && isToken) {
     return {
