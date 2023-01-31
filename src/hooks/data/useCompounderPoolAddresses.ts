@@ -70,7 +70,7 @@ export default function useCompounderPoolAddresses({
   }
   const filterRegistryQuery = {
     ...registryQuery,
-    data: registryQuery.data?.filter((a) => filterTab.includes(a))
+    data: registryQuery.data?.filter((a) => filterTab.includes(a)),
   }
   return filterRegistryQuery
 }
