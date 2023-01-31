@@ -14,5 +14,5 @@ export type VaultDynamicProps = VaultProps & {
 }
 
 export type VaultDepositWithdrawProps = VaultProps & {
-  underlyingAssets: Address[] |  readonly Address[] |undefined
+  underlyingAssets: Address[] | readonly Address[] | undefined
 }

@@ -201,7 +201,9 @@ const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
           tokenAddreseses={[
-            ...(lpTokenOrAsset ? [(lpTokenOrAsset?? "0x") as `0x${string}`] : []),
+            ...(lpTokenOrAsset
+              ? [(lpTokenOrAsset ?? "0x") as `0x${string}`]
+              : []),
             ...(underlyingAssets || []),
           ]}
         />

@@ -15,9 +15,9 @@ export default function useCompounderUnderlyingAssets({
 
   // Preferred: API request
   const apiQuery = useQuery(["pools", type], {
-    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve?? true }),
+    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve ?? true }),
     retry: false,
-    enabled: !isToken
+    enabled: !isToken,
   })
   // Fallback: contract request
   const registryQuery = useContractRead({

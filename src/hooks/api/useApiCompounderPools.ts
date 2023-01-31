@@ -80,18 +80,18 @@ export default function useApiCompounderPools({ type }: { type: VaultType }) {
   const isToken = useIsTokenCompounder(type)
 
   const query = useQuery(["pools", type], {
-    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve?? true }),
+    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve ?? true }),
     retry: false,
-    enabled: !isToken
+    enabled: !isToken,
   })
 
   const tokenQuery = useQuery(["pools", type], {
     queryFn: () => fetchApiTokenCompounderPools(),
     retry: false,
-    enabled: isToken
+    enabled: isToken,
   })
 
-  return !isToken? query : tokenQuery
+  return !isToken ? query : tokenQuery
 }
 
 export async function fetchApiCurveCompounderPools({

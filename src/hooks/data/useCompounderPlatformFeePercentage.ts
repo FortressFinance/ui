@@ -1,6 +1,9 @@
 import { useContractRead, useQuery } from "wagmi"
 
-import { fetchApiCurveCompounderPools, fetchApiTokenCompounderPools } from "@/hooks/api/useApiCompounderPools"
+import {
+  fetchApiCurveCompounderPools,
+  fetchApiTokenCompounderPools,
+} from "@/hooks/api/useApiCompounderPools"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
@@ -15,15 +18,15 @@ export default function useCompounderPlatformFeePercentage({
   const isToken = useIsTokenCompounder(type)
   // Preferred: API request
   const apiQuery = useQuery(["pools", type], {
-    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve?? true }),
+    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve ?? true }),
     retry: false,
-    enabled: !isToken
+    enabled: !isToken,
   })
 
   const apiTokenQuery = useQuery(["pools", type], {
     queryFn: () => fetchApiTokenCompounderPools(),
     retry: false,
-    enabled: isToken
+    enabled: isToken,
   })
   // Fallback: contract request
   const registryQuery = useContractRead({
