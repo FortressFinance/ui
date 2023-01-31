@@ -1,18 +1,14 @@
 import { Address } from "wagmi"
 
-import { ApiPool } from "@/hooks/api/useApiCompounderPools"
+import { ApiPool } from "@/hooks/api/useApiListCompounderVaults"
 
 export type VaultType = "balancer" | "curve" | "stable" | "featured" | "crypto"
 
 export type VaultProps = {
-  address: Address
+  asset: Address | undefined
   type: VaultType
 }
 
 export type VaultDynamicProps = VaultProps & {
   poolId: ApiPool["poolId"] | undefined
-}
-
-export type VaultDepositWithdrawProps = VaultProps & {
-  underlyingAssets: Address[] | readonly Address[] | undefined
 }

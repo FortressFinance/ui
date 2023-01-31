@@ -6,7 +6,7 @@ export default function useIsCurve(type: VaultType) {
   return useMemo(
     () =>
       ["CRYPTO", "FEATURED", "STABLE"].includes(type?.toLocaleUpperCase())
-        ? undefined
+        ? false
         : type === "curve",
     [type]
   )

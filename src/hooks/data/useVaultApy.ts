@@ -1,11 +1,7 @@
-import { useApiCompounderPoolDynamic } from "@/hooks/api/useApiCompounderPoolDynamic"
+import { useApiCompounderPoolDynamic } from "@/hooks/api"
 import { VaultDynamicProps } from "@/hooks/types"
 
-export default function useCompounderPoolApy({
-  address: _address,
-  poolId,
-  type,
-}: VaultDynamicProps) {
+export default function useVaultApy({ poolId, type }: VaultDynamicProps) {
   // Preferred: API request
   const apiQuery = useApiCompounderPoolDynamic({ poolId, type })
   // TODO: Fallbacks?
@@ -15,11 +11,7 @@ export default function useCompounderPoolApy({
   }
 }
 
-export function useCompounderPoolBaseApr({
-  address: _address,
-  poolId,
-  type,
-}: VaultDynamicProps) {
+export function useVaultBaseApr({ poolId, type }: VaultDynamicProps) {
   // Preferred: API request
   const apiQuery = useApiCompounderPoolDynamic({ poolId, type })
   // TODO: Fallbacks?
@@ -29,11 +21,7 @@ export function useCompounderPoolBaseApr({
   }
 }
 
-export function useCompounderPoolCrvApr({
-  address: _address,
-  poolId,
-  type,
-}: VaultDynamicProps) {
+export function useVaultCrvApr({ poolId, type }: VaultDynamicProps) {
   // Preferred: API request
   const apiQuery = useApiCompounderPoolDynamic({ poolId, type })
   // TODO: Fallbacks?
@@ -43,11 +31,7 @@ export function useCompounderPoolCrvApr({
   }
 }
 
-export function useCompounderPoolCvxApr({
-  address: _address,
-  poolId,
-  type,
-}: VaultDynamicProps) {
+export function useVaultCvxApr({ poolId, type }: VaultDynamicProps) {
   // Preferred: API request
   const apiQuery = useApiCompounderPoolDynamic({ poolId, type })
   // TODO: Fallbacks?
@@ -57,11 +41,7 @@ export function useCompounderPoolCvxApr({
   }
 }
 
-export function useCompounderPoolExraApr({
-  address: _address,
-  poolId,
-  type,
-}: VaultDynamicProps) {
+export function useVaultExraApr({ poolId, type }: VaultDynamicProps) {
   // Preferred: API request
   const apiQuery = useApiCompounderPoolDynamic({ poolId, type })
   // TODO: Fallbacks?
@@ -71,11 +51,7 @@ export function useCompounderPoolExraApr({
   }
 }
 
-export function useCompounderPoolTotalApr({
-  address: _address,
-  poolId,
-  type,
-}: VaultDynamicProps) {
+export function useVaultTotalApr({ poolId, type }: VaultDynamicProps) {
   // Preferred: API request
   const apiQuery = useApiCompounderPoolDynamic({ poolId, type })
   // TODO: Fallbacks?

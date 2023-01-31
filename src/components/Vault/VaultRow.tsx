@@ -1,13 +1,10 @@
 import { Disclosure, Popover, Portal } from "@headlessui/react"
 import { AnimatePresence, easeInOut, motion, MotionConfig } from "framer-motion"
-import { FC, Fragment, MouseEventHandler, useEffect, useState } from "react"
+import { FC, Fragment, MouseEventHandler, useState } from "react"
 import { usePopper } from "react-popper"
 
 import clsxm from "@/lib/clsxm"
-import useCompounderPoolAsset from "@/hooks/data/useCompounderPoolAsset"
-import useCompounderUnderlyingAssets from "@/hooks/data/useCompounderUnderlyingAssets"
-import useCompounderYbTokens from "@/hooks/data/useCompounderYbTokens"
-import useTokenCompounderUnderlyingAssets from "@/hooks/data/useTokenCompounderUnderlyingAssets"
+import { useVaultTokens } from "@/hooks/data"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
@@ -20,13 +17,15 @@ import {
   VaultName,
   VaultTvl,
 } from "@/components/Vault/VaultData"
-import VaultDepositForm from "@/components/Vault/VaultDepositForm"
+import CompounderDepositForm from "@/components/Vault/VaultForms/CompounderDepositForm"
+import CompounderWithdrawForm from "@/components/Vault/VaultForms/CompounderWithdrawForm"
+import TokenDepositForm from "@/components/Vault/VaultForms/TokenDepositForm"
+import TokenWithdrawForm from "@/components/Vault/VaultForms/TokenWithdrawForm"
 import VaultStrategyButton from "@/components/Vault/VaultStrategy"
 import {
   VaultTableCell,
   VaultTableRow,
 } from "@/components/Vault/VaultTableNode"
-import VaultWithdrawForm from "@/components/Vault/VaultWithdrawForm"
 
 import ChevronDownCircle from "~/svg/icons/chevron-down-circle.svg"
 import Cog from "~/svg/icons/cog.svg"
@@ -45,31 +44,10 @@ const VaultRow: FC<VaultProps> = (props) => {
       { name: "offset", options: { offset: [-3, 4] } },
     ],
   })
-  const [updatedProps, setUpdatedProps] = useState<VaultProps>(props)
-  const isToken = useIsTokenCompounder(props.type)
-
-  const { data: ybTokenAddress } = useCompounderYbTokens({
-    address: props.address,
-    type: props.type,
-  })
-
-  useEffect(() => {
-    setUpdatedProps({
-      address: (ybTokenAddress ?? "0x") as `0x${string}`,
-      type: props.type,
-    })
-  }, [props.type, ybTokenAddress])
-
-  const { isLoading: isLoadingAsset } = useCompounderPoolAsset(updatedProps)
-  const { data: tokenUnderlyingAssets, isLoading: isLoadingTokenUnderlying } =
-    useTokenCompounderUnderlyingAssets(updatedProps)
-  const { data: underlyingAssets, isLoading: isLoadingUnderlying } =
-    useCompounderUnderlyingAssets(updatedProps)
-
-  const isLoading =
-    isLoadingAsset || isLoadingUnderlying || isLoadingTokenUnderlying
 
   const isCurve = useIsCurve(props.type)
+  const isToken = useIsTokenCompounder(props.type)
+  const { isLoading } = useVaultTokens(props)
 
   const toggleVaultOpen: MouseEventHandler<
     HTMLButtonElement | HTMLDivElement
@@ -102,32 +80,17 @@ const VaultRow: FC<VaultProps> = (props) => {
                   }
                 />
               </div>
-              <VaultName
-                key={`name_${updatedProps.type}_${updatedProps.address}`}
-                {...updatedProps}
-              />
-              <VaultStrategyButton
-                key={`strategy_${updatedProps.type}_${updatedProps.address}`}
-                {...updatedProps}
-              />
+              <VaultName {...props} />
+              <VaultStrategyButton {...props} />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultApr
-                key={`apr_${updatedProps.type}_${updatedProps.address}`}
-                {...updatedProps}
-              />
+              <VaultApr {...props} />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultTvl
-                key={`tvl_${updatedProps.type}_${updatedProps.address}`}
-                {...updatedProps}
-              />
+              <VaultTvl {...props} />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultDepositedLp
-                key={`deposited_${updatedProps.type}_${updatedProps.address}`}
-                {...updatedProps}
-              />
+              <VaultDepositedLp {...props} />
             </VaultTableCell>
 
             {/* Action buttons */}
@@ -208,22 +171,17 @@ const VaultRow: FC<VaultProps> = (props) => {
                   >
                     {/* Margins or padding on the motion.div will cause janky animation, use margins inside */}
                     <div className="mt-6 grid gap-3 md:grid-cols-2 md:gap-4">
-                      <VaultDepositForm
-                        key={`deposit_${updatedProps.type}_${updatedProps.address}`}
-                        underlyingAssets={
-                          isToken ? tokenUnderlyingAssets : underlyingAssets
-                        }
-                        type={updatedProps.type}
-                        address={updatedProps.address}
-                      />
-                      <VaultWithdrawForm
-                        key={`withdraw_${updatedProps.type}_${updatedProps.address}`}
-                        underlyingAssets={
-                          isToken ? tokenUnderlyingAssets : underlyingAssets
-                        }
-                        type={updatedProps.type}
-                        address={updatedProps.address}
-                      />
+                      {isToken ? (
+                        <>
+                          <TokenDepositForm {...props} />
+                          <TokenWithdrawForm {...props} />
+                        </>
+                      ) : (
+                        <>
+                          <CompounderDepositForm {...props} />
+                          <CompounderWithdrawForm {...props} />
+                        </>
+                      )}
                     </div>
                   </motion.div>
                 </Disclosure.Panel>

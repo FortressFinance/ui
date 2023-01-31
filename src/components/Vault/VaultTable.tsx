@@ -1,6 +1,6 @@
 import { FC } from "react"
 
-import useCompounderPoolAddresses from "@/hooks/data/useCompounderPoolAddresses"
+import { useListVaults } from "@/hooks/data"
 import { VaultProps } from "@/hooks/types"
 
 import Spinner from "@/components/Spinner"
@@ -11,9 +11,8 @@ import {
 } from "@/components/Vault/VaultTableNode"
 
 const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
-  const { data: vaultAddresses, isLoading } = useCompounderPoolAddresses({
-    type,
-  })
+  const { data: vaultAssets, isLoading } = useListVaults({ type })
+
   return (
     <div className="" role="table">
       {/* Table headings */}
@@ -33,15 +32,11 @@ const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
       <div className="space-y-2" role="rowgroup">
         {isLoading ? (
           <VaultsLoading />
-        ) : !vaultAddresses?.length ? (
+        ) : !vaultAssets?.length ? (
           <NoVaultsFound />
         ) : (
-          vaultAddresses?.map((address, i) => (
-            <VaultRow
-              key={`pool-${i}`}
-              address={(address ?? "0x") as `0x${string}`}
-              type={type}
-            />
+          vaultAssets?.map((asset, i) => (
+            <VaultRow key={`pool-${i}`} asset={asset} type={type} />
           ))
         )}
       </div>

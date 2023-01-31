@@ -1,15 +1,11 @@
-import { useApiCompounderPoolDynamic } from "@/hooks/api/useApiCompounderPoolDynamic"
+import { useApiCompounderPoolDynamic } from "@/hooks/api"
 import { VaultProps } from "@/hooks/types"
 
-type UseCompounderPoolAprParams = VaultProps & {
+type UseVaultTvlParams = VaultProps & {
   poolId: number | undefined
 }
 
-export default function useCompounderPoolTvl({
-  address: _address,
-  poolId,
-  type,
-}: UseCompounderPoolAprParams) {
+export default function useVaultTvl({ poolId, type }: UseVaultTvlParams) {
   // Preferred: API request
   const apiQuery = useApiCompounderPoolDynamic({ poolId, type })
   // TODO: Fallbacks?

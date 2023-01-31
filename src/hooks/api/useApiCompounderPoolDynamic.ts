@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { Address, useAccount } from "wagmi"
 
 import fortressApi, { ApiResult } from "@/lib/fortressApi"
-import { ApiPool } from "@/hooks/api/useApiCompounderPools"
+import { ApiPool } from "@/hooks/api/useApiListCompounderVaults"
 import { VaultType } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
@@ -60,7 +60,7 @@ export interface ApiGetVaultDynamicResult extends ApiResult {
   message?: string
 }
 
-export function useApiCompounderPoolDynamic({
+export default function useApiCompounderPoolDynamic({
   type,
   poolId,
 }: {

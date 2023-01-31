@@ -2,11 +2,13 @@ import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
 import { useToken } from "wagmi"
 
-import { useCompounderPoolTotalApr } from "@/hooks/data/useCompounderPoolApy"
-import useCompounderPoolDepositedLpTokens from "@/hooks/data/useCompounderPoolDepositedLpTokens"
-import useCompounderPoolId from "@/hooks/data/useCompounderPoolId"
-import useCompounderPoolName from "@/hooks/data/useCompounderPoolName"
-import useCompounderPoolTvl from "@/hooks/data/useCompounderPoolTvl"
+import {
+  useVaultDepositedTokens,
+  useVaultId,
+  useVaultName,
+  useVaultTotalApr,
+  useVaultTvl,
+} from "@/hooks/data"
 import { VaultProps } from "@/hooks/types"
 
 import Currency from "@/components/Currency"
@@ -14,7 +16,7 @@ import Percentage from "@/components/Percentage"
 import Skeleton from "@/components/Skeleton"
 
 export const VaultName: FC<VaultProps> = (props) => {
-  const { data: vaultName, isLoading } = useCompounderPoolName(props)
+  const { data: vaultName, isLoading } = useVaultName(props)
   return (
     <Skeleton isLoading={isLoading}>
       {isLoading ? "Loading vault..." : vaultName}
@@ -23,8 +25,9 @@ export const VaultName: FC<VaultProps> = (props) => {
 }
 
 export const VaultApr: FC<VaultProps> = (props) => {
-  const { data: poolId, isLoading: isLoadingId } = useCompounderPoolId(props)
-  const { data: totalApr, isLoading } = useCompounderPoolTotalApr({
+  const { data: poolId, isLoading: isLoadingId } = useVaultId(props)
+
+  const { data: totalApr, isLoading } = useVaultTotalApr({
     ...props,
     poolId,
   })
@@ -37,8 +40,8 @@ export const VaultApr: FC<VaultProps> = (props) => {
 }
 
 export const VaultTvl: FC<VaultProps> = (props) => {
-  const { data: poolId, isLoading: isLoadingId } = useCompounderPoolId(props)
-  const { data: tvl, isLoading } = useCompounderPoolTvl({
+  const { data: poolId, isLoading: isLoadingId } = useVaultId(props)
+  const { data: tvl, isLoading } = useVaultTvl({
     ...props,
     poolId,
   })
@@ -53,14 +56,14 @@ export const VaultTvl: FC<VaultProps> = (props) => {
 }
 
 export const VaultDepositedLp: FC<VaultProps> = (props) => {
-  const { data: poolId, isLoading: isLoadingId } = useCompounderPoolId(props)
+  const { data: poolId, isLoading: isLoadingId } = useVaultId(props)
   const { data: depositedTokens, isLoading: isLoadingDepositedTokens } =
-    useCompounderPoolDepositedLpTokens({
+    useVaultDepositedTokens({
       ...props,
       poolId,
     })
   const { data: lpToken, isLoading: isLoadingLpToken } = useToken({
-    address: props.address,
+    address: props.asset,
   })
   const formatted = ethers.utils.formatUnits(
     BigNumber.from(depositedTokens ?? 0),
