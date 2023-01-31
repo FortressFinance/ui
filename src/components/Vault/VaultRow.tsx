@@ -112,10 +112,16 @@ const VaultRow: FC<VaultProps> = (props) => {
               />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultApr key={`apr_${updatedProps.type}_${updatedProps.address}`} {...updatedProps} />
+              <VaultApr
+                key={`apr_${updatedProps.type}_${updatedProps.address}`}
+                {...updatedProps}
+              />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultTvl key={`tvl_${updatedProps.type}_${updatedProps.address}`} {...updatedProps} />
+              <VaultTvl
+                key={`tvl_${updatedProps.type}_${updatedProps.address}`}
+                {...updatedProps}
+              />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
               <VaultDepositedLp
