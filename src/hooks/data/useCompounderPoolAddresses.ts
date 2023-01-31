@@ -9,6 +9,10 @@ import { VaultType } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
+// HARDCODE HERE AT THE MOMENT, THE BE SHOULD CLASSIFY THEM
+const stableRelevant = ["0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7"]
+const crypto = ["0x616e8BfA43F920657B3497DBf40D6b1A02D4608d"]
+
 export default function useCompounderPoolAddresses({
   type,
 }: {
@@ -49,10 +53,12 @@ export default function useCompounderPoolAddresses({
     }
   }
 
+  const filterTab = type === "stable"? stableRelevant : type === "crypto"? crypto : [...crypto, ...stableRelevant];
+
   if (!apiTokenQuery.isError && apiTokenQuery.data !== null && isToken) {
     return {
       ...apiTokenQuery,
-      data: apiTokenQuery.data?.map((p) => p.token.asset.address),
+      data: apiTokenQuery.data?.map((p) => p.token.asset.address).filter((a) => filterTab.includes(a)),
     }
   }
   return registryQuery

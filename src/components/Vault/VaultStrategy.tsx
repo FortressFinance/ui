@@ -66,7 +66,7 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
       <VaultStrategyModal
         isOpen={isStrategyOpen}
         onClose={() => setIsStrategyOpen(false)}
-        underlyingAssets={underlyingAssets}
+        underlyingAssets={!isToken? underlyingAssets : tokenUnderlyingAssets}
         platformFeePercentage={platformFeePercentage}
         withdrawFeePercentage={withdrawFeePercentage}
         {...props}
@@ -141,7 +141,7 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
               liquidity pool. Holders earn fees from users trading in the pool,
               and can also deposit the LP to Curve's gauges to earn CRV
               emissions. This Curve v2 crypto pool contains{" "}
-              {underlyingAssets?.map((address, index) => (
+              {underlyingAssets?.map((address: string | undefined, index: number) => (
                 <Fragment key={`underlying-asset-${index}`}>
                   {underlyingAssets.length > 2 &&
                   index > 0 &&
@@ -152,7 +152,7 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
                     : null}
                   <TokenSymbol
                     key={`token-symbol-${index}`}
-                    address={address}
+                    address={(address ?? "0x") as `0x${string}`}
                   />
                 </Fragment>
               ))}

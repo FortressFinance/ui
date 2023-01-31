@@ -39,7 +39,7 @@ const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
       amountIn: "",
       amountOut: "",
       inputToken: vaultAddress,
-      outputToken: lpTokenOrAsset ?? "0x",
+      outputToken: (lpTokenOrAsset ?? "0x") as `0x${string}`,
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -172,7 +172,7 @@ const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
           onSubmit={onSubmitForm}
           submitText="Withdraw"
           tokenAddreseses={[
-            ...(lpTokenOrAsset ? [lpTokenOrAsset] : []),
+            ...(lpTokenOrAsset ? [(lpTokenOrAsset?? "0x") as `0x${string}`] : []),
             ...(underlyingAssets || []),
           ]}
         />

@@ -45,13 +45,13 @@ export type ApiTokenVault = {
   withdrawalFee: number
   token: {
     ybToken: {
-      address: string
+      address: Address
       decimals: number
       symbol?: string
       name?: string
     }
     asset: {
-      address: string
+      address: Address
       decimals: number
       symbol?: string
       name?: string
@@ -79,13 +79,19 @@ export default function useApiCompounderPools({ type }: { type: VaultType }) {
   const isCurve = useIsCurve(type)
   const isToken = useIsTokenCompounder(type)
 
-  return useQuery(["pools", type], {
-    queryFn: () =>
-      isToken
-        ? fetchApiTokenCompounderPools()
-        : fetchApiCurveCompounderPools({ isCurve }),
+  const query = useQuery(["pools", type], {
+    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve?? true }),
     retry: false,
+    enabled: !isToken
   })
+
+  const tokenQuery = useQuery(["pools", type], {
+    queryFn: () => fetchApiTokenCompounderPools(),
+    retry: false,
+    enabled: isToken
+  })
+
+  return !isToken? query : tokenQuery
 }
 
 export async function fetchApiCurveCompounderPools({

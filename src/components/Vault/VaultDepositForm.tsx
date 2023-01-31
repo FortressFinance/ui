@@ -40,7 +40,7 @@ const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     defaultValues: {
       amountIn: "",
       amountOut: "",
-      inputToken: lpTokenOrAsset ?? "0x",
+      inputToken: (lpTokenOrAsset ?? "0x") as `0x${string}`,
       outputToken: vaultAddress,
     },
     mode: "all",
@@ -195,12 +195,13 @@ const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
             waitDepositLp.isLoading ||
             waitDepositUnderlying.isLoading ||
             waitTokenDepositLp.isLoading ||
-            waitDepositUnderlying.isLoading
+            waitDepositUnderlying.isLoading ||
+            waitTokenDepositUnderlying.isLoading
           }
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
           tokenAddreseses={[
-            ...(lpTokenOrAsset ? [lpTokenOrAsset] : []),
+            ...(lpTokenOrAsset ? [(lpTokenOrAsset?? "0x") as `0x${string}`] : []),
             ...(underlyingAssets || []),
           ]}
         />

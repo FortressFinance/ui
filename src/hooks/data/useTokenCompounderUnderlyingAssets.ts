@@ -25,7 +25,7 @@ export default function useTokenCompounderUnderlyingAssets({
 
   if (!isToken) {
     return {
-      data: [undefined],
+      data: undefined,
       isLoading: false,
     }
   }
@@ -34,8 +34,8 @@ export default function useTokenCompounderUnderlyingAssets({
     return {
       ...apiQuery,
       data: [
-        apiQuery.data?.find((p) => p.token.ybToken.address === address)?.token
-          .asset.address,
+        (apiQuery.data?.find((p) => p.token.ybToken.address === address)?.token
+          .asset.address?? "0x") as `0x${string}`
       ],
     }
   }

@@ -1,7 +1,7 @@
-import { useContractRead } from "wagmi"
+import { useContractRead, useQuery } from "wagmi"
 
 import { registryContractConfig } from "@/lib/fortressContracts"
-import useApiCompounderPools from "@/hooks/api/useApiCompounderPools"
+import { fetchApiCurveCompounderPools } from "@/hooks/api/useApiCompounderPools"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
@@ -14,7 +14,11 @@ export default function useCompounderUnderlyingAssets({
   const isCurve = useIsCurve(type)
 
   // Preferred: API request
-  const apiQuery = useApiCompounderPools({ type })
+  const apiQuery = useQuery(["pools", type], {
+    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve?? true }),
+    retry: false,
+    enabled: !isToken
+  })
   // Fallback: contract request
   const registryQuery = useContractRead({
     ...registryContractConfig,
@@ -27,7 +31,7 @@ export default function useCompounderUnderlyingAssets({
 
   if (isToken) {
     return {
-      data: [undefined],
+      data: undefined,
       isLoading: false,
     }
   }
