@@ -11,5 +11,3 @@ export const useActiveChain = create<ActiveChainStore>((set, _get) => ({
   chainId: enabledNetworks.chains[0].id,
   setChainId: (chainId) => set({ chainId }),
 }))
-
-export const selectActiveChainId = (store: ActiveChainStore) => store.chainId

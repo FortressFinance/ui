@@ -4,9 +4,8 @@ import { Address, useAccount } from "wagmi"
 import fortressApi, { ApiResult } from "@/lib/fortressApi"
 import { ApiPool } from "@/hooks/api/useApiCompounderPools"
 import { VaultType } from "@/hooks/types"
+import useActiveChainId from "@/hooks/useActiveChainId"
 import useIsCurve from "@/hooks/useIsCurve"
-
-import { selectActiveChainId, useActiveChain } from "@/store/activeChain"
 
 export type ApiPoolDynamic = {
   chainId?: number
@@ -44,7 +43,7 @@ export function useApiCompounderPoolDynamic({
 }) {
   const isCurve = useIsCurve(type)
   const { address } = useAccount()
-  const chainId = useActiveChain(selectActiveChainId)
+  const chainId = useActiveChainId()
 
   return useQuery(
     [chainId, "pools", isCurve ? "curve" : "balancer", "data", poolId, address],

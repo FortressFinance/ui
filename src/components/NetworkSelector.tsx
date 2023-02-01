@@ -19,10 +19,13 @@ type NetworkSelectorProps = {
 const NetworkSelector: FC<NetworkSelectorProps> = () => {
   const { chain: connectedChain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
-  const chainId = useActiveChain(selectActiveChainId)
   const setActiveChainId = useActiveChain((state) => state.setChainId)
-  const disconnectedChain = enabledNetworks.chains.find((c) => c.id === chainId)
+  const disconnectedChainId = useActiveChain(selectActiveChainId)
+  const disconnectedChain = enabledNetworks.chains.find(
+    (c) => c.id === disconnectedChainId
+  )
   const chain = connectedChain || { ...disconnectedChain, unsupported: false }
+  const chainId = connectedChain?.id ?? disconnectedChainId
 
   const onClickChain = (chainId: number) => {
     if (connectedChain && switchNetwork) {

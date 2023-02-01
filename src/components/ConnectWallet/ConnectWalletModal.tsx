@@ -6,6 +6,7 @@ import { BiCopy, BiLinkExternal, BiXCircle } from "react-icons/bi"
 import { useAccount, useConnect, useDisconnect, useNetwork } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
+import useActiveChainId from "@/hooks/useActiveChainId"
 
 import Address from "@/components/Address"
 import Button from "@/components/Button"
@@ -13,10 +14,8 @@ import ConnectorLogo from "@/components/ConnectWallet/ConnectorLogo"
 import ModalBase, { ModalBaseProps } from "@/components/Modal/ModalBase"
 import OrangeModal from "@/components/Modal/OrangeModal"
 
-import { selectActiveChainId, useActiveChain } from "@/store/activeChain"
-
 export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
-  const chainId = useActiveChain(selectActiveChainId)
+  const chainId = useActiveChainId()
 
   const { connect, connectors, error, isLoading, pendingConnector } =
     useConnect({

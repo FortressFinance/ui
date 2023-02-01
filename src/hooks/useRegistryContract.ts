@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { Address } from "wagmi"
 
-import { selectActiveChainId, useActiveChain } from "@/store/activeChain"
+import useActiveChainId from "@/hooks/useActiveChainId"
 
 import registryAbi from "@/constant/abi/registryAbi"
 
@@ -15,7 +15,7 @@ const REGISTRY_ADDRESS: Record<number, Address> = {
 }
 
 export default function useRegistryContract() {
-  const chainId = useActiveChain(selectActiveChainId)
+  const chainId = useActiveChainId()
   return useMemo(
     () => ({
       abi: registryAbi,

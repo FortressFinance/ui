@@ -2,8 +2,7 @@ import { useContractRead } from "wagmi"
 
 import useApiCompounderPools from "@/hooks/api/useApiCompounderPools"
 import { VaultProps } from "@/hooks/types"
-
-import { selectActiveChainId, useActiveChain } from "@/store/activeChain"
+import useActiveChainId from "@/hooks/useActiveChainId"
 
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
@@ -11,7 +10,7 @@ export default function useCompounderWithdrawFeePercentage({
   address,
   type,
 }: VaultProps) {
-  const chainId = useActiveChain(selectActiveChainId)
+  const chainId = useActiveChainId()
   // Preferred: API request
   const apiQuery = useApiCompounderPools({ type })
   // Fallback: contract request

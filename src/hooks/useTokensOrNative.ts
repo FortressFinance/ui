@@ -10,8 +10,7 @@ import {
 } from "wagmi"
 
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
-
-import { selectActiveChainId, useActiveChain } from "@/store/activeChain"
+import useActiveChainId from "@/hooks/useActiveChainId"
 
 type AggregatedTokensResult = FetchTokenResult & {
   balance: FetchBalanceResult
@@ -22,7 +21,7 @@ export default function useTokensOrNative({
 }: {
   addresses: Address[] | readonly Address[] | undefined
 }) {
-  const chainId = useActiveChain(selectActiveChainId)
+  const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
 
   const nonEthAddresses = addresses.filter((a) => !isEthTokenAddress(a))

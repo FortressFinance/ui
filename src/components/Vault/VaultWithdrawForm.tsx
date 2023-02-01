@@ -14,16 +14,15 @@ import logger from "@/lib/logger"
 import useCompounderPoolAsset from "@/hooks/data/useCompounderPoolAsset"
 import useCompounderUnderlyingAssets from "@/hooks/data/useCompounderUnderlyingAssets"
 import { VaultProps } from "@/hooks/types"
+import useActiveChainId from "@/hooks/useActiveChainId"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
-import { selectActiveChainId, useActiveChain } from "@/store/activeChain"
-
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
 const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
-  const chainId = useActiveChain(selectActiveChainId)
+  const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
   const { data: lpToken } = useCompounderPoolAsset({
     address: vaultAddress,
