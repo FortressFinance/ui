@@ -1,5 +1,6 @@
 import { Inter, VT323 } from "@next/font/google"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { Analytics } from "@vercel/analytics/react"
 import { AppProps } from "next/app"
 import { configureChains, createClient, WagmiConfig } from "wagmi"
 import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet"
@@ -73,6 +74,8 @@ function MyApp({ Component, pageProps }: AppProps) {
           </WagmiConfig>
         </QueryClientProvider>
       </div>
+
+      <Analytics />
     </>
   )
 }
