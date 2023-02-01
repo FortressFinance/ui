@@ -38,6 +38,12 @@ export const mainnetFork: Chain = {
       http: ["/api/anvil-mainnet"],
     },
   },
+  contracts: {
+    multicall3: {
+      address: "0xca11bde05977b3631167028862be2a173976ca11",
+      blockCreated: 14353601,
+    },
+  },
 }
 
 export const arbitrumFork: Chain = {
@@ -52,6 +58,12 @@ export const arbitrumFork: Chain = {
   rpcUrls: {
     default: {
       http: ["/api/anvil-arbitrum"],
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: "0xca11bde05977b3631167028862be2a173976ca11",
+      blockCreated: 7654707,
     },
   },
 }

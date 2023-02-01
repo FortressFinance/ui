@@ -51,7 +51,7 @@ export default VaultTable
 const VaultsLoading: FC = () => {
   return (
     <VaultTableRow
-      className="flex h-44 items-center"
+      className="flex h-44 items-center rounded-t-none"
       aria-label="Loading vaults..."
     >
       <span className="col-span-full text-center" aria-hidden="true">
@@ -63,7 +63,7 @@ const VaultsLoading: FC = () => {
 
 const NoVaultsFound: FC = () => {
   return (
-    <VaultTableRow className="flex h-44 items-center">
+    <VaultTableRow className="flex h-44 items-center rounded-t-none">
       <h2 className="col-span-full text-center text-2xl">No vaults found...</h2>
     </VaultTableRow>
   )
