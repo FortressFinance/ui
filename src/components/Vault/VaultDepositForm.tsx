@@ -20,10 +20,13 @@ import useTokenOrNative from "@/hooks/useTokenOrNative"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
+import { selectActiveChainId, useActiveChain } from "@/store/activeChain"
+
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
 const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
   const { address: userAddress } = useAccount()
+  const chainId = useActiveChain(selectActiveChainId)
   const { data: lpToken } = useCompounderPoolAsset({
     address: vaultAddress,
     type,
@@ -87,6 +90,7 @@ const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
   })
   // Preview deposit method
   const { isLoading: isLoadingPreview } = useContractRead({
+    chainId,
     abi: curveCompounderAbi,
     address: vaultAddress,
     functionName: "previewDeposit",

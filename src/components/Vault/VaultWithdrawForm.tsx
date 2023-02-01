@@ -18,9 +18,12 @@ import useTokenOrNative from "@/hooks/useTokenOrNative"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
+import { selectActiveChainId, useActiveChain } from "@/store/activeChain"
+
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
 const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
+  const chainId = useActiveChain(selectActiveChainId)
   const { address: userAddress } = useAccount()
   const { data: lpToken } = useCompounderPoolAsset({
     address: vaultAddress,
@@ -61,6 +64,7 @@ const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
 
   // Preview redeem method
   const { isLoading: isLoadingPreview } = useContractRead({
+    chainId,
     address: vaultAddress,
     abi: curveCompounderAbi,
     functionName: "previewRedeem",

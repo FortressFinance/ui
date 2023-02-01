@@ -3,13 +3,17 @@ import { useContractRead } from "wagmi"
 import useApiCompounderPools from "@/hooks/api/useApiCompounderPools"
 import { VaultProps } from "@/hooks/types"
 
+import { selectActiveChainId, useActiveChain } from "@/store/activeChain"
+
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
 export default function useCompounderPoolAsset({ address, type }: VaultProps) {
+  const chainId = useActiveChain(selectActiveChainId)
   // Preferred: API request
   const apiQuery = useApiCompounderPools({ type })
   // Fallback: contract request
   const contractQuery = useContractRead({
+    chainId,
     abi: curveCompounderAbi,
     functionName: "asset",
     address,

@@ -1,9 +1,11 @@
-import { useChainId, useContractRead, useQuery } from "wagmi"
+import { useContractRead, useQuery } from "wagmi"
 
 import { fetchApiCompounderPools } from "@/hooks/api/useApiCompounderPools"
 import { VaultType } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useRegistryContract from "@/hooks/useRegistryContract"
+
+import { selectActiveChainId, useActiveChain } from "@/store/activeChain"
 
 export default function useCompounderPoolAddresses({
   type,
@@ -11,7 +13,7 @@ export default function useCompounderPoolAddresses({
   type: VaultType
 }) {
   const isCurve = useIsCurve(type)
-  const chainId = useChainId()
+  const chainId = useActiveChain(selectActiveChainId)
   // Preferred: API request
   const apiQuery = useQuery([chainId, "pools", type], {
     queryFn: () => fetchApiCompounderPools({ chainId, isCurve }),
