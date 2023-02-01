@@ -1,11 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
-import { Address } from "wagmi"
+import { Address, useChainId } from "wagmi"
 
 import fortressApi, { ApiResult } from "@/lib/fortressApi"
 import { VaultType } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
-
-import { CHAIN_ID } from "@/constant/env"
 
 export type ApiPool = {
   isCurve?: boolean
@@ -47,22 +45,25 @@ export interface ApiGetPoolsResult extends ApiResult {
 
 export default function useApiCompounderPools({ type }: { type: VaultType }) {
   const isCurve = useIsCurve(type)
+  const chainId = useChainId()
 
-  return useQuery(["pools", type], {
-    queryFn: () => fetchApiCompounderPools({ isCurve }),
+  return useQuery([chainId, "pools", type], {
+    queryFn: () => fetchApiCompounderPools({ chainId, isCurve }),
     retry: false,
   })
 }
 
 export async function fetchApiCompounderPools({
+  chainId,
   isCurve,
 }: {
+  chainId: number
   isCurve: boolean
 }) {
   const resp = await fortressApi.post<ApiGetPoolsResult>(
     "AMM_Compounder/getAllPoolsStaticData",
     {
-      chainId: CHAIN_ID,
+      chainId,
       isCurve,
     }
   )

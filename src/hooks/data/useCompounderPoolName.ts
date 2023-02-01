@@ -1,9 +1,9 @@
 import { useContractRead } from "wagmi"
 
-import { registryContractConfig } from "@/lib/fortressContracts"
 import useApiCompounderPools from "@/hooks/api/useApiCompounderPools"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
+import useRegistryContract from "@/hooks/useRegistryContract"
 
 export default function useCompounderPoolName({ address, type }: VaultProps) {
   const isCurve = useIsCurve(type)
@@ -11,7 +11,7 @@ export default function useCompounderPoolName({ address, type }: VaultProps) {
   const apiQuery = useApiCompounderPools({ type })
   // Fallback: contract request
   const registryQuery = useContractRead({
-    ...registryContractConfig,
+    ...useRegistryContract(),
     functionName: isCurve
       ? "getCurveCompounderName"
       : "getBalancerCompounderName",

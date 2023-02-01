@@ -1,12 +1,10 @@
 import { useQuery } from "@tanstack/react-query"
-import { Address, useAccount } from "wagmi"
+import { Address, useAccount, useChainId } from "wagmi"
 
 import fortressApi, { ApiResult } from "@/lib/fortressApi"
 import { ApiPool } from "@/hooks/api/useApiCompounderPools"
 import { VaultType } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
-
-import { CHAIN_ID } from "@/constant/env"
 
 export type ApiPoolDynamic = {
   chainId?: number
@@ -44,12 +42,14 @@ export function useApiCompounderPoolDynamic({
 }) {
   const isCurve = useIsCurve(type)
   const { address } = useAccount()
+  const chainId = useChainId()
 
   return useQuery(
-    ["pools", isCurve ? "curve" : "balancer", "data", poolId, address],
+    [chainId, "pools", isCurve ? "curve" : "balancer", "data", poolId, address],
     {
       queryFn: () =>
         fetchApiCompounderPoolDynamic({
+          chainId,
           isCurve,
           poolId,
           user: address || "0x",
@@ -61,10 +61,12 @@ export function useApiCompounderPoolDynamic({
 }
 
 async function fetchApiCompounderPoolDynamic({
+  chainId,
   isCurve,
   poolId,
   user = "0x",
 }: {
+  chainId: number
   isCurve: boolean
   poolId: number | undefined
   user: Address | undefined
@@ -74,7 +76,7 @@ async function fetchApiCompounderPoolDynamic({
     {
       isCurve,
       poolId,
-      chainId: CHAIN_ID,
+      chainId,
       user,
     }
   )

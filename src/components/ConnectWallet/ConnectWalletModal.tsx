@@ -3,7 +3,13 @@ import copy from "copy-to-clipboard"
 import Link from "next/link"
 import { FC, MouseEvent, PropsWithChildren, useCallback, useState } from "react"
 import { BiCopy, BiLinkExternal, BiXCircle } from "react-icons/bi"
-import { useAccount, useConnect, useDisconnect } from "wagmi"
+import {
+  useAccount,
+  useChainId,
+  useConnect,
+  useDisconnect,
+  useNetwork,
+} from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 
@@ -12,16 +18,13 @@ import Button from "@/components/Button"
 import ConnectorLogo from "@/components/ConnectWallet/ConnectorLogo"
 import ModalBase, { ModalBaseProps } from "@/components/Modal/ModalBase"
 import OrangeModal from "@/components/Modal/OrangeModal"
-import { useActiveNetwork } from "@/components/NetworkSelector/NetworkProvider"
-
-import { CHAIN_ID } from "@/constant/env"
 
 export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
-  const { chain } = useActiveNetwork()
+  const chainId = useChainId()
 
   const { connect, connectors, error, isLoading, pendingConnector } =
     useConnect({
-      chainId: chain !== undefined ? chain.id : Number(CHAIN_ID),
+      chainId,
       onSuccess: () => onClose(),
     })
 
@@ -81,7 +84,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
   const { address, connector: activeConnector } = useAccount()
   const { disconnect } = useDisconnect()
   const [isCopied, setCopied] = useState(false)
-  const { chain } = useActiveNetwork()
+  const { chain } = useNetwork()
 
   const blockExplorerUrl: string = chain?.blockExplorers?.default.url || ""
 

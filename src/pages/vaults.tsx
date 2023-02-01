@@ -73,8 +73,6 @@ const Vaults: NextPage = () => {
             </Tab.Panels>
           </Tab.Group>
         </main>
-
-        {/* <aside className="max-xl:hidden"></aside> */}
       </div>
     </Layout>
   )
