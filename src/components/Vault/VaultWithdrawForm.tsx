@@ -23,10 +23,14 @@ import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
 const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const isToken = useIsTokenCompounder(props.type)
-  const { address: userAddress } = useAccount()  
+  const { address: userAddress } = useAccount()
   const { data: vaultTokens } = useVaultTokens(props)
 
-  const lpTokenOrAsset = isToken? vaultTokens.underlyingAssetAddresses?.[vaultTokens.underlyingAssetAddresses?.length - 1] : props.asset
+  const lpTokenOrAsset = isToken
+    ? vaultTokens.underlyingAssetAddresses?.[
+        vaultTokens.underlyingAssetAddresses?.length - 1
+      ]
+    : props.asset
   const vaultAddress = vaultTokens.ybTokenAddress ?? "0x"
   const underlyingAssets = vaultTokens.underlyingAssetAddresses
 

@@ -17,7 +17,7 @@ export default function useApiListCompounderVaults({
   const isToken = useIsTokenCompounder(type)
 
   return useQuery(["pools", "compounder", type], {
-    queryFn: () => fetchApiCompounderVaults({ isCurve: isCurve?? true }),
+    queryFn: () => fetchApiCompounderVaults({ isCurve: isCurve ?? true }),
     retry: false,
     enabled: !isToken,
   })

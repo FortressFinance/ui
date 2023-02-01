@@ -19,7 +19,7 @@ export default function useCompounderPlatformFeePercentage({
   const isToken = useIsTokenCompounder(type)
   const { data: vaultTokens } = useVaultTokens({
     asset,
-    type
+    type,
   })
   // Preferred: API request
   const apiQuery = useQuery(["pools", type], {
@@ -45,15 +45,17 @@ export default function useCompounderPlatformFeePercentage({
   if (!apiQuery.isError && apiQuery.data !== null && !isToken) {
     return {
       ...apiQuery,
-      data: apiQuery.data?.find((p) => p.token.ybToken.address === vaultTokens.ybTokenAddress)
-        ?.platformFee,
+      data: apiQuery.data?.find(
+        (p) => p.token.ybToken.address === vaultTokens.ybTokenAddress
+      )?.platformFee,
     }
   }
   if (!apiTokenQuery.isError && apiTokenQuery.data !== null && isToken) {
     return {
       ...apiTokenQuery,
-      data: apiTokenQuery.data?.find((p) => p.token.ybToken.address === vaultTokens.ybTokenAddress)
-        ?.platformFee,
+      data: apiTokenQuery.data?.find(
+        (p) => p.token.ybToken.address === vaultTokens.ybTokenAddress
+      )?.platformFee,
     }
   }
   // Fallback to contract data after failure

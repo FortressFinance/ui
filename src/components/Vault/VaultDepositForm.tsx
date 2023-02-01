@@ -28,7 +28,11 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const { address: userAddress } = useAccount()
   const { data: vaultTokens } = useVaultTokens(props)
 
-  const lpTokenOrAsset = isToken? vaultTokens.underlyingAssetAddresses?.[vaultTokens.underlyingAssetAddresses?.length - 1] : props.asset
+  const lpTokenOrAsset = isToken
+    ? vaultTokens.underlyingAssetAddresses?.[
+        vaultTokens.underlyingAssetAddresses?.length - 1
+      ]
+    : props.asset
   const vaultAddress = vaultTokens.ybTokenAddress ?? "0x"
   const underlyingAssets = vaultTokens.underlyingAssetAddresses
 

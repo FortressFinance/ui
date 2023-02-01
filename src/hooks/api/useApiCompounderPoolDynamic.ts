@@ -1,5 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
-import { Address, useAccount } from "wagmi"
+import { Address, useAccount, useQuery } from "wagmi"
 
 import fortressApi, { ApiResult } from "@/lib/fortressApi"
 import { ApiPool } from "@/hooks/api/useApiCompounderPools"
@@ -44,7 +43,12 @@ export type ApiVaultDynamic = {
   APR: {
     BALApr: number
     AuraApr: number
+    crvApr: number
+    cvxApr: number
+    extraRewardsApr: number
     totalApr: number
+    GMXApr: number
+    ETHApr: number
   }
   APY: number
   user: {
@@ -71,30 +75,74 @@ export default function useApiCompounderPoolDynamic({
   const isToken = useIsTokenCompounder(type)
   const { address } = useAccount()
 
-  return useQuery(
-    [
-      "pools",
-      type,
-      "data",
-      poolId,
-      address,
-    ],
-    {
-      queryFn: () =>
-        isToken
-          ? fetchApiTokenCompounderPoolDynamic({
-              poolId,
-              user: address || "0x",
-            })
-          : fetchApiCompounderPoolDynamic({
-              isCurve: isCurve?? true,
-              poolId,
-              user: address || "0x",
-            }),
-      retry: false,
-      enabled: poolId !== undefined,
-    }
-  )
+  const apiQuery = useQuery(["pools", type, "data", poolId, address], {
+    queryFn: () =>
+      fetchApiCompounderPoolDynamic({
+        isCurve: isCurve ?? true,
+        poolId,
+        user: address || "0x",
+      }),
+    retry: false,
+    enabled: poolId !== undefined && !isToken,
+  })
+
+  const apiTokenQuery = useQuery(["pools", type, "data", poolId, address], {
+    queryFn: () =>
+      fetchApiTokenCompounderPoolDynamic({
+        poolId,
+        user: address || "0x",
+      }),
+    retry: false,
+    enabled: poolId !== undefined && isToken,
+  })
+
+  return !isToken ? apiQuery : apiTokenQuery
+}
+
+export function useApiCurveBalancerCompounderPoolDynamic({
+  type,
+  poolId,
+}: {
+  type: VaultType
+  poolId: ApiPool["poolId"]
+}) {
+  const isCurve = useIsCurve(type)
+  const { address } = useAccount()
+
+  const apiQuery = useQuery(["pools", type, "data", poolId, address], {
+    queryFn: () =>
+      fetchApiCompounderPoolDynamic({
+        isCurve: isCurve ?? true,
+        poolId,
+        user: address || "0x",
+      }),
+    retry: false,
+    enabled: poolId !== undefined,
+  })
+
+  return apiQuery
+}
+
+export function useApiTokenCompounderPoolDynamic({
+  type,
+  poolId,
+}: {
+  type: VaultType
+  poolId: ApiPool["poolId"]
+}) {
+  const { address } = useAccount()
+
+  const apiTokenQuery = useQuery(["pools", type, "data", poolId, address], {
+    queryFn: () =>
+      fetchApiTokenCompounderPoolDynamic({
+        poolId,
+        user: address || "0x",
+      }),
+    retry: false,
+    enabled: poolId !== undefined,
+  })
+
+  return apiTokenQuery
 }
 
 async function fetchApiCompounderPoolDynamic({
@@ -127,7 +175,7 @@ async function fetchApiTokenCompounderPoolDynamic({
   user: Address | undefined
 }) {
   if (!poolId) return null
-  const resp = await fortressApi.post<ApiGetPoolDynamicResult>(
+  const resp = await fortressApi.post<ApiGetVaultDynamicResult>(
     "Token_Compounder/getVaultDynamicData",
     {
       vaultId: poolId,
