@@ -14,7 +14,7 @@ export default function useCompounderPoolId({ asset, type }: VaultProps) {
   const isToken = useIsTokenCompounder(type)
   const { data: vaultTokens } = useVaultTokens({
     asset,
-    type
+    type,
   })
   // Preferred: API request
   const apiQuery = useQuery(["pools", type], {
@@ -32,14 +32,16 @@ export default function useCompounderPoolId({ asset, type }: VaultProps) {
   if (!isToken) {
     return {
       ...apiQuery,
-      data: apiQuery.data?.find((p) => p.token.ybToken.address === vaultTokens.ybTokenAddress)
-        ?.poolId,
+      data: apiQuery.data?.find(
+        (p) => p.token.ybToken.address === vaultTokens.ybTokenAddress
+      )?.poolId,
     }
   }
 
   return {
     ...apiTokenQuery,
-    data: apiTokenQuery.data?.find((p) => p.token.ybToken.address === vaultTokens.ybTokenAddress)
-      ?.vaultId,
+    data: apiTokenQuery.data?.find(
+      (p) => p.token.ybToken.address === vaultTokens.ybTokenAddress
+    )?.vaultId,
   }
 }

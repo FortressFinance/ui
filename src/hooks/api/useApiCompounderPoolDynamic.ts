@@ -71,30 +71,21 @@ export default function useApiCompounderPoolDynamic({
   const isToken = useIsTokenCompounder(type)
   const { address } = useAccount()
 
-  return useQuery(
-    [
-      "pools",
-      type,
-      "data",
-      poolId,
-      address,
-    ],
-    {
-      queryFn: () =>
-        isToken
-          ? fetchApiTokenCompounderPoolDynamic({
-              poolId,
-              user: address || "0x",
-            })
-          : fetchApiCompounderPoolDynamic({
-              isCurve: isCurve?? true,
-              poolId,
-              user: address || "0x",
-            }),
-      retry: false,
-      enabled: poolId !== undefined,
-    }
-  )
+  return useQuery(["pools", type, "data", poolId, address], {
+    queryFn: () =>
+      isToken
+        ? fetchApiTokenCompounderPoolDynamic({
+            poolId,
+            user: address || "0x",
+          })
+        : fetchApiCompounderPoolDynamic({
+            isCurve: isCurve ?? true,
+            poolId,
+            user: address || "0x",
+          }),
+    retry: false,
+    enabled: poolId !== undefined,
+  })
 }
 
 async function fetchApiCompounderPoolDynamic({

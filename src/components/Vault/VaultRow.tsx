@@ -42,7 +42,7 @@ const VaultRow: FC<VaultProps> = (props) => {
     ],
   })
 
-  const { isLoading: isLoadingAsset } = useCompounderPoolAsset(props) 
+  const { isLoading: isLoadingAsset } = useCompounderPoolAsset(props)
   const isLoading = isLoadingAsset
 
   const isCurve = useIsCurve(props.type)
@@ -78,22 +78,17 @@ const VaultRow: FC<VaultProps> = (props) => {
                   }
                 />
               </div>
-              <VaultName {...props}
-              />
-              <VaultStrategyButton {...props}
-              />
+              <VaultName {...props} />
+              <VaultStrategyButton {...props} />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultApr {...props}
-              />
+              <VaultApr {...props} />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultTvl {...props}
-              />
+              <VaultTvl {...props} />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultDepositedLpTokens {...props}
-              />
+              <VaultDepositedLpTokens {...props} />
             </VaultTableCell>
 
             {/* Action buttons */}

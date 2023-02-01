@@ -15,7 +15,7 @@ export default function useCompounderPoolName({ asset, type }: VaultProps) {
   const isToken = useIsTokenCompounder(type)
   const { data: vaultTokens } = useVaultTokens({
     asset,
-    type
+    type,
   })
 
   // Preferred: API request
@@ -46,15 +46,17 @@ export default function useCompounderPoolName({ asset, type }: VaultProps) {
   if (!apiQuery.isError && apiQuery.data !== null && !isToken) {
     return {
       ...apiQuery,
-      data: apiQuery.data?.find((p) => p.token.ybToken.address === vaultTokens.ybTokenAddress)
-        ?.poolName,
+      data: apiQuery.data?.find(
+        (p) => p.token.ybToken.address === vaultTokens.ybTokenAddress
+      )?.poolName,
     }
   }
   if (!apiTokenQuery.isError && apiTokenQuery.data !== null && isToken) {
     return {
       ...apiTokenQuery,
-      data: apiTokenQuery.data?.find((p) => p.token.ybToken.address === vaultTokens.ybTokenAddress)
-        ?.vaultName,
+      data: apiTokenQuery.data?.find(
+        (p) => p.token.ybToken.address === vaultTokens.ybTokenAddress
+      )?.vaultName,
     }
   }
   // Fallback to contract data after failure
