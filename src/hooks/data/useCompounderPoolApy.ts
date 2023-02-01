@@ -1,8 +1,8 @@
-import { useApiCompounderPoolDynamic } from "@/hooks/api/useApiCompounderPoolDynamic"
+import { useApiCompounderPoolDynamic } from "@/hooks/api"
 import { VaultDynamicProps } from "@/hooks/types"
 
 export default function useCompounderPoolApy({
-  address: _address,
+  asset: _address,
   poolId,
   type,
 }: VaultDynamicProps) {
@@ -16,7 +16,7 @@ export default function useCompounderPoolApy({
 }
 
 export function useCompounderPoolBaseApr({
-  address: _address,
+  asset: _address,
   poolId,
   type,
 }: VaultDynamicProps) {
@@ -30,7 +30,7 @@ export function useCompounderPoolBaseApr({
 }
 
 export function useCompounderPoolCrvApr({
-  address: _address,
+  asset: _address,
   poolId,
   type,
 }: VaultDynamicProps) {
@@ -44,7 +44,7 @@ export function useCompounderPoolCrvApr({
 }
 
 export function useCompounderPoolCvxApr({
-  address: _address,
+  asset: _address,
   poolId,
   type,
 }: VaultDynamicProps) {
@@ -58,7 +58,7 @@ export function useCompounderPoolCvxApr({
 }
 
 export function useCompounderPoolExraApr({
-  address: _address,
+  asset: _address,
   poolId,
   type,
 }: VaultDynamicProps) {
@@ -72,7 +72,7 @@ export function useCompounderPoolExraApr({
 }
 
 export function useCompounderPoolTotalApr({
-  address: _address,
+  asset: _address,
   poolId,
   type,
 }: VaultDynamicProps) {

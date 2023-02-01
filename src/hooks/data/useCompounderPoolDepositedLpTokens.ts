@@ -1,8 +1,8 @@
-import { useApiCompounderPoolDynamic } from "@/hooks/api/useApiCompounderPoolDynamic"
+import { useApiCompounderPoolDynamic } from "@/hooks/api"
 import { VaultDynamicProps } from "@/hooks/types"
 
 export default function useCompounderPoolDepositedLpTokens({
-  address: _address,
+  asset: _address,
   poolId,
   type,
 }: VaultDynamicProps) {

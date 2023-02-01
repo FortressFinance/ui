@@ -5,6 +5,7 @@ import fortressApi, { ApiResult } from "@/lib/fortressApi"
 import { ApiPool } from "@/hooks/api/useApiCompounderPools"
 import { VaultType } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
+import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
 import { CHAIN_ID } from "@/constant/env"
 
@@ -35,7 +36,31 @@ export interface ApiGetPoolDynamicResult extends ApiResult {
   message?: string
 }
 
-export function useApiCompounderPoolDynamic({
+export type ApiVaultDynamic = {
+  chainId: number
+  poolId: number
+  poolDepositedLPtokens: number
+  TVL: number
+  APR: {
+    BALApr: number
+    AuraApr: number
+    totalApr: number
+  }
+  APY: number
+  user: {
+    address: string
+    ybTokensShare: string
+    LPTokensShare: string
+    usdShare: number
+  }
+}
+
+export interface ApiGetVaultDynamicResult extends ApiResult {
+  data?: ApiVaultDynamic
+  message?: string
+}
+
+export default function useApiCompounderPoolDynamic({
   type,
   poolId,
 }: {
@@ -43,21 +68,24 @@ export function useApiCompounderPoolDynamic({
   poolId: ApiPool["poolId"]
 }) {
   const isCurve = useIsCurve(type)
+  const isToken = useIsTokenCompounder(type)
   const { address } = useAccount()
 
-  return useQuery(
-    ["pools", isCurve ? "curve" : "balancer", "data", poolId, address],
-    {
-      queryFn: () =>
-        fetchApiCompounderPoolDynamic({
-          isCurve,
-          poolId,
-          user: address || "0x",
-        }),
-      retry: false,
-      enabled: poolId !== undefined,
-    }
-  )
+  return useQuery(["pools", type, "data", poolId, address], {
+    queryFn: () =>
+      isToken
+        ? fetchApiTokenCompounderPoolDynamic({
+            poolId,
+            user: address || "0x",
+          })
+        : fetchApiCompounderPoolDynamic({
+            isCurve: isCurve ?? true,
+            poolId,
+            user: address || "0x",
+          }),
+    retry: false,
+    enabled: poolId !== undefined,
+  })
 }
 
 async function fetchApiCompounderPoolDynamic({
@@ -74,6 +102,26 @@ async function fetchApiCompounderPoolDynamic({
     {
       isCurve,
       poolId,
+      chainId: CHAIN_ID,
+      user,
+    }
+  )
+  if (resp?.data?.data) return resp.data.data
+  return null
+}
+
+async function fetchApiTokenCompounderPoolDynamic({
+  poolId,
+  user = "0x",
+}: {
+  poolId: number | undefined
+  user: Address | undefined
+}) {
+  if (!poolId) return null
+  const resp = await fortressApi.post<ApiGetPoolDynamicResult>(
+    "Token_Compounder/getVaultDynamicData",
+    {
+      vaultId: poolId,
       chainId: CHAIN_ID,
       user,
     }

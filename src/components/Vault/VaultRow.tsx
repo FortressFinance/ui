@@ -5,7 +5,6 @@ import { usePopper } from "react-popper"
 
 import clsxm from "@/lib/clsxm"
 import useCompounderPoolAsset from "@/hooks/data/useCompounderPoolAsset"
-import useCompounderUnderlyingAssets from "@/hooks/data/useCompounderUnderlyingAssets"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 
@@ -13,7 +12,7 @@ import AssetLogo from "@/components/AssetLogo"
 import TxSettingsForm from "@/components/TxSettingsForm"
 import {
   VaultApr,
-  VaultDepositedLp,
+  VaultDepositedLpTokens,
   VaultName,
   VaultTvl,
 } from "@/components/Vault/VaultData"
@@ -44,10 +43,7 @@ const VaultRow: FC<VaultProps> = (props) => {
   })
 
   const { isLoading: isLoadingAsset } = useCompounderPoolAsset(props)
-  const { isLoading: isLoadingUnderlying } =
-    useCompounderUnderlyingAssets(props)
-
-  const isLoading = isLoadingAsset || isLoadingUnderlying
+  const isLoading = isLoadingAsset
 
   const isCurve = useIsCurve(props.type)
 
@@ -73,7 +69,13 @@ const VaultRow: FC<VaultProps> = (props) => {
               <div className="hidden h-10 w-10 items-center justify-center rounded-full bg-white sm:flex">
                 <AssetLogo
                   className="h-6 w-6"
-                  name={isCurve ? "curve" : "balancer"}
+                  name={
+                    isCurve === undefined
+                      ? "token"
+                      : isCurve
+                      ? "curve"
+                      : "balancer"
+                  }
                 />
               </div>
               <VaultName {...props} />
@@ -86,7 +88,7 @@ const VaultRow: FC<VaultProps> = (props) => {
               <VaultTvl {...props} />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultDepositedLp {...props} />
+              <VaultDepositedLpTokens {...props} />
             </VaultTableCell>
 
             {/* Action buttons */}

@@ -13,33 +13,36 @@ import {
 
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
-import useCompounderPoolAsset from "@/hooks/data/useCompounderPoolAsset"
-import useCompounderUnderlyingAssets from "@/hooks/data/useCompounderUnderlyingAssets"
+import useVaultTokens from "@/hooks/data/useVaultTokens"
 import { VaultProps } from "@/hooks/types"
+import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
+import auraBalCompounderAbi from "@/constant/abi/auraBALCompounderAbi"
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
-const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
+const VaultDepositForm: FC<VaultProps> = (props) => {
+  const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
-  const { data: lpToken } = useCompounderPoolAsset({
-    address: vaultAddress,
-    type,
-  })
-  const { data: underlyingAssets } = useCompounderUnderlyingAssets({
-    address: vaultAddress,
-    type,
-  })
+  const { data: vaultTokens } = useVaultTokens(props)
+
+  const lpTokenOrAsset = isToken
+    ? vaultTokens.underlyingAssetAddresses?.[
+        vaultTokens.underlyingAssetAddresses?.length - 1
+      ]
+    : props.asset
+  const vaultAddress = vaultTokens.ybTokenAddress ?? "0x"
+  const underlyingAssets = vaultTokens.underlyingAssetAddresses
 
   // Configure form
   const form = useForm<TokenFormValues>({
     defaultValues: {
       amountIn: "",
       amountOut: "",
-      inputToken: lpToken ?? "0x",
-      outputToken: vaultAddress,
+      inputToken: lpTokenOrAsset,
+      outputToken: vaultTokens.ybTokenAddress,
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -49,7 +52,7 @@ const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
   const amountIn = form.watch("amountIn")
   const inputTokenAddress = form.watch("inputToken")
   // Calculate + fetch information on selected tokens
-  const inputIsLp = inputTokenAddress === lpToken
+  const inputIsLp = inputTokenAddress === lpTokenOrAsset
   const inputIsEth = isEthTokenAddress(inputTokenAddress)
   const { data: ybToken } = useTokenOrNative({ address: vaultAddress })
   const { data: inputToken } = useTokenOrNative({
@@ -100,7 +103,7 @@ const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
     abi: curveCompounderAbi,
     address: vaultAddress,
     functionName: "depositSingleUnderlying",
-    enabled: value.gt(0) && !requiresApproval && !inputIsLp,
+    enabled: value.gt(0) && !requiresApproval && !inputIsLp && !isToken,
     args: [value, inputTokenAddress, userAddress ?? "0x", BigNumber.from(0)],
     overrides: { value },
   })
@@ -109,17 +112,46 @@ const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
     hash: depositUnderlying.data?.hash,
     onSuccess: onDepositSuccess,
   })
+
+  const prepareTokenDepositUnderlying = usePrepareContractWrite({
+    abi: auraBalCompounderAbi,
+    address: vaultAddress,
+    functionName: "depositUnderlying",
+    enabled: value.gt(0) && !requiresApproval && !inputIsLp && isToken,
+    args: [value, userAddress ?? "0x", BigNumber.from(0)],
+  })
+  const tokenDepositUnderlying = useContractWrite(
+    prepareTokenDepositUnderlying.config
+  )
+  const waitTokenDepositUnderlying = useWaitForTransaction({
+    hash: tokenDepositUnderlying.data?.hash,
+    onSuccess: onDepositSuccess,
+  })
+
   // Configure depositLp method
   const prepareDepositLp = usePrepareContractWrite({
     abi: curveCompounderAbi,
     address: vaultAddress,
     functionName: "deposit",
-    enabled: value.gt(0) && !requiresApproval && inputIsLp,
+    enabled: value.gt(0) && !requiresApproval && inputIsLp && !isToken,
     args: [value, userAddress ?? "0x"],
   })
   const depositLp = useContractWrite(prepareDepositLp.config)
   const waitDepositLp = useWaitForTransaction({
     hash: depositLp.data?.hash,
+    onSuccess: onDepositSuccess,
+  })
+
+  const prepareTokenDepositLp = usePrepareContractWrite({
+    abi: auraBalCompounderAbi,
+    address: vaultAddress,
+    functionName: "deposit",
+    enabled: value.gt(0) && !requiresApproval && inputIsLp && isToken,
+    args: [value, userAddress ?? "0x"],
+  })
+  const tokenDepositLp = useContractWrite(prepareTokenDepositLp.config)
+  const waitTokenDepositLp = useWaitForTransaction({
+    hash: tokenDepositLp.data?.hash,
     onSuccess: onDepositSuccess,
   })
 
@@ -134,6 +166,10 @@ const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
         ? depositLp.write()
         : depositUnderlying?.write
         ? depositUnderlying.write()
+        : tokenDepositLp?.write
+        ? tokenDepositLp.write()
+        : tokenDepositUnderlying?.write
+        ? tokenDepositUnderlying.write()
         : null
     }
   }
@@ -152,15 +188,20 @@ const VaultDepositForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
             approve.isLoading ||
             depositLp.isLoading ||
             depositUnderlying.isLoading ||
+            tokenDepositLp.isLoading ||
+            tokenDepositUnderlying.isLoading ||
             waitApprove.isLoading ||
             waitDepositLp.isLoading ||
-            waitDepositUnderlying.isLoading
+            waitDepositUnderlying.isLoading ||
+            waitTokenDepositLp.isLoading ||
+            waitDepositUnderlying.isLoading ||
+            waitTokenDepositUnderlying.isLoading
           }
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
           tokenAddreseses={[
-            ...(lpToken ? [lpToken] : []),
-            ...(underlyingAssets || []),
+            ...(lpTokenOrAsset ? [lpTokenOrAsset ?? "0x"] : []),
+            ...(underlyingAssets?.filter((a) => a !== lpTokenOrAsset) || []),
           ]}
         />
       </FormProvider>
