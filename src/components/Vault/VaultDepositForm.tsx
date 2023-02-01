@@ -159,14 +159,14 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     } else {
       logger("Depositing", amountIn)
       depositLp?.write
-      ? depositLp.write()
-      : depositUnderlying?.write
-      ? depositUnderlying.write()
-      : tokenDepositLp?.write
-      ? tokenDepositLp.write()
-      : tokenDepositUnderlying?.write
-      ? tokenDepositUnderlying.write()
-      : null
+        ? depositLp.write()
+        : depositUnderlying?.write
+        ? depositUnderlying.write()
+        : tokenDepositLp?.write
+        ? tokenDepositLp.write()
+        : tokenDepositUnderlying?.write
+        ? tokenDepositUnderlying.write()
+        : null
     }
   }
 
@@ -196,9 +196,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
           tokenAddreseses={[
-            ...(lpTokenOrAsset
-              ? [lpTokenOrAsset ?? "0x"]
-              : []),
+            ...(lpTokenOrAsset ? [lpTokenOrAsset ?? "0x"] : []),
             ...(underlyingAssets?.filter((a) => a !== lpTokenOrAsset) || []),
           ]}
         />

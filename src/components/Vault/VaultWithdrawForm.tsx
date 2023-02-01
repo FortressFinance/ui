@@ -134,14 +134,14 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
     logger("Withdrawing", amountIn)
     withdrawLp?.write
-    ? withdrawLp.write()
-    : withdrawUnderlying?.write
-    ? withdrawUnderlying.write()
-    : tokenWithdrawLp?.write
-    ? tokenWithdrawLp.write()
-    : tokenWithdrawUnderlying?.write
-    ? tokenWithdrawUnderlying.write()
-    : null
+      ? withdrawLp.write()
+      : withdrawUnderlying?.write
+      ? withdrawUnderlying.write()
+      : tokenWithdrawLp?.write
+      ? tokenWithdrawLp.write()
+      : tokenWithdrawUnderlying?.write
+      ? tokenWithdrawUnderlying.write()
+      : null
   }
 
   return (
@@ -167,9 +167,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
           onSubmit={onSubmitForm}
           submitText="Withdraw"
           tokenAddreseses={[
-            ...(lpTokenOrAsset
-              ? [lpTokenOrAsset ?? "0x"]
-              : []),
+            ...(lpTokenOrAsset ? [lpTokenOrAsset ?? "0x"] : []),
             ...(underlyingAssets?.filter((a) => a !== lpTokenOrAsset) || []),
           ]}
         />
