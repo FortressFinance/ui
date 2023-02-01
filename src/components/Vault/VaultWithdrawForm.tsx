@@ -11,8 +11,8 @@ import {
 } from "wagmi"
 
 import logger from "@/lib/logger"
-import useCompounderPoolAsset from "@/hooks/data/useCompounderPoolAsset"
-import { VaultDepositWithdrawProps } from "@/hooks/types"
+import useVaultTokens from "@/hooks/data/useVaultTokens"
+import { VaultProps } from "@/hooks/types"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 
@@ -21,17 +21,14 @@ import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 import auraBalCompounderAbi from "@/constant/abi/auraBALCompounderAbi"
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
-const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
-  address: vaultAddress,
-  type,
-  underlyingAssets,
-}) => {
-  const isToken = useIsTokenCompounder(type)
-  const { address: userAddress } = useAccount()
-  const { data: lpTokenOrAsset } = useCompounderPoolAsset({
-    address: vaultAddress,
-    type,
-  })
+const VaultWithdrawForm: FC<VaultProps> = (props) => {
+  const isToken = useIsTokenCompounder(props.type)
+  const { address: userAddress } = useAccount()  
+  const { data: vaultTokens } = useVaultTokens(props)
+
+  const lpTokenOrAsset = isToken? vaultTokens.underlyingAssetAddresses?.[vaultTokens.underlyingAssetAddresses?.length - 1] : props.asset
+  const vaultAddress = vaultTokens.ybTokenAddress ?? "0x"
+  const underlyingAssets = vaultTokens.underlyingAssetAddresses
 
   // Configure form
   const form = useForm<TokenFormValues>({

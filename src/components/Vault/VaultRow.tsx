@@ -5,18 +5,14 @@ import { usePopper } from "react-popper"
 
 import clsxm from "@/lib/clsxm"
 import useCompounderPoolAsset from "@/hooks/data/useCompounderPoolAsset"
-import useCompounderUnderlyingAssets from "@/hooks/data/useCompounderUnderlyingAssets"
-import useCompounderYbTokens from "@/hooks/data/useCompounderYbTokens"
-import useTokenCompounderUnderlyingAssets from "@/hooks/data/useTokenCompounderUnderlyingAssets"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
 import AssetLogo from "@/components/AssetLogo"
 import TxSettingsForm from "@/components/TxSettingsForm"
 import {
   VaultApr,
-  VaultDepositedLp,
+  VaultDepositedLpTokens,
   VaultName,
   VaultTvl,
 } from "@/components/Vault/VaultData"
@@ -45,26 +41,9 @@ const VaultRow: FC<VaultProps> = (props) => {
       { name: "offset", options: { offset: [-3, 4] } },
     ],
   })
-  const isToken = useIsTokenCompounder(props.type)
 
-  const { data: ybTokenAddress } = useCompounderYbTokens({
-    address: props.address,
-    type: props.type,
-  })
-
-  const childProps = {
-    address: ybTokenAddress ?? "0x",
-    type: props.type
-  }
-
-  const { isLoading: isLoadingAsset } = useCompounderPoolAsset(childProps)
-  const { data: tokenUnderlyingAssets, isLoading: isLoadingTokenUnderlying } =
-    useTokenCompounderUnderlyingAssets(childProps)
-  const { data: underlyingAssets, isLoading: isLoadingUnderlying } =
-    useCompounderUnderlyingAssets(childProps)
-
-  const isLoading =
-    isLoadingAsset || isLoadingUnderlying || isLoadingTokenUnderlying
+  const { isLoading: isLoadingAsset } = useCompounderPoolAsset(props) 
+  const isLoading = isLoadingAsset
 
   const isCurve = useIsCurve(props.type)
 
@@ -101,19 +80,19 @@ const VaultRow: FC<VaultProps> = (props) => {
               </div>
               <VaultName {...props}
               />
-              <VaultStrategyButton {...childProps}
+              <VaultStrategyButton {...props}
               />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultApr {...childProps}
+              <VaultApr {...props}
               />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultTvl {...childProps}
+              <VaultTvl {...props}
               />
             </VaultTableCell>
             <VaultTableCell className="pointer-events-none text-center">
-              <VaultDepositedLp {...childProps}
+              <VaultDepositedLpTokens {...props}
               />
             </VaultTableCell>
 
@@ -195,20 +174,8 @@ const VaultRow: FC<VaultProps> = (props) => {
                   >
                     {/* Margins or padding on the motion.div will cause janky animation, use margins inside */}
                     <div className="mt-6 grid gap-3 md:grid-cols-2 md:gap-4">
-                      <VaultDepositForm
-                        underlyingAssets={
-                          isToken ? tokenUnderlyingAssets : underlyingAssets
-                        }
-                        type={childProps.type}
-                        address={childProps.address}
-                      />
-                      <VaultWithdrawForm
-                        underlyingAssets={
-                          isToken ? tokenUnderlyingAssets : underlyingAssets
-                        }
-                        type={childProps.type}
-                        address={childProps.address}
-                      />
+                      <VaultDepositForm {...props} />
+                      <VaultWithdrawForm {...props} />
                     </div>
                   </motion.div>
                 </Disclosure.Panel>

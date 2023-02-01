@@ -4,15 +4,9 @@ import { FC, Fragment, MouseEventHandler, useState } from "react"
 import { useAccount } from "wagmi"
 
 import useCompounderPlatformFeePercentage from "@/hooks/data/useCompounderPlatformFeePercentage"
-import useCompounderUnderlyingAssets, {
-  UseCompounderUnderlyingAssetsResult,
-} from "@/hooks/data/useCompounderUnderlyingAssets"
 import useCompounderWithdrawFeePercentage from "@/hooks/data/useCompounderWithdrawFeePercentage"
-import useTokenCompounderUnderlyingAssets, {
-  UseTokenCompounderUnderlyingAssetsResult,
-} from "@/hooks/data/useTokenCompounderUnderlyingAssets"
+import useVaultTokens, { UseVaultTokensResult } from "@/hooks/data/useVaultTokens"
 import { VaultProps } from "@/hooks/types"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 
 import Button from "@/components/Button"
@@ -30,13 +24,10 @@ import Close from "~/svg/icons/close.svg"
 import ExternalLink from "~/svg/icons/external-link.svg"
 
 const VaultStrategyButton: FC<VaultProps> = (props) => {
-  const isToken = useIsTokenCompounder(props.type)
   const [isStrategyOpen, setIsStrategyOpen] = useState(false)
 
-  const { data: underlyingAssets, ...underlyingAssetsQuery } =
-    useCompounderUnderlyingAssets(props)
-  const { data: tokenUnderlyingAssets, ...tokenUnderlyingAssetsQuery } =
-    useTokenCompounderUnderlyingAssets(props)
+
+  const { data: vaultTokens, ...vaultTokensQuery } = useVaultTokens(props)
   const { data: platformFeePercentage, ...platformFeeQuery } =
     useCompounderPlatformFeePercentage(props)
   const { data: withdrawFeePercentage, ...withdrawFeeQuery } =
@@ -45,8 +36,7 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
   const isLoading = [
     platformFeeQuery,
     withdrawFeeQuery,
-    underlyingAssetsQuery,
-    tokenUnderlyingAssetsQuery,
+    vaultTokensQuery,
   ].some((q) => q.isLoading)
 
   const toggleStrategyOpen: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -68,7 +58,7 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
       <VaultStrategyModal
         isOpen={isStrategyOpen}
         onClose={() => setIsStrategyOpen(false)}
-        underlyingAssets={!isToken ? underlyingAssets : tokenUnderlyingAssets}
+        underlyingAssets={vaultTokens.underlyingAssetAddresses}
         platformFeePercentage={platformFeePercentage}
         withdrawFeePercentage={withdrawFeePercentage}
         {...props}
@@ -81,15 +71,13 @@ export default VaultStrategyButton
 
 type VaultStrategyModalProps = VaultProps &
   ModalBaseProps & {
-    underlyingAssets:
-      | UseCompounderUnderlyingAssetsResult["data"]
-      | UseTokenCompounderUnderlyingAssetsResult["data"]
+    underlyingAssets: UseVaultTokensResult["data"]["underlyingAssetAddresses"]
     platformFeePercentage: string | number | undefined
     withdrawFeePercentage: string | number | undefined
   }
 
 const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
-  address,
+  asset,
   type,
   underlyingAssets,
   platformFeePercentage,
@@ -98,7 +86,7 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
 }) => {
   const { connector } = useAccount()
 
-  const { data: token } = useTokenOrNative({ address })
+  const { data: token } = useTokenOrNative({ address: asset })
 
   const addTokenToWallet: MouseEventHandler<HTMLButtonElement> = () => {
     if (token && token.address && connector && connector.watchAsset) {
@@ -122,7 +110,7 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
           )}
           <Tooltip label="View contract">
             <Link
-              href={`https://arbiscan.io/address/${address}`}
+              href={`https://arbiscan.io/address/${asset}`}
               target="_blank"
             >
               <ExternalLink className="h-6 w-6" aria-label="View contract" />

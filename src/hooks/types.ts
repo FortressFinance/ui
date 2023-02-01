@@ -5,14 +5,10 @@ import { ApiPool } from "@/hooks/api/useApiCompounderPools"
 export type VaultType = "balancer" | "curve" | "stable" | "featured" | "crypto"
 
 export type VaultProps = {
-  address: Address
+  asset: Address | undefined
   type: VaultType
 }
 
 export type VaultDynamicProps = VaultProps & {
   poolId: ApiPool["poolId"] | undefined
-}
-
-export type VaultDepositWithdrawProps = VaultProps & {
-  underlyingAssets: Address[] | readonly Address[] | undefined
 }

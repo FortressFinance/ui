@@ -52,24 +52,24 @@ export const VaultTvl: FC<VaultProps> = (props) => {
   )
 }
 
-export const VaultDepositedLp: FC<VaultProps> = (props) => {
+export const VaultDepositedLpTokens: FC<VaultProps> = (props) => {
   const { data: poolId, isLoading: isLoadingId } = useCompounderPoolId(props)
   const { data: depositedTokens, isLoading: isLoadingDepositedTokens } =
     useCompounderPoolDepositedLpTokens({
       ...props,
       poolId,
     })
-  const { data: lpToken, isLoading: isLoadingLpToken } = useToken({
-    address: props.address,
+  const { data: lpTokenOrAsset, isLoading: isLoadingLpTokenOrAsset } = useToken({
+    address: props.asset,
   })
   const formatted = ethers.utils.formatUnits(
     BigNumber.from(depositedTokens ?? 0),
-    lpToken?.decimals ?? 18
+    lpTokenOrAsset?.decimals ?? 18
   )
 
   return (
     <Skeleton
-      isLoading={isLoadingId || isLoadingDepositedTokens || isLoadingLpToken}
+      isLoading={isLoadingId || isLoadingDepositedTokens || isLoadingLpTokenOrAsset}
     >
       <Currency abbreviate>{formatted}</Currency>
     </Skeleton>

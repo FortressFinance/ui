@@ -60,7 +60,7 @@ export interface ApiGetVaultDynamicResult extends ApiResult {
   message?: string
 }
 
-export function useApiCompounderPoolDynamic({
+export default function useApiCompounderPoolDynamic({
   type,
   poolId,
 }: {
@@ -74,20 +74,20 @@ export function useApiCompounderPoolDynamic({
   return useQuery(
     [
       "pools",
-      isToken ? "token" : isCurve ? "curve" : "balancer",
+      type,
       "data",
       poolId,
       address,
     ],
     {
       queryFn: () =>
-        isCurve === undefined
+        isToken
           ? fetchApiTokenCompounderPoolDynamic({
               poolId,
               user: address || "0x",
             })
           : fetchApiCompounderPoolDynamic({
-              isCurve,
+              isCurve: isCurve?? true,
               poolId,
               user: address || "0x",
             }),

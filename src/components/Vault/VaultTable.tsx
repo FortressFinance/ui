@@ -39,7 +39,7 @@ const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
           vaultAddresses?.map((address, i) => (
             <VaultRow
               key={`pool-${i}`}
-              address={address}
+              asset={address}
               type={type}
             />
           ))

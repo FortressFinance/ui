@@ -5,13 +5,18 @@ import {
   fetchApiCurveCompounderPools,
   fetchApiTokenCompounderPools,
 } from "@/hooks/api/useApiCompounderPools"
+import useVaultTokens from "@/hooks/data/useVaultTokens"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
-export default function useCompounderPoolName({ address, type }: VaultProps) {
+export default function useCompounderPoolName({ asset, type }: VaultProps) {
   const isCurve = useIsCurve(type)
   const isToken = useIsTokenCompounder(type)
+  const { data: vaultTokens } = useVaultTokens({
+    asset,
+    type
+  })
 
   // Preferred: API request
   const apiQuery = useQuery(["pools", type], {
@@ -34,21 +39,21 @@ export default function useCompounderPoolName({ address, type }: VaultProps) {
       : isCurve
       ? "getCurveCompounderName"
       : "getBalancerCompounderName",
-    args: [address],
+    args: [asset ?? "0x"],
     enabled: apiQuery.isError || apiTokenQuery.isError,
   })
   // Prioritize API response until it has errored
   if (!apiQuery.isError && apiQuery.data !== null && !isToken) {
     return {
       ...apiQuery,
-      data: apiQuery.data?.find((p) => p.token.ybToken.address === address)
+      data: apiQuery.data?.find((p) => p.token.ybToken.address === vaultTokens.ybTokenAddress)
         ?.poolName,
     }
   }
   if (!apiTokenQuery.isError && apiTokenQuery.data !== null && isToken) {
     return {
       ...apiTokenQuery,
-      data: apiTokenQuery.data?.find((p) => p.token.ybToken.address === address)
+      data: apiTokenQuery.data?.find((p) => p.token.ybToken.address === vaultTokens.ybTokenAddress)
         ?.vaultName,
     }
   }

@@ -15,7 +15,7 @@ type NetworkSelectorProps = {
   className?: string
 }
 
-const NetworkSelector: FC<NetworkSelectorProps> = ({ className }) => {
+const NetworkSelector: FC<NetworkSelectorProps> = () => {
   const { chain, chains, switchActiveNetwork } = useActiveNetwork()
 
   return (

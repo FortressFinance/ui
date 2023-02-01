@@ -1,4 +1,4 @@
-import { useApiCompounderPoolDynamic } from "@/hooks/api/useApiCompounderPoolDynamic"
+import { useApiCompounderPoolDynamic } from "@/hooks/api"
 import { VaultProps } from "@/hooks/types"
 
 type UseCompounderPoolAprParams = VaultProps & {
@@ -6,7 +6,7 @@ type UseCompounderPoolAprParams = VaultProps & {
 }
 
 export default function useCompounderPoolTvl({
-  address: _address,
+  asset: _address,
   poolId,
   type,
 }: UseCompounderPoolAprParams) {
