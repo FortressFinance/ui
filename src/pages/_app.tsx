@@ -1,12 +1,7 @@
 import { Inter, VT323 } from "@next/font/google"
-import {
-  Hydrate,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Analytics } from "@vercel/analytics/react"
 import { AppProps } from "next/app"
-import { useState } from "react"
 
 import "@/styles/globals.css"
 
@@ -20,17 +15,15 @@ const vt323 = VT323({
 })
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [queryClient] = useState(
-    new QueryClient({
-      defaultOptions: {
-        queries: {
-          refetchOnMount: false,
-          refetchOnWindowFocus: false,
-          retryOnMount: false,
-        },
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        retryOnMount: false,
       },
-    })
-  )
+    },
+  })
 
   return (
     <>
@@ -43,11 +36,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 
       <div className="font-sans">
         <QueryClientProvider client={queryClient}>
-          <Hydrate state={pageProps.dehydratedState}>
-            <WagmiProvider>
-              <Component {...pageProps} />
-            </WagmiProvider>
-          </Hydrate>
+          <WagmiProvider>
+            <Component {...pageProps} />
+          </WagmiProvider>
         </QueryClientProvider>
       </div>
 
