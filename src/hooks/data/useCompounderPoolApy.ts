@@ -1,8 +1,4 @@
-import { useApiCompounderPoolDynamic } from "@/hooks/api"
-import {
-  useApiCurveBalancerCompounderPoolDynamic,
-  useApiTokenCompounderPoolDynamic,
-} from "@/hooks/api/useApiCompounderPoolDynamic"
+import { useApiCompounderPoolDynamic } from "@/hooks/api/useApiCompounderPoolDynamic"
 import { VaultDynamicProps } from "@/hooks/types"
 
 export default function useCompounderPoolApy({

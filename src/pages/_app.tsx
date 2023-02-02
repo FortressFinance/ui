@@ -1,5 +1,6 @@
 import { Inter, VT323 } from "@next/font/google"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { Analytics } from "@vercel/analytics/react"
 import { AppProps } from "next/app"
 import { configureChains, createClient, WagmiConfig } from "wagmi"
 import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet"
@@ -9,7 +10,6 @@ import { WalletConnectConnector } from "wagmi/connectors/walletConnect"
 
 import "@/styles/globals.css"
 
-import ConnectWalletProvider from "@/components/ConnectWallet/ConnectWalletProvider"
 import NetworkProvider from "@/components/NetworkSelector/NetworkProvider"
 
 import { ENABLE_CHAINS, ENABLE_PROVIDERS } from "@/constant/env"
@@ -69,13 +69,13 @@ function MyApp({ Component, pageProps }: AppProps) {
         <QueryClientProvider client={queryClient}>
           <WagmiConfig client={wagmiClient}>
             <NetworkProvider>
-              <ConnectWalletProvider>
-                <Component {...pageProps} />
-              </ConnectWalletProvider>
+              <Component {...pageProps} />
             </NetworkProvider>
           </WagmiConfig>
         </QueryClientProvider>
       </div>
+
+      <Analytics />
     </>
   )
 }

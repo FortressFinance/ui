@@ -1,4 +1,4 @@
-import { Disclosure, Popover, Portal } from "@headlessui/react"
+import { Disclosure, Popover } from "@headlessui/react"
 import { AnimatePresence, easeInOut, motion, MotionConfig } from "framer-motion"
 import { FC, Fragment, MouseEventHandler, useState } from "react"
 import { usePopper } from "react-popper"
@@ -133,21 +133,19 @@ const VaultRow: FC<VaultProps> = (props) => {
 
                         <AnimatePresence>
                           {open && (
-                            <Portal>
-                              <Popover.Panel as={Fragment} static>
-                                <motion.div
-                                  ref={setTxSettingsPopover}
-                                  className="z-20 w-full max-w-xs rounded-md bg-orange-400 p-4 shadow-lg"
-                                  style={styles.popper}
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 1 }}
-                                  exit={{ opacity: 0 }}
-                                  {...attributes.popper}
-                                >
-                                  <TxSettingsForm />
-                                </motion.div>
-                              </Popover.Panel>
-                            </Portal>
+                            <Popover.Panel as={Fragment} static>
+                              <motion.div
+                                ref={setTxSettingsPopover}
+                                className="z-20 w-72 rounded-md bg-orange-400 p-4 shadow-lg"
+                                style={styles.popper}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                {...attributes.popper}
+                              >
+                                <TxSettingsForm />
+                              </motion.div>
+                            </Popover.Panel>
                           )}
                         </AnimatePresence>
                       </>

@@ -140,12 +140,12 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
               {underlyingAssets?.map((address, index) => (
                 <Fragment key={`underlying-asset-${index}`}>
                   {underlyingAssets.length > 2 &&
-                  index > 0 &&
-                  index !== underlyingAssets.length - 1
+                    index > 0 &&
+                    index !== underlyingAssets.length - 1
                     ? ", "
                     : index > 0
-                    ? " and "
-                    : null}
+                      ? " and "
+                      : null}
                   <TokenSymbol
                     key={`token-symbol-${index}`}
                     address={(address ?? "0x") as `0x${string}`}
