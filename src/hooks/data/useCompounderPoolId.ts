@@ -19,14 +19,14 @@ export default function useCompounderPoolId({ asset, type }: VaultProps) {
     type,
   })
   // Preferred: API request
-  const apiQuery = useQuery(["pools", type], {
+  const apiQuery = useQuery([chainId, "pools", type], {
     queryFn: () =>
       fetchApiCurveCompounderPools({ chainId, isCurve: isCurve ?? true }),
     retry: false,
     enabled: !isToken,
   })
 
-  const apiTokenQuery = useQuery(["pools", type], {
+  const apiTokenQuery = useQuery([chainId, "pools", type], {
     queryFn: () => fetchApiTokenCompounderPools({ chainId }),
     retry: false,
     enabled: isToken,
