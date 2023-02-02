@@ -1,8 +1,8 @@
+import dynamic from "next/dynamic"
 import Image from "next/image"
 import Link from "next/link"
 import { FC, PropsWithChildren } from "react"
 
-import ConnectWalletButton from "@/components/ConnectWallet/ConnectWalletButton"
 import ConnectWalletModal, {
   DisconnectWalletModal,
 } from "@/components/ConnectWallet/ConnectWalletModal"
@@ -13,6 +13,11 @@ import { useConnectWallet } from "@/store/connectWallet"
 
 import FortressBackground from "~/images/fortress-background.gif"
 import FortressLogo from "~/svg/fortress-logo.svg"
+
+const ConnectWalletButton = dynamic(
+  () => import("@/components/ConnectWallet/ConnectWalletButton"),
+  { ssr: false }
+)
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const [connectModal, setConnectModal] = useConnectWallet((state) => [
