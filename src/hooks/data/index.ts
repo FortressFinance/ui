@@ -1,9 +1,13 @@
 export { default as useVaultAddresses } from "./useVaultAddresses"
 export {
+  useVaultAuraApr,
+  useVaultBalApr,
   useVaultBaseApr,
   useVaultCrvApr,
   useVaultCvxApr,
+  useVaultEthApr,
   useVaultExraApr,
+  useVaultGmxApr,
   useVaultTotalApr,
 } from "./useVaultApy"
 export { default as useVaultDepositedLpTokens } from "./useVaultDepositedLpTokens"
