@@ -1,16 +1,12 @@
 import { Tab } from "@headlessui/react"
 import { NextPage } from "next"
-import dynamic from "next/dynamic"
 import { Fragment } from "react"
 
 import clsxm from "@/lib/clsxm"
 
 import Layout from "@/components/Layout"
 import Seo from "@/components/Seo"
-
-const VaultTable = dynamic(() => import("@/components/Vault"), {
-  ssr: false,
-})
+import VaultTable from "@/components/Vault"
 
 const Vaults: NextPage = () => {
   return (
@@ -115,8 +111,6 @@ const Vaults: NextPage = () => {
             </Tab.Panels>
           </Tab.Group>
         </main>
-
-        {/* <aside className="max-xl:hidden"></aside> */}
       </div>
     </Layout>
   )

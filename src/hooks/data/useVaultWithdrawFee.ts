@@ -1,52 +1,42 @@
-import { useContractRead, useQuery } from "wagmi"
+import { useContractRead } from "wagmi"
 
-import {
-  fetchApiCurveCompounderPools,
-  fetchApiTokenCompounderPools,
-} from "@/hooks/api/useApiCompounderPools"
-import useVaultTokens from "@/hooks/data/useVaultTokens"
+import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
+import { useVaultTokens } from "@/hooks/data"
 import { VaultProps } from "@/hooks/types"
-import useIsCurve from "@/hooks/useIsCurve"
+import useActiveChainId from "@/hooks/useActiveChainId"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
-export default function useCompounderWithdrawFeePercentage({
-  asset,
-  type,
-}: VaultProps) {
-  const isCurve = useIsCurve(type)
+export default function useVaultWithdrawFee({ asset, type }: VaultProps) {
+  const chainId = useActiveChainId()
   const isToken = useIsTokenCompounder(type)
   const { data: vaultTokens } = useVaultTokens({
     asset,
     type,
   })
   // Preferred: API request
-  const apiQuery = useQuery(["pools", type], {
-    queryFn: () => fetchApiCurveCompounderPools({ isCurve: isCurve ?? true }),
-    retry: false,
-    enabled: !isToken,
-  })
-
-  const apiTokenQuery = useQuery(["pools", type], {
-    queryFn: () => fetchApiTokenCompounderPools(),
-    retry: false,
-    enabled: isToken,
-  })
+  const apiCompounderQuery = useApiCompounderVaults({ type })
+  const apiTokenQuery = useApiTokenVaults({ type })
 
   // Fallback: contract request
   const registryQuery = useContractRead({
+    chainId,
     abi: curveCompounderAbi,
     address: asset,
     functionName: "withdrawFeePercentage",
-    enabled: apiQuery.isError || apiTokenQuery.isError,
+    enabled: apiCompounderQuery.isError || apiTokenQuery.isError,
     select: (data) => data.toString(),
   })
   // Prioritize API response until it has errored
-  if (!apiQuery.isError && apiQuery.data !== null && !isToken) {
+  if (
+    !apiCompounderQuery.isError &&
+    apiCompounderQuery.data !== null &&
+    !isToken
+  ) {
     return {
-      ...apiQuery,
-      data: apiQuery.data?.find(
+      ...apiCompounderQuery,
+      data: apiCompounderQuery.data?.find(
         (p) => p.token.ybToken.address === vaultTokens.ybTokenAddress
       )?.withdrawalFee,
     }

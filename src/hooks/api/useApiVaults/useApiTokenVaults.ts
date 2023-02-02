@@ -1,35 +1,33 @@
-import { useQuery } from "@tanstack/react-query"
-import { Address } from "wagmi"
+import { Address, useQuery } from "wagmi"
 
 import fortressApi, { ApiResult } from "@/lib/fortressApi"
 import { VaultType } from "@/hooks/types"
+import useActiveChainId from "@/hooks/useActiveChainId"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
-import { CHAIN_ID } from "@/constant/env"
+type UseApiTokenVaultsParams = {
+  type: VaultType
+}
 
-export default function useApiListTokenVaults({ type }: { type: VaultType }) {
+export default function useApiTokenVaults({ type }: UseApiTokenVaultsParams) {
+  const chainId = useActiveChainId()
   const isToken = useIsTokenCompounder(type)
-
-  return useQuery(["pools", "token", type], {
-    queryFn: fetchApiTokenVaults,
+  return useQuery([chainId, "pools", type], {
+    queryFn: () => fetchApiTokenVaults({ chainId }),
     retry: false,
     enabled: isToken,
   })
 }
 
-async function fetchApiTokenVaults() {
+async function fetchApiTokenVaults({ chainId }: { chainId: number }) {
   const resp = await fortressApi.post<ApiGetVaultsResult>(
     "Token_Compounder/getVaultStaticData",
-    {
-      chainId: CHAIN_ID,
-    }
+    { chainId }
   )
-  if (resp?.data?.data?.pools) {
-    return resp.data.data.pools
-  } else {
-    return null
-  }
+  return resp?.data?.data?.pools ?? null
 }
+
+export type UseApiTokenVaultsResult = ReturnType<typeof useApiTokenVaults>
 
 export type ApiTokenVault = {
   vaultId: number
@@ -52,7 +50,7 @@ export type ApiTokenVault = {
   }
 }
 
-export interface ApiGetVaultsResult extends ApiResult {
+interface ApiGetVaultsResult extends ApiResult {
   data?: {
     chainId: number
     pools: ApiTokenVault[]

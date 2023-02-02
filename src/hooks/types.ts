@@ -1,6 +1,6 @@
 import { Address } from "wagmi"
 
-import { ApiPool } from "@/hooks/api/useApiCompounderPools"
+import { ApiPool } from "@/hooks/api/useApiVaults/useApiCompounderVaults"
 
 export type VaultType = "balancer" | "curve" | "stable" | "featured" | "crypto"
 

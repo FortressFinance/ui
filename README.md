@@ -13,7 +13,8 @@
 $ yarn
 ```
 
-2. Create a `.env` file based on `.env.example` (ask another dev for the values)
+2. Create a `.env` file based on `.env.example`. You can ask another dev for the
+   environment variables or fallback to public RPC providers.
 
 ```sh
 $ cp .env.example .env

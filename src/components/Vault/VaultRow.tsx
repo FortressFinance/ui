@@ -4,7 +4,7 @@ import { FC, Fragment, MouseEventHandler, useState } from "react"
 import { usePopper } from "react-popper"
 
 import clsxm from "@/lib/clsxm"
-import useCompounderPoolAsset from "@/hooks/data/useCompounderPoolAsset"
+import { useVaultTokens } from "@/hooks/data"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 
@@ -42,8 +42,7 @@ const VaultRow: FC<VaultProps> = (props) => {
     ],
   })
 
-  const { isLoading: isLoadingAsset } = useCompounderPoolAsset(props)
-  const isLoading = isLoadingAsset
+  const { isLoading } = useVaultTokens(props)
 
   const isCurve = useIsCurve(props.type)
 
