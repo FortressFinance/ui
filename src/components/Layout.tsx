@@ -30,12 +30,12 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <>
       <div className="relative z-[1] grid min-h-screen grid-cols-1 grid-rows-[auto,1fr,auto]">
-        <header className="sticky top-0 z-10 border-b-2 border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] py-4 shadow-2xl backdrop-blur-lg">
+        <header className="sticky top-0 z-10 border-b-2 border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
             <div className="flex items-center space-x-10">
               <Link className="group" href="/">
                 <FortressLogo
-                  className="h-full w-7 fill-white group-hover:fill-pink-400"
+                  className="my-6 h-8 w-auto fill-white group-hover:fill-pink-400"
                   aria-label="Fortress Finance"
                 />
               </Link>
