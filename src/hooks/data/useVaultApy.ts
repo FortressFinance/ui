@@ -84,3 +84,59 @@ export function useVaultTotalApr({
     data: apiQuery.data?.APR?.totalApr,
   }
 }
+
+export function useVaultBalApr({
+  asset: _address,
+  poolId,
+  type,
+}: VaultDynamicProps) {
+  // Preferred: API request
+  const apiQuery = useApiVaultDynamic({ poolId, type })
+  // TODO: Fallbacks?
+  return {
+    ...apiQuery,
+    data: apiQuery.data?.APR?.BALApr,
+  }
+}
+
+export function useVaultAuraApr({
+  asset: _address,
+  poolId,
+  type,
+}: VaultDynamicProps) {
+  // Preferred: API request
+  const apiQuery = useApiVaultDynamic({ poolId, type })
+  // TODO: Fallbacks?
+  return {
+    ...apiQuery,
+    data: apiQuery.data?.APR?.AuraApr,
+  }
+}
+
+export function useVaultGmxApr({
+  asset: _address,
+  poolId,
+  type,
+}: VaultDynamicProps) {
+  // Preferred: API request
+  const apiQuery = useApiVaultDynamic({ poolId, type })
+  // TODO: Fallbacks?
+  return {
+    ...apiQuery,
+    data: apiQuery.data?.APR?.GMXApr,
+  }
+}
+
+export function useVaultEthApr({
+  asset: _address,
+  poolId,
+  type,
+}: VaultDynamicProps) {
+  // Preferred: API request
+  const apiQuery = useApiVaultDynamic({ poolId, type })
+  // TODO: Fallbacks?
+  return {
+    ...apiQuery,
+    data: apiQuery.data?.APR?.ETHApr,
+  }
+}
