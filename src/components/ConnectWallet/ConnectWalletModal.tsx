@@ -3,15 +3,10 @@ import copy from "copy-to-clipboard"
 import Link from "next/link"
 import { FC, MouseEvent, PropsWithChildren, useCallback, useState } from "react"
 import { BiCopy, BiLinkExternal, BiXCircle } from "react-icons/bi"
-import {
-  useAccount,
-  useChainId,
-  useConnect,
-  useDisconnect,
-  useNetwork,
-} from "wagmi"
+import { useAccount, useConnect, useDisconnect, useNetwork } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
+import useActiveChainId from "@/hooks/useActiveChainId"
 
 import Address from "@/components/Address"
 import Button from "@/components/Button"
@@ -20,7 +15,7 @@ import ModalBase, { ModalBaseProps } from "@/components/Modal/ModalBase"
 import OrangeModal from "@/components/Modal/OrangeModal"
 
 export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
-  const chainId = useChainId()
+  const chainId = useActiveChainId()
 
   const { connect, connectors, error, isLoading, pendingConnector } =
     useConnect({

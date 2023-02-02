@@ -31,6 +31,39 @@ const Vaults: NextPage = () => {
                         "bg-white text-black": selected,
                       })}
                     >
+                      Featured
+                    </button>
+                  )}
+                </Tab>
+                <Tab as={Fragment}>
+                  {({ selected }) => (
+                    <button
+                      className={clsxm("py-3 px-6", {
+                        "bg-white text-black": selected,
+                      })}
+                    >
+                      Crypto
+                    </button>
+                  )}
+                </Tab>
+                <Tab as={Fragment}>
+                  {({ selected }) => (
+                    <button
+                      className={clsxm("py-3 px-6", {
+                        "bg-white text-black": selected,
+                      })}
+                    >
+                      Stable
+                    </button>
+                  )}
+                </Tab>
+                <Tab as={Fragment}>
+                  {({ selected }) => (
+                    <button
+                      className={clsxm("py-3 px-6", {
+                        "bg-white text-black": selected,
+                      })}
+                    >
                       Curve
                     </button>
                   )}
@@ -63,6 +96,15 @@ const Vaults: NextPage = () => {
             </Tab.List>
 
             <Tab.Panels className="mt-6">
+              <Tab.Panel>
+                <VaultTable type="featured" />
+              </Tab.Panel>
+              <Tab.Panel>
+                <VaultTable type="crypto" />
+              </Tab.Panel>
+              <Tab.Panel>
+                <VaultTable type="stable" />
+              </Tab.Panel>
               <Tab.Panel>
                 <VaultTable type="curve" />
               </Tab.Panel>
