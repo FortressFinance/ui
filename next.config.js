@@ -35,14 +35,14 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: "/:path*",
+        source: "/",
         has: [
           {
             type: "host",
             value: "ui-git-vanillahill-redirecttoapp-fortress-finance.vercel.app",
           },
         ],
-        destination: "/vaults/:path*",
+        destination: "/vaults/",
         permanent: false,
       },
     ]
