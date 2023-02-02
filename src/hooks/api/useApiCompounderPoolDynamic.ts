@@ -35,7 +35,7 @@ export interface ApiGetPoolDynamicResult extends ApiResult {
   message?: string
 }
 
-export function useApiCompounderPoolDynamic({
+export default function useApiCompounderPoolDynamic({
   type,
   poolId,
 }: {
