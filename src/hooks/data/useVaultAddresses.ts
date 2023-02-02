@@ -1,11 +1,7 @@
-import { useContractRead, useQuery } from "wagmi"
+import { useContractRead } from "wagmi"
 
-import {
-  fetchApiCurveCompounderPools,
-  fetchApiTokenCompounderPools,
-} from "@/hooks/api/useApiCompounderPools"
+import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
 import { VaultType } from "@/hooks/types"
-import useActiveChainId from "@/hooks/useActiveChainId"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useRegistryContract from "@/hooks/useRegistryContract"
@@ -14,28 +10,13 @@ import useRegistryContract from "@/hooks/useRegistryContract"
 const STABLE = ["0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7"]
 const CRYPTO = ["0x616e8BfA43F920657B3497DBf40D6b1A02D4608d"]
 
-export default function useCompounderPoolAddresses({
-  type,
-}: {
-  type: VaultType
-}) {
-  const chainId = useActiveChainId()
+export default function useVaultAddresses({ type }: { type: VaultType }) {
   const isCurve = useIsCurve(type)
   const isToken = useIsTokenCompounder(type)
 
   // Preferred: API request
-  const apiQuery = useQuery([chainId, "pools", type], {
-    queryFn: () =>
-      fetchApiCurveCompounderPools({ chainId, isCurve: isCurve ?? true }),
-    retry: false,
-    enabled: !isToken,
-  })
-
-  const apiTokenQuery = useQuery([chainId, "pools", type], {
-    queryFn: () => fetchApiTokenCompounderPools({ chainId }),
-    retry: false,
-    enabled: isToken,
-  })
+  const apiCompounderQuery = useApiCompounderVaults({ type })
+  const apiTokenQuery = useApiTokenVaults({ type })
 
   // Fallback: contract request
   const registryQuery = useContractRead({
@@ -45,14 +26,18 @@ export default function useCompounderPoolAddresses({
       : isCurve
       ? "getCurveCompoundersList"
       : "getBalancerCompoundersList",
-    enabled: apiQuery.isError || apiTokenQuery.isError,
+    enabled: apiCompounderQuery.isError || apiTokenQuery.isError,
   })
 
   // Prioritize API response until it has errored
-  if (!apiQuery.isError && apiQuery.data !== null && !isToken) {
+  if (
+    !apiCompounderQuery.isError &&
+    apiCompounderQuery.data !== null &&
+    !isToken
+  ) {
     return {
-      ...apiQuery,
-      data: apiQuery.data?.map((p) => p.token.LPtoken?.address),
+      ...apiCompounderQuery,
+      data: apiCompounderQuery.data?.map((p) => p.token.LPtoken?.address),
     }
   }
 

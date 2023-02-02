@@ -1,18 +1,13 @@
-import { useContractRead, useQuery } from "wagmi"
+import { useContractRead } from "wagmi"
 
-import {
-  fetchApiCurveCompounderPools,
-  fetchApiTokenCompounderPools,
-} from "@/hooks/api/useApiCompounderPools"
-import useVaultTokens from "@/hooks/data/useVaultTokens"
+import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
+import { useVaultTokens } from "@/hooks/data"
 import { VaultProps } from "@/hooks/types"
-import useActiveChainId from "@/hooks/useActiveChainId"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useRegistryContract from "@/hooks/useRegistryContract"
 
-export default function useCompounderPoolName({ asset, type }: VaultProps) {
-  const chainId = useActiveChainId()
+export default function useVaultName({ asset, type }: VaultProps) {
   const isCurve = useIsCurve(type)
   const isToken = useIsTokenCompounder(type)
   const { data: vaultTokens } = useVaultTokens({
@@ -21,18 +16,8 @@ export default function useCompounderPoolName({ asset, type }: VaultProps) {
   })
 
   // Preferred: API request
-  const apiQuery = useQuery([chainId, "pools", type], {
-    queryFn: () =>
-      fetchApiCurveCompounderPools({ chainId, isCurve: isCurve ?? true }),
-    retry: false,
-    enabled: !isToken,
-  })
-
-  const apiTokenQuery = useQuery([chainId, "pools", type], {
-    queryFn: () => fetchApiTokenCompounderPools({ chainId }),
-    retry: false,
-    enabled: isToken,
-  })
+  const apiCompounderQuery = useApiCompounderVaults({ type })
+  const apiTokenQuery = useApiTokenVaults({ type })
 
   // Fallback: contract request
   const registryQuery = useContractRead({
@@ -43,13 +28,17 @@ export default function useCompounderPoolName({ asset, type }: VaultProps) {
       ? "getCurveCompounderName"
       : "getBalancerCompounderName",
     args: [asset ?? "0x"],
-    enabled: apiQuery.isError || apiTokenQuery.isError,
+    enabled: apiCompounderQuery.isError || apiTokenQuery.isError,
   })
   // Prioritize API response until it has errored
-  if (!apiQuery.isError && apiQuery.data !== null && !isToken) {
+  if (
+    !apiCompounderQuery.isError &&
+    apiCompounderQuery.data !== null &&
+    !isToken
+  ) {
     return {
-      ...apiQuery,
-      data: apiQuery.data?.find(
+      ...apiCompounderQuery,
+      data: apiCompounderQuery.data?.find(
         (p) => p.token.ybToken.address === vaultTokens.ybTokenAddress
       )?.poolName,
     }

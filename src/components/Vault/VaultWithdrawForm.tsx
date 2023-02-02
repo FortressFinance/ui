@@ -11,7 +11,7 @@ import {
 } from "wagmi"
 
 import logger from "@/lib/logger"
-import useVaultTokens from "@/hooks/data/useVaultTokens"
+import { useVaultTokens } from "@/hooks/data"
 import { VaultProps } from "@/hooks/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"

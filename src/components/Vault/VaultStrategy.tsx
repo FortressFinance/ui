@@ -3,11 +3,12 @@ import Link from "next/link"
 import { FC, Fragment, MouseEventHandler, useState } from "react"
 import { useAccount } from "wagmi"
 
-import useCompounderPlatformFeePercentage from "@/hooks/data/useCompounderPlatformFeePercentage"
-import useCompounderWithdrawFeePercentage from "@/hooks/data/useCompounderWithdrawFeePercentage"
-import useVaultTokens, {
-  UseVaultTokensResult,
-} from "@/hooks/data/useVaultTokens"
+import {
+  useVaultPlatformFee,
+  useVaultTokens,
+  useVaultWithdrawFee,
+} from "@/hooks/data"
+import { UseVaultTokensResult } from "@/hooks/data/useVaultTokens"
 import { VaultProps } from "@/hooks/types"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 
@@ -30,9 +31,9 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
 
   const { data: vaultTokens, ...vaultTokensQuery } = useVaultTokens(props)
   const { data: platformFeePercentage, ...platformFeeQuery } =
-    useCompounderPlatformFeePercentage(props)
+    useVaultPlatformFee(props)
   const { data: withdrawFeePercentage, ...withdrawFeeQuery } =
-    useCompounderWithdrawFeePercentage(props)
+    useVaultWithdrawFee(props)
 
   const isLoading = [platformFeeQuery, withdrawFeeQuery, vaultTokensQuery].some(
     (q) => q.isLoading

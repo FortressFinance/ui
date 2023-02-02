@@ -7,16 +7,17 @@ import useActiveChainId from "@/hooks/useActiveChainId"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
-export default function useApiListCompounderVaults({
-  type,
-}: {
+type UseApiCompounderVaultsParams = {
   type: VaultType
-}) {
+}
+
+export default function useApiCompounderVaults({
+  type,
+}: UseApiCompounderVaultsParams) {
   const chainId = useActiveChainId()
   const isCurve = useIsCurve(type)
   const isToken = useIsTokenCompounder(type)
-
-  return useQuery([chainId, "pools", "compounder", type], {
+  return useQuery([chainId, "pools", type], {
     queryFn: () =>
       fetchApiCompounderVaults({ chainId, isCurve: isCurve ?? true }),
     retry: false,
@@ -24,7 +25,11 @@ export default function useApiListCompounderVaults({
   })
 }
 
-export async function fetchApiCompounderVaults({
+export type UseApiCompounderVaultsResult = ReturnType<
+  typeof useApiCompounderVaults
+>
+
+async function fetchApiCompounderVaults({
   chainId,
   isCurve,
 }: {
@@ -33,16 +38,9 @@ export async function fetchApiCompounderVaults({
 }) {
   const resp = await fortressApi.post<ApiGetPoolsResult>(
     "AMM_Compounder/getAllPoolsStaticData",
-    {
-      chainId,
-      isCurve,
-    }
+    { chainId, isCurve }
   )
-  if (resp?.data?.data?.pools) {
-    return resp.data.data.pools
-  } else {
-    return null
-  }
+  return resp?.data?.data?.pools ?? null
 }
 
 export type ApiPool = {
@@ -75,7 +73,7 @@ export type ApiPool = {
   }
 }
 
-export interface ApiGetPoolsResult extends ApiResult {
+interface ApiGetPoolsResult extends ApiResult {
   data?: {
     chainId: number
     pools: ApiPool[]

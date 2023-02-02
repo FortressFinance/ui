@@ -2,13 +2,13 @@ import { useQuery } from "@tanstack/react-query"
 import { Address, useAccount } from "wagmi"
 
 import fortressApi, { ApiResult } from "@/lib/fortressApi"
-import { ApiPool } from "@/hooks/api/useApiCompounderPools"
+import { ApiPool } from "@/hooks/api/useApiVaults/useApiCompounderVaults"
 import { VaultType } from "@/hooks/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
-export type ApiPoolDynamic = {
+export type ApiCompounderVaultDynamic = {
   chainId?: number
   isCurve?: boolean
   poolId?: number
@@ -31,11 +31,11 @@ export type ApiPoolDynamic = {
 }
 
 export interface ApiGetPoolDynamicResult extends ApiResult {
-  data?: ApiPoolDynamic
+  data?: ApiCompounderVaultDynamic
   message?: string
 }
 
-export type ApiVaultDynamic = {
+export type ApiTokenVaultDynamic = {
   chainId: number
   poolId: number
   poolDepositedLPtokens: number
@@ -55,7 +55,7 @@ export type ApiVaultDynamic = {
 }
 
 export interface ApiGetVaultDynamicResult extends ApiResult {
-  data?: ApiVaultDynamic
+  data?: ApiTokenVaultDynamic
   message?: string
 }
 

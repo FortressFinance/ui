@@ -1,6 +1,6 @@
 import { FC } from "react"
 
-import useCompounderPoolAddresses from "@/hooks/data/useCompounderPoolAddresses"
+import { useVaultAddresses } from "@/hooks/data"
 import { VaultProps } from "@/hooks/types"
 
 import Spinner from "@/components/Spinner"
@@ -11,7 +11,7 @@ import {
 } from "@/components/Vault/VaultTableNode"
 
 const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
-  const { data: vaultAddresses, isLoading } = useCompounderPoolAddresses({
+  const { data: vaultAddresses, isLoading } = useVaultAddresses({
     type,
   })
   return (
