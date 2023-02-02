@@ -55,7 +55,7 @@ const nextConfig = {
         ],
         destination: "app.fortress.finance/vaults/",
         permanent: false,
-      }
+      },
     ]
   },
 }
