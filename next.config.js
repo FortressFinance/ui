@@ -29,19 +29,23 @@ const nextConfig = {
       {
         source: "/api/anvil-arbitrum",
         destination: "http://18.196.63.80:8545",
-      },
+      }
+    ]
+  },
+  async redirects() {
+    return [
       {
         source: '/:path*',
         has: [
           {
-            type: 'host',
-            value: 'app.fortress.finance',
-          },
+            "type": "host",
+            "value": "app.fortress.finance"
+          }
         ],
         destination: '/vaults/:path*',
       }
     ]
-  },
+  }
 }
 
 module.exports = nextConfig
