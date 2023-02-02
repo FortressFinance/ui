@@ -10,6 +10,7 @@ import {
 } from "wagmi"
 
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
+import useActiveChainId from "@/hooks/useActiveChainId"
 
 type AggregatedTokensResult = FetchTokenResult & {
   balance: FetchBalanceResult
@@ -20,16 +21,18 @@ export default function useTokensOrNative({
 }: {
   addresses: Address[] | readonly Address[] | undefined
 }) {
+  const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
 
   const nonEthAddresses = addresses.filter((a) => !isEthTokenAddress(a))
   const { data, ...tokensQuery } = useContractReads({
     contracts: nonEthAddresses.flatMap((address) => [
-      { abi: erc20ABI, address, functionName: "decimals" },
-      { abi: erc20ABI, address, functionName: "name" },
-      { abi: erc20ABI, address, functionName: "symbol" },
-      { abi: erc20ABI, address, functionName: "totalSupply" },
+      { chainId, abi: erc20ABI, address, functionName: "decimals" },
+      { chainId, abi: erc20ABI, address, functionName: "name" },
+      { chainId, abi: erc20ABI, address, functionName: "symbol" },
+      { chainId, abi: erc20ABI, address, functionName: "totalSupply" },
       {
+        chainId,
         abi: erc20ABI,
         address,
         functionName: "balanceOf",
@@ -37,7 +40,7 @@ export default function useTokensOrNative({
       },
     ]),
   })
-  const { data: ethBalance } = useBalance({ address: userAddress })
+  const { data: ethBalance } = useBalance({ chainId, address: userAddress })
 
   if (data && ethBalance) {
     let hasEthBeenInserted = false

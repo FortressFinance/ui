@@ -13,8 +13,9 @@ import {
 
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
-import useVaultTokens from "@/hooks/data/useVaultTokens"
+import { useVaultTokens } from "@/hooks/data"
 import { VaultProps } from "@/hooks/types"
+import useActiveChainId from "@/hooks/useActiveChainId"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 
@@ -26,6 +27,7 @@ import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 const VaultDepositForm: FC<VaultProps> = (props) => {
   const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
+  const chainId = useActiveChainId()
   const { data: vaultTokens } = useVaultTokens(props)
 
   const lpTokenOrAsset = isToken
@@ -90,6 +92,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   })
   // Preview deposit method
   const { isLoading: isLoadingPreview } = useContractRead({
+    chainId,
     abi: curveCompounderAbi,
     address: vaultAddress,
     functionName: "previewDeposit",

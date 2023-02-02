@@ -11,8 +11,9 @@ import {
 } from "wagmi"
 
 import logger from "@/lib/logger"
-import useVaultTokens from "@/hooks/data/useVaultTokens"
+import { useVaultTokens } from "@/hooks/data"
 import { VaultProps } from "@/hooks/types"
+import useActiveChainId from "@/hooks/useActiveChainId"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 
@@ -22,6 +23,7 @@ import auraBalCompounderAbi from "@/constant/abi/auraBALCompounderAbi"
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
 const VaultWithdrawForm: FC<VaultProps> = (props) => {
+  const chainId = useActiveChainId()
   const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
   const { data: vaultTokens } = useVaultTokens(props)
@@ -64,6 +66,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
 
   // Preview redeem method
   const { isLoading: isLoadingPreview } = useContractRead({
+    chainId,
     address: vaultAddress,
     abi: curveCompounderAbi,
     functionName: "previewRedeem",

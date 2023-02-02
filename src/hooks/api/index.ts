@@ -1,3 +1,3 @@
-export { default as useApiCompounderPoolDynamic } from "./useApiCompounderPoolDynamic"
-export { default as useApiListCompounderVaults } from "./useApiListCompounderVaults"
-export { default as useApiListTokenVaults } from "./useApiListTokenVaults"
+export { default as useApiVaultDynamic } from "./useApiVaultDynamic"
+export { default as useApiCompounderVaults } from "./useApiVaults/useApiCompounderVaults"
+export { default as useApiTokenVaults } from "./useApiVaults/useApiTokenVaults"

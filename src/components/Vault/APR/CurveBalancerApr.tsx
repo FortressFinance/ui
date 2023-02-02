@@ -1,40 +1,38 @@
 import { FC } from "react"
 
 import {
-  useCompounderPoolBaseApr,
-  useCompounderPoolCrvApr,
-  useCompounderPoolCvxApr,
-  useCompounderPoolExraApr,
-  useCompounderPoolTotalApr,
-} from "@/hooks/data/useCompounderPoolApy"
-import useCompounderPoolId from "@/hooks/data/useCompounderPoolId"
+  useVaultBaseApr,
+  useVaultCrvApr,
+  useVaultCvxApr,
+  useVaultExraApr,
+  useVaultPoolId,
+  useVaultTotalApr,
+} from "@/hooks/data"
 import { VaultProps } from "@/hooks/types"
 
 import Percentage from "@/components/Percentage"
 import Skeleton from "@/components/Skeleton"
 
 export const CurveBalancerApr: FC<VaultProps> = (props) => {
-  const { data: poolId, isLoading: isLoadingId } = useCompounderPoolId(props)
-  const { data: totalApr, isLoading: isLoadingTotalApr } =
-    useCompounderPoolTotalApr({
-      ...props,
-      poolId,
-    })
-  const { data: baseApr, isLoading: isLoadingBaseApr } =
-    useCompounderPoolBaseApr({
-      ...props,
-      poolId,
-    })
-  const { data: crvApr, isLoading: isLoadingCrvApr } = useCompounderPoolCrvApr({
+  const { data: poolId, isLoading: isLoadingId } = useVaultPoolId(props)
+  const { data: totalApr, isLoading: isLoadingTotalApr } = useVaultTotalApr({
     ...props,
     poolId,
   })
-  const { data: cvxApr, isLoading: isLoadingCvxApr } = useCompounderPoolCvxApr({
+  const { data: baseApr, isLoading: isLoadingBaseApr } = useVaultBaseApr({
+    ...props,
+    poolId,
+  })
+  const { data: crvApr, isLoading: isLoadingCrvApr } = useVaultCrvApr({
+    ...props,
+    poolId,
+  })
+  const { data: cvxApr, isLoading: isLoadingCvxApr } = useVaultCvxApr({
     ...props,
     poolId,
   })
   const { data: extraRewardsApr, isLoading: isLoadingExtraRewardsApr } =
-    useCompounderPoolExraApr({
+    useVaultExraApr({
       ...props,
       poolId,
     })

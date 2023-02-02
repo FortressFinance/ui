@@ -7,7 +7,6 @@ import ConnectWalletModal, {
   DisconnectWalletModal,
 } from "@/components/ConnectWallet/ConnectWalletModal"
 import ExternalLinks from "@/components/ExternalLinks"
-import NetworkSelector from "@/components/NetworkSelector/NetworkSelector"
 
 import { useConnectWallet } from "@/store/connectWallet"
 
@@ -18,6 +17,9 @@ const ConnectWalletButton = dynamic(
   () => import("@/components/ConnectWallet/ConnectWalletButton"),
   { ssr: false }
 )
+const NetworkSelector = dynamic(() => import("@/components/NetworkSelector"), {
+  ssr: false,
+})
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const [connectModal, setConnectModal] = useConnectWallet((state) => [

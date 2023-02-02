@@ -4,16 +4,16 @@ import {
   findApiCompounderVaultForAsset,
   findApiTokenVaultForAsset,
 } from "@/lib/findApiVaultForAsset"
-import { registryContractConfig } from "@/lib/fortressContracts"
-import { useApiListCompounderVaults, useApiListTokenVaults } from "@/hooks/api"
+import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
+import useRegistryContract from "@/hooks/useRegistryContract"
 
 export default function useVaultTokens({ asset, type }: VaultProps) {
   // Preferred: API request
-  const apiCompounderQuery = useApiListCompounderVaults({ type })
-  const apiTokenQuery = useApiListTokenVaults({ type })
+  const apiCompounderQuery = useApiCompounderVaults({ type })
+  const apiTokenQuery = useApiTokenVaults({ type })
 
   // Fallback: contract requests
   const isCurve = useIsCurve(type)
@@ -23,7 +23,7 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
     : apiCompounderQuery.isError
 
   const regGetCompounder = useContractRead({
-    ...registryContractConfig,
+    ...useRegistryContract(),
     functionName: isToken
       ? "getTokenCompounder"
       : isCurve
@@ -33,7 +33,7 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
     enabled: enableFallback,
   })
   const regGetUnderlying = useContractRead({
-    ...registryContractConfig,
+    ...useRegistryContract(),
     functionName: isToken
       ? "getTokenCompoundersList"
       : isCurve

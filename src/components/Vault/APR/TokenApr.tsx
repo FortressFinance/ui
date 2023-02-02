@@ -1,55 +1,53 @@
 import { FC } from "react"
 
 import {
-  useCompounderPoolAuraApr,
-  useCompounderPoolBalApr,
-  useCompounderPoolCrvApr,
-  useCompounderPoolCvxApr,
-  useCompounderPoolEthApr,
-  useCompounderPoolExraApr,
-  useCompounderPoolGmxApr,
-  useCompounderPoolTotalApr,
-} from "@/hooks/data/useCompounderPoolApy"
-import useCompounderPoolId from "@/hooks/data/useCompounderPoolId"
+  useVaultAuraApr,
+  useVaultBalApr,
+  useVaultCrvApr,
+  useVaultCvxApr,
+  useVaultEthApr,
+  useVaultExraApr,
+  useVaultGmxApr,
+  useVaultPoolId,
+  useVaultTotalApr,
+} from "@/hooks/data"
 import { VaultProps } from "@/hooks/types"
 
 import Percentage from "@/components/Percentage"
 import Skeleton from "@/components/Skeleton"
 
 export const TokenApr: FC<VaultProps> = (props) => {
-  const { data: poolId, isLoading: isLoadingId } = useCompounderPoolId(props)
-  const { data: totalApr, isLoading: isLoadingTotalApr } =
-    useCompounderPoolTotalApr({
-      ...props,
-      poolId,
-    })
-  const { data: balApr, isLoading: isLoadingBalApr } = useCompounderPoolBalApr({
+  const { data: poolId, isLoading: isLoadingId } = useVaultPoolId(props)
+  const { data: totalApr, isLoading: isLoadingTotalApr } = useVaultTotalApr({
     ...props,
     poolId,
   })
-  const { data: AuraApr, isLoading: isLoadingAuraApr } =
-    useCompounderPoolAuraApr({
-      ...props,
-      poolId,
-    })
-  const { data: crvApr, isLoading: isLoadingCrvApr } = useCompounderPoolCrvApr({
+  const { data: balApr, isLoading: isLoadingBalApr } = useVaultBalApr({
     ...props,
     poolId,
   })
-  const { data: cvxApr, isLoading: isLoadingCvxApr } = useCompounderPoolCvxApr({
+  const { data: AuraApr, isLoading: isLoadingAuraApr } = useVaultAuraApr({
     ...props,
     poolId,
   })
-  const { data: gmxApr, isLoading: isLoadingGmxApr } = useCompounderPoolGmxApr({
+  const { data: crvApr, isLoading: isLoadingCrvApr } = useVaultCrvApr({
     ...props,
     poolId,
   })
-  const { data: ethApr, isLoading: isLoadingEthApr } = useCompounderPoolEthApr({
+  const { data: cvxApr, isLoading: isLoadingCvxApr } = useVaultCvxApr({
+    ...props,
+    poolId,
+  })
+  const { data: gmxApr, isLoading: isLoadingGmxApr } = useVaultGmxApr({
+    ...props,
+    poolId,
+  })
+  const { data: ethApr, isLoading: isLoadingEthApr } = useVaultEthApr({
     ...props,
     poolId,
   })
   const { data: extraRewardsApr, isLoading: isLoadingExtraRewardsApr } =
-    useCompounderPoolExraApr({
+    useVaultExraApr({
       ...props,
       poolId,
     })
