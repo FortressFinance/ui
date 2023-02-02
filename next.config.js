@@ -35,15 +35,15 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/:path*',
+        source: "/:path*",
         has: [
           {
             "type": "host",
             "value": "app.fortress.finance"
           }
         ],
-        destination: '/vaults/:path*',
-      }
+        destination: "/vaults/:path*",
+      },
     ]
   }
 }
