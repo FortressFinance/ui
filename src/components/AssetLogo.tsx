@@ -15,6 +15,9 @@ const AssetLogo: FC<AssetLogoProps> = ({ className, name }) => {
       return <Image src={CurveLogo} className={className} priority alt="" />
     case "balancer":
       return <Image src={BalancerLogo} className={className} priority alt="" />
+    case "token":
+      // use CurveLogo for now
+      return <Image src={CurveLogo} className={className} priority alt="" />
     default:
       return null
   }

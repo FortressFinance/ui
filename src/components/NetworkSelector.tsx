@@ -3,10 +3,11 @@ import { FC, Fragment } from "react"
 import { useNetwork, useSwitchNetwork } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
+import useActiveChainId from "@/hooks/useActiveChainId"
 
 import { enabledNetworks, mainnetFork } from "@/components/WagmiProvider"
 
-import { selectActiveChainId, useActiveChain } from "@/store/activeChain"
+import { useActiveChain } from "@/store/activeChain"
 
 import ArbitrumLogo from "~/svg/arbitrum_logo.svg"
 import EthereumLogo from "~/svg/ethereum-logo.svg"
@@ -20,7 +21,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
   const { chain: connectedChain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
   const setActiveChainId = useActiveChain((state) => state.setChainId)
-  const disconnectedChainId = useActiveChain(selectActiveChainId)
+  const disconnectedChainId = useActiveChainId()
   const disconnectedChain = enabledNetworks.chains.find(
     (c) => c.id === disconnectedChainId
   )

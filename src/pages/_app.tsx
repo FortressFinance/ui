@@ -1,5 +1,6 @@
 import { Inter, VT323 } from "@next/font/google"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { Analytics } from "@vercel/analytics/react"
 import { AppProps } from "next/app"
 
 import "@/styles/globals.css"
@@ -40,6 +41,8 @@ function MyApp({ Component, pageProps }: AppProps) {
           </WagmiProvider>
         </QueryClientProvider>
       </div>
+
+      <Analytics />
     </>
   )
 }

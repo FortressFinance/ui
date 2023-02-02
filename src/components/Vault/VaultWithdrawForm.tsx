@@ -11,27 +11,30 @@ import {
 } from "wagmi"
 
 import logger from "@/lib/logger"
-import useCompounderPoolAsset from "@/hooks/data/useCompounderPoolAsset"
-import useCompounderUnderlyingAssets from "@/hooks/data/useCompounderUnderlyingAssets"
+import useVaultTokens from "@/hooks/data/useVaultTokens"
 import { VaultProps } from "@/hooks/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
+import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
+import auraBalCompounderAbi from "@/constant/abi/auraBALCompounderAbi"
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
-const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
+const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const chainId = useActiveChainId()
+  const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
-  const { data: lpToken } = useCompounderPoolAsset({
-    address: vaultAddress,
-    type,
-  })
-  const { data: underlyingAssets } = useCompounderUnderlyingAssets({
-    address: vaultAddress,
-    type,
-  })
+  const { data: vaultTokens } = useVaultTokens(props)
+
+  const lpTokenOrAsset = isToken
+    ? vaultTokens.underlyingAssetAddresses?.[
+        vaultTokens.underlyingAssetAddresses?.length - 1
+      ]
+    : props.asset
+  const vaultAddress = vaultTokens.ybTokenAddress ?? "0x"
+  const underlyingAssets = vaultTokens.underlyingAssetAddresses
 
   // Configure form
   const form = useForm<TokenFormValues>({
@@ -39,7 +42,7 @@ const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
       amountIn: "",
       amountOut: "",
       inputToken: vaultAddress,
-      outputToken: lpToken ?? "0x",
+      outputToken: lpTokenOrAsset ?? "0x",
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -49,7 +52,7 @@ const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
   const amountIn = form.watch("amountIn")
   const outputTokenAddress = form.watch("outputToken")
   // Calculate + fetch information on selected tokens
-  const outputIsLp = outputTokenAddress === lpToken
+  const outputIsLp = outputTokenAddress === lpTokenOrAsset
   const { data: ybToken } = useTokenOrNative({ address: vaultAddress })
   const { data: outputToken } = useTokenOrNative({
     address: outputTokenAddress,
@@ -77,7 +80,7 @@ const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
     address: vaultAddress,
     abi: curveCompounderAbi,
     functionName: "redeemSingleUnderlying",
-    enabled: value.gt(0) && !outputIsLp,
+    enabled: value.gt(0) && !outputIsLp && !isToken,
     args: [
       value,
       outputTokenAddress,
@@ -91,17 +94,46 @@ const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
     hash: withdrawUnderlying.data?.hash,
     onSuccess: onWithdrawSuccess,
   })
+
+  const prepareTokenWithdrawUnderlying = usePrepareContractWrite({
+    address: vaultAddress,
+    abi: auraBalCompounderAbi,
+    functionName: "redeemUnderlying",
+    enabled: value.gt(0) && !outputIsLp && isToken,
+    args: [value, userAddress ?? "0x", userAddress ?? "0x", BigNumber.from(0)],
+  })
+  const tokenWithdrawUnderlying = useContractWrite(
+    prepareTokenWithdrawUnderlying.config
+  )
+  const waitTokenWithdrawUnderlying = useWaitForTransaction({
+    hash: tokenWithdrawUnderlying.data?.hash,
+    onSuccess: onWithdrawSuccess,
+  })
+
   // Configure redeemLp method
   const prepareWithdrawLp = usePrepareContractWrite({
     address: vaultAddress,
     abi: curveCompounderAbi,
     functionName: "redeem",
-    enabled: value.gt(0) && outputIsLp,
+    enabled: value.gt(0) && outputIsLp && !isToken,
     args: [value, userAddress ?? "0x", userAddress ?? "0x"],
   })
   const withdrawLp = useContractWrite(prepareWithdrawLp.config)
   const waitWithdrawLp = useWaitForTransaction({
     hash: withdrawLp.data?.hash,
+    onSuccess: onWithdrawSuccess,
+  })
+
+  const prepareTokenWithdrawLp = usePrepareContractWrite({
+    address: vaultAddress,
+    abi: auraBalCompounderAbi,
+    functionName: "redeem",
+    enabled: value.gt(0) && outputIsLp && isToken,
+    args: [value, userAddress ?? "0x", userAddress ?? "0x"],
+  })
+  const tokenWithdrawLp = useContractWrite(prepareTokenWithdrawLp.config)
+  const waitTokenWithdrawLp = useWaitForTransaction({
+    hash: tokenWithdrawLp.data?.hash,
     onSuccess: onWithdrawSuccess,
   })
 
@@ -112,6 +144,10 @@ const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
       ? withdrawLp.write()
       : withdrawUnderlying?.write
       ? withdrawUnderlying.write()
+      : tokenWithdrawLp?.write
+      ? tokenWithdrawLp.write()
+      : tokenWithdrawUnderlying?.write
+      ? tokenWithdrawUnderlying.write()
       : null
   }
 
@@ -128,14 +164,18 @@ const VaultWithdrawForm: FC<VaultProps> = ({ address: vaultAddress, type }) => {
             prepareWithdrawUnderlying.isLoading ||
             withdrawLp.isLoading ||
             withdrawUnderlying.isLoading ||
+            tokenWithdrawLp.isLoading ||
+            tokenWithdrawUnderlying.isLoading ||
             waitWithdrawLp.isLoading ||
-            waitWithdrawUnderlying.isLoading
+            waitWithdrawUnderlying.isLoading ||
+            waitTokenWithdrawLp.isLoading ||
+            waitTokenWithdrawUnderlying.isLoading
           }
           onSubmit={onSubmitForm}
           submitText="Withdraw"
           tokenAddreseses={[
-            ...(lpToken ? [lpToken] : []),
-            ...(underlyingAssets || []),
+            ...(lpTokenOrAsset ? [lpTokenOrAsset ?? "0x"] : []),
+            ...(underlyingAssets?.filter((a) => a !== lpTokenOrAsset) || []),
           ]}
         />
       </FormProvider>
