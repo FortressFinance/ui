@@ -39,7 +39,7 @@ const nextConfig = {
         has: [
           {
             type: "host",
-            value: "app.fortress.finance",
+            value: "ui-git-vanillahill-redirecttoapp-fortress-finance.vercel.app",
           },
         ],
         destination: "/vaults/:path*",
