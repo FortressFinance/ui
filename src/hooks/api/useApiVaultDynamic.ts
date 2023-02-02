@@ -1,5 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
-import { Address, useAccount } from "wagmi"
+import { Address, useAccount, useQuery } from "wagmi"
 
 import fortressApi, { ApiResult } from "@/lib/fortressApi"
 import { ApiPool } from "@/hooks/api/useApiVaults/useApiCompounderVaults"
@@ -21,6 +20,10 @@ export type ApiCompounderVaultDynamic = {
     cvxApr: number
     extraRewardsApr: number
     totalApr: number
+    BALApr: number
+    AuraApr: number
+    GMXApr: number
+    ETHApr: number
   }
   user: {
     address?: Address
@@ -35,31 +38,7 @@ export interface ApiGetPoolDynamicResult extends ApiResult {
   message?: string
 }
 
-export type ApiTokenVaultDynamic = {
-  chainId: number
-  poolId: number
-  poolDepositedLPtokens: number
-  TVL: number
-  APR: {
-    BALApr: number
-    AuraApr: number
-    totalApr: number
-  }
-  APY: number
-  user: {
-    address: string
-    ybTokensShare: string
-    LPTokensShare: string
-    usdShare: number
-  }
-}
-
-export interface ApiGetVaultDynamicResult extends ApiResult {
-  data?: ApiTokenVaultDynamic
-  message?: string
-}
-
-export default function useApiCompounderPoolDynamic({
+export default function useApiVaultDynamic({
   type,
   poolId,
 }: {
@@ -74,12 +53,12 @@ export default function useApiCompounderPoolDynamic({
   return useQuery([chainId, "pools", type, "data", poolId, address], {
     queryFn: () =>
       isToken
-        ? fetchApiTokenCompounderPoolDynamic({
+        ? fetchApiTokenVaultDynamic({
             chainId,
             poolId,
             user: address || "0x",
           })
-        : fetchApiCompounderPoolDynamic({
+        : fetchApiCompounderVaultDynamic({
             chainId,
             isCurve: isCurve ?? true,
             poolId,
@@ -90,7 +69,7 @@ export default function useApiCompounderPoolDynamic({
   })
 }
 
-async function fetchApiCompounderPoolDynamic({
+async function fetchApiCompounderVaultDynamic({
   chainId,
   isCurve,
   poolId,
@@ -114,7 +93,7 @@ async function fetchApiCompounderPoolDynamic({
   return null
 }
 
-async function fetchApiTokenCompounderPoolDynamic({
+async function fetchApiTokenVaultDynamic({
   chainId,
   poolId,
   user = "0x",

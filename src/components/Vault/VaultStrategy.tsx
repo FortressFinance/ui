@@ -10,6 +10,7 @@ import {
 } from "@/hooks/data"
 import { UseVaultTokensResult } from "@/hooks/data/useVaultTokens"
 import { VaultProps } from "@/hooks/types"
+import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 
 import Button from "@/components/Button"
@@ -21,6 +22,8 @@ import PurpleModal, {
 import Percentage from "@/components/Percentage"
 import TokenSymbol from "@/components/TokenSymbol"
 import Tooltip from "@/components/Tooltip"
+import { CurveBalancerApr } from "@/components/Vault/APR/CurveBalancerApr"
+import { TokenApr } from "@/components/Vault/APR/TokenApr"
 
 import AddToWallet from "~/svg/icons/add-to-wallet.svg"
 import Close from "~/svg/icons/close.svg"
@@ -34,6 +37,7 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
     useVaultPlatformFee(props)
   const { data: withdrawFeePercentage, ...withdrawFeeQuery } =
     useVaultWithdrawFee(props)
+  const depositFeePercentage = 0 // HARDCODED IT TO ZERO FOR NOW
 
   const isLoading = [platformFeeQuery, withdrawFeeQuery, vaultTokensQuery].some(
     (q) => q.isLoading
@@ -61,6 +65,7 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
         underlyingAssets={vaultTokens.underlyingAssetAddresses}
         platformFeePercentage={platformFeePercentage}
         withdrawFeePercentage={withdrawFeePercentage}
+        depositFeePercentage={depositFeePercentage}
         {...props}
       />
     </>
@@ -74,6 +79,7 @@ type VaultStrategyModalProps = VaultProps &
     underlyingAssets: UseVaultTokensResult["data"]["underlyingAssetAddresses"]
     platformFeePercentage: string | number | undefined
     withdrawFeePercentage: string | number | undefined
+    depositFeePercentage: string | number | undefined
   }
 
 const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
@@ -82,11 +88,13 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
   underlyingAssets,
   platformFeePercentage,
   withdrawFeePercentage,
+  depositFeePercentage,
   ...modalProps
 }) => {
   const { connector } = useAccount()
 
   const { data: token } = useTokenOrNative({ address: asset })
+  const isToken = useIsTokenCompounder(type)
 
   const addTokenToWallet: MouseEventHandler<HTMLButtonElement> = () => {
     if (token && token.address && connector && connector.watchAsset) {
@@ -149,28 +157,13 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
             </p>
           </div>
           <div>
-            <h1 className="mb-4 font-bold max-md:mt-4">APY</h1>
+            <h1 className="mb-4 font-bold max-md:mt-4">APR</h1>
             <dl className="gap-x06 grid grid-cols-4 gap-y-3 gap-x-6">
-              <dt>Weekly APY</dt>
-              <dd className="text-right">
-                <Percentage>0</Percentage>
-              </dd>
-              <dt>Gross APR</dt>
-              <dd className="text-right">
-                <Percentage>0</Percentage>
-              </dd>
-              <dt>Monthly APY</dt>
-              <dd className="text-right">
-                <Percentage>0</Percentage>
-              </dd>
-              <dt>Net APY</dt>
-              <dd className="text-right">
-                <Percentage>0</Percentage>
-              </dd>
-              <dt>Inception APY</dt>
-              <dd className="text-right">
-                <Percentage>0</Percentage>
-              </dd>
+              {isToken ? (
+                <TokenApr asset={asset} type={type} />
+              ) : (
+                <CurveBalancerApr asset={asset} type={type} />
+              )}
             </dl>
           </div>
         </div>
@@ -180,10 +173,17 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
           <h1 className="mb-4 font-bold max-md:mt-4">Yearn fees</h1>
           <dl className="grid grid-cols-3 grid-rows-[auto,1fr] gap-x-6 gap-y-3">
             <dt className="text-sm">
-              Deposit &<br />
-              withdrawal fee
+              Deposit <br />
+              fee
             </dt>
             <dd className="col-start-1 row-start-2 text-4xl font-semibold">
+              <Percentage truncate>{depositFeePercentage ?? 0}</Percentage>
+            </dd>
+            <dt className="text-sm">
+              Withdrawal <br />
+              fee
+            </dt>
+            <dd className="col-start-2 row-start-2 text-4xl font-semibold">
               <Percentage truncate>{withdrawFeePercentage ?? 0}</Percentage>
             </dd>
             <dt className="text-sm">
@@ -191,7 +191,7 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
               <br />
               fee
             </dt>
-            <dd className="col-start-2 row-start-2 text-4xl font-semibold">
+            <dd className="col-start-3 row-start-2 text-4xl font-semibold">
               <Percentage truncate>{platformFeePercentage ?? 0}</Percentage>
             </dd>
             <dt className="text-sm">
@@ -199,7 +199,7 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
               <br />
               fee
             </dt>
-            <dd className="col-start-3 row-start-2 text-4xl font-semibold">
+            <dd className="col-start-4 row-start-2 text-4xl font-semibold">
               <Percentage truncate>0</Percentage>
             </dd>
           </dl>
