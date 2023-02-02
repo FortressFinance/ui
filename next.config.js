@@ -43,6 +43,7 @@ const nextConfig = {
           }
         ],
         destination: "/vaults/:path*",
+        permanent: false
       },
     ]
   }
