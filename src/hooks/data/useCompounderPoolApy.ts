@@ -1,4 +1,4 @@
-import { useApiCompounderPoolDynamic } from "@/hooks/api"
+import { useApiCompounderPoolDynamic } from "@/hooks/api/useApiCompounderPoolDynamic"
 import { VaultDynamicProps } from "@/hooks/types"
 
 export default function useCompounderPoolApy({
@@ -21,7 +21,7 @@ export function useCompounderPoolBaseApr({
   type,
 }: VaultDynamicProps) {
   // Preferred: API request
-  const apiQuery = useApiCompounderPoolDynamic({ poolId, type })
+  const apiQuery = useApiCurveBalancerCompounderPoolDynamic({ poolId, type })
   // TODO: Fallbacks?
   return {
     ...apiQuery,
@@ -82,5 +82,61 @@ export function useCompounderPoolTotalApr({
   return {
     ...apiQuery,
     data: apiQuery.data?.APR?.totalApr,
+  }
+}
+
+export function useCompounderPoolBalApr({
+  asset: _address,
+  poolId,
+  type,
+}: VaultDynamicProps) {
+  // Preferred: API request
+  const apiQuery = useApiTokenCompounderPoolDynamic({ poolId, type })
+  // TODO: Fallbacks?
+  return {
+    ...apiQuery,
+    data: apiQuery.data?.APR?.BALApr,
+  }
+}
+
+export function useCompounderPoolAuraApr({
+  asset: _address,
+  poolId,
+  type,
+}: VaultDynamicProps) {
+  // Preferred: API request
+  const apiQuery = useApiTokenCompounderPoolDynamic({ poolId, type })
+  // TODO: Fallbacks?
+  return {
+    ...apiQuery,
+    data: apiQuery.data?.APR?.AuraApr,
+  }
+}
+
+export function useCompounderPoolGmxApr({
+  asset: _address,
+  poolId,
+  type,
+}: VaultDynamicProps) {
+  // Preferred: API request
+  const apiQuery = useApiTokenCompounderPoolDynamic({ poolId, type })
+  // TODO: Fallbacks?
+  return {
+    ...apiQuery,
+    data: apiQuery.data?.APR?.GMXApr,
+  }
+}
+
+export function useCompounderPoolEthApr({
+  asset: _address,
+  poolId,
+  type,
+}: VaultDynamicProps) {
+  // Preferred: API request
+  const apiQuery = useApiTokenCompounderPoolDynamic({ poolId, type })
+  // TODO: Fallbacks?
+  return {
+    ...apiQuery,
+    data: apiQuery.data?.APR?.ETHApr,
   }
 }
