@@ -14,6 +14,9 @@ module.exports = {
         sans: ["var(--font-inter)", ...fontFamily.sans],
         display: ["var(--font-vt323)", ...fontFamily.sans],
       },
+      transitionProperty: {
+        height: "height",
+      },
       colors: {
         dark: "#371f33",
         blue: "#0070FF",

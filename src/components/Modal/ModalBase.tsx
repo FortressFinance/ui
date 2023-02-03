@@ -1,6 +1,5 @@
-import { Dialog } from "@headlessui/react"
-import { AnimatePresence, easeInOut, motion, MotionConfig } from "framer-motion"
-import { FC, PropsWithChildren } from "react"
+import { Dialog, Transition } from "@headlessui/react"
+import { FC, Fragment, PropsWithChildren } from "react"
 
 export type ModalBaseProps = {
   isOpen: boolean
@@ -17,34 +16,40 @@ const ModalBase: FC<PropsWithChildren<ModalBaseProps>> = ({
   onClose,
 }) => {
   return (
-    <MotionConfig transition={{ duration: 0.2, ease: easeInOut }}>
-      <AnimatePresence>
-        {isOpen && (
-          <Dialog as={motion.div} onClose={onClose} open={isOpen} static>
-            {/* Backdrop */}
-            <motion.div
-              className="fixed inset-0 z-10 bg-black"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.8 }}
-              exit={{ opacity: 0 }}
-            />
+    <Transition show={isOpen}>
+      <Dialog onClose={onClose} open={isOpen} static>
+        {/* Backdrop */}
+        <Transition.Child
+          as={Fragment}
+          enter="transition-all duration-200"
+          enterFrom="opacity-0"
+          enterTo="opacity-60"
+          leave="transition-all duration-200"
+          leaveFrom="opacity-60"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 z-10 bg-black" />
+        </Transition.Child>
 
-            {/* Scrollable container for modal dialog */}
-            <motion.div
-              className="fixed inset-0 z-10 overflow-y-auto backdrop-blur"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {/* Inner scrollarea */}
-              <div className="flex min-h-full items-center justify-center sm:p-4">
-                {children}
-              </div>
-            </motion.div>
-          </Dialog>
-        )}
-      </AnimatePresence>
-    </MotionConfig>
+        {/* Scrollable container for modal dialog */}
+        <Transition.Child
+          as={Fragment}
+          enter="transition-all duration-200"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="transition-all duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 z-10 overflow-y-auto backdrop-blur">
+            {/* Inner scrollarea */}
+            <div className="flex min-h-full items-center justify-center sm:p-4">
+              {children}
+            </div>
+          </div>
+        </Transition.Child>
+      </Dialog>
+    </Transition>
   )
 }
 
