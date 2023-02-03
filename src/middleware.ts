@@ -26,7 +26,7 @@ export function middleware(req: NextRequest) {
   const currentHost =
     process.env.NODE_ENV === "production" && process.env.VERCEL === "1"
       ? hostname
-          .replace(".fortress-finance.vercel.app", "")
+          .replace(process.env.NEXT_PUBLIC_VERCEL_URL ?? "", "")
           .replace(".fortress.finance", "")
       : hostname.replace(".localhost:3000", "")
 
