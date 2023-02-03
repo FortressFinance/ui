@@ -1,5 +1,4 @@
-import { Portal } from "@headlessui/react"
-import { AnimatePresence, easeInOut, motion } from "framer-motion"
+import { Transition } from "@headlessui/react"
 import {
   Children,
   cloneElement,
@@ -65,31 +64,31 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
         ref: setReferenceElement,
       })}
 
-      <AnimatePresence>
-        {isOpen && (
-          <Portal>
-            <motion.div
-              ref={setPopperElement}
-              className="z-20 rounded-md bg-blue py-2 px-4 text-sm"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15, ease: easeInOut }}
-              style={styles.popper}
-              {...attributes.popper}
-            >
-              <span className="-translate-y-4">{label}</span>
-              <span
-                ref={setArrowElement}
-                style={styles.arrow}
-                {...attributes.arrow}
-              >
-                <Triangle className="h-3 w-6 translate-y-6 fill-blue" />
-              </span>
-            </motion.div>
-          </Portal>
-        )}
-      </AnimatePresence>
+      <Transition
+        show={isOpen}
+        enter="transition-opacity duration-200"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="transition-opacity duration-200"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+      >
+        <div
+          ref={setPopperElement}
+          className="z-20 rounded-md bg-blue py-2 px-4 text-sm"
+          style={styles.popper}
+          {...attributes.popper}
+        >
+          <span className="-translate-y-4">{label}</span>
+          <span
+            ref={setArrowElement}
+            style={styles.arrow}
+            {...attributes.arrow}
+          >
+            <Triangle className="h-3 w-6 translate-y-6 fill-blue" />
+          </span>
+        </div>
+      </Transition>
     </>
   )
 }
