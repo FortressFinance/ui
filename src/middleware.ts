@@ -34,7 +34,7 @@ export function middleware(req: NextRequest) {
   // redirect for app pages
   if (shouldRedirectToApp && path !== "/") {
     // we show only the landing page with fortress.finance
-    return NextResponse.redirect(`https://app.fortress.finance/${path}`)
+    return NextResponse.redirect(`https://app.fortress.finance${path}`)
   }
   if (shouldRedirectToLandingPage && path === "/") {
     return NextResponse.redirect(`https://fortress.finance`)
