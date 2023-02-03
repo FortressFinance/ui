@@ -32,32 +32,6 @@ const nextConfig = {
       },
     ]
   },
-  async redirects() {
-    return [
-      {
-        source: "/",
-        has: [
-          {
-            type: "host",
-            value: "app.fortress.finance",
-          },
-        ],
-        destination: "/vaults/",
-        permanent: false,
-      },
-      {
-        source: "/vaults",
-        has: [
-          {
-            type: "host",
-            value: "fortress.finance",
-          },
-        ],
-        destination: "app.fortress.finance/vaults/",
-        permanent: false,
-      },
-    ]
-  },
 }
 
 module.exports = nextConfig
