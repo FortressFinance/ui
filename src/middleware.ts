@@ -26,7 +26,7 @@ export function middleware(req: NextRequest) {
   const currentHost =
     process.env.NODE_ENV === "production" && process.env.VERCEL === "1"
       ? hostname
-          .replace(".ui-iota-sage.vercel.app", "")
+          .replace(".fortress-finance.vercel.app", "")
           .replace(".fortress.finance", "")
       : hostname.replace(".localhost:3000", "")
 
