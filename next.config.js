@@ -32,6 +32,20 @@ const nextConfig = {
       },
     ]
   },
+  async redirects() {
+    return [
+      {
+        source: "/app",
+        destination: "https://app.fortress.finance",
+        permanent: true,
+      },
+      {
+        source: "/app/:slug*",
+        destination: "https://app.fortress.finance/:slug*",
+        permanent: true,
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig
