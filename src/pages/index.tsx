@@ -18,9 +18,12 @@ type Data = {
 
 export const getServerSideProps: GetServerSideProps<Data> = async (context) => {
   const host = context.req.headers.host || "fortress.finance"
-  const appUrl = host.includes("localhost")
-    ? `http://app.${host}`
-    : `https://app.${host}`
+  const appUrl =
+    process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
+      ? `https://${host}`
+      : host.includes("localhost")
+      ? `http://app.${host}`
+      : `https://app.${host}`
   return { props: { appUrl } }
 }
 

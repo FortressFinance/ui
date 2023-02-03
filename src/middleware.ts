@@ -16,6 +16,9 @@ export const config = {
 export function middleware(req: NextRequest) {
   const url = req.nextUrl
 
+  // Disable for preview deployments (requires $100/mo preview deployment suffix)
+  if (process.env.VERCEL_ENV === "preview") return NextResponse.rewrite(url)
+
   // Get hostname of request (e.g. localhost:3000)
   const hostname = req.headers.get("host") || "fortress.finance"
 
@@ -25,9 +28,7 @@ export function middleware(req: NextRequest) {
   // Get the current host (e,g, "app", "")
   const currentHost =
     process.env.NODE_ENV === "production" && process.env.VERCEL === "1"
-      ? hostname
-          .replace(process.env.NEXT_PUBLIC_VERCEL_URL ?? "", "")
-          .replace(".fortress.finance", "")
+      ? hostname.replace(".fortress.finance", "")
       : hostname.replace(".localhost:3000", "")
 
   // Rewrite app.* subdomain requests to pages/app

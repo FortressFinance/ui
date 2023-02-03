@@ -36,11 +36,25 @@ const nextConfig = {
     return [
       {
         source: "/app",
+        has: [
+          {
+            type: "header",
+            key: "host",
+            value: "fortress.finance",
+          },
+        ],
         destination: "https://app.fortress.finance",
         permanent: true,
       },
       {
         source: "/app/:slug*",
+        has: [
+          {
+            type: "header",
+            key: "host",
+            value: "fortress.finance",
+          },
+        ],
         destination: "https://app.fortress.finance/:slug*",
         permanent: true,
       },
