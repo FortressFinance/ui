@@ -31,12 +31,12 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
   const menuItems = [
     {
-      name: 'Vaults',
-      href: "/vaults"
+      name: "Vaults",
+      href: "/vaults",
     },
     {
-      name: 'Lend',
-      href: "/lend"
+      name: "Lend",
+      href: "/lend",
     },
   ]
 
@@ -56,7 +56,11 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               {/* Desktop navigation */}
               <nav className="hidden space-x-10 lg:block" aria-label="Global">
                 {menuItems.map((item, index) => (
-                  <Link key={`menu-item-${index}`} className="hover:text-pink-400" href={item.href}>
+                  <Link
+                    key={`menu-item-${index}`}
+                    className="hover:text-pink-400"
+                    href={item.href}
+                  >
                     {item.name}
                   </Link>
                 ))}
@@ -69,9 +73,12 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
             </div>
 
             {/* Mobile navigation */}
-            <Menu as="div" className="md:hidden relative inline-block text-left">
+            <Menu
+              as="div"
+              className="relative inline-block text-left md:hidden"
+            >
               <Menu.Button>
-                <RxHamburgerMenu className="h-8 w-8 ml-3" />
+                <RxHamburgerMenu className="ml-3 h-8 w-8" />
               </Menu.Button>
               <Transition
                 as={Fragment}
@@ -82,10 +89,13 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute right-0 my-3 w-56 origin-top-right divide-y divide-gray-100 text-black text-xl bg-white focus:outline-none">
+                <Menu.Items className="absolute right-0 my-3 w-56 origin-top-right divide-y divide-gray-100 bg-white text-xl text-black focus:outline-none">
                   {menuItems.map((item, index) => (
                     <Menu.Item key={`menu-item-${index}`}>
-                      <Link className="hover:text-pink-400 block m-3" href={item.href}>
+                      <Link
+                        className="m-3 block hover:text-pink-400"
+                        href={item.href}
+                      >
                         {item.name}
                       </Link>
                     </Menu.Item>
@@ -93,7 +103,6 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 </Menu.Items>
               </Transition>
             </Menu>
-
           </div>
         </header>
 
