@@ -1,7 +1,9 @@
+import { Menu, Transition } from "@headlessui/react"
 import dynamic from "next/dynamic"
 import Image from "next/image"
 import Link from "next/link"
-import { FC, PropsWithChildren } from "react"
+import { FC, Fragment, PropsWithChildren } from "react"
+import { RxHamburgerMenu } from "react-icons/Rx"
 
 import ConnectWalletModal, {
   DisconnectWalletModal,
@@ -27,6 +29,17 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
     state.setConnectModal,
   ])
 
+  const menuItems = [
+    {
+      name: 'Vaults',
+      href: "/vaults"
+    },
+    {
+      name: 'Lend',
+      href: "/lend"
+    },
+  ]
+
   return (
     <>
       <div className="relative z-[1] grid min-h-screen grid-cols-1 grid-rows-[auto,1fr,auto]">
@@ -42,12 +55,11 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
               {/* Desktop navigation */}
               <nav className="hidden space-x-10 lg:block" aria-label="Global">
-                <Link className="hover:text-pink-400" href="/vaults">
-                  Vaults
-                </Link>
-                <Link className="hover:text-pink-400" href="/lend">
-                  Lend
-                </Link>
+                {menuItems.map((item, index) => (
+                  <Link key={`menu-item-${index}`} className="hover:text-pink-400" href={item.href}>
+                    {item.name}
+                  </Link>
+                ))}
               </nav>
             </div>
 
@@ -55,6 +67,33 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               <NetworkSelector />
               <ConnectWalletButton />
             </div>
+
+            {/* Mobile navigation */}
+            <Menu as="div" className="md:hidden relative inline-block text-left">
+              <Menu.Button>
+                <RxHamburgerMenu className="h-8 w-8 ml-3" />
+              </Menu.Button>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute right-0 my-3 w-56 origin-top-right divide-y divide-gray-100 text-black text-xl bg-white focus:outline-none">
+                  {menuItems.map((item, index) => (
+                    <Menu.Item key={`menu-item-${index}`}>
+                      <Link className="hover:text-pink-400 block m-3" href={item.href}>
+                        {item.name}
+                      </Link>
+                    </Menu.Item>
+                  ))}
+                </Menu.Items>
+              </Transition>
+            </Menu>
+
           </div>
         </header>
 
