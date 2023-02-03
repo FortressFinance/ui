@@ -42,8 +42,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
               {/* Desktop navigation */}
               <nav className="hidden space-x-10 lg:block" aria-label="Global">
-                <Link className="hover:text-pink-400" href="/vaults">
-                  Vaults
+                <Link className="hover:text-pink-400" href="/yield">
+                  Yield
                 </Link>
                 <Link className="hover:text-pink-400" href="/lend">
                   Lend

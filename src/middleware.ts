@@ -19,24 +19,25 @@ export function middleware(req: NextRequest) {
   // Get hostname of request (e.g. localhost:3000)
   const hostname = req.headers.get("host") || "fortress.finance"
 
-  // Get the pathname of the request (e.g. /, /about, /blog/first-post)
+  // Get the pathname of the request (e.g. /, /yield, /lend)
   const path = url.pathname
 
-  const shouldRedirectToApp =
-    process.env.NODE_ENV === "production" &&
-    process.env.VERCEL === "1" &&
-    hostname === "fortress.finance"
-  const shouldRedirectToLandingPage =
-    process.env.NODE_ENV === "production" &&
-    process.env.VERCEL === "1" &&
-    hostname === "app.fortress.finance"
+  // Get the current host (e,g, "app", "")
+  const currentHost =
+    process.env.NODE_ENV === "production" && process.env.VERCEL === "1"
+      ? hostname
+          .replace(".ui-iota-sage.vercel.app", "")
+          .replace(".fortress.finance", "")
+      : hostname.replace(".localhost:3000", "")
 
-  // redirect for app pages
-  if (shouldRedirectToApp && path !== "/") {
-    // we show only the landing page with fortress.finance
-    return NextResponse.redirect(`https://app.fortress.finance${path}`)
+  // Rewrite app.* subdomain requests to pages/app
+  if (currentHost === "app") {
+    // No index page exists in /app, we have to rewrite them to /yield
+    if (path === "/") {
+      return NextResponse.rewrite(new URL("/app/yield", req.url))
+    }
+    return NextResponse.rewrite(new URL(`/app${path}`, req.url))
   }
-  if (shouldRedirectToLandingPage && path === "/") {
-    return NextResponse.redirect(`https://fortress.finance`)
-  }
+
+  return NextResponse.rewrite(url)
 }

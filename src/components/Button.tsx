@@ -85,6 +85,7 @@ export default Button
 
 interface ButtonLinkProps extends LinkProps {
   className?: string
+  external?: boolean
   size?: ButtonSize
   variant?: ButtonVariant
 }
@@ -92,12 +93,17 @@ interface ButtonLinkProps extends LinkProps {
 export const ButtonLink: FC<PropsWithChildren<ButtonLinkProps>> = ({
   children,
   className,
+  external,
   size,
   variant,
   ...props
 }) => {
   return (
-    <Link className={buttonClasses(className, false, size, variant)} {...props}>
+    <Link
+      className={buttonClasses(className, false, size, variant)}
+      {...props}
+      {...(external ? { target: "_blank" } : {})}
+    >
       {children}
     </Link>
   )

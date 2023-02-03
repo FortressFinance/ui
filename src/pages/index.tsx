@@ -13,6 +13,11 @@ import SwordImage from "~/images/sword.gif"
 import FortressLogo from "~/svg/fortress-logo.svg"
 
 const HomePage: NextPage = () => {
+  const appLinkHref =
+    typeof window === "undefined"
+      ? "https://app.fortress.finance"
+      : `${window.location.protocol}//app.${window.location.host}`
+
   return (
     <div className="h-screen w-screen bg-gradient-to-br from-pink to-orange p-2 lg:p-4">
       <Seo />
@@ -85,7 +90,12 @@ const HomePage: NextPage = () => {
                 Fortress introduces a new suite of tools built on Curve and
                 Balancer.
               </p>
-              <ButtonLink className="mt-6 px-8" href="/vaults" size="large">
+              <ButtonLink
+                className="mt-6 px-8"
+                href={appLinkHref}
+                size="large"
+                external
+              >
                 Launch App
               </ButtonLink>
             </div>

@@ -8,10 +8,10 @@ import Layout from "@/components/Layout"
 import Seo from "@/components/Seo"
 import VaultTable from "@/components/Vault"
 
-const Vaults: NextPage = () => {
+const Yield: NextPage = () => {
   return (
     <Layout>
-      <Seo templateTitle="Vaults" />
+      <Seo templateTitle="Yield" />
 
       <div className="grid gap-6">
         <main>
@@ -116,4 +116,4 @@ const Vaults: NextPage = () => {
   )
 }
 
-export default Vaults
+export default Yield
