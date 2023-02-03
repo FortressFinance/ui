@@ -165,7 +165,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
       </div>
       <div className="w-7/8 mx-10 mt-10 text-justify text-sm">
         By connecting your wallet to Fortress finance, you acknowledge that you
-        have read and understand the {" "}
+        have read and understand the{" "}
         <Link
           href="https://docs.fortress.finance/protocol"
           className="font-bold underline"
