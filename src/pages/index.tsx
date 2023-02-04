@@ -114,7 +114,7 @@ const HomePage: NextPage<
               </p>
               <ButtonLink
                 className="mt-6 px-8"
-                href={appUrl}
+                href={`${appUrl}/yield`}
                 size="large"
                 external
               >
