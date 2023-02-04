@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-import { enabledNetworks } from "@/components/WagmiProvider"
+import { enabledNetworks } from "@/components/AppProviders"
 
 export interface ActiveChainStore {
   chainId: number

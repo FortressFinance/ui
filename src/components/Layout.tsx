@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { FC, PropsWithChildren } from "react"
 
+import AppProviders from "@/components/AppProviders"
 import ConnectWalletModal, {
   DisconnectWalletModal,
 } from "@/components/ConnectWallet/ConnectWalletModal"
@@ -28,7 +29,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   ])
 
   return (
-    <>
+    <AppProviders>
       <div className="relative z-[1] grid min-h-screen grid-cols-1 grid-rows-[auto,1fr,auto]">
         <header className="sticky top-0 z-10 border-b-2 border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
@@ -83,7 +84,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         onClose={() => setConnectModal(null)}
         onChange={() => setConnectModal("disconnected")}
       />
-    </>
+    </AppProviders>
   )
 }
 
