@@ -50,7 +50,9 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
       ...apiTokenQuery,
       data: {
         ybTokenAddress: matchedVault?.token.ybToken.address,
-        underlyingAssetAddresses: [matchedVault?.token.baseAsset.address ?? "0x"],
+        underlyingAssetAddresses: [
+          matchedVault?.token.baseAsset.address ?? "0x",
+        ],
       },
     }
   }
