@@ -52,7 +52,7 @@ export default function useVaultAddresses({ type }: { type: VaultType }) {
     return {
       ...apiTokenQuery,
       data: apiTokenQuery.data
-        ?.map((p) => p.token.asset.address)
+        ?.map((p) => p.token.baseAsset.address)
         .filter((a) => filterTab.includes(a)),
     }
   }

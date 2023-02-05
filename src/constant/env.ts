@@ -4,3 +4,7 @@ export const showLogger = isLocal
   ? true
   : process.env.NEXT_PUBLIC_SHOW_LOGGER === "true" ?? false
 export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ""
+export const CURVE_GRAPH_URL = process.env.NEXT_PUBLIC_CURVE_GRAPH_URL ?? ""
+export const AURA_GRAPH_URL = process.env.NEXT_PUBLIC_AURA_GRAPH_URL ?? ""
+export const AURA_FINANCE_URL = process.env.NEXT_PUBLIC_AURA_FINANCE_URL ?? ""
+export const LLAMA_URL = process.env.NEXT_PUBLIC_LLAMA_URL ?? ""
