@@ -41,12 +41,17 @@ export type ApiTokenVault = {
       symbol?: string
       name?: string
     }
-    asset: {
+    baseAsset: {
       address: Address
       decimals: number
       symbol?: string
       name?: string
-    }
+    },
+    underlyingAssets: {
+      address: Address
+      decimals: number
+      symbol?: string
+    }[]
   }
 }
 

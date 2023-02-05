@@ -24,8 +24,8 @@ export default function useVaultAddresses({ type }: { type: VaultType }) {
     functionName: isToken
       ? "getTokenCompoundersList"
       : isCurve
-      ? "getCurveCompoundersList"
-      : "getBalancerCompoundersList",
+        ? "getCurveCompoundersList"
+        : "getBalancerCompoundersList",
     enabled: apiCompounderQuery.isError || apiTokenQuery.isError,
   })
 
@@ -45,14 +45,14 @@ export default function useVaultAddresses({ type }: { type: VaultType }) {
     type === "stable"
       ? STABLE
       : type === "crypto"
-      ? CRYPTO
-      : [...CRYPTO, ...STABLE]
+        ? CRYPTO
+        : [...CRYPTO, ...STABLE]
 
   if (!apiTokenQuery.isError && apiTokenQuery.data !== null && isToken) {
     return {
       ...apiTokenQuery,
       data: apiTokenQuery.data
-        ?.map((p) => p.token.asset.address)
+        ?.map((p) => p.token.baseAsset.address)
         .filter((a) => filterTab.includes(a)),
     }
   }
