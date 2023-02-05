@@ -15,5 +15,5 @@ export function findApiTokenVaultForAsset(
   data: UseQueryResult<ApiTokenVault[]>["data"],
   asset: Address | undefined
 ) {
-  return data?.find((v) => v.token.asset.address === asset)
+  return data?.find((v) => v.token.baseAsset.address === asset)
 }

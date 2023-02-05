@@ -27,8 +27,8 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
     functionName: isToken
       ? "getTokenCompounder"
       : isCurve
-      ? "getCurveCompounder"
-      : "getBalancerCompounder",
+        ? "getCurveCompounder"
+        : "getBalancerCompounder",
     args: [asset ?? "0x"],
     enabled: enableFallback,
   })
@@ -37,8 +37,8 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
     functionName: isToken
       ? "getTokenCompoundersList"
       : isCurve
-      ? "getCurveCompounderUnderlyingAssets"
-      : "getBalancerCompounderUnderlyingAssets",
+        ? "getCurveCompounderUnderlyingAssets"
+        : "getBalancerCompounderUnderlyingAssets",
     args: [regGetCompounder.data ?? "0x"],
     enabled: enableFallback && !!regGetCompounder.data,
   })
@@ -50,7 +50,9 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
       ...apiTokenQuery,
       data: {
         ybTokenAddress: matchedVault?.token.ybToken.address,
-        underlyingAssetAddresses: [matchedVault?.token.asset.address ?? "0x"],
+        underlyingAssetAddresses: matchedVault?.token.underlyingAssets.map(
+          (a) => a.address
+        ),
       },
     }
   }
