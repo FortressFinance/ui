@@ -9,7 +9,7 @@ import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useRegistryContract from "@/hooks/useRegistryContract"
 
-import { AURA_ADDRESS, AURA_BAL_ADDRESS, AURA_FINANCE_URL, AURA_GRAPH_URL, CURVE_GRAPH_URL, LLAMA_URL } from "@/constant/env"
+import { AURA_ADDRESS, AURA_BAL_ADDRESS, AURA_FINANCE_URL, AURA_GRAPH_URL, CONVEX_STAKING_URL, CURVE_GRAPH_URL, LLAMA_URL } from "@/constant/env"
 
 export default function useVaultApy({
   asset: _address,
@@ -223,12 +223,6 @@ export function useVaultTotalApr({
   // END OF BALANCER
 
   // TOKEN 
-  const auraTokenQuery =  useQuery([_address, "auraMint"], {
-    queryFn: async () => await getAuraMint(),
-    retry: false,
-    enabled: isToken
-  })
-
   const registryQuery = useContractRead({
     ...useRegistryContract(),
     functionName: "getTokenCompounderSymbol",
@@ -238,12 +232,25 @@ export function useVaultTotalApr({
   })
 
   const ybTokenSymbol = registryQuery.data
+
+  const auraTokenQuery =  useQuery([_address, "auraMint"], {
+    queryFn: async () => await getAuraMint(),
+    retry: false,
+    enabled: (apiQuery.isError || apiQuery.data === null) && isToken && !!ybTokenSymbol && ybTokenSymbol === 'fort-auraBAL',
+  })
+
   const auraTokenMint = auraTokenQuery.data
 
   const fortAuraBalAprFallback =  useQuery([_address, "fortAuraBalAprFallback"], {
     queryFn: async () => await getFortAuraBalAprFallback(auraTokenMint),
     retry: false,
-    enabled: !!ybTokenSymbol && !! auraTokenMint && ybTokenSymbol === 'fort-auraBAL'
+    enabled: !!ybTokenSymbol && !!auraTokenMint && ybTokenSymbol === 'fort-auraBAL'
+  })
+
+  const fortCvxCrvAprFallback =  useQuery([_address, "fortCvxCrvAprFallback"], {
+    queryFn: async () => await getFortCvxCrvAprFallback(),
+    retry: false,
+    enabled: !!ybTokenSymbol && ybTokenSymbol === 'fort-cvxCRV'
   })
   // END OF TOKEN
 
@@ -277,11 +284,51 @@ export function useVaultTotalApr({
       ...fortAuraBalAprFallback,
       data: fortAuraBalAprFallback.data.totalApr
     }
+  } 
+
+  if(!fortCvxCrvAprFallback.isError && !!fortCvxCrvAprFallback.data ){
+    return {
+      ...fortCvxCrvAprFallback,
+      data: fortCvxCrvAprFallback.data.totalApr
+    }
   }
 
   return {
     ...apiQuery,
     data: apiQuery.data?.APR?.totalApr,
+  }
+}
+
+async function getFortCvxCrvAprFallback(){
+  const graphqlQuery = gql`
+    query MyQuery {
+      dailySnapshots(orderBy: timestamp, orderDirection: desc) {
+        crvApr
+        cvxApr
+        extraRewardsApr {
+          apr
+          token
+          tokenName
+        }
+      }
+    }
+  `  
+  const data = await request(CONVEX_STAKING_URL,graphqlQuery)
+  if (data?.dailySnapshots?.length !== 0) {
+    const crvApr = Number(data?.dailySnapshots[0].crvApr)
+    const cvxApr = Number(data?.dailySnapshots[0].cvxApr)
+    const extraRewardsAprList = data?.dailySnapshots[0].extraRewardsApr
+    let extraRewardsApr = 0
+    if(extraRewardsAprList?.length !== 0){
+      extraRewardsApr = Number(extraRewardsAprList[0].apr)
+    }
+    const totalApr = crvApr + cvxApr + extraRewardsApr
+    return {
+      'crvApr':crvApr,
+      'cvxApr':cvxApr,
+      'extraRewardsApr':extraRewardsApr,
+      'totalApr':totalApr
+    }
   }
 }
 
