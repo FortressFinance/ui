@@ -1,3 +1,4 @@
+import { useQueries } from "@tanstack/react-query"
 import axios from "axios"
 import request, { gql } from "graphql-request"
 import { useQuery } from "wagmi"
@@ -7,7 +8,7 @@ import { VaultDynamicProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
-import { AURA_FINANCE_URL, AURA_GRAPH_URL, CURVE_GRAPH_URL, LLAMA_URL } from "@/constant/env"
+import { AURA_ADDRESS, AURA_FINANCE_URL, AURA_GRAPH_URL, CURVE_GRAPH_URL, LLAMA_URL } from "@/constant/env"
 
 export default function useVaultApy({
   asset: _address,
@@ -170,21 +171,21 @@ export function useVaultTotalApr({
     enabled: (apiQuery.isError || apiQuery.data === null) && !isToken && isCurve
   })
 
-  const auraQuery =  useQuery([_address, "auraFinance"], {
-    queryFn: async () => await fetchApiAuraFinance(_address),
-    retry: false,
-    //enabled: (apiQuery.isError || apiQuery.data === null) && !isToken && !isCurve
-    enabled: !isToken && !isCurve
+  const auraQuery = useQueries({
+    queries: [
+      { queryKey: [_address, "auraFinance"], queryFn: async () => await fetchApiAuraFinance(_address), staleTime: Infinity, enabled: (apiQuery.isError || apiQuery.data === null) && !isToken && !isCurve},
+      { queryKey: [_address, "auraMint"], queryFn: async () => await getAuraMint(), staleTime: Infinity, enabled: (apiQuery.isError || apiQuery.data === null) && !isToken && !isCurve}
+    ]
   })
 
-  const extraTokenAwards = auraQuery.data?.extraTokenAwards
-  const swapFee = auraQuery.data?.swapFee
+  const extraTokenAwards = auraQuery?.[0].data?.extraTokenAwards
+  const swapFee = auraQuery?.[0].data?.swapFee
+  const auraMint = auraQuery?.[1].data
 
   const balancerTotalAprFallbackQuery =  useQuery([_address, "balancerTotalAprFallback", extraTokenAwards, swapFee], {
-    queryFn: async () => await getBalancerTotalAprFallback(_address, extraTokenAwards, swapFee),
+    queryFn: async () => await getBalancerTotalAprFallback(_address, extraTokenAwards, swapFee, auraMint),
     retry: false,
-    //enabled: (apiQuery.isError || apiQuery.data === null) && (!auraQuery.isError && auraQuery.data !== null) && !isToken && !isCurve
-    enabled: (!!swapFee && !!extraTokenAwards) && !isToken && !isCurve
+    enabled: (apiQuery.isError || apiQuery.data === null) && (!!swapFee && !!extraTokenAwards && !!auraMint) && !isToken && !isCurve
   })  
 
   if (!vaultAprFallback.isError && !!vaultAprFallback.data && vaultAprFallback.data.length > 0) {  
@@ -194,13 +195,12 @@ export function useVaultTotalApr({
     }
   } 
 
-  if(!balancerTotalAprFallbackQuery.isError){
-    //debugger
+  if(!balancerTotalAprFallbackQuery.isError && !!balancerTotalAprFallbackQuery.data ){
+    return {
+      ...balancerTotalAprFallbackQuery,
+      data: balancerTotalAprFallbackQuery.data.totalApr
+    }
   }
-
-  // if(!balancerTotalAprFallbackQuery.isError){
-  //   return balancerTotalAprFallbackQuery
-  // }
 
   return {
     ...apiQuery,
@@ -208,7 +208,7 @@ export function useVaultTotalApr({
   }
 }
 
-async function getBalancerTotalAprFallback(asset: VaultDynamicProps["asset"], extraTokenAwards: number|undefined, swapFee:number|undefined){
+async function getBalancerTotalAprFallback(asset: VaultDynamicProps["asset"], extraTokenAwards: number|undefined, swapFee:number|undefined, auraMint: any){
   const { rewardRates, addresses, totalStaked } = await getBalancerRewardData(asset)
   const lpTokenPrice = 1297
   const tvl = (totalStaked/1e18 * lpTokenPrice)
@@ -217,9 +217,50 @@ async function getBalancerTotalAprFallback(asset: VaultDynamicProps["asset"], ex
     const apr = await getTokenAPR(Number(rewardRates[key])/1e18, val, tvl)
     aprTokens += apr
   })
+
+  const BalYearlyRewards = Number(rewardRates['BAL'])/1e18 * 86_400 * 365
+  const AuraRewardYearly = calculateAuraMintAmount(auraMint, BalYearlyRewards)
+  const AuraRewardAnnualUsd = AuraRewardYearly * await getTokenPriceUsd(AURA_ADDRESS)
+  const aprAura = AuraRewardAnnualUsd / tvl
+
+  const aprTotal = aprTokens + aprAura + (swapFee?? 0) + (extraTokenAwards?? 0)
+      
+  return {
+    'BALApr': aprTokens,
+    'swapFeeApr':(swapFee?? 0),
+    'AuraApr':aprAura,
+    'extraRewardsApr':(extraTokenAwards?? 0),
+    'totalApr':aprTotal
+  }
 }
 
-async function getTokenAPR(rewardRate, token, tvl){
+
+function calculateAuraMintAmount(auraMint: any, BALYearlyRewards: number) {
+  const reductionPerCliff = Number(auraMint.auraReductionPerCliff)
+  const maxSupply = Number(auraMint.auraMaxSupply)
+  const totalSupply = Number(auraMint.auraTotalSupply)
+  const totalCliffs = Number(auraMint.auraTotalCliffs)
+  const minterMinted = Number(auraMint.auraMinterMinted)
+
+  const emissionsMinted = totalSupply - maxSupply - minterMinted
+  const cliff = emissionsMinted / reductionPerCliff
+
+  if (cliff < totalCliffs) {
+    const reduction = (totalCliffs - cliff) * 2.5 + 700
+    let amount = (BALYearlyRewards * reduction) / totalCliffs
+    const amtTillMax = maxSupply - emissionsMinted
+
+    if (amount > amtTillMax){
+      amount = amtTillMax
+    }
+
+    return amount
+  }
+      
+  return 0
+}
+
+async function getTokenAPR(rewardRate: number, token: string, tvl: number){
   const rewardYearly = rewardRate * 86_400 * 365
   const tokenPriceUsd = await getTokenPriceUsd(token)
   const rewardAnnualUsd = rewardYearly * tokenPriceUsd
@@ -227,7 +268,7 @@ async function getTokenAPR(rewardRate, token, tvl){
   return tokenApr
 }
 
-async function getTokenPriceUsd(token){
+async function getTokenPriceUsd(token: string){
   const resp = await axios.get(`${LLAMA_URL}ethereum:${token}`)
   const coins = resp?.data?.coins
   const ethToken = coins?.[`ethereum:${token}`]
@@ -248,6 +289,23 @@ async function fetchApiAuraFinance(asset: VaultDynamicProps["asset"]) {
   const extraTokenAwards = relevantAsset?.poolAprs?.tokens?.total;
   const swapFee = relevantAsset?.poolAprs.swap
   return { extraTokenAwards: (extraTokenAwards/100), swapFee: (swapFee/100)}
+}
+
+async function getAuraMint(){
+  const graphqlQuery = gql`
+      query MyQuery {
+        global(id: "global") {
+          auraMaxSupply
+          auraMinterMinted
+          auraReductionPerCliff
+          auraTotalSupply
+          auraTotalCliffs
+        }
+      }
+    ` 
+    
+    const data = await request(AURA_GRAPH_URL,graphqlQuery)
+    return data?.global
 }
 
 async function getBalancerRewardData(asset: VaultDynamicProps["asset"]){
@@ -343,3 +401,4 @@ export function useVaultEthApr({
     data: apiQuery.data?.APR?.ETHApr,
   }
 }
+
