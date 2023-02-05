@@ -60,6 +60,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                     {item.name}
                   </Link>
                 ))}
+
               </nav>
             </div>
 
