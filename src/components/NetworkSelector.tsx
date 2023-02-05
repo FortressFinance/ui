@@ -5,7 +5,7 @@ import { useNetwork, useSwitchNetwork } from "wagmi"
 import clsxm from "@/lib/clsxm"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
-import { enabledNetworks, mainnetFork } from "@/components/WagmiProvider"
+import { enabledNetworks, mainnetFork } from "@/components/AppProviders"
 
 import { useActiveChain } from "@/store/activeChain"
 
