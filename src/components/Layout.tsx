@@ -64,7 +64,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         <footer className="layout py-6">
           <div className="grid grid-cols-3 grid-rows-1 gap-4">
             <ExternalLinks showHelp />
-            <a className="ml-3 items-center rounded-full bg-black/40 py-1 px-3 text-center text-xs font-medium leading-5 text-white/70 hover:bg-black/60 hover:text-white/90 xl:flex"
+            <a
+              className="ml-3 items-center rounded-full bg-black/40 py-1 px-3 text-center text-xs font-medium leading-5 text-white/70 hover:bg-black/60 hover:text-white/90 xl:flex"
               href="https://docs.fortress.finance/protocol/risks"
               target="_blank"
               rel="noreferrer"
