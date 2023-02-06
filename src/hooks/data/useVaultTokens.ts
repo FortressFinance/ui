@@ -52,7 +52,7 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
         ybTokenAddress: matchedVault?.token.ybToken.address,
         underlyingAssetAddresses: matchedVault?.token.underlyingAssets.map(
           (a) => a.address
-        ),
+        ).concat([matchedVault?.token.baseAsset.address ?? "0x"]),
       },
     }
   }
