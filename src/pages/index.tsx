@@ -1,5 +1,5 @@
 import { Menu, Transition } from "@headlessui/react"
-import { NextPage } from "next"
+import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { Fragment } from "react"
@@ -12,7 +12,24 @@ import Seo from "@/components/Seo"
 import SwordImage from "~/images/sword.gif"
 import FortressLogo from "~/svg/fortress-logo.svg"
 
-const HomePage: NextPage = () => {
+type Data = {
+  appUrl: string
+}
+
+export const getServerSideProps: GetServerSideProps<Data> = async (context) => {
+  const host = context.req.headers.host || "fortress.finance"
+  const appUrl =
+    process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
+      ? `https://${host}/app`
+      : host.includes("localhost")
+      ? `http://app.${host}`
+      : `https://app.${host}`
+  return { props: { appUrl } }
+}
+
+const HomePage: NextPage<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+> = ({ appUrl }) => {
   return (
     <div className="h-screen w-screen bg-gradient-to-br from-pink to-orange p-2 lg:p-4">
       <Seo />
@@ -26,10 +43,18 @@ const HomePage: NextPage = () => {
 
           {/* Desktop navigation */}
           <nav className="hidden space-x-10 lg:block" aria-label="Global">
-            <Link href="/vaults" className="font-display text-3xl">
-              Vaults
+            <Link
+              href={`${appUrl}/yield`}
+              className="font-display text-3xl"
+              target="_blank"
+            >
+              Yield
             </Link>
-            <Link href="/earn" className="font-display text-3xl">
+            <Link
+              href={`${appUrl}/lend`}
+              className="font-display text-3xl"
+              target="_blank"
+            >
               Lend
             </Link>
           </nav>
@@ -51,16 +76,18 @@ const HomePage: NextPage = () => {
               <Menu.Items className="absolute right-0 z-10 w-52 rounded-md bg-white py-2">
                 <Menu.Item>
                   <Link
-                    href="/vaults"
+                    href={`${appUrl}/yield`}
                     className="block w-full py-2 text-center font-display text-xl text-black"
+                    target="_blank"
                   >
-                    Vaults
+                    Yield
                   </Link>
                 </Menu.Item>
                 <Menu.Item>
                   <Link
-                    href="/lend"
+                    href={`${appUrl}/lend`}
                     className="block w-full py-2 text-center font-display text-xl text-black"
+                    target="_blank"
                   >
                     Lend
                   </Link>
@@ -85,7 +112,12 @@ const HomePage: NextPage = () => {
                 Fortress introduces a new suite of tools built on Curve and
                 Balancer.
               </p>
-              <ButtonLink className="mt-6 px-8" href="/vaults" size="large">
+              <ButtonLink
+                className="mt-6 px-8"
+                href={`${appUrl}/yield`}
+                size="large"
+                external
+              >
                 Launch App
               </ButtonLink>
             </div>
@@ -98,7 +130,7 @@ const HomePage: NextPage = () => {
         </main>
 
         <footer className="layout py-10">
-          <ExternalLinks className="justify-center md:justify-end" />
+          <ExternalLinks className="justify-center md:justify-start" />
         </footer>
       </div>
     </div>

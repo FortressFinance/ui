@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ChainProviderFn } from "@wagmi/core"
 import { FC, PropsWithChildren } from "react"
 import { configureChains, createClient, WagmiConfig } from "wagmi"
@@ -167,7 +168,7 @@ const { chains, provider, webSocketProvider } = configureChains(
   enabledNetworks.chains,
   enabledNetworks.providers
 )
-const client = createClient({
+const wagmiClient = createClient({
   autoConnect: true,
   provider,
   webSocketProvider,
@@ -185,8 +186,22 @@ const client = createClient({
   ],
 })
 
-const WagmiProvider: FC<PropsWithChildren> = ({ children }) => {
-  return <WagmiConfig client={client}>{children}</WagmiConfig>
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      retryOnMount: false,
+    },
+  },
+})
+
+const AppProviders: FC<PropsWithChildren> = ({ children }) => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WagmiConfig client={wagmiClient}>{children}</WagmiConfig>
+    </QueryClientProvider>
+  )
 }
 
-export default WagmiProvider
+export default AppProviders
