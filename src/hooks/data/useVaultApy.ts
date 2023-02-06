@@ -1,7 +1,15 @@
 import { useQueries } from "@tanstack/react-query"
 import { useContractRead, useQuery } from "wagmi"
 
-import { fetchApiAuraFinance, getAuraMint, getBalancerTotalAprFallback, getFortAuraBalAprFallback, getFortCvxCrvAprFallback, getFortGlpAprFallback, getVaultAprFallback } from "@/lib/aprFallback"
+import {
+  fetchApiAuraFinance,
+  getAuraMint,
+  getBalancerTotalAprFallback,
+  getFortAuraBalAprFallback,
+  getFortCvxCrvAprFallback,
+  getFortGlpAprFallback,
+  getVaultAprFallback,
+} from "@/lib/aprFallback"
 import { useApiVaultDynamic } from "@/hooks/api"
 import { VaultDynamicProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
@@ -9,9 +17,7 @@ import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useRegistryContract from "@/hooks/useRegistryContract"
 
 import glpRewardsDistributorAbi from "@/constant/abi/glpRewardsDistributorAbi"
-import {
-  GLP_REWARDS_DISTRIBUTOR_ADDRESS,
-} from "@/constant/env"
+import { GLP_REWARDS_DISTRIBUTOR_ADDRESS } from "@/constant/env"
 
 export default function useVaultApy({
   asset: _address,
@@ -330,7 +336,7 @@ export function useVaultBalApr({
   const isToken = useIsTokenCompounder(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
-  
+
   const registryQuery = useContractRead({
     ...useRegistryContract(),
     functionName: "getTokenCompounderSymbol",
@@ -361,7 +367,7 @@ export function useVaultBalApr({
         !!ybTokenSymbol && !!auraTokenMint && ybTokenSymbol === "fort-auraBAL",
     }
   )
-  
+
   if (!fortAuraBalAprFallback.isError && !!fortAuraBalAprFallback.data) {
     return {
       ...fortAuraBalAprFallback,
@@ -414,7 +420,7 @@ export function useVaultAuraApr({
         !!ybTokenSymbol && !!auraTokenMint && ybTokenSymbol === "fort-auraBAL",
     }
   )
-  
+
   if (!fortAuraBalAprFallback.isError && !!fortAuraBalAprFallback.data) {
     return {
       ...fortAuraBalAprFallback,
@@ -444,7 +450,7 @@ export function useVaultGmxApr({
   })
 
   const ybTokenSymbol = registryQuery.data
-  
+
   const glpQuery = useContractRead({
     abi: glpRewardsDistributorAbi,
     address: GLP_REWARDS_DISTRIBUTOR_ADDRESS as `0x${string}`,
@@ -457,7 +463,8 @@ export function useVaultGmxApr({
   const fortGlpAprFallback = useQuery([_address, "fortGlpAprFallback"], {
     queryFn: async () => await getFortGlpAprFallback(ethRewardsPerSecond),
     retry: false,
-    enabled: !!ybTokenSymbol && !!ethRewardsPerSecond && ybTokenSymbol === "fortGLP",
+    enabled:
+      !!ybTokenSymbol && !!ethRewardsPerSecond && ybTokenSymbol === "fortGLP",
   })
 
   if (!fortGlpAprFallback.isError && !!fortGlpAprFallback.data) {
@@ -490,7 +497,7 @@ export function useVaultEthApr({
   })
 
   const ybTokenSymbol = registryQuery.data
-  
+
   const glpQuery = useContractRead({
     abi: glpRewardsDistributorAbi,
     address: GLP_REWARDS_DISTRIBUTOR_ADDRESS as `0x${string}`,
@@ -503,7 +510,8 @@ export function useVaultEthApr({
   const fortGlpAprFallback = useQuery([_address, "fortGlpAprFallback"], {
     queryFn: async () => await getFortGlpAprFallback(ethRewardsPerSecond),
     retry: false,
-    enabled: !!ybTokenSymbol && !!ethRewardsPerSecond && ybTokenSymbol === "fortGLP",
+    enabled:
+      !!ybTokenSymbol && !!ethRewardsPerSecond && ybTokenSymbol === "fortGLP",
   })
 
   if (!fortGlpAprFallback.isError && !!fortGlpAprFallback.data) {

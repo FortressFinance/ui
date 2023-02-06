@@ -4,7 +4,16 @@ import request, { gql } from "graphql-request"
 
 import { VaultDynamicProps } from "@/hooks/types"
 
-import { AURA_ADDRESS, AURA_BAL_ADDRESS, AURA_FINANCE_URL, AURA_GRAPH_URL, CONVEX_STAKING_URL, CURVE_GRAPH_URL, GXM_GRAPH_URL, LLAMA_URL } from "@/constant/env"
+import {
+  AURA_ADDRESS,
+  AURA_BAL_ADDRESS,
+  AURA_FINANCE_URL,
+  AURA_GRAPH_URL,
+  CONVEX_STAKING_URL,
+  CURVE_GRAPH_URL,
+  GXM_GRAPH_URL,
+  LLAMA_URL,
+} from "@/constant/env"
 
 export async function getVaultAprFallback(asset: VaultDynamicProps["asset"]) {
   const graphqlQuery = gql`
@@ -30,21 +39,23 @@ export async function getVaultAprFallback(asset: VaultDynamicProps["asset"]) {
   return data?.pools
 }
 
-
-
-export async function getFortGlpAprFallback(ethRewardsPerSecond: BigNumber | undefined) {
+export async function getFortGlpAprFallback(
+  ethRewardsPerSecond: BigNumber | undefined
+) {
   const { aum, priceGmx } = await getGmxPriceData()
-  const ethRewardsAnnual = ethRewardsPerSecond?.mul(BigNumber.from(3600 * 24 * 365)).div(1e18)
+  const ethRewardsAnnual = ethRewardsPerSecond
+    ?.mul(BigNumber.from(3600 * 24 * 365))
+    .div(1e18)
   const ethPrice = await getLlamaEthPrice()
-  const gmxRewardsMonthlyEmissionRate = 0  // need to know why is it zero
+  const gmxRewardsMonthlyEmissionRate = 0 // need to know why is it zero
   const esGmxRewards = priceGmx * gmxRewardsMonthlyEmissionRate * 12
-  const aprGmx = esGmxRewards/aum
-  const aprEth = ((ethRewardsAnnual?.toNumber()?? 0) * ethPrice) / aum
+  const aprGmx = esGmxRewards / aum
+  const aprEth = ((ethRewardsAnnual?.toNumber() ?? 0) * ethPrice) / aum
   const totalApr = aprGmx + aprEth
   return {
-      'GMXApr':aprGmx,
-      'ETHApr':aprEth,
-      'totalApr':totalApr
+    GMXApr: aprGmx,
+    ETHApr: aprEth,
+    totalApr: totalApr,
   }
 }
 
@@ -64,7 +75,7 @@ async function getGmxPriceData() {
         glpSupply
       }
       uniswapPrices(orderBy: id, orderDirection: desc) {
-          value
+        value
       }
     }
   `
@@ -72,14 +83,14 @@ async function getGmxPriceData() {
   let aum = 0
   let priceGmx = 0
   if (data?.glpStats?.length !== 0) {
-    aum = Number(data?.glpStats[0].aumInUsdg)/1e18
+    aum = Number(data?.glpStats[0].aumInUsdg) / 1e18
   }
   if (data?.uniswapPrices?.length !== 0) {
-    priceGmx = Number(data?.uniswapPrices[0].value)/1e30
+    priceGmx = Number(data?.uniswapPrices[0].value) / 1e30
   }
   return {
     aum,
-    priceGmx
+    priceGmx,
   }
 }
 
