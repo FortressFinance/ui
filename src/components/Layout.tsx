@@ -64,7 +64,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         <footer className="layout py-6">
           <div className="grid gap-4 grid-cols-3 grid-rows-1">            
             <ExternalLinks showHelp />
-            <a className="ml-3 text-xs leading-5 font-medium text-sky-600 dark:text-sky-400 bg-sky-400/10 rounded-full py-1 px-3 xl:flex items-center text-center hover:bg-sky-400/20" href="https://docs.fortress.finance/protocol/risks" target="_blank" rel="noreferrer">
+            <a className="ml-3 text-xs leading-5 text-white/70 hover:text-white/90 font-medium bg-black/40 rounded-full py-1 px-3 xl:flex items-center text-center hover:bg-black/60" href="https://docs.fortress.finance/protocol/risks" target="_blank" rel="noreferrer">
               <strong className="font-semibold">This project is in beta. Use at your own risk.</strong>
             </a>
           </div>
