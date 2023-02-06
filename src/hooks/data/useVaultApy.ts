@@ -1,5 +1,6 @@
 import { useQueries } from "@tanstack/react-query"
 import axios from "axios"
+import { BigNumber } from "ethers"
 import request, { gql } from "graphql-request"
 import { useContractRead, useQuery } from "wagmi"
 
@@ -9,6 +10,7 @@ import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useRegistryContract from "@/hooks/useRegistryContract"
 
+import glpRewardsDistributorAbi from "@/constant/abi/glpRewardsDistributorAbi"
 import {
   AURA_ADDRESS,
   AURA_BAL_ADDRESS,
@@ -16,6 +18,8 @@ import {
   AURA_GRAPH_URL,
   CONVEX_STAKING_URL,
   CURVE_GRAPH_URL,
+  GLP_REWARDS_DISTRIBUTOR_ADDRESS,
+  GXM_GRAPH_URL,
   LLAMA_URL,
 } from "@/constant/env"
 
@@ -283,6 +287,21 @@ export function useVaultTotalApr({
     retry: false,
     enabled: !!ybTokenSymbol && ybTokenSymbol === "fort-cvxCRV",
   })
+
+  const glpQuery = useContractRead({
+    abi: glpRewardsDistributorAbi,
+    address: GLP_REWARDS_DISTRIBUTOR_ADDRESS as `0x${string}`,
+    functionName: "tokensPerInterval",
+    enabled: !!ybTokenSymbol && ybTokenSymbol === "fortGLP",
+  })
+
+  const ethRewardsPerSecond = glpQuery.data
+
+  const fortGlpAprFallback = useQuery([_address, "fortGlpAprFallback"], {
+    queryFn: async () => await getFortGlpAprFallback(ethRewardsPerSecond),
+    retry: false,
+    enabled: !!ybTokenSymbol && !!ethRewardsPerSecond && ybTokenSymbol === "fortGLP",
+  })
   // END OF TOKEN
 
   if (
@@ -324,9 +343,67 @@ export function useVaultTotalApr({
     }
   }
 
+  if (!fortGlpAprFallback.isError && !!fortGlpAprFallback.data) {
+    return {
+      ...fortGlpAprFallback,
+      data: fortGlpAprFallback.data.totalApr,
+    }
+  }
+
   return {
     ...apiQuery,
     data: apiQuery.data?.APR?.totalApr,
+  }
+}
+
+async function getFortGlpAprFallback(ethRewardsPerSecond: BigNumber | undefined) {
+  const { aum, priceGmx } = await getGmxPriceData()
+  const ethRewardsAnnual = ethRewardsPerSecond?.mul(BigNumber.from(3600 * 24 * 365)).div(1e18)
+  const ethPrice = await getLlamaEthPrice()
+  const gmxRewardsMonthlyEmissionRate = 0  // need to know why is it zero
+  const esGmxRewards = priceGmx * gmxRewardsMonthlyEmissionRate * 12
+  const aprGmx = esGmxRewards/aum
+  const aprEth = ((ethRewardsAnnual?.toNumber()?? 0) * ethPrice) / aum
+  const totalApr = aprGmx + aprEth
+  return {
+      'GMXApr':aprGmx,
+      'ETHApr':aprEth,
+      'totalApr':totalApr
+  }
+}
+
+async function getLlamaEthPrice() {
+  const resp = await axios.get(`${LLAMA_URL}coingecko:ethereum`)
+  const coins = resp?.data?.coins
+  const ethToken = coins?.[`coingecko:ethereum`]
+  return ethToken?.price
+}
+
+async function getGmxPriceData() {
+  const graphqlQuery = gql`
+    {
+      glpStats(orderBy: id, orderDirection: desc) {
+        id
+        aumInUsdg
+        glpSupply
+      }
+      uniswapPrices(orderBy: id, orderDirection: desc) {
+          value
+      }
+    }
+  `
+  const data = await request(GXM_GRAPH_URL, graphqlQuery)
+  let aum = 0
+  let priceGmx = 0
+  if (data?.glpStats?.length !== 0) {
+    aum = Number(data?.glpStats[0].aumInUsdg)/1e18
+  }
+  if (data?.uniswapPrices?.length !== 0) {
+    priceGmx = Number(data?.uniswapPrices[0].value)/1e30
+  }
+  return {
+    aum,
+    priceGmx
   }
 }
 

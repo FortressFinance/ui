@@ -10,5 +10,7 @@ export const AURA_FINANCE_URL = process.env.NEXT_PUBLIC_AURA_FINANCE_URL ?? ""
 export const LLAMA_URL = process.env.NEXT_PUBLIC_LLAMA_URL ?? ""
 export const CONVEX_STAKING_URL =
   process.env.NEXT_PUBLIC_CONVEX_STAKING_URL ?? ""
+export const GXM_GRAPH_URL = process.env.NEXT_PUBLIC_GXM_GRAPH_URL ?? ""
 export const AURA_ADDRESS = process.env.NEXT_PUBLIC_AURA_ADDRESS ?? "0x"
 export const AURA_BAL_ADDRESS = process.env.NEXT_PUBLIC_AURA_BAL_ADDRESS ?? "0x"
+export const GLP_REWARDS_DISTRIBUTOR_ADDRESS = process.env.NEXT_PUBLIC_GLP_REWARDS_DISTRIBUTOR_ADDRESS ?? "0x"
