@@ -3,7 +3,7 @@ import dynamic from "next/dynamic"
 import Image from "next/image"
 import Link from "next/link"
 import { FC, Fragment, PropsWithChildren } from "react"
-import { RxHamburgerMenu } from "react-icons/Rx"
+import { RxHamburgerMenu } from "react-icons/rx"
 
 import ConnectWalletModal, {
   DisconnectWalletModal,
@@ -66,7 +66,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
             <div className="flex items-center">
               <NetworkSelector />
-              <ConnectWalletButton />
+              <ConnectWalletButton className="hidden space-x-10 lg:block" />
             </div>
 
             {/* Mobile navigation */}
@@ -83,10 +83,13 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute right-0 my-3 w-56 origin-top-right divide-y divide-gray-100 text-black text-xl bg-white focus:outline-none">
+                <Menu.Items className="absolute right-0 my-3 w-56 origin-top-right divide-y divide-gray-500 text-black text-xl bg-white focus:outline-none">
+                  <Menu.Item>
+                    <ConnectWalletButton className="md:hidden m-3 justify-self-center" />
+                  </Menu.Item>
                   {menuItems.map((item, index) => (
-                    <Menu.Item key={`menu-item-${index}`}>
-                      <Link className="hover:text-pink-400 block m-3" href={item.href}>
+                    <Menu.Item key={`menu-item-${index}`} >
+                      <Link className="hover:text-pink-400 block text-xl m-3 leading-loose" href={item.href}>
                         {item.name}
                       </Link>
                     </Menu.Item>
