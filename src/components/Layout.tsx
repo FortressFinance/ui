@@ -31,12 +31,12 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
   const menuItems = [
     {
-      name: 'Vaults',
-      href: "/vaults"
+      name: "Vaults",
+      href: "/vaults",
     },
     {
-      name: 'Lend',
-      href: "/lend"
+      name: "Lend",
+      href: "/lend",
     },
   ]
 
@@ -56,7 +56,11 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               {/* Desktop navigation */}
               <nav className="hidden space-x-10 lg:block" aria-label="Global">
                 {menuItems.map((item, index) => (
-                  <Link key={`menu-item-${index}`} className="hover:text-pink-400" href={item.href}>
+                  <Link
+                    key={`menu-item-${index}`}
+                    className="hover:text-pink-400"
+                    href={item.href}
+                  >
                     {item.name}
                   </Link>
                 ))}
@@ -70,7 +74,10 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
             </div>
 
             {/* Mobile navigation */}
-            <Menu as="div" className="md:hidden relative inline-block text-left">
+            <Menu
+              as="div"
+              className="relative inline-block text-left md:hidden"
+            >
               <Menu.Button>
                 <RxHamburgerMenu className="h-8 w-8 ml-3" />
               </Menu.Button>
@@ -97,7 +104,6 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 </Menu.Items>
               </Transition>
             </Menu>
-
           </div>
         </header>
 
