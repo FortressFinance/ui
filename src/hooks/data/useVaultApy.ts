@@ -265,7 +265,8 @@ export function useVaultTotalApr({
   const fortGlpAprFallback = useQuery([_address, "fortGlpAprFallback"], {
     queryFn: async () => await getFortGlpAprFallback(ethRewardsPerSecond),
     retry: false,
-    enabled: !!ybTokenSymbol && !!ethRewardsPerSecond && ybTokenSymbol === "fortGLP",
+    enabled:
+      !!ybTokenSymbol && !!ethRewardsPerSecond && ybTokenSymbol === "fortGLP",
   })
   // END OF TOKEN
 
