@@ -8,7 +8,7 @@ import useRegistryContract from "@/hooks/useRegistryContract"
 
 // HARDCODE HERE AT THE MOMENT, THE BE SHOULD CLASSIFY THEM
 const STABLE = ["0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7"]
-const CRYPTO = ["0x616e8BfA43F920657B3497DBf40D6b1A02D4608d"]
+const CRYPTO = ["0x616e8BfA43F920657B3497DBf40D6b1A02D4608d","0x5402B5F40310bDED796c7D0F3FF6683f5C0cFfdf"]
 
 export default function useVaultAddresses({ type }: { type: VaultType }) {
   const isCurve = useIsCurve(type)
