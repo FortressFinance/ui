@@ -46,7 +46,7 @@ export type ApiTokenVault = {
       decimals: number
       symbol?: string
       name?: string
-    },
+    }
     underlyingAssets: {
       address: Address
       decimals: number

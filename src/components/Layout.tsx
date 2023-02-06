@@ -64,7 +64,6 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                     {item.name}
                   </Link>
                 ))}
-
               </nav>
             </div>
 
@@ -79,7 +78,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               className="relative inline-block text-left md:hidden"
             >
               <Menu.Button>
-                <RxHamburgerMenu className="h-8 w-8 ml-3" />
+                <RxHamburgerMenu className="ml-3 h-8 w-8" />
               </Menu.Button>
               <Transition
                 as={Fragment}
@@ -90,13 +89,16 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute right-0 my-3 w-56 origin-top-right divide-y divide-gray-500 text-black text-xl bg-white focus:outline-none">
+                <Menu.Items className="absolute right-0 my-3 w-56 origin-top-right divide-y divide-gray-500 bg-white text-xl text-black focus:outline-none">
                   <Menu.Item>
-                    <ConnectWalletButton className="md:hidden m-3 justify-self-center" />
+                    <ConnectWalletButton className="m-3 justify-self-center md:hidden" />
                   </Menu.Item>
                   {menuItems.map((item, index) => (
-                    <Menu.Item key={`menu-item-${index}`} >
-                      <Link className="hover:text-pink-400 block text-xl m-3 leading-loose" href={item.href}>
+                    <Menu.Item key={`menu-item-${index}`}>
+                      <Link
+                        className="m-3 block text-xl leading-loose hover:text-pink-400"
+                        href={item.href}
+                      >
                         {item.name}
                       </Link>
                     </Menu.Item>
