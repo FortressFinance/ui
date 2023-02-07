@@ -161,7 +161,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
           <Address>{address}</Address>
         </div>
         <div className="flex items-center justify-between py-5">
-          <div className={clsxm({ "text-black": isCopied === true })} onClick={() => staticCopy(address as string)}>
+          <div className={clsxm({ "text-green-400": isCopied === true })} onClick={() => staticCopy(address as string)}>
             <BiCopy              
               className="mr-2 inline h-5 w-5"
             />
