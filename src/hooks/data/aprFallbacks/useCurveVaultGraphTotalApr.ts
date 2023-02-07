@@ -1,12 +1,16 @@
-import { useQuery } from "wagmi";
+import { useQuery } from "wagmi"
 
-import {
-  getVaultAprFallback,
-} from "@/lib/aprFallback"
-import { VaultDynamicProps } from "@/hooks/types";
-import useActiveChainId from "@/hooks/useActiveChainId";
+import { getVaultAprFallback } from "@/lib/aprFallback"
+import { VaultDynamicProps } from "@/hooks/types"
+import useActiveChainId from "@/hooks/useActiveChainId"
 
-export default function useCurveVaultGraphTotalApr({ asset, enabled }: { asset: VaultDynamicProps["asset"], enabled: boolean }) {
+export default function useCurveVaultGraphTotalApr({
+  asset,
+  enabled,
+}: {
+  asset: VaultDynamicProps["asset"]
+  enabled: boolean
+}) {
   const chainId = useActiveChainId()
   const vaultAprFallback = useQuery([chainId, asset, "vaultAprFallback"], {
     queryFn: () => getVaultAprFallback(asset),
@@ -20,5 +24,5 @@ export default function useCurveVaultGraphTotalApr({ asset, enabled }: { asset: 
       Number(vaultAprFallback.data?.[0].crvApr) +
       Number(vaultAprFallback.data?.[0].cvxApr) +
       Number(vaultAprFallback.data?.[0].extraRewardsApr),
-  };
+  }
 }

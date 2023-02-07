@@ -1,8 +1,6 @@
 import { useQuery } from "wagmi"
 
-import {
-  getVaultAprFallback,
-} from "@/lib/aprFallback"
+import { getVaultAprFallback } from "@/lib/aprFallback"
 import { useApiVaultDynamic } from "@/hooks/api"
 import useBalancerVaultGraphTotalApr from "@/hooks/data/aprFallbacks/useBalancerVaultGraphTotalApr"
 import useCurveVaultGraphTotalApr from "@/hooks/data/aprFallbacks/useCurveVaultGraphTotalApr"
@@ -13,7 +11,6 @@ import useTokenVaultSymbol from "@/hooks/data/aprFallbacks/useTokenVaultSymbol"
 import { VaultDynamicProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
-
 
 export default function useVaultApy({
   asset: _address,
@@ -162,13 +159,25 @@ export function useVaultTotalApr({
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
-  const isCurveFallbackEnabled = (apiQuery.isError || apiQuery.data === null) && isCurve && !isToken
-  const isBalancerFallbackEnabled = (apiQuery.isError || apiQuery.data === null) && !isCurve && !isToken
-  const isTokenFallbackEnabled = (apiQuery.isError || apiQuery.data === null) && isToken
+  const isCurveFallbackEnabled =
+    (apiQuery.isError || apiQuery.data === null) && isCurve && !isToken
+  const isBalancerFallbackEnabled =
+    (apiQuery.isError || apiQuery.data === null) && !isCurve && !isToken
+  const isTokenFallbackEnabled =
+    (apiQuery.isError || apiQuery.data === null) && isToken
 
-  const curveVaultGraphTotalApr = useCurveVaultGraphTotalApr({ asset:_address, enabled: isCurveFallbackEnabled?? false })
-  const balancerVaultGraphTotalApr = useBalancerVaultGraphTotalApr({ asset:_address, enabled: isBalancerFallbackEnabled?? false })
-  const tokenVaultGraphTotalApr = useTokenVaultGraphTotalApr({ asset:_address, enabled: isTokenFallbackEnabled?? false })
+  const curveVaultGraphTotalApr = useCurveVaultGraphTotalApr({
+    asset: _address,
+    enabled: isCurveFallbackEnabled ?? false,
+  })
+  const balancerVaultGraphTotalApr = useBalancerVaultGraphTotalApr({
+    asset: _address,
+    enabled: isBalancerFallbackEnabled ?? false,
+  })
+  const tokenVaultGraphTotalApr = useTokenVaultGraphTotalApr({
+    asset: _address,
+    enabled: isTokenFallbackEnabled ?? false,
+  })
 
   if (isCurveFallbackEnabled) {
     return curveVaultGraphTotalApr
@@ -178,9 +187,9 @@ export function useVaultTotalApr({
     return balancerVaultGraphTotalApr
   }
 
-  if(isTokenFallbackEnabled){
+  if (isTokenFallbackEnabled) {
     return tokenVaultGraphTotalApr
-  }  
+  }
 
   return {
     ...apiQuery,
@@ -196,14 +205,24 @@ export function useVaultBalApr({
   const isToken = useIsTokenCompounder(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
-  
-  const isTokenFallbackEnabled = (apiQuery.isError || apiQuery.data === null) && isToken
-  const tokenVaultSymbol = useTokenVaultSymbol({asset: _address, enabled: isTokenFallbackEnabled?? false})
+
+  const isTokenFallbackEnabled =
+    (apiQuery.isError || apiQuery.data === null) && isToken
+  const tokenVaultSymbol = useTokenVaultSymbol({
+    asset: _address,
+    enabled: isTokenFallbackEnabled ?? false,
+  })
 
   const ybTokenSymbol = tokenVaultSymbol.data
 
-  const isAuraTokenFallbackEnabled = isTokenFallbackEnabled && !!ybTokenSymbol && ybTokenSymbol === "fort-auraBAL"
-  const tokenAuraBalVault = useTokenAuraBalVault({asset: _address, enabled: isAuraTokenFallbackEnabled?? false})
+  const isAuraTokenFallbackEnabled =
+    isTokenFallbackEnabled &&
+    !!ybTokenSymbol &&
+    ybTokenSymbol === "fort-auraBAL"
+  const tokenAuraBalVault = useTokenAuraBalVault({
+    asset: _address,
+    enabled: isAuraTokenFallbackEnabled ?? false,
+  })
 
   if (!tokenAuraBalVault.isError && !!tokenAuraBalVault.data) {
     return {
@@ -227,13 +246,23 @@ export function useVaultAuraApr({
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
-  const isTokenFallbackEnabled = (apiQuery.isError || apiQuery.data === null) && isToken
-  const tokenVaultSymbol = useTokenVaultSymbol({asset: _address, enabled: isTokenFallbackEnabled?? false})
+  const isTokenFallbackEnabled =
+    (apiQuery.isError || apiQuery.data === null) && isToken
+  const tokenVaultSymbol = useTokenVaultSymbol({
+    asset: _address,
+    enabled: isTokenFallbackEnabled ?? false,
+  })
 
   const ybTokenSymbol = tokenVaultSymbol.data
 
-  const isAuraTokenFallbackEnabled = isTokenFallbackEnabled && !!ybTokenSymbol && ybTokenSymbol === "fort-auraBAL"
-  const tokenAuraBalVault = useTokenAuraBalVault({asset: _address, enabled: isAuraTokenFallbackEnabled?? false})
+  const isAuraTokenFallbackEnabled =
+    isTokenFallbackEnabled &&
+    !!ybTokenSymbol &&
+    ybTokenSymbol === "fort-auraBAL"
+  const tokenAuraBalVault = useTokenAuraBalVault({
+    asset: _address,
+    enabled: isAuraTokenFallbackEnabled ?? false,
+  })
 
   if (!tokenAuraBalVault.isError && !!tokenAuraBalVault.data) {
     return {
@@ -256,13 +285,21 @@ export function useVaultGmxApr({
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
-  const isTokenFallbackEnabled = (apiQuery.isError || apiQuery.data === null) && isToken
-  const tokenVaultSymbol = useTokenVaultSymbol({asset: _address, enabled: isTokenFallbackEnabled?? false})
+  const isTokenFallbackEnabled =
+    (apiQuery.isError || apiQuery.data === null) && isToken
+  const tokenVaultSymbol = useTokenVaultSymbol({
+    asset: _address,
+    enabled: isTokenFallbackEnabled ?? false,
+  })
 
   const ybTokenSymbol = tokenVaultSymbol.data
 
-  const isGlpTokenFallbackEnabled = isTokenFallbackEnabled && !!ybTokenSymbol && ybTokenSymbol === "fortGLP"
-  const tokenGlpVault = useTokenGlpVault({asset: _address, enabled: isGlpTokenFallbackEnabled?? false})
+  const isGlpTokenFallbackEnabled =
+    isTokenFallbackEnabled && !!ybTokenSymbol && ybTokenSymbol === "fortGLP"
+  const tokenGlpVault = useTokenGlpVault({
+    asset: _address,
+    enabled: isGlpTokenFallbackEnabled ?? false,
+  })
 
   if (!tokenGlpVault.isError && !!tokenGlpVault.data) {
     return {
@@ -286,13 +323,21 @@ export function useVaultEthApr({
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
-  const isTokenFallbackEnabled = (apiQuery.isError || apiQuery.data === null) && isToken
-  const tokenVaultSymbol = useTokenVaultSymbol({asset: _address, enabled: isTokenFallbackEnabled?? false})
+  const isTokenFallbackEnabled =
+    (apiQuery.isError || apiQuery.data === null) && isToken
+  const tokenVaultSymbol = useTokenVaultSymbol({
+    asset: _address,
+    enabled: isTokenFallbackEnabled ?? false,
+  })
 
   const ybTokenSymbol = tokenVaultSymbol.data
 
-  const isGlpTokenFallbackEnabled = isTokenFallbackEnabled && !!ybTokenSymbol && ybTokenSymbol === "fortGLP"
-  const tokenGlpVault = useTokenGlpVault({asset: _address, enabled: isGlpTokenFallbackEnabled?? false})
+  const isGlpTokenFallbackEnabled =
+    isTokenFallbackEnabled && !!ybTokenSymbol && ybTokenSymbol === "fortGLP"
+  const tokenGlpVault = useTokenGlpVault({
+    asset: _address,
+    enabled: isGlpTokenFallbackEnabled ?? false,
+  })
 
   if (!tokenGlpVault.isError && !!tokenGlpVault.data) {
     return {
