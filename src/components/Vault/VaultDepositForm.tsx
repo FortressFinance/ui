@@ -208,7 +208,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
           }
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
-          tokenAddreseses={[
+          tokenAddresses={[
             ...(lpTokenOrAsset ? [lpTokenOrAsset ?? "0x"] : []),
             ...(underlyingAssets?.filter((a) => a !== lpTokenOrAsset) || []),
           ]}

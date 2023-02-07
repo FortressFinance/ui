@@ -177,7 +177,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
           }
           onSubmit={onSubmitForm}
           submitText="Withdraw"
-          tokenAddreseses={[
+          tokenAddresses={[
             ...(lpTokenOrAsset ? [lpTokenOrAsset ?? "0x"] : []),
             ...(underlyingAssets?.filter((a) => a !== lpTokenOrAsset) || []),
           ]}

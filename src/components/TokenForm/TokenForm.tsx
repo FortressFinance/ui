@@ -17,7 +17,7 @@ type TokenFormProps = {
   isLoadingTransaction: boolean
   isWithdraw?: boolean
   submitText: string
-  tokenAddreseses: Address[] | readonly Address[] | undefined
+  tokenAddresses: Address[] | readonly Address[] | undefined
   onSubmit: SubmitHandler<TokenFormValues>
 }
 
@@ -35,7 +35,7 @@ const TokenForm: FC<TokenFormProps> = ({
   isLoadingTransaction,
   isWithdraw = false,
   submitText,
-  tokenAddreseses,
+  tokenAddresses,
   onSubmit,
 }) => {
   const [tokenSelectMode, setTokenSelectMode] = useState<TokenSelectMode>(null)
@@ -78,7 +78,12 @@ const TokenForm: FC<TokenFormProps> = ({
         {/* inputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-1 flex items-start justify-self-end pr-4 pt-4">
           <TokenSelectButton
-            canChange={!isWithdraw && isConnected}
+            canChange={
+              !isWithdraw &&
+              isConnected &&
+              !!tokenAddresses &&
+              tokenAddresses.length > 1
+            }
             tokenAddress={inputTokenAddress}
             onClick={() => setTokenSelectMode("inputToken")}
           />
@@ -99,7 +104,12 @@ const TokenForm: FC<TokenFormProps> = ({
         {/* outputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-3 flex items-start space-x-1 justify-self-end pr-4 pb-4">
           <TokenSelectButton
-            canChange={isWithdraw && isConnected}
+            canChange={
+              isWithdraw &&
+              isConnected &&
+              !!tokenAddresses &&
+              tokenAddresses.length > 1
+            }
             tokenAddress={outputTokenAddress}
             onClick={() => setTokenSelectMode("outputToken")}
           />
@@ -138,7 +148,7 @@ const TokenForm: FC<TokenFormProps> = ({
           controller={tokenSelectField}
           isOpen={tokenSelectMode !== null}
           onClose={() => setTokenSelectMode(null)}
-          tokenAddresses={tokenAddreseses}
+          tokenAddresses={tokenAddresses}
         />
       </div>
     </form>
