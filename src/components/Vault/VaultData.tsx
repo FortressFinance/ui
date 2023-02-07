@@ -10,6 +10,7 @@ import {
   useVaultTvl,
 } from "@/hooks/data"
 import { VaultProps } from "@/hooks/types"
+import useActiveChainId from "@/hooks/useActiveChainId"
 
 import Currency from "@/components/Currency"
 import Percentage from "@/components/Percentage"
@@ -55,6 +56,7 @@ export const VaultTvl: FC<VaultProps> = (props) => {
 }
 
 export const VaultDepositedLpTokens: FC<VaultProps> = (props) => {
+  const chainId = useActiveChainId()
   const { data: poolId, isLoading: isLoadingId } = useVaultPoolId(props)
   const { data: depositedTokens, isLoading: isLoadingDepositedTokens } =
     useVaultDepositedLpTokens({
@@ -63,6 +65,7 @@ export const VaultDepositedLpTokens: FC<VaultProps> = (props) => {
     })
   const { data: lpTokenOrAsset, isLoading: isLoadingLpTokenOrAsset } = useToken(
     {
+      chainId,
       address: props.asset,
     }
   )

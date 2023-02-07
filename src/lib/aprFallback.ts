@@ -43,14 +43,12 @@ export async function getFortGlpAprFallback(
   ethRewardsPerSecond: BigNumber | undefined
 ) {
   const { aum, priceGmx } = await getGmxPriceData()
-  const ethRewardsAnnual = ethRewardsPerSecond
-    ?.mul(BigNumber.from(3600 * 24 * 365))
-    .div(1e18)
+  const ethRewardsAnnual = ((ethRewardsPerSecond?? BigNumber.from(0)).toNumber()* 3600 * 24 * 365)/1e18
   const ethPrice = await getLlamaEthPrice()
   const gmxRewardsMonthlyEmissionRate = 0 // need to know why is it zero
   const esGmxRewards = priceGmx * gmxRewardsMonthlyEmissionRate * 12
   const aprGmx = esGmxRewards / aum
-  const aprEth = ((ethRewardsAnnual?.toNumber() ?? 0) * ethPrice) / aum
+  const aprEth = (ethRewardsAnnual * ethPrice) / aum
   const totalApr = aprGmx + aprEth
   return {
     GMXApr: aprGmx,

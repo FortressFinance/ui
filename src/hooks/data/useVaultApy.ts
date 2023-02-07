@@ -12,6 +12,7 @@ import {
 } from "@/lib/aprFallback"
 import { useApiVaultDynamic } from "@/hooks/api"
 import { VaultDynamicProps } from "@/hooks/types"
+import useActiveChainId from "@/hooks/useActiveChainId"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useRegistryContract from "@/hooks/useRegistryContract"
@@ -161,6 +162,7 @@ export function useVaultTotalApr({
   poolId,
   type,
 }: VaultDynamicProps) {
+  const chainId = useActiveChainId()
   const isCurve = useIsCurve(type)
   const isToken = useIsTokenCompounder(type)
   // Preferred: API request
@@ -260,6 +262,7 @@ export function useVaultTotalApr({
   })
 
   const glpQuery = useContractRead({
+    chainId,
     abi: glpRewardsDistributorAbi,
     address: GLP_REWARDS_DISTRIBUTOR_ADDRESS as `0x${string}`,
     functionName: "tokensPerInterval",
@@ -438,6 +441,7 @@ export function useVaultGmxApr({
   poolId,
   type,
 }: VaultDynamicProps) {
+  const chainId = useActiveChainId()
   const isToken = useIsTokenCompounder(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
@@ -452,6 +456,7 @@ export function useVaultGmxApr({
   const ybTokenSymbol = registryQuery.data
 
   const glpQuery = useContractRead({
+    chainId,
     abi: glpRewardsDistributorAbi,
     address: GLP_REWARDS_DISTRIBUTOR_ADDRESS as `0x${string}`,
     functionName: "tokensPerInterval",
@@ -485,6 +490,7 @@ export function useVaultEthApr({
   poolId,
   type,
 }: VaultDynamicProps) {
+  const chainId = useActiveChainId()
   const isToken = useIsTokenCompounder(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
@@ -499,6 +505,7 @@ export function useVaultEthApr({
   const ybTokenSymbol = registryQuery.data
 
   const glpQuery = useContractRead({
+    chainId,
     abi: glpRewardsDistributorAbi,
     address: GLP_REWARDS_DISTRIBUTOR_ADDRESS as `0x${string}`,
     functionName: "tokensPerInterval",
