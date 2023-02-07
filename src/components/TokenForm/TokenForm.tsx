@@ -16,6 +16,8 @@ type TokenFormProps = {
   isLoadingPreview: boolean
   isLoadingTransaction: boolean
   isWithdraw?: boolean
+  enableModalInput?: boolean
+  enableModalOuput?: boolean
   submitText: string
   tokenAddreseses: Address[] | readonly Address[] | undefined
   onSubmit: SubmitHandler<TokenFormValues>
@@ -34,6 +36,8 @@ const TokenForm: FC<TokenFormProps> = ({
   isLoadingPreview,
   isLoadingTransaction,
   isWithdraw = false,
+  enableModalInput = true,
+  enableModalOuput = true,
   submitText,
   tokenAddreseses,
   onSubmit,
@@ -78,7 +82,7 @@ const TokenForm: FC<TokenFormProps> = ({
         {/* inputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-1 flex items-start justify-self-end pr-4 pt-4">
           <TokenSelectButton
-            canChange={!isWithdraw && isConnected}
+            canChange={!isWithdraw && isConnected && enableModalInput}
             tokenAddress={inputTokenAddress}
             onClick={() => setTokenSelectMode("inputToken")}
           />
@@ -99,7 +103,7 @@ const TokenForm: FC<TokenFormProps> = ({
         {/* outputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-3 flex items-start space-x-1 justify-self-end pr-4 pb-4">
           <TokenSelectButton
-            canChange={isWithdraw && isConnected}
+            canChange={isWithdraw && isConnected && enableModalOuput}
             tokenAddress={outputTokenAddress}
             onClick={() => setTokenSelectMode("outputToken")}
           />

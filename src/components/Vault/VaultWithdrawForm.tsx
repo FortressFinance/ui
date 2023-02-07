@@ -35,6 +35,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     : props.asset
   const vaultAddress = vaultTokens.ybTokenAddress ?? "0x"
   const underlyingAssets = vaultTokens.underlyingAssetAddresses
+  const enableModalOuput = vaultTokens.underlyingAssetAddresses?.length != 1
 
   // Configure form
   const form = useForm<TokenFormValues>({
@@ -171,6 +172,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
             waitTokenWithdrawLp.isLoading ||
             waitTokenWithdrawUnderlying.isLoading
           }
+          enableModalOuput={enableModalOuput}
           onSubmit={onSubmitForm}
           submitText="Withdraw"
           tokenAddreseses={[

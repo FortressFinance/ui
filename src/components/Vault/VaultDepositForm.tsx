@@ -37,6 +37,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     : props.asset
   const vaultAddress = vaultTokens.ybTokenAddress ?? "0x"
   const underlyingAssets = vaultTokens.underlyingAssetAddresses
+  const enableModalInput = vaultTokens.underlyingAssetAddresses?.length != 1
 
   // Configure form
   const form = useForm<TokenFormValues>({
@@ -200,6 +201,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
             waitDepositUnderlying.isLoading ||
             waitTokenDepositUnderlying.isLoading
           }
+          enableModalInput={enableModalInput}
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
           tokenAddreseses={[
