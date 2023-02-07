@@ -1,10 +1,20 @@
 import { useQueries, useQuery } from "@tanstack/react-query"
 
-import { fetchApiAuraFinance, getAuraMint, getBalancerTotalAprFallback } from "@/lib/aprFallback";
-import { VaultDynamicProps } from "@/hooks/types";
-import useActiveChainId from "@/hooks/useActiveChainId";
+import {
+  fetchApiAuraFinance,
+  getAuraMint,
+  getBalancerTotalAprFallback,
+} from "@/lib/aprFallback"
+import { VaultDynamicProps } from "@/hooks/types"
+import useActiveChainId from "@/hooks/useActiveChainId"
 
-export default function useBalancerVaultGraphTotalApr({ asset, enabled }: { asset: VaultDynamicProps["asset"], enabled: boolean }) {
+export default function useBalancerVaultGraphTotalApr({
+  asset,
+  enabled,
+}: {
+  asset: VaultDynamicProps["asset"]
+  enabled: boolean
+}) {
   const chainId = useActiveChainId()
   const auraQuery = useQueries({
     queries: [
@@ -31,18 +41,9 @@ export default function useBalancerVaultGraphTotalApr({ asset, enabled }: { asse
     [chainId, asset, "balancerTotalAprFallback", extraTokenAwards, swapFee],
     {
       queryFn: () =>
-        getBalancerTotalAprFallback(
-          asset,
-          extraTokenAwards,
-          swapFee,
-          auraMint
-        ),
+        getBalancerTotalAprFallback(asset, extraTokenAwards, swapFee, auraMint),
       retry: false,
-      enabled:
-        enabled &&
-        !!swapFee &&
-        !!extraTokenAwards &&
-        !!auraMint,
+      enabled: enabled && !!swapFee && !!extraTokenAwards && !!auraMint,
     }
   )
 

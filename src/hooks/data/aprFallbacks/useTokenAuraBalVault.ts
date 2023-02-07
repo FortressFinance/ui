@@ -1,10 +1,16 @@
-import { useQuery } from "wagmi";
+import { useQuery } from "wagmi"
 
-import { getAuraMint, getFortAuraBalAprFallback } from "@/lib/aprFallback";
-import { VaultDynamicProps } from "@/hooks/types";
-import useActiveChainId from "@/hooks/useActiveChainId";
+import { getAuraMint, getFortAuraBalAprFallback } from "@/lib/aprFallback"
+import { VaultDynamicProps } from "@/hooks/types"
+import useActiveChainId from "@/hooks/useActiveChainId"
 
-export default function useTokenAuraBalVault({ asset, enabled }: { asset: VaultDynamicProps["asset"], enabled: boolean }) {
+export default function useTokenAuraBalVault({
+  asset,
+  enabled,
+}: {
+  asset: VaultDynamicProps["asset"]
+  enabled: boolean
+}) {
   const chainId = useActiveChainId()
   const auraTokenQuery = useQuery([chainId, asset, "auraMint"], {
     queryFn: () => getAuraMint(),
@@ -14,14 +20,11 @@ export default function useTokenAuraBalVault({ asset, enabled }: { asset: VaultD
 
   const auraTokenMint = auraTokenQuery.data
 
-  const fortAuraBalAprFallback = useQuery(
-    [asset, "fortAuraBalAprFallback"],
-    {
-      queryFn: () => getFortAuraBalAprFallback(auraTokenMint),
-      retry: false,
-      enabled: enabled && !!auraTokenMint,
-    }
-  )
+  const fortAuraBalAprFallback = useQuery([asset, "fortAuraBalAprFallback"], {
+    queryFn: () => getFortAuraBalAprFallback(auraTokenMint),
+    retry: false,
+    enabled: enabled && !!auraTokenMint,
+  })
 
   return fortAuraBalAprFallback
 }
