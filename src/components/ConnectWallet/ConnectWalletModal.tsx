@@ -1,7 +1,7 @@
 import { Dialog } from "@headlessui/react"
 import copy from "copy-to-clipboard"
 import Link from "next/link"
-import { FC, MouseEvent, PropsWithChildren, useCallback, useState } from "react"
+import { FC, MouseEvent, PropsWithChildren, useCallback, useEffect, useState } from "react"
 import { BiCopy, BiLinkExternal, BiXCircle } from "react-icons/bi"
 import { useAccount, useConnect, useDisconnect, useNetwork } from "wagmi"
 
@@ -80,6 +80,21 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
   const { disconnect } = useDisconnect()
   const [isCopied, setCopied] = useState(false)
   const { chain } = useNetwork()
+  const resetAfterMs = 500
+
+  useEffect(() => {
+    if (resetAfterMs === null) return undefined
+
+    const timeout = setTimeout(() => {
+      if(isCopied){
+        setCopied(false)
+      }
+    }, resetAfterMs)
+
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [resetAfterMs, isCopied, setCopied])
 
   const blockExplorerUrl: string = chain?.blockExplorers?.default.url || ""
 
@@ -109,15 +124,15 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
 
   return (
     <ConnectWalletModalBase isOpen={isOpen} onClose={onClose}>
-      <div className="flex h-full items-start justify-end">
+      <div className="grid grid-cols-6 grid-rows-1 gap-4">
+        <div></div>
+        <Dialog.Title as="h1" className="text-center font-display text-4xl col-span-4">
+          Account
+        </Dialog.Title>
         <button onClick={onClose} className="p-2">
-          <BiXCircle className="h-8 w-8" />
+            <BiXCircle className="h-8 w-8" />
         </button>
       </div>
-
-      <Dialog.Title as="h1" className="text-center font-display text-4xl">
-        Account
-      </Dialog.Title>
 
       <div className="mt-30 space-y flex flex-col divide-y">
         <div className="flex items-center justify-between py-5">
@@ -146,12 +161,11 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
           <Address>{address}</Address>
         </div>
         <div className="flex items-center justify-between py-5">
-          <div className={clsxm({ "text-black": isCopied === true })}>
-            <BiCopy
-              onClick={() => staticCopy(address as string)}
+          <div className={clsxm({ "text-black": isCopied === true })} onClick={() => staticCopy(address as string)}>
+            <BiCopy              
               className="mr-2 inline h-5 w-5"
             />
-            <span>Copy address</span>
+            <span className="cursor-pointer">Copy address</span>
           </div>
           <Link
             href={blockExplorerUrl + "/address/" + address}
@@ -163,7 +177,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
           </Link>
         </div>
       </div>
-      <div className="w-7/8 mx-10 mt-10 text-justify text-sm">
+      <div className="w-7/8 mt-2 text-justify text-xs">
         By connecting your wallet to Fortress finance, you acknowledge that you
         have read and understand the{" "}
         <Link
