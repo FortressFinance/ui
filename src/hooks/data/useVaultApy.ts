@@ -1,24 +1,19 @@
-import { useQueries } from "@tanstack/react-query"
-import { useContractRead, useQuery } from "wagmi"
+import { useQuery } from "wagmi"
 
 import {
-  fetchApiAuraFinance,
-  getAuraMint,
-  getBalancerTotalAprFallback,
-  getFortAuraBalAprFallback,
-  getFortCvxCrvAprFallback,
-  getFortGlpAprFallback,
   getVaultAprFallback,
 } from "@/lib/aprFallback"
 import { useApiVaultDynamic } from "@/hooks/api"
+import useBalancerVaultGraphTotalApr from "@/hooks/data/aprFallbacks/useBalancerVaultGraphTotalApr"
+import useCurveVaultGraphTotalApr from "@/hooks/data/aprFallbacks/useCurveVaultGraphTotalApr"
+import useTokenAuraBalVault from "@/hooks/data/aprFallbacks/useTokenAuraBalVault"
+import useTokenGlpVault from "@/hooks/data/aprFallbacks/useTokenGlpVault"
+import useTokenVaultGraphTotalApr from "@/hooks/data/aprFallbacks/useTokenVaultGraphTotalApr"
+import useTokenVaultSymbol from "@/hooks/data/aprFallbacks/useTokenVaultSymbol"
 import { VaultDynamicProps } from "@/hooks/types"
-import useActiveChainId from "@/hooks/useActiveChainId"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
-import useRegistryContract from "@/hooks/useRegistryContract"
 
-import glpRewardsDistributorAbi from "@/constant/abi/glpRewardsDistributorAbi"
-import { GLP_REWARDS_DISTRIBUTOR_ADDRESS } from "@/constant/env"
 
 export default function useVaultApy({
   asset: _address,
@@ -162,168 +157,30 @@ export function useVaultTotalApr({
   poolId,
   type,
 }: VaultDynamicProps) {
-  const chainId = useActiveChainId()
   const isCurve = useIsCurve(type)
   const isToken = useIsTokenCompounder(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
-  // CURVE
-  const vaultAprFallback = useQuery([_address, "vaultAprFallback"], {
-    queryFn: async () => await getVaultAprFallback(_address),
-    retry: false,
-    enabled:
-      (apiQuery.isError || apiQuery.data === null) && !isToken && isCurve,
-  })
-  // END OF CURVE
+  const isCurveFallbackEnabled = (apiQuery.isError || apiQuery.data === null) && isCurve && !isToken
+  const isBalancerFallbackEnabled = (apiQuery.isError || apiQuery.data === null) && !isCurve && !isToken
+  const isTokenFallbackEnabled = (apiQuery.isError || apiQuery.data === null) && isToken
 
-  // BALANCER
-  const auraQuery = useQueries({
-    queries: [
-      {
-        queryKey: [_address, "auraFinance"],
-        queryFn: async () => await fetchApiAuraFinance(_address),
-        staleTime: Infinity,
-        enabled:
-          (apiQuery.isError || apiQuery.data === null) && !isToken && !isCurve,
-      },
-      {
-        queryKey: [_address, "auraMint"],
-        queryFn: async () => await getAuraMint(),
-        staleTime: Infinity,
-        enabled:
-          (apiQuery.isError || apiQuery.data === null) && !isToken && !isCurve,
-      },
-    ],
-  })
+  const curveVaultGraphTotalApr = useCurveVaultGraphTotalApr({ asset:_address, enabled: isCurveFallbackEnabled?? false })
+  const balancerVaultGraphTotalApr = useBalancerVaultGraphTotalApr({ asset:_address, enabled: isBalancerFallbackEnabled?? false })
+  const tokenVaultGraphTotalApr = useTokenVaultGraphTotalApr({ asset:_address, enabled: isTokenFallbackEnabled?? false })
 
-  const extraTokenAwards = auraQuery?.[0].data?.extraTokenAwards
-  const swapFee = auraQuery?.[0].data?.swapFee
-  const auraMint = auraQuery?.[1].data
-
-  const balancerTotalAprFallbackQuery = useQuery(
-    [_address, "balancerTotalAprFallback", extraTokenAwards, swapFee],
-    {
-      queryFn: async () =>
-        await getBalancerTotalAprFallback(
-          _address,
-          extraTokenAwards,
-          swapFee,
-          auraMint
-        ),
-      retry: false,
-      enabled:
-        (apiQuery.isError || apiQuery.data === null) &&
-        !!swapFee &&
-        !!extraTokenAwards &&
-        !!auraMint &&
-        !isToken &&
-        !isCurve,
-    }
-  )
-  // END OF BALANCER
-
-  // TOKEN
-  const registryQuery = useContractRead({
-    ...useRegistryContract(),
-    functionName: "getTokenCompounderSymbol",
-    args: [_address ?? "0x"],
-    enabled: (apiQuery.isError || apiQuery.data === null) && isToken,
-  })
-
-  const ybTokenSymbol = registryQuery.data
-
-  const auraTokenQuery = useQuery([_address, "auraMint"], {
-    queryFn: async () => await getAuraMint(),
-    retry: false,
-    enabled:
-      (apiQuery.isError || apiQuery.data === null) &&
-      isToken &&
-      !!ybTokenSymbol &&
-      ybTokenSymbol === "fort-auraBAL",
-  })
-
-  const auraTokenMint = auraTokenQuery.data
-
-  const fortAuraBalAprFallback = useQuery(
-    [_address, "fortAuraBalAprFallback"],
-    {
-      queryFn: async () => await getFortAuraBalAprFallback(auraTokenMint),
-      retry: false,
-      enabled:
-        !!ybTokenSymbol && !!auraTokenMint && ybTokenSymbol === "fort-auraBAL",
-    }
-  )
-
-  const fortCvxCrvAprFallback = useQuery([_address, "fortCvxCrvAprFallback"], {
-    queryFn: async () => await getFortCvxCrvAprFallback(),
-    retry: false,
-    enabled: !!ybTokenSymbol && ybTokenSymbol === "fort-cvxCRV",
-  })
-
-  const glpQuery = useContractRead({
-    chainId,
-    abi: glpRewardsDistributorAbi,
-    address: GLP_REWARDS_DISTRIBUTOR_ADDRESS as `0x${string}`,
-    functionName: "tokensPerInterval",
-    enabled: !!ybTokenSymbol && ybTokenSymbol === "fortGLP",
-  })
-
-  const ethRewardsPerSecond = glpQuery.data
-
-  const fortGlpAprFallback = useQuery([_address, "fortGlpAprFallback"], {
-    queryFn: async () => await getFortGlpAprFallback(ethRewardsPerSecond),
-    retry: false,
-    enabled:
-      !!ybTokenSymbol && !!ethRewardsPerSecond && ybTokenSymbol === "fortGLP",
-  })
-  // END OF TOKEN
-
-  if (
-    !vaultAprFallback.isError &&
-    !!vaultAprFallback.data &&
-    vaultAprFallback.data.length > 0
-  ) {
-    return {
-      ...vaultAprFallback,
-      data:
-        Number(vaultAprFallback.data?.[0].baseApr) +
-        Number(vaultAprFallback.data?.[0].crvApr) +
-        Number(vaultAprFallback.data?.[0].cvxApr) +
-        Number(vaultAprFallback.data?.[0].extraRewardsApr),
-    }
+  if (isCurveFallbackEnabled) {
+    return curveVaultGraphTotalApr
   }
 
-  if (
-    !balancerTotalAprFallbackQuery.isError &&
-    !!balancerTotalAprFallbackQuery.data
-  ) {
-    return {
-      ...balancerTotalAprFallbackQuery,
-      data: balancerTotalAprFallbackQuery.data.totalApr,
-    }
+  if (isBalancerFallbackEnabled) {
+    return balancerVaultGraphTotalApr
   }
 
-  if (!fortAuraBalAprFallback.isError && !!fortAuraBalAprFallback.data) {
-    return {
-      ...fortAuraBalAprFallback,
-      data: fortAuraBalAprFallback.data.totalApr,
-    }
-  }
-
-  if (!fortCvxCrvAprFallback.isError && !!fortCvxCrvAprFallback.data) {
-    return {
-      ...fortCvxCrvAprFallback,
-      data: fortCvxCrvAprFallback.data.totalApr,
-    }
-  }
-
-  if (!fortGlpAprFallback.isError && !!fortGlpAprFallback.data) {
-    return {
-      ...fortGlpAprFallback,
-      data: fortGlpAprFallback.data.totalApr,
-    }
-  }
+  if(isTokenFallbackEnabled){
+    return tokenVaultGraphTotalApr
+  }  
 
   return {
     ...apiQuery,
@@ -339,42 +196,19 @@ export function useVaultBalApr({
   const isToken = useIsTokenCompounder(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
+  
+  const isTokenFallbackEnabled = (apiQuery.isError || apiQuery.data === null) && isToken
+  const tokenVaultSymbol = useTokenVaultSymbol({asset: _address, enabled: isTokenFallbackEnabled?? false})
 
-  const registryQuery = useContractRead({
-    ...useRegistryContract(),
-    functionName: "getTokenCompounderSymbol",
-    args: [_address ?? "0x"],
-    enabled: (apiQuery.isError || apiQuery.data === null) && isToken,
-  })
+  const ybTokenSymbol = tokenVaultSymbol.data
 
-  const ybTokenSymbol = registryQuery.data
+  const isAuraTokenFallbackEnabled = isTokenFallbackEnabled && !!ybTokenSymbol && ybTokenSymbol === "fort-auraBAL"
+  const tokenAuraBalVault = useTokenAuraBalVault({asset: _address, enabled: isAuraTokenFallbackEnabled?? false})
 
-  const auraTokenQuery = useQuery([_address, "auraMint"], {
-    queryFn: async () => await getAuraMint(),
-    retry: false,
-    enabled:
-      (apiQuery.isError || apiQuery.data === null) &&
-      isToken &&
-      !!ybTokenSymbol &&
-      ybTokenSymbol === "fort-auraBAL",
-  })
-
-  const auraTokenMint = auraTokenQuery.data
-
-  const fortAuraBalAprFallback = useQuery(
-    [_address, "fortAuraBalAprFallback"],
-    {
-      queryFn: async () => await getFortAuraBalAprFallback(auraTokenMint),
-      retry: false,
-      enabled:
-        !!ybTokenSymbol && !!auraTokenMint && ybTokenSymbol === "fort-auraBAL",
-    }
-  )
-
-  if (!fortAuraBalAprFallback.isError && !!fortAuraBalAprFallback.data) {
+  if (!tokenAuraBalVault.isError && !!tokenAuraBalVault.data) {
     return {
-      ...fortAuraBalAprFallback,
-      data: fortAuraBalAprFallback.data.BALApr,
+      ...tokenAuraBalVault,
+      data: tokenAuraBalVault.data.BALApr,
     }
   }
 
@@ -393,41 +227,18 @@ export function useVaultAuraApr({
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
-  const registryQuery = useContractRead({
-    ...useRegistryContract(),
-    functionName: "getTokenCompounderSymbol",
-    args: [_address ?? "0x"],
-    enabled: (apiQuery.isError || apiQuery.data === null) && isToken,
-  })
+  const isTokenFallbackEnabled = (apiQuery.isError || apiQuery.data === null) && isToken
+  const tokenVaultSymbol = useTokenVaultSymbol({asset: _address, enabled: isTokenFallbackEnabled?? false})
 
-  const ybTokenSymbol = registryQuery.data
+  const ybTokenSymbol = tokenVaultSymbol.data
 
-  const auraTokenQuery = useQuery([_address, "auraMint"], {
-    queryFn: async () => await getAuraMint(),
-    retry: false,
-    enabled:
-      (apiQuery.isError || apiQuery.data === null) &&
-      isToken &&
-      !!ybTokenSymbol &&
-      ybTokenSymbol === "fort-auraBAL",
-  })
+  const isAuraTokenFallbackEnabled = isTokenFallbackEnabled && !!ybTokenSymbol && ybTokenSymbol === "fort-auraBAL"
+  const tokenAuraBalVault = useTokenAuraBalVault({asset: _address, enabled: isAuraTokenFallbackEnabled?? false})
 
-  const auraTokenMint = auraTokenQuery.data
-
-  const fortAuraBalAprFallback = useQuery(
-    [_address, "fortAuraBalAprFallback"],
-    {
-      queryFn: async () => await getFortAuraBalAprFallback(auraTokenMint),
-      retry: false,
-      enabled:
-        !!ybTokenSymbol && !!auraTokenMint && ybTokenSymbol === "fort-auraBAL",
-    }
-  )
-
-  if (!fortAuraBalAprFallback.isError && !!fortAuraBalAprFallback.data) {
+  if (!tokenAuraBalVault.isError && !!tokenAuraBalVault.data) {
     return {
-      ...fortAuraBalAprFallback,
-      data: fortAuraBalAprFallback.data.AuraApr,
+      ...tokenAuraBalVault,
+      data: tokenAuraBalVault.data.AuraApr,
     }
   }
   return {
@@ -441,41 +252,22 @@ export function useVaultGmxApr({
   poolId,
   type,
 }: VaultDynamicProps) {
-  const chainId = useActiveChainId()
   const isToken = useIsTokenCompounder(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
-  const registryQuery = useContractRead({
-    ...useRegistryContract(),
-    functionName: "getTokenCompounderSymbol",
-    args: [_address ?? "0x"],
-    enabled: (apiQuery.isError || apiQuery.data === null) && isToken,
-  })
+  const isTokenFallbackEnabled = (apiQuery.isError || apiQuery.data === null) && isToken
+  const tokenVaultSymbol = useTokenVaultSymbol({asset: _address, enabled: isTokenFallbackEnabled?? false})
 
-  const ybTokenSymbol = registryQuery.data
+  const ybTokenSymbol = tokenVaultSymbol.data
 
-  const glpQuery = useContractRead({
-    chainId,
-    abi: glpRewardsDistributorAbi,
-    address: GLP_REWARDS_DISTRIBUTOR_ADDRESS as `0x${string}`,
-    functionName: "tokensPerInterval",
-    enabled: !!ybTokenSymbol && ybTokenSymbol === "fortGLP",
-  })
+  const isGlpTokenFallbackEnabled = isTokenFallbackEnabled && !!ybTokenSymbol && ybTokenSymbol === "fortGLP"
+  const tokenGlpVault = useTokenGlpVault({asset: _address, enabled: isGlpTokenFallbackEnabled?? false})
 
-  const ethRewardsPerSecond = glpQuery.data
-
-  const fortGlpAprFallback = useQuery([_address, "fortGlpAprFallback"], {
-    queryFn: async () => await getFortGlpAprFallback(ethRewardsPerSecond),
-    retry: false,
-    enabled:
-      !!ybTokenSymbol && !!ethRewardsPerSecond && ybTokenSymbol === "fortGLP",
-  })
-
-  if (!fortGlpAprFallback.isError && !!fortGlpAprFallback.data) {
+  if (!tokenGlpVault.isError && !!tokenGlpVault.data) {
     return {
-      ...fortGlpAprFallback,
-      data: fortGlpAprFallback.data.GMXApr,
+      ...tokenGlpVault,
+      data: tokenGlpVault.data.GMXApr,
     }
   }
 
@@ -490,41 +282,22 @@ export function useVaultEthApr({
   poolId,
   type,
 }: VaultDynamicProps) {
-  const chainId = useActiveChainId()
   const isToken = useIsTokenCompounder(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
-  const registryQuery = useContractRead({
-    ...useRegistryContract(),
-    functionName: "getTokenCompounderSymbol",
-    args: [_address ?? "0x"],
-    enabled: (apiQuery.isError || apiQuery.data === null) && isToken,
-  })
+  const isTokenFallbackEnabled = (apiQuery.isError || apiQuery.data === null) && isToken
+  const tokenVaultSymbol = useTokenVaultSymbol({asset: _address, enabled: isTokenFallbackEnabled?? false})
 
-  const ybTokenSymbol = registryQuery.data
+  const ybTokenSymbol = tokenVaultSymbol.data
 
-  const glpQuery = useContractRead({
-    chainId,
-    abi: glpRewardsDistributorAbi,
-    address: GLP_REWARDS_DISTRIBUTOR_ADDRESS as `0x${string}`,
-    functionName: "tokensPerInterval",
-    enabled: !!ybTokenSymbol && ybTokenSymbol === "fortGLP",
-  })
+  const isGlpTokenFallbackEnabled = isTokenFallbackEnabled && !!ybTokenSymbol && ybTokenSymbol === "fortGLP"
+  const tokenGlpVault = useTokenGlpVault({asset: _address, enabled: isGlpTokenFallbackEnabled?? false})
 
-  const ethRewardsPerSecond = glpQuery.data
-
-  const fortGlpAprFallback = useQuery([_address, "fortGlpAprFallback"], {
-    queryFn: async () => await getFortGlpAprFallback(ethRewardsPerSecond),
-    retry: false,
-    enabled:
-      !!ybTokenSymbol && !!ethRewardsPerSecond && ybTokenSymbol === "fortGLP",
-  })
-
-  if (!fortGlpAprFallback.isError && !!fortGlpAprFallback.data) {
+  if (!tokenGlpVault.isError && !!tokenGlpVault.data) {
     return {
-      ...fortGlpAprFallback,
-      data: fortGlpAprFallback.data.ETHApr,
+      ...tokenGlpVault,
+      data: tokenGlpVault.data.ETHApr,
     }
   }
   return {
