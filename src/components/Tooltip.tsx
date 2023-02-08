@@ -3,6 +3,7 @@ import {
   Children,
   cloneElement,
   FC,
+  Fragment,
   PropsWithChildren,
   useCallback,
   useRef,
@@ -45,9 +46,10 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "top",
+    strategy: "fixed",
     modifiers: [
       { name: "preventOverflow", options: { padding: 8 } },
-      { name: "offset", options: { offset: [-3, 16] } },
+      { name: "offset", options: { offset: [0, 16] } },
       { name: "arrow", options: { element: arrowElement } },
     ],
   })
@@ -65,6 +67,8 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
       })}
 
       <Transition
+        as="div"
+        className="fixed"
         show={isOpen}
         enter="transition-opacity duration-200"
         enterFrom="opacity-0"
