@@ -22,7 +22,7 @@ export default function useTokensOrNative({
   lpToken,
 }: {
   tokenAddresses: Address[] | readonly Address[] | undefined
-  lpToken: Address | readonly Address | undefined
+  lpToken: Address | Address | undefined
 }) {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
