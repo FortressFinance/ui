@@ -13,20 +13,20 @@ import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
 type AggregatedTokensResult = FetchTokenResult & {
-  balance: FetchBalanceResult,
+  balance: FetchBalanceResult
   isLpToken: boolean
 }
 
 export default function useTokensOrNative({
   tokenAddresses = ["0x"],
-  lpToken
+  lpToken,
 }: {
-  tokenAddresses: Address[] | readonly Address[] | undefined,
+  tokenAddresses: Address[] | readonly Address[] | undefined
   lpToken: Address | readonly Address | undefined
 }) {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
-  const addresses = [...tokenAddresses || [], ...(lpToken ? [lpToken] : [])]
+  const addresses = [...(tokenAddresses || []), ...(lpToken ? [lpToken] : [])]
 
   const nonEthAddresses = addresses.filter((a) => !isEthTokenAddress(a))
   const { data, ...tokensQuery } = useContractReads({

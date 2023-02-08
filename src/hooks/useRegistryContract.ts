@@ -18,6 +18,7 @@ export default function useRegistryContract() {
   const chainId = useActiveChainId()
   return useMemo(
     () => ({
+      chainId,
       abi: registryAbi,
       address: REGISTRY_ADDRESS[chainId],
     }),

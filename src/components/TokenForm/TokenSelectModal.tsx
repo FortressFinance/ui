@@ -18,7 +18,7 @@ import Close from "~/svg/icons/close.svg"
 type TokenSelectModalProps = ModalBaseProps & {
   controller: UseControllerReturn<TokenFormValues, "inputToken" | "outputToken">
   tokenAddresses: Address[] | readonly Address[] | undefined
-  lpToken: Address | undefined,
+  lpToken: Address | undefined
   vaultType: VaultType
 }
 
@@ -28,9 +28,12 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
   onClose,
   tokenAddresses,
   lpToken,
-  vaultType
+  vaultType,
 }) => {
-  const { data: tokens } = useTokensOrNative({ tokenAddresses: tokenAddresses, lpToken })
+  const { data: tokens } = useTokensOrNative({
+    tokenAddresses: tokenAddresses,
+    lpToken,
+  })
 
   const clickHandler: MouseEventHandler<HTMLDivElement> = () => {
     onClose()
@@ -70,19 +73,24 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
                   )}
                   onClick={clickHandler}
                   onKeyDown={keyHandler}
-                > <div className="relative w-7 h-7 row-start-1 row-span-2">
-                    {token.isLpToken ? <MultiLayerTokenLogo
-                      className="relative col-start-1 row-span-2 row-start-1 h-7 w-7"
-                      vaultType={vaultType}
-                      tokens={tokenAddresses}
-                      isLpToken={token.isLpToken}
-                      size={24}
-                    /> : <AssetLogo
-                      className="col-start-1 row-span-2 row-start-1 h-7 w-7"
-                      name="token"
-                      tokenAddress={token.address}
-                    />
-                    }
+                >
+                  {" "}
+                  <div className="relative row-span-2 row-start-1 h-7 w-7">
+                    {token.isLpToken ? (
+                      <MultiLayerTokenLogo
+                        className="relative col-start-1 row-span-2 row-start-1 h-7 w-7"
+                        vaultType={vaultType}
+                        tokens={tokenAddresses}
+                        isLpToken={token.isLpToken}
+                        size={24}
+                      />
+                    ) : (
+                      <AssetLogo
+                        className="col-start-1 row-span-2 row-start-1 h-7 w-7"
+                        name="token"
+                        tokenAddress={token.address}
+                      />
+                    )}
                   </div>
                   <h2 className="col-start-2 row-start-1 text-sm">
                     {token.symbol}

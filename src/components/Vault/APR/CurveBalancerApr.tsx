@@ -4,7 +4,7 @@ import {
   useVaultBaseApr,
   useVaultCrvApr,
   useVaultCvxApr,
-  useVaultExraApr,
+  useVaultExtraApr,
   useVaultPoolId,
   useVaultTotalApr,
 } from "@/hooks/data"
@@ -32,7 +32,7 @@ export const CurveBalancerApr: FC<VaultProps> = (props) => {
     poolId,
   })
   const { data: extraRewardsApr, isLoading: isLoadingExtraRewardsApr } =
-    useVaultExraApr({
+    useVaultExtraApr({
       ...props,
       poolId,
     })
