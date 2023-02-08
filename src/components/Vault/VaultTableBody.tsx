@@ -51,11 +51,11 @@ const NoVaultsFound: FC<Pick<VaultProps, "type">> = ({ type }) => {
   const network = availableChains?.[0].name
   return (
     <TableRow className="flex h-44 items-center rounded-t-none">
-      <div className="col-span-full grid grid-rows-[1fr,1fr]">
-        <h2 className="text-center text-2xl font-semibold">
+      <div className="col-span-full">
+        <h2 className="mb-3 text-center text-2xl font-semibold">
           Where Vaults ser?
         </h2>
-        <p className="mx-[100px] text-center text-sm">
+        <p className="mx-auto max-w-3xl text-center text-sm">
           It seems we don't have {capitalize(type)} Vaults on {network} (yet).
           Feel free to check out other vaults on {network} or change network.
           New Vaults and strategies are added often, so check back later. Don't
