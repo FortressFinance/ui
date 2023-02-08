@@ -1,27 +1,14 @@
-import dynamic from "next/dynamic"
 import { FC } from "react"
-
-import { VaultProps } from "@/hooks/types"
 
 import { TableHeader, TableRow } from "@/components/Table/TableNode"
 
-const VaultTableBody = dynamic(
-  () => import("@/components/Vault/VaultTableBody"),
-  { ssr: false }
-)
-
-export function capitalize(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
-
-const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
-  const vaultTitle = `${capitalize(type)} Vaults`
+const HoldingsTable: FC = () => {
   return (
     <div className="" role="table">
       {/* Table headings */}
       <div className="" role="rowgroup">
         <TableRow className="rounded-b-none border-b-2 border-b-pink/30">
-          <TableHeader>{vaultTitle}</TableHeader>
+          <TableHeader>Holdings</TableHeader>
           <TableHeader className="text-center">APR</TableHeader>
           <TableHeader className="text-center">TVL</TableHeader>
           <TableHeader className="text-center">Deposit</TableHeader>
@@ -32,9 +19,19 @@ const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
       </div>
 
       {/* Table body */}
-      <VaultTableBody type={type} />
+      <TableRow className="flex h-44 items-center rounded-t-none">
+        <div className="col-span-full">
+          <h2 className="mb-3 text-center text-2xl font-semibold">
+            Well this is awkward...
+          </h2>
+          <p className="mx-auto max-w-3xl text-center text-sm">
+            You don't appear to have any deposits in our Vaults. There's an easy
+            way to change that.
+          </p>
+        </div>
+      </TableRow>
     </div>
   )
 }
 
-export default VaultTable
+export default HoldingsTable
