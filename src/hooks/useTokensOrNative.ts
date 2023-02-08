@@ -13,16 +13,20 @@ import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
 type AggregatedTokensResult = FetchTokenResult & {
-  balance: FetchBalanceResult
+  balance: FetchBalanceResult,
+  isLpToken: boolean
 }
 
 export default function useTokensOrNative({
-  addresses = ["0x"],
+  tokenAddresses = ["0x"],
+  lpToken
 }: {
-  addresses: Address[] | readonly Address[] | undefined
+  tokenAddresses: Address[] | readonly Address[] | undefined,
+  lpToken: Address | readonly Address | undefined
 }) {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
+  const addresses = [...tokenAddresses || [], ...(lpToken ? [lpToken] : [])]
 
   const nonEthAddresses = addresses.filter((a) => !isEthTokenAddress(a))
   const { data, ...tokensQuery } = useContractReads({
@@ -57,6 +61,7 @@ export default function useTokensOrNative({
           decimals: 18,
           name: "Ether",
           symbol: "ETH",
+          isLpToken: false,
           totalSupply: {
             formatted: "",
             value: BigNumber.from(0),
@@ -72,11 +77,13 @@ export default function useTokensOrNative({
         const symbol = data[adjustedIndex + 2] as string
         const totalSupply = data[adjustedIndex + 3] as BigNumber
         const value = data[adjustedIndex + 4] as BigNumber
+        const isLpToken = address === lpToken
         adjustedData.push({
           address,
           decimals,
           name,
           symbol,
+          isLpToken,
           totalSupply: {
             formatted: totalSupply?.toString(),
             value: totalSupply,

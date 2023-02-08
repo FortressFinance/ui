@@ -4,6 +4,7 @@ import { SubmitHandler, useController, useFormContext } from "react-hook-form"
 import { Address, useAccount } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
+import { VaultType } from "@/hooks/types"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 
@@ -17,8 +18,10 @@ type TokenFormProps = {
   isLoadingTransaction: boolean
   isWithdraw?: boolean
   submitText: string
-  tokenAddreseses: Address[] | readonly Address[] | undefined
+  tokenAddresses: Address[] | readonly Address[] | undefined
+  lpToken: Address | undefined
   onSubmit: SubmitHandler<TokenFormValues>
+  vaultType: VaultType
 }
 
 type TokenSelectMode = "inputToken" | "outputToken" | null
@@ -35,9 +38,12 @@ const TokenForm: FC<TokenFormProps> = ({
   isLoadingTransaction,
   isWithdraw = false,
   submitText,
-  tokenAddreseses,
+  tokenAddresses,
+  lpToken,
   onSubmit,
+  vaultType
 }) => {
+
   const [tokenSelectMode, setTokenSelectMode] = useState<TokenSelectMode>(null)
 
   const form = useFormContext<TokenFormValues>()
@@ -138,7 +144,9 @@ const TokenForm: FC<TokenFormProps> = ({
           controller={tokenSelectField}
           isOpen={tokenSelectMode !== null}
           onClose={() => setTokenSelectMode(null)}
-          tokenAddresses={tokenAddreseses}
+          tokenAddresses={tokenAddresses}
+          lpToken={lpToken}
+          vaultType={vaultType}
         />
       </div>
     </form>

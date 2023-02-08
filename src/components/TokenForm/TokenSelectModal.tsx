@@ -4,11 +4,13 @@ import { UseControllerReturn } from "react-hook-form"
 import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
+import { VaultType } from "@/hooks/types"
 import useTokensOrNative from "@/hooks/useTokensOrNative"
 
 import AssetLogo from "@/components/AssetLogo"
 import { ModalBaseProps } from "@/components/Modal/ModalBase"
 import PurpleModal, { PurpleModalContent } from "@/components/Modal/PurpleModal"
+import MultiLayerTokenLogo from "@/components/MultiLayerTokenLogo"
 import { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
 import Close from "~/svg/icons/close.svg"
@@ -16,6 +18,8 @@ import Close from "~/svg/icons/close.svg"
 type TokenSelectModalProps = ModalBaseProps & {
   controller: UseControllerReturn<TokenFormValues, "inputToken" | "outputToken">
   tokenAddresses: Address[] | readonly Address[] | undefined
+  lpToken: Address | undefined,
+  vaultType: VaultType
 }
 
 const TokenSelectModal: FC<TokenSelectModalProps> = ({
@@ -23,8 +27,10 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
   isOpen,
   onClose,
   tokenAddresses,
+  lpToken,
+  vaultType
 }) => {
-  const { data: tokens } = useTokensOrNative({ addresses: tokenAddresses })
+  const { data: tokens } = useTokensOrNative({ tokenAddresses: tokenAddresses, lpToken })
 
   const clickHandler: MouseEventHandler<HTMLDivElement> = () => {
     onClose()
@@ -33,7 +39,6 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
   const keyHandler: KeyboardEventHandler<HTMLDivElement> = (e) => {
     if (e.key === "Enter") onClose()
   }
-
   return (
     <PurpleModal className="max-w-md" isOpen={isOpen} onClose={onClose}>
       <PurpleModalContent>
@@ -65,11 +70,20 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
                   )}
                   onClick={clickHandler}
                   onKeyDown={keyHandler}
-                >
-                  <AssetLogo
-                    className="col-start-1 row-span-2 row-start-1 h-7 w-7"
-                    name="curve"
-                  />
+                > <div className="relative w-7 h-7 row-start-1 row-span-2">
+                    {token.isLpToken ? <MultiLayerTokenLogo
+                      className="relative col-start-1 row-span-2 row-start-1 h-7 w-7"
+                      vaultType={vaultType}
+                      tokens={tokenAddresses}
+                      isLpToken={token.isLpToken}
+                      size={24}
+                    /> : <AssetLogo
+                      className="col-start-1 row-span-2 row-start-1 h-7 w-7"
+                      name="token"
+                      tokenAddress={token.address}
+                    />
+                    }
+                  </div>
                   <h2 className="col-start-2 row-start-1 text-sm">
                     {token.symbol}
                   </h2>

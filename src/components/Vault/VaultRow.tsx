@@ -70,8 +70,8 @@ const VaultRow: FC<VaultProps> = (props) => {
                   isCurve === undefined
                     ? "token"
                     : isCurve
-                    ? "curve"
-                    : "balancer"
+                      ? "curve"
+                      : "balancer"
                 }
               />
             </div>
