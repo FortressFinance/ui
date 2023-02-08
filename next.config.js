@@ -26,10 +26,10 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'raw.githubusercontent.com',
-        port: '',
-        pathname: '/FortressFinance/assets/master/blockchains/**',
+        protocol: "https",
+        hostname: "raw.githubusercontent.com",
+        port: "",
+        pathname: "/FortressFinance/assets/master/blockchains/**",
       },
     ],
   },

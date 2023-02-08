@@ -30,8 +30,8 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
 
   const lpTokenOrAsset = isToken
     ? vaultTokens.underlyingAssetAddresses?.[
-    vaultTokens.underlyingAssetAddresses?.length - 1
-    ]
+        vaultTokens.underlyingAssetAddresses?.length - 1
+      ]
     : props.asset
   const vaultAddress = vaultTokens.ybTokenAddress ?? "0x"
   const underlyingAssets = vaultTokens.underlyingAssetAddresses
@@ -143,12 +143,12 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     withdrawLp?.write
       ? withdrawLp.write()
       : withdrawUnderlying?.write
-        ? withdrawUnderlying.write()
-        : tokenWithdrawLp?.write
-          ? tokenWithdrawLp.write()
-          : tokenWithdrawUnderlying?.write
-            ? tokenWithdrawUnderlying.write()
-            : null
+      ? withdrawUnderlying.write()
+      : tokenWithdrawLp?.write
+      ? tokenWithdrawLp.write()
+      : tokenWithdrawUnderlying?.write
+      ? tokenWithdrawUnderlying.write()
+      : null
   }
 
   return (

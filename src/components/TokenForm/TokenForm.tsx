@@ -41,9 +41,8 @@ const TokenForm: FC<TokenFormProps> = ({
   tokenAddresses,
   lpToken,
   onSubmit,
-  vaultType
+  vaultType,
 }) => {
-
   const [tokenSelectMode, setTokenSelectMode] = useState<TokenSelectMode>(null)
 
   const form = useFormContext<TokenFormValues>()

@@ -32,8 +32,8 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
 
   const lpTokenOrAsset = isToken
     ? vaultTokens.underlyingAssetAddresses?.[
-    vaultTokens.underlyingAssetAddresses?.length - 1
-    ]
+        vaultTokens.underlyingAssetAddresses?.length - 1
+      ]
     : props.asset
   const vaultAddress = vaultTokens.ybTokenAddress ?? "0x"
   const underlyingAssets = vaultTokens.underlyingAssetAddresses
@@ -168,12 +168,12 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
       depositLp?.write
         ? depositLp.write()
         : depositUnderlying?.write
-          ? depositUnderlying.write()
-          : tokenDepositLp?.write
-            ? tokenDepositLp.write()
-            : tokenDepositUnderlying?.write
-              ? tokenDepositUnderlying.write()
-              : null
+        ? depositUnderlying.write()
+        : tokenDepositLp?.write
+        ? tokenDepositLp.write()
+        : tokenDepositUnderlying?.write
+        ? tokenDepositUnderlying.write()
+        : null
     }
   }
 

@@ -7,15 +7,19 @@ import BalancerLogo from "~/images/assets/balancer.png"
 import CurveLogo from "~/images/assets/curve.png"
 
 type AssetLogoProps = {
-  name: string,
-  className: string,
-  style?: CSSProperties,
+  name: string
+  className: string
+  style?: CSSProperties
   tokenAddress?: `0x${string}`
 }
 
-const AssetLogo: FC<AssetLogoProps> = ({ className, name, tokenAddress, style }) => {
-
-  const { logoURI } = useCurrencyLogoURI(tokenAddress || '0x')
+const AssetLogo: FC<AssetLogoProps> = ({
+  className,
+  name,
+  tokenAddress,
+  style,
+}) => {
+  const { logoURI } = useCurrencyLogoURI(tokenAddress || "0x")
 
   const getImage = (name: string) => {
     switch (name) {
