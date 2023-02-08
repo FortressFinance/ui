@@ -87,7 +87,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
   const { disconnect } = useDisconnect()
   const [isCopied, setCopied] = useState(false)
   const { chain } = useNetwork()
-  const resetAfterMs = 500
+  const resetAfterMs = 1000
 
   useEffect(() => {
     if (resetAfterMs === null) return undefined
@@ -132,10 +132,9 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
   return (
     <ConnectWalletModalBase isOpen={isOpen} onClose={onClose}>
       <div className="grid grid-cols-6 grid-rows-1 gap-4">
-        <div></div>
         <Dialog.Title
           as="h1"
-          className="col-span-4 text-center font-display text-4xl"
+          className="col-start-2 col-span-4 text-center font-display text-4xl"
         >
           Account
         </Dialog.Title>
