@@ -64,6 +64,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
 
   // Check token approval if necessary
   const { data: allowance, isLoading: isLoadingAllowance } = useContractRead({
+    chainId,
     abi: erc20ABI,
     address: inputTokenAddress,
     functionName: "allowance",
@@ -80,6 +81,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
 
   // Configure approve method
   const prepareApprove = usePrepareContractWrite({
+    chainId,
     abi: erc20ABI,
     address: inputTokenAddress,
     functionName: "approve",
@@ -103,6 +105,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   })
   // Configure depositUnderlying method
   const prepareDepositUnderlying = usePrepareContractWrite({
+    chainId,
     abi: curveCompounderAbi,
     address: vaultAddress,
     functionName: "depositSingleUnderlying",
@@ -117,6 +120,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   })
 
   const prepareTokenDepositUnderlying = usePrepareContractWrite({
+    chainId,
     abi: auraBalCompounderAbi,
     address: vaultAddress,
     functionName: "depositUnderlying",
@@ -133,6 +137,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
 
   // Configure depositLp method
   const prepareDepositLp = usePrepareContractWrite({
+    chainId,
     abi: curveCompounderAbi,
     address: vaultAddress,
     functionName: "deposit",
@@ -146,6 +151,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   })
 
   const prepareTokenDepositLp = usePrepareContractWrite({
+    chainId,
     abi: auraBalCompounderAbi,
     address: vaultAddress,
     functionName: "deposit",

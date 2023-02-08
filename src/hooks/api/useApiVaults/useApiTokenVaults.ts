@@ -51,6 +51,7 @@ export type ApiTokenVault = {
       address: Address
       decimals: number
       symbol?: string
+      name?: string
     }[]
   }
 }

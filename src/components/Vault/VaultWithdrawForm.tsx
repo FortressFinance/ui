@@ -77,6 +77,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   })
   // Configure redeemUnderlying method
   const prepareWithdrawUnderlying = usePrepareContractWrite({
+    chainId,
     address: vaultAddress,
     abi: curveCompounderAbi,
     functionName: "redeemSingleUnderlying",
@@ -96,6 +97,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   })
 
   const prepareTokenWithdrawUnderlying = usePrepareContractWrite({
+    chainId,
     address: vaultAddress,
     abi: auraBalCompounderAbi,
     functionName: "redeemUnderlying",
@@ -112,6 +114,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
 
   // Configure redeemLp method
   const prepareWithdrawLp = usePrepareContractWrite({
+    chainId,
     address: vaultAddress,
     abi: curveCompounderAbi,
     functionName: "redeem",
@@ -125,6 +128,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   })
 
   const prepareTokenWithdrawLp = usePrepareContractWrite({
+    chainId,
     address: vaultAddress,
     abi: auraBalCompounderAbi,
     functionName: "redeem",

@@ -6,7 +6,7 @@ import {
   useVaultCrvApr,
   useVaultCvxApr,
   useVaultEthApr,
-  useVaultExraApr,
+  useVaultExtraApr,
   useVaultGmxApr,
   useVaultPoolId,
   useVaultTotalApr,
@@ -47,7 +47,7 @@ export const TokenApr: FC<VaultProps> = (props) => {
     poolId,
   })
   const { data: extraRewardsApr, isLoading: isLoadingExtraRewardsApr } =
-    useVaultExraApr({
+    useVaultExtraApr({
       ...props,
       poolId,
     })

@@ -6,7 +6,7 @@ export {
   useVaultCrvApr,
   useVaultCvxApr,
   useVaultEthApr,
-  useVaultExraApr,
+  useVaultExtraApr,
   useVaultGmxApr,
   useVaultTotalApr,
 } from "./useVaultApy"
