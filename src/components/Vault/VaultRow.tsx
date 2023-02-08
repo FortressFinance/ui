@@ -75,7 +75,6 @@ const VaultRow: FC<VaultProps> = (props) => {
 
           {/* Action buttons */}
           <VaultTableCell className="relative flex items-center">
-
             <button
               className="group absolute inset-0 flex items-center justify-end focus:outline-none"
               disabled={isLoading}

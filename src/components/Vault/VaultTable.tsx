@@ -32,7 +32,7 @@ const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
       { name: "offset", options: { offset: [24, 4] } },
     ],
   })
-  
+
   return (
     <div className="" role="table">
       {/* Table headings */}
