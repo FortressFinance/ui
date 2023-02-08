@@ -66,13 +66,7 @@ const VaultRow: FC<VaultProps> = (props) => {
             <div className="hidden h-10 w-10 items-center justify-center rounded-full bg-white sm:flex">
               <AssetLogo
                 className="h-6 w-6"
-                name={
-                  isCurve === undefined
-                    ? "token"
-                    : isCurve
-                      ? "curve"
-                      : "balancer"
-                }
+                name={props.type}
               />
             </div>
             <VaultName {...props} />

@@ -3,6 +3,7 @@ import { CSSProperties, FC } from "react"
 
 import useCurrencyLogoURI from "@/hooks/useCurrencyLogoURIs"
 
+import AuraLogo from "~/images/assets/aura.png"
 import BalancerLogo from "~/images/assets/balancer.png"
 import CurveLogo from "~/images/assets/curve.png"
 
@@ -23,6 +24,8 @@ const AssetLogo: FC<AssetLogoProps> = ({ className, name, tokenAddress, style })
         return <Image src={CurveLogo} priority alt="" />
       case "balancer":
         return <Image src={BalancerLogo} priority alt="" />
+      case "crypto":
+        return <Image src={AuraLogo} priority alt="" />
       case "token":
         return <Image src={logoURI} priority alt="" fill />
       default:
