@@ -20,9 +20,14 @@ const HoldingsTable: FC = () => {
 
       {/* Table body */}
       <TableRow className="flex h-44 items-center rounded-t-none">
-        <div className="grid grid-rows-[2fr,1fr] col-span-full">
-          <h2 className="text-center font-semibold text-2xl">Well this is awkward...</h2>
-          <p className="text-center text-sm">You don't appear to have any deposits in our Vaults. There's an easy way to change that</p>
+        <div className="col-span-full grid grid-rows-[2fr,1fr]">
+          <h2 className="text-center text-2xl font-semibold">
+            Well this is awkward...
+          </h2>
+          <p className="text-center text-sm">
+            You don't appear to have any deposits in our Vaults. There's an easy
+            way to change that
+          </p>
         </div>
       </TableRow>
     </div>

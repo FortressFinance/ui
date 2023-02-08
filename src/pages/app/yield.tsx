@@ -11,7 +11,7 @@ import VaultTable from "@/components/Vault"
 
 const Yield: NextPage = () => {
   const [selectedIndex, setSelectedIndex] = useState(0)
-  const pageTitle = selectedIndex == 5? "Holdings" : "Compounders"
+  const pageTitle = selectedIndex == 5 ? "Holdings" : "Compounders"
 
   return (
     <Layout>

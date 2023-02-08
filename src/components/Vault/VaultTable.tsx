@@ -3,17 +3,14 @@ import { FC } from "react"
 
 import { VaultProps } from "@/hooks/types"
 
-import {
-  TableHeader,
-  TableRow,
-} from "@/components/Table/TableNode"
+import { TableHeader, TableRow } from "@/components/Table/TableNode"
 
 const VaultTableBody = dynamic(
   () => import("@/components/Vault/VaultTableBody"),
   { ssr: false }
 )
 
-export function capitalize(str: string){
+export function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 

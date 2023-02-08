@@ -9,10 +9,7 @@ import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
 import AssetLogo from "@/components/AssetLogo"
-import {
-  TableCell,
-  TableRow,
-} from "@/components/Table/TableNode"
+import { TableCell, TableRow } from "@/components/Table/TableNode"
 import TxSettingsForm from "@/components/TxSettingsForm"
 import {
   VaultApr,
@@ -68,13 +65,7 @@ const VaultRow: FC<VaultProps> = (props) => {
             <div className="hidden h-10 w-10 items-center justify-center rounded-full bg-white sm:flex">
               <AssetLogo
                 className="h-6 w-6"
-                name={
-                  isToken
-                    ? "token"
-                    : isCurve
-                    ? "curve"
-                    : "balancer"
-                }
+                name={isToken ? "token" : isCurve ? "curve" : "balancer"}
               />
             </div>
             <VaultName {...props} />

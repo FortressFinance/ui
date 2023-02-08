@@ -47,13 +47,20 @@ const VaultsLoading: FC = () => {
 
 const NoVaultsFound: FC<Pick<VaultProps, "type">> = ({ type }) => {
   const chainId = useActiveChainId()
-  const availableChains = enabledNetworks.chains.filter(n => n.id === chainId)
+  const availableChains = enabledNetworks.chains.filter((n) => n.id === chainId)
   const network = availableChains?.[0].name
   return (
     <TableRow className="flex h-44 items-center rounded-t-none">
-      <div className="grid grid-rows-[1fr,1fr] col-span-full">
-        <h2 className="text-center font-semibold text-2xl">Where Vaults ser?</h2>
-        <p className="text-center text-sm mx-[100px]">It seems we don't have {capitalize(type)} Vaults on {network} (yet). Feel free to check out other vaults on {network} or change network. New Vaults and strategies are added often, so check back later. Don't be a stranger.</p>
+      <div className="col-span-full grid grid-rows-[1fr,1fr]">
+        <h2 className="text-center text-2xl font-semibold">
+          Where Vaults ser?
+        </h2>
+        <p className="mx-[100px] text-center text-sm">
+          It seems we don't have {capitalize(type)} Vaults on {network} (yet).
+          Feel free to check out other vaults on {network} or change network.
+          New Vaults and strategies are added often, so check back later. Don't
+          be a stranger.
+        </p>
       </div>
     </TableRow>
   )
