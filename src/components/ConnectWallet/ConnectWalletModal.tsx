@@ -171,7 +171,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
         </div>
         <div className="flex items-center justify-between py-5">
           <div
-            className={clsxm({ "text-green-400": isCopied === true })}
+            className={clsxm({ "text-pink-800": isCopied === true })}
             onClick={() => staticCopy(address as string)}
           >
             <BiCopy className="mr-2 inline h-5 w-5" />
@@ -187,7 +187,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
           </Link>
         </div>
       </div>
-      <div className="w-7/8 mt-2 text-justify text-xs">
+      <div className="w-7/8 mt-2 text-xs">
         By connecting your wallet to Fortress finance, you acknowledge that you
         have read and understand the{" "}
         <Link
