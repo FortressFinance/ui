@@ -134,7 +134,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
       <div className="grid grid-cols-6 grid-rows-1 gap-4">
         <Dialog.Title
           as="h1"
-          className="col-start-2 col-span-4 text-center font-display text-4xl"
+          className="col-span-4 col-start-2 text-center font-display text-4xl"
         >
           Account
         </Dialog.Title>
