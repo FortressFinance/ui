@@ -1,9 +1,5 @@
-import { Menu, Transition } from "@headlessui/react"
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from "next"
 import Image from "next/image"
-import Link from "next/link"
-import { Fragment } from "react"
-import { BiMenu } from "react-icons/bi"
 
 import { ButtonLink } from "@/components/Button"
 import ExternalLinks from "@/components/ExternalLinks"
@@ -40,61 +36,6 @@ const HomePage: NextPage<
             className="h-auto w-7 fill-white"
             aria-label="Fortress Finance"
           />
-
-          {/* Desktop navigation */}
-          <nav className="hidden space-x-10 lg:block" aria-label="Global">
-            <Link
-              href={`${appUrl}/yield`}
-              className="font-display text-3xl"
-              target="_blank"
-            >
-              Yield
-            </Link>
-            <Link
-              href={`${appUrl}/lend`}
-              className="font-display text-3xl"
-              target="_blank"
-            >
-              Lend
-            </Link>
-          </nav>
-
-          {/* Mobile navigation */}
-          <Menu as="div" className="relative lg:hidden">
-            <Menu.Button>
-              <BiMenu className="h-10 w-10" aria-label="Menu" />
-            </Menu.Button>
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
-              <Menu.Items className="absolute right-0 z-10 w-52 rounded-md bg-white py-2">
-                <Menu.Item>
-                  <Link
-                    href={`${appUrl}/yield`}
-                    className="block w-full py-2 text-center font-display text-xl text-black"
-                    target="_blank"
-                  >
-                    Yield
-                  </Link>
-                </Menu.Item>
-                <Menu.Item>
-                  <Link
-                    href={`${appUrl}/lend`}
-                    className="block w-full py-2 text-center font-display text-xl text-black"
-                    target="_blank"
-                  >
-                    Lend
-                  </Link>
-                </Menu.Item>
-              </Menu.Items>
-            </Transition>
-          </Menu>
         </header>
 
         <main className="grid h-full w-full items-center justify-center">

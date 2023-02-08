@@ -6,8 +6,13 @@ import clsxm from "@/lib/clsxm"
 import { useVaultTokens } from "@/hooks/data"
 import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
+import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
 import AssetLogo from "@/components/AssetLogo"
+import {
+  TableCell,
+  TableRow,
+} from "@/components/Table/TableNode"
 import TxSettingsForm from "@/components/TxSettingsForm"
 import {
   VaultApr,
@@ -17,10 +22,6 @@ import {
 } from "@/components/Vault/VaultData"
 import VaultDepositForm from "@/components/Vault/VaultDepositForm"
 import VaultStrategyButton from "@/components/Vault/VaultStrategy"
-import {
-  VaultTableCell,
-  VaultTableRow,
-} from "@/components/Vault/VaultTableNode"
 import VaultWithdrawForm from "@/components/Vault/VaultWithdrawForm"
 
 import ChevronDownCircle from "~/svg/icons/chevron-down-circle.svg"
@@ -44,6 +45,7 @@ const VaultRow: FC<VaultProps> = (props) => {
   const { isLoading } = useVaultTokens(props)
 
   const isCurve = useIsCurve(props.type)
+  const isToken = useIsTokenCompounder(props.type)
 
   const toggleVaultOpen: MouseEventHandler<
     HTMLButtonElement | HTMLDivElement
@@ -56,18 +58,18 @@ const VaultRow: FC<VaultProps> = (props) => {
   return (
     <>
       <Disclosure as={Fragment}>
-        <VaultTableRow
+        <TableRow
           className="first:rounded-t-none lg:py-6"
           onClick={toggleVaultOpen}
           disabled={isLoading}
         >
           {/* Row of vault info */}
-          <VaultTableCell className="pointer-events-none sm:grid sm:grid-cols-[max-content,auto,max-content] sm:items-center sm:space-x-3">
+          <TableCell className="pointer-events-none sm:grid sm:grid-cols-[max-content,auto,max-content] sm:items-center sm:space-x-3">
             <div className="hidden h-10 w-10 items-center justify-center rounded-full bg-white sm:flex">
               <AssetLogo
                 className="h-6 w-6"
                 name={
-                  isCurve === undefined
+                  isToken
                     ? "token"
                     : isCurve
                     ? "curve"
@@ -77,19 +79,19 @@ const VaultRow: FC<VaultProps> = (props) => {
             </div>
             <VaultName {...props} />
             <VaultStrategyButton {...props} />
-          </VaultTableCell>
-          <VaultTableCell className="pointer-events-none text-center">
+          </TableCell>
+          <TableCell className="pointer-events-none text-center">
             <VaultApr {...props} />
-          </VaultTableCell>
-          <VaultTableCell className="pointer-events-none text-center">
+          </TableCell>
+          <TableCell className="pointer-events-none text-center">
             <VaultTvl {...props} />
-          </VaultTableCell>
-          <VaultTableCell className="pointer-events-none text-center">
+          </TableCell>
+          <TableCell className="pointer-events-none text-center">
             <VaultDepositedLpTokens {...props} />
-          </VaultTableCell>
+          </TableCell>
 
           {/* Action buttons */}
-          <VaultTableCell className="relative flex items-center">
+          <TableCell className="relative flex items-center">
             <Popover className="relative z-[1] flex justify-start">
               {({ open }) => (
                 <>
@@ -161,7 +163,7 @@ const VaultRow: FC<VaultProps> = (props) => {
                 />
               </div>
             </button>
-          </VaultTableCell>
+          </TableCell>
 
           {/* Collapsible forms */}
           <Transition
@@ -181,7 +183,7 @@ const VaultRow: FC<VaultProps> = (props) => {
               </div>
             </Disclosure.Panel>
           </Transition>
-        </VaultTableRow>
+        </TableRow>
       </Disclosure>
     </>
   )

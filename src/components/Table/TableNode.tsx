@@ -3,16 +3,16 @@ import { FC, MouseEventHandler, PropsWithChildren } from "react"
 
 import clsxm from "@/lib/clsxm"
 
-type VaultTableNodeProps = {
+type TableNodeProps = {
   className?: string
 }
 
-type VaultTableRowProps = VaultTableNodeProps & {
+type TableRowProps = TableNodeProps & {
   disabled?: boolean
   onClick?: MouseEventHandler<HTMLDivElement>
 }
 
-export const VaultTableRow: FC<PropsWithChildren<VaultTableRowProps>> = ({
+export const TableRow: FC<PropsWithChildren<TableRowProps>> = ({
   children,
   className,
   disabled,
@@ -47,7 +47,7 @@ export const VaultTableRow: FC<PropsWithChildren<VaultTableRowProps>> = ({
   )
 }
 
-export const VaultTableHeader: FC<PropsWithChildren<VaultTableNodeProps>> = ({
+export const TableHeader: FC<PropsWithChildren<TableNodeProps>> = ({
   children,
   className,
 }) => (
@@ -56,7 +56,7 @@ export const VaultTableHeader: FC<PropsWithChildren<VaultTableNodeProps>> = ({
   </span>
 )
 
-export const VaultTableCell: FC<PropsWithChildren<VaultTableNodeProps>> = ({
+export const TableCell: FC<PropsWithChildren<TableNodeProps>> = ({
   children,
   className,
 }) => (
