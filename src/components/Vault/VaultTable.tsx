@@ -1,10 +1,15 @@
+import { Popover, Transition } from "@headlessui/react"
 import dynamic from "next/dynamic"
-import { FC, useState } from "react"
+import { FC, Fragment, useState } from "react"
 import { usePopper } from "react-popper"
 
+import clsxm from "@/lib/clsxm"
 import { VaultProps } from "@/lib/types"
 
 import { TableHeader, TableRow } from "@/components/Table/TableNode"
+import TxSettingsForm from "@/components/TxSettingsForm"
+
+import Cog from "~/svg/icons/cog.svg"
 
 const VaultTableBody = dynamic(
   () => import("@/components/Vault/VaultTableBody"),
@@ -34,12 +39,62 @@ const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
     <div className="" role="table">
       {/* Table headings */}
       <div className="" role="rowgroup">
-        <TableRow className="rounded-b-none border-b-2 border-b-pink/30">
+        <TableRow className="rounded-b-none border-b-2 border-b-pink/30 overflow-visible">
           <TableHeader>{vaultTitle}</TableHeader>
           <TableHeader className="text-center">APR</TableHeader>
           <TableHeader className="text-center">TVL</TableHeader>
           <TableHeader className="text-center">Deposit</TableHeader>
           <TableHeader>
+            <Popover className="relative flex justify-end">
+              {({ open }) => (
+                <>
+                  <Popover.Button as={Fragment}>
+                    <button
+                      ref={setTxSettingsCog}
+                      className={clsxm(
+                        "relative flex h-5 w-5 items-center justify-center transition-transform duration-200",
+                        {
+                          "-rotate-180": open,
+                        }
+                      )}
+                    >
+                      <Cog className="h-6 w-6" />
+                    </button>
+                  </Popover.Button>
+
+                  <Transition
+                    show={open}
+                  >
+                    <Transition.Child
+                      enter="transition-opacity duration-200"
+                      enterFrom="opacity-0"
+                      enterTo="opacity-100"
+                      leave="transition-opacity duration-200"
+                      leaveFrom="opacity-100"
+                      leaveTo="opacity-0"
+                    ></Transition.Child>
+                    <Transition.Child
+                      enter="transition-z-index duration-200"
+                      enterFrom="z-0"
+                      enterTo="z-100"
+                      leave="transition-z-index duration-200"
+                      leaveFrom="z-100"
+                      leaveTo="z-0"
+                    ></Transition.Child>
+                    <Popover.Panel
+                      as="div"
+                      ref={setTxSettingsPopover}
+                      className="z-20 w-72 rounded-md bg-orange-400 p-4 shadow-lg"
+                      style={styles.popper}
+                      {...attributes.popper}
+                      static
+                    >
+                      <TxSettingsForm />
+                    </Popover.Panel>
+                  </Transition>
+                </>
+              )}
+            </Popover>
             <span className="sr-only">Vault actions</span>
           </TableHeader>
         </TableRow>

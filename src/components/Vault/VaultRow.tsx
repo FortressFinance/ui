@@ -9,7 +9,6 @@ import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
 import AssetLogo from "@/components/AssetLogo"
 import { TableCell, TableRow } from "@/components/Table/TableNode"
-import TxSettingsForm from "@/components/TxSettingsForm"
 import {
   VaultApr,
   VaultDepositedLpTokens,
@@ -69,57 +68,6 @@ const VaultRow: FC<VaultProps> = (props) => {
 
           {/* Action buttons */}
           <TableCell className="relative flex items-center">
-            <Popover className="relative z-[1] flex justify-start">
-              {({ open }) => (
-                <>
-                  <Transition
-                    show={isVaultOpen}
-                    enter="transition-all duration-200"
-                    enterFrom="opacity-0 translate-x-4"
-                    enterTo="opacity-100 translate-x-0"
-                    leave="transition-all duration-200"
-                    leaveFrom="opacity-100 translate-x-0"
-                    leaveTo="opacity-0 translate-x-4"
-                  >
-                    <Popover.Button as={Fragment}>
-                      <button
-                        ref={setTxSettingsCog}
-                        className={clsxm(
-                          "relative z-[1] flex h-7 w-7 items-center justify-center transition-transform duration-200",
-                          {
-                            "-rotate-180": open,
-                          }
-                        )}
-                      >
-                        <Cog className="h-6 w-6" />
-                      </button>
-                    </Popover.Button>
-                  </Transition>
-
-                  <Transition
-                    show={open}
-                    enter="transition-all duration-200"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="transition-all duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <Popover.Panel
-                      as="div"
-                      ref={setTxSettingsPopover}
-                      className="z-20 w-72 rounded-md bg-orange-400 p-4 shadow-lg"
-                      style={styles.popper}
-                      {...attributes.popper}
-                      static
-                    >
-                      <TxSettingsForm />
-                    </Popover.Panel>
-                  </Transition>
-                </>
-              )}
-            </Popover>
-
             <button
               className="group absolute inset-0 flex items-center justify-end focus:outline-none"
               disabled={isLoading}
