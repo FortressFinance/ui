@@ -54,7 +54,7 @@ const VaultRow: FC<VaultProps> = (props) => {
 
   return (
     <>
-      <Disclosure as={Fragment}>
+      <Disclosure as={Fragment} key={props.asset}>
         <TableRow
           className="first:rounded-t-none lg:py-6"
           onClick={toggleVaultOpen}
