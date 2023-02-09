@@ -2040,6 +2040,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lukemorales/query-key-factory@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@lukemorales/query-key-factory@npm:1.1.0"
+  peerDependencies:
+    "@tanstack/query-core": ^4.0.0
+  checksum: 803fd850268a536caa993ec5409847bafbad9f7705c1870cdd108fef1fc03633fba8cb248bafd6bbfd3f7d1cd40096cd7ec164c2aec3f25018471a9968c8497d
+  languageName: node
+  linkType: hard
+
 "@metamask/safe-event-emitter@npm:2.0.0, @metamask/safe-event-emitter@npm:^2.0.0":
   version: 2.0.0
   resolution: "@metamask/safe-event-emitter@npm:2.0.0"
@@ -6336,6 +6345,7 @@ __metadata:
   dependencies:
     "@headlessui/react": "npm:^1.7.7"
     "@heroicons/react": "npm:^2.0.13"
+    "@lukemorales/query-key-factory": "npm:^1.1.0"
     "@next/font": "npm:^13.1.2"
     "@popperjs/core": "npm:^2.11.6"
     "@svgr/webpack": "npm:^6.5.1"
