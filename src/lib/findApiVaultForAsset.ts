@@ -1,18 +1,20 @@
 import { UseQueryResult } from "@tanstack/react-query"
 import { Address } from "wagmi"
 
-import { ApiPool } from "@/hooks/api/useApiVaults/useApiCompounderVaults"
-import { ApiTokenVault } from "@/hooks/api/useApiVaults/useApiTokenVaults"
+import {
+  CompounderVaultStaticData,
+  TokenVaultStaticData,
+} from "@/lib/api/vaults"
 
 export function findApiCompounderVaultForAsset(
-  data: UseQueryResult<ApiPool[]>["data"],
+  data: UseQueryResult<CompounderVaultStaticData[]>["data"],
   asset: Address | undefined
 ) {
   return data?.find((v) => v.token.LPtoken.address === asset)
 }
 
 export function findApiTokenVaultForAsset(
-  data: UseQueryResult<ApiTokenVault[]>["data"],
+  data: UseQueryResult<TokenVaultStaticData[]>["data"],
   asset: Address | undefined
 ) {
   return data?.find((v) => v.token.baseAsset.address === asset)

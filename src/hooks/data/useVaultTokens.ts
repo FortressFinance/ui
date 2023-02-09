@@ -4,8 +4,8 @@ import {
   findApiCompounderVaultForAsset,
   findApiTokenVaultForAsset,
 } from "@/lib/findApiVaultForAsset"
+import { VaultProps } from "@/lib/types"
 import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
-import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useRegistryContract from "@/hooks/useRegistryContract"
@@ -44,7 +44,7 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
   })
 
   // Prioritize API response until it has errored
-  if (isToken && !apiTokenQuery.isError && apiTokenQuery.data !== null) {
+  if (isToken && !apiTokenQuery.isError) {
     const matchedVault = findApiTokenVaultForAsset(apiTokenQuery.data, asset)
     return {
       ...apiTokenQuery,
@@ -56,11 +56,7 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
       },
     }
   }
-  if (
-    !isToken &&
-    !apiCompounderQuery.isError &&
-    apiCompounderQuery.data !== null
-  ) {
+  if (!isToken && !apiCompounderQuery.isError) {
     const matchedVault = findApiCompounderVaultForAsset(
       apiCompounderQuery.data,
       asset

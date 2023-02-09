@@ -35,6 +35,9 @@ export const mainnetFork: Chain = {
     symbol: "ETH",
   },
   rpcUrls: {
+    public: {
+      http: ["/api/anvil-mainnet"],
+    },
     default: {
       http: ["/api/anvil-mainnet"],
     },
@@ -57,6 +60,9 @@ export const arbitrumFork: Chain = {
     symbol: "WETH",
   },
   rpcUrls: {
+    public: {
+      http: ["/api/anvil-arbitrum"],
+    },
     default: {
       http: ["/api/anvil-arbitrum"],
     },
