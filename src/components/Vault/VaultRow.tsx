@@ -3,8 +3,8 @@ import { FC, Fragment, MouseEventHandler, useState } from "react"
 import { usePopper } from "react-popper"
 
 import clsxm from "@/lib/clsxm"
+import { VaultProps } from "@/lib/types"
 import { useVaultTokens } from "@/hooks/data"
-import { VaultProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
@@ -54,7 +54,7 @@ const VaultRow: FC<VaultProps> = (props) => {
 
   return (
     <>
-      <Disclosure as={Fragment}>
+      <Disclosure as={Fragment} key={props.asset}>
         <TableRow
           className="first:rounded-t-none lg:py-6"
           onClick={toggleVaultOpen}

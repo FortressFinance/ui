@@ -1,7 +1,7 @@
 import { useContractRead } from "wagmi"
 
+import { VaultType } from "@/lib/types"
 import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
-import { VaultType } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useRegistryContract from "@/hooks/useRegistryContract"
@@ -33,11 +33,7 @@ export default function useVaultAddresses({ type }: { type: VaultType }) {
   })
 
   // Prioritize API response until it has errored
-  if (
-    !apiCompounderQuery.isError &&
-    apiCompounderQuery.data !== null &&
-    !isToken
-  ) {
+  if (!apiCompounderQuery.isError && !isToken) {
     return {
       ...apiCompounderQuery,
       data: apiCompounderQuery.data?.map((p) => p.token.LPtoken?.address),
@@ -51,7 +47,7 @@ export default function useVaultAddresses({ type }: { type: VaultType }) {
       ? CRYPTO
       : [...CRYPTO, ...STABLE]
 
-  if (!apiTokenQuery.isError && apiTokenQuery.data !== null && isToken) {
+  if (!apiTokenQuery.isError && isToken) {
     return {
       ...apiTokenQuery,
       data: apiTokenQuery.data
