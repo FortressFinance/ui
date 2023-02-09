@@ -64,23 +64,13 @@ const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
 
                   <Transition
                     show={open}
+                    enter="transition-all duration-200"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition-all duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
                   >
-                    <Transition.Child
-                      enter="transition-opacity duration-200"
-                      enterFrom="opacity-0"
-                      enterTo="opacity-100"
-                      leave="transition-opacity duration-200"
-                      leaveFrom="opacity-100"
-                      leaveTo="opacity-0"
-                    ></Transition.Child>
-                    <Transition.Child
-                      enter="transition-z-index duration-200"
-                      enterFrom="z-0"
-                      enterTo="z-100"
-                      leave="transition-z-index duration-200"
-                      leaveFrom="z-100"
-                      leaveTo="z-0"
-                    ></Transition.Child>
                     <Popover.Panel
                       as="div"
                       ref={setTxSettingsPopover}
