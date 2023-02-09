@@ -38,7 +38,7 @@ const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
   return (
     <div className="" role="table">
       {/* Table headings */}
-      <div className="" role="rowgroup">
+      <div className="relative z-[1]" role="rowgroup">
         <TableRow className="overflow-visible rounded-b-none border-b-2 border-b-pink/30">
           <TableHeader>{vaultTitle}</TableHeader>
           <TableHeader className="text-center">APR</TableHeader>
@@ -74,7 +74,7 @@ const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
                     <Popover.Panel
                       as="div"
                       ref={setTxSettingsPopover}
-                      className="z-20 w-72 rounded-md bg-orange-400 p-4 shadow-lg"
+                      className="z-20 w-72 rounded-md bg-orange-400 p-4 shadow-lg border-black/60 border"
                       style={styles.popper}
                       {...attributes.popper}
                       static
