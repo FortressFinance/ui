@@ -10,7 +10,7 @@ export {
   useVaultGmxApr,
   useVaultTotalApr,
 } from "./useVaultApy"
-export { default as useVaultDepositedLpTokens } from "./useVaultDepositedLpTokens"
+export { default as useVaultDepositedAssets } from "./useVaultDepositedAssets"
 export { default as useVaultName } from "./useVaultName"
 export { default as useVaultPlatformFee } from "./useVaultPlatformFee"
 export { default as useVaultPoolId } from "./useVaultPoolId"

@@ -4,7 +4,7 @@ import { useToken } from "wagmi"
 
 import { VaultProps } from "@/lib/types"
 import {
-  useVaultDepositedLpTokens,
+  useVaultDepositedAssets,
   useVaultName,
   useVaultPoolId,
   useVaultTotalApr,
@@ -59,7 +59,7 @@ export const VaultDepositedLpTokens: FC<VaultProps> = (props) => {
   const chainId = useActiveChainId()
   const { data: poolId, isLoading: isLoadingId } = useVaultPoolId(props)
   const { data: depositedTokens, isLoading: isLoadingDepositedTokens } =
-    useVaultDepositedLpTokens({
+    useVaultDepositedAssets({
       ...props,
       poolId,
     })
