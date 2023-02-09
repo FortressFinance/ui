@@ -74,7 +74,7 @@ const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
                     <Popover.Panel
                       as="div"
                       ref={setTxSettingsPopover}
-                      className="z-20 w-72 rounded-md bg-orange-400 p-4 shadow-lg border-black/60 border"
+                      className="z-20 w-72 rounded-md border border-black/60 bg-orange-400 p-4 shadow-lg"
                       style={styles.popper}
                       {...attributes.popper}
                       static
