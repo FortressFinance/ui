@@ -37,7 +37,7 @@ export function useVaultBaseApr({
   const vaultAprFallback = useQuery([_address, "vaultAprFallback"], {
     queryFn: async () => await getVaultAprFallback(_address),
     retry: false,
-    enabled: apiQuery.isError || apiQuery.data === null,
+    enabled: apiQuery.isError,
   })
 
   if (
@@ -68,7 +68,7 @@ export function useVaultCrvApr({
   const vaultAprFallback = useQuery([_address, "vaultAprFallback"], {
     queryFn: async () => await getVaultAprFallback(_address),
     retry: false,
-    enabled: apiQuery.isError || apiQuery.data === null,
+    enabled: apiQuery.isError,
   })
 
   if (
@@ -99,7 +99,7 @@ export function useVaultCvxApr({
   const vaultAprFallback = useQuery([_address, "vaultAprFallback"], {
     queryFn: async () => await getVaultAprFallback(_address),
     retry: false,
-    enabled: apiQuery.isError || apiQuery.data === null,
+    enabled: apiQuery.isError,
   })
 
   if (
@@ -129,7 +129,7 @@ export function useVaultExtraApr({
   const vaultAprFallback = useQuery([_address, "vaultAprFallback"], {
     queryFn: async () => await getVaultAprFallback(_address),
     retry: false,
-    enabled: apiQuery.isError || apiQuery.data === null,
+    enabled: apiQuery.isError,
   })
 
   if (
@@ -159,12 +159,9 @@ export function useVaultTotalApr({
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
-  const isCurveFallbackEnabled =
-    (apiQuery.isError || apiQuery.data === null) && isCurve && !isToken
-  const isBalancerFallbackEnabled =
-    (apiQuery.isError || apiQuery.data === null) && !isCurve && !isToken
-  const isTokenFallbackEnabled =
-    (apiQuery.isError || apiQuery.data === null) && isToken
+  const isCurveFallbackEnabled = apiQuery.isError && isCurve && !isToken
+  const isBalancerFallbackEnabled = apiQuery.isError && !isCurve && !isToken
+  const isTokenFallbackEnabled = apiQuery.isError && isToken
 
   const curveVaultGraphTotalApr = useCurveVaultGraphTotalApr({
     asset: _address,
@@ -206,8 +203,7 @@ export function useVaultBalApr({
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
-  const isTokenFallbackEnabled =
-    (apiQuery.isError || apiQuery.data === null) && isToken
+  const isTokenFallbackEnabled = apiQuery.isError && isToken
   const tokenVaultSymbol = useTokenVaultSymbol({
     asset: _address,
     enabled: isTokenFallbackEnabled ?? false,
@@ -246,8 +242,7 @@ export function useVaultAuraApr({
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
-  const isTokenFallbackEnabled =
-    (apiQuery.isError || apiQuery.data === null) && isToken
+  const isTokenFallbackEnabled = apiQuery.isError && isToken
   const tokenVaultSymbol = useTokenVaultSymbol({
     asset: _address,
     enabled: isTokenFallbackEnabled ?? false,
@@ -285,8 +280,7 @@ export function useVaultGmxApr({
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
-  const isTokenFallbackEnabled =
-    (apiQuery.isError || apiQuery.data === null) && isToken
+  const isTokenFallbackEnabled = apiQuery.isError && isToken
   const tokenVaultSymbol = useTokenVaultSymbol({
     asset: _address,
     enabled: isTokenFallbackEnabled ?? false,
@@ -323,8 +317,7 @@ export function useVaultEthApr({
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
-  const isTokenFallbackEnabled =
-    (apiQuery.isError || apiQuery.data === null) && isToken
+  const isTokenFallbackEnabled = apiQuery.isError && isToken
   const tokenVaultSymbol = useTokenVaultSymbol({
     asset: _address,
     enabled: isTokenFallbackEnabled ?? false,

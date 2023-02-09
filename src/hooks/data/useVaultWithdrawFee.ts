@@ -29,11 +29,7 @@ export default function useVaultWithdrawFee({ asset, type }: VaultProps) {
     select: (data) => data.toString(),
   })
   // Prioritize API response until it has errored
-  if (
-    !apiCompounderQuery.isError &&
-    apiCompounderQuery.data !== null &&
-    !isToken
-  ) {
+  if (!apiCompounderQuery.isError && !isToken) {
     return {
       ...apiCompounderQuery,
       data: apiCompounderQuery.data?.find(
@@ -41,7 +37,7 @@ export default function useVaultWithdrawFee({ asset, type }: VaultProps) {
       )?.withdrawalFee,
     }
   }
-  if (!apiTokenQuery.isError && apiTokenQuery.data !== null && isToken) {
+  if (!apiTokenQuery.isError && isToken) {
     return {
       ...apiTokenQuery,
       data: apiTokenQuery.data?.find(
