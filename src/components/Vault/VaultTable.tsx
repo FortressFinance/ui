@@ -39,7 +39,7 @@ const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
     <div className="" role="table">
       {/* Table headings */}
       <div className="" role="rowgroup">
-        <TableRow className="rounded-b-none border-b-2 border-b-pink/30 overflow-visible">
+        <TableRow className="overflow-visible rounded-b-none border-b-2 border-b-pink/30">
           <TableHeader>{vaultTitle}</TableHeader>
           <TableHeader className="text-center">APR</TableHeader>
           <TableHeader className="text-center">TVL</TableHeader>
@@ -62,9 +62,7 @@ const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
                     </button>
                   </Popover.Button>
 
-                  <Transition
-                    show={open}
-                  >
+                  <Transition show={open}>
                     <Transition.Child
                       enter="transition-opacity duration-200"
                       enterFrom="opacity-0"
