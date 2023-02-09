@@ -1,6 +1,6 @@
 import { useQuery } from "wagmi"
 
-import { getVaultAprFallback } from "@/lib/aprFallback"
+import { getVaultAprFallback } from "@/lib/api/vaults"
 import { VaultDynamicProps } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 

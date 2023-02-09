@@ -1,6 +1,6 @@
 import { useContractRead, useQuery } from "wagmi"
 
-import { getFortGlpAprFallback } from "@/lib/aprFallback"
+import { getFortGlpAprFallback } from "@/lib/api/vaults"
 import { VaultDynamicProps } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 

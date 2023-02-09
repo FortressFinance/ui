@@ -4,7 +4,7 @@ import {
   fetchApiAuraFinance,
   getAuraMint,
   getBalancerTotalAprFallback,
-} from "@/lib/aprFallback"
+} from "@/lib/api/vaults"
 import { VaultDynamicProps } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 

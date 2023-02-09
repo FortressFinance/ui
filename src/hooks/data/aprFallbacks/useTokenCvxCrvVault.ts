@@ -1,6 +1,6 @@
 import { useQuery } from "wagmi"
 
-import { getFortCvxCrvAprFallback } from "@/lib/aprFallback"
+import { getFortCvxCrvAprFallback } from "@/lib/api/vaults"
 import { VaultDynamicProps } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
