@@ -1,5 +1,5 @@
+import { VaultProps } from "@/lib/types"
 import { useApiVaultDynamic } from "@/hooks/api"
-import { VaultProps } from "@/hooks/types"
 
 type UseVaultTvlParams = VaultProps & {
   poolId: number | undefined

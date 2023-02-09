@@ -1,7 +1,7 @@
 import { useContractRead, useQuery } from "wagmi"
 
 import { getFortGlpAprFallback } from "@/lib/aprFallback"
-import { VaultDynamicProps } from "@/hooks/types"
+import { VaultDynamicProps } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
 import glpRewardsDistributorAbi from "@/constant/abi/glpRewardsDistributorAbi"

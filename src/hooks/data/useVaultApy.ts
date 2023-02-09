@@ -1,6 +1,7 @@
 import { useQuery } from "wagmi"
 
 import { getVaultAprFallback } from "@/lib/aprFallback"
+import { VaultDynamicProps } from "@/lib/types"
 import { useApiVaultDynamic } from "@/hooks/api"
 import useBalancerVaultGraphTotalApr from "@/hooks/data/aprFallbacks/useBalancerVaultGraphTotalApr"
 import useCurveVaultGraphTotalApr from "@/hooks/data/aprFallbacks/useCurveVaultGraphTotalApr"
@@ -8,7 +9,6 @@ import useTokenAuraBalVault from "@/hooks/data/aprFallbacks/useTokenAuraBalVault
 import useTokenGlpVault from "@/hooks/data/aprFallbacks/useTokenGlpVault"
 import useTokenVaultGraphTotalApr from "@/hooks/data/aprFallbacks/useTokenVaultGraphTotalApr"
 import useTokenVaultSymbol from "@/hooks/data/aprFallbacks/useTokenVaultSymbol"
-import { VaultDynamicProps } from "@/hooks/types"
 import useIsCurve from "@/hooks/useIsCurve"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 

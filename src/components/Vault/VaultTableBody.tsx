@@ -1,7 +1,7 @@
 import { FC } from "react"
 
+import { VaultProps } from "@/lib/types"
 import { useVaultAddresses } from "@/hooks/data"
-import { VaultProps } from "@/hooks/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
 import { enabledNetworks } from "@/components/AppProviders"

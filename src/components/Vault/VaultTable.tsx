@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic"
 import { FC } from "react"
 
-import { VaultProps } from "@/hooks/types"
+import { VaultProps } from "@/lib/types"
 
 import { TableHeader, TableRow } from "@/components/Table/TableNode"
 

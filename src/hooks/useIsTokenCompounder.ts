@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 
-import { VaultType } from "@/hooks/types"
+import { VaultType } from "@/lib/types"
 
 export default function useIsTokenCompounder(type: VaultType) {
   return useMemo(

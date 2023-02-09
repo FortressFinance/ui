@@ -1,6 +1,6 @@
 import { useContractRead } from "wagmi"
 
-import { VaultDynamicProps } from "@/hooks/types"
+import { VaultDynamicProps } from "@/lib/types"
 import useRegistryContract from "@/hooks/useRegistryContract"
 
 export default function useTokenVaultSymbol({

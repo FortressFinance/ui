@@ -1,5 +1,5 @@
+import { VaultDynamicProps } from "@/lib/types"
 import { useApiVaultDynamic } from "@/hooks/api"
-import { VaultDynamicProps } from "@/hooks/types"
 
 export default function useVaultDepositedLpTokens({
   asset: _address,

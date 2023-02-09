@@ -2,6 +2,7 @@ import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
 import { useToken } from "wagmi"
 
+import { VaultProps } from "@/lib/types"
 import {
   useVaultDepositedLpTokens,
   useVaultName,
@@ -9,7 +10,6 @@ import {
   useVaultTotalApr,
   useVaultTvl,
 } from "@/hooks/data"
-import { VaultProps } from "@/hooks/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
 import Currency from "@/components/Currency"
