@@ -209,9 +209,10 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
           tokenAddresses={[
-            ...(lpTokenOrAsset ? [lpTokenOrAsset ?? "0x"] : []),
             ...(underlyingAssets?.filter((a) => a !== lpTokenOrAsset) || []),
           ]}
+          lpToken={lpTokenOrAsset}
+          vaultType={props.type}
         />
       </FormProvider>
     </div>

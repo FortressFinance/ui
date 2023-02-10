@@ -4,8 +4,6 @@ import { FC, Fragment, MouseEventHandler, useState } from "react"
 import clsxm from "@/lib/clsxm"
 import { VaultProps } from "@/lib/types"
 import { useVaultTokens } from "@/hooks/data"
-import useIsCurve from "@/hooks/useIsCurve"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 
 import AssetLogo from "@/components/AssetLogo"
 import { TableCell, TableRow } from "@/components/Table/TableNode"
@@ -26,9 +24,6 @@ const VaultRow: FC<VaultProps> = (props) => {
 
   const { isLoading } = useVaultTokens(props)
 
-  const isCurve = useIsCurve(props.type)
-  const isToken = useIsTokenCompounder(props.type)
-
   const toggleVaultOpen: MouseEventHandler<
     HTMLButtonElement | HTMLDivElement
   > = (e) => {
@@ -48,10 +43,7 @@ const VaultRow: FC<VaultProps> = (props) => {
           {/* Row of vault info */}
           <TableCell className="pointer-events-none sm:grid sm:grid-cols-[max-content,auto,max-content] sm:items-center sm:space-x-3">
             <div className="hidden h-10 w-10 items-center justify-center rounded-full bg-white sm:flex">
-              <AssetLogo
-                className="h-6 w-6"
-                name={isToken ? "token" : isCurve ? "curve" : "balancer"}
-              />
+              <AssetLogo className="h-6 w-6" name={props.type} />
             </div>
             <VaultName {...props} />
             <VaultStrategyButton {...props} />
