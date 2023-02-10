@@ -3,11 +3,15 @@ import { FC, MouseEventHandler, PropsWithChildren } from "react"
 
 import clsxm from "@/lib/clsxm"
 
-type TableNodeProps = {
+export const Table: FC<PropsWithChildren> = ({ children }) => {
+  return <div role="table">{children}</div>
+}
+
+type TableChildProps = {
   className?: string
 }
 
-type TableRowProps = TableNodeProps & {
+type TableRowProps = TableChildProps & {
   disabled?: boolean
   onClick?: MouseEventHandler<HTMLDivElement>
 }
@@ -47,7 +51,37 @@ export const TableRow: FC<PropsWithChildren<TableRowProps>> = ({
   )
 }
 
-export const TableHeader: FC<PropsWithChildren<TableNodeProps>> = ({
+export const TableHeaderRow: FC<PropsWithChildren<TableRowProps>> = ({
+  className,
+  children,
+  ...props
+}) => {
+  return (
+    <div role="rowgroup">
+      <TableRow
+        className={clsxm(
+          "rounded-b-none border-b-2 border-b-pink/30",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </TableRow>
+    </div>
+  )
+}
+
+export const TableBody: FC<PropsWithChildren<TableChildProps>> = ({
+  children,
+}) => {
+  return (
+    <div role="rowgroup" className="space-y-2">
+      {children}
+    </div>
+  )
+}
+
+export const TableHeader: FC<PropsWithChildren<TableChildProps>> = ({
   children,
   className,
 }) => (
@@ -56,7 +90,7 @@ export const TableHeader: FC<PropsWithChildren<TableNodeProps>> = ({
   </span>
 )
 
-export const TableCell: FC<PropsWithChildren<TableNodeProps>> = ({
+export const TableCell: FC<PropsWithChildren<TableChildProps>> = ({
   children,
   className,
 }) => (

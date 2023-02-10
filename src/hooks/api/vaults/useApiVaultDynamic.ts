@@ -9,8 +9,10 @@ import {
 import { queryKeys } from "@/lib/helpers"
 import { VaultType } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
-import useIsCurve from "@/hooks/useIsCurve"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
+import {
+  useIsCurveCompounder,
+  useIsTokenCompounder,
+} from "@/hooks/useVaultTypes"
 
 export function useApiVaultDynamic({
   type,
@@ -19,14 +21,13 @@ export function useApiVaultDynamic({
   type: VaultType
   poolId: CompounderVaultStaticData["poolId"]
 }) {
-  const _isCurve = useIsCurve(type)
-  const isCurve = _isCurve ?? true
+  const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
   const { address: user } = useAccount()
   const chainId = useActiveChainId()
 
   return useQuery({
-    ...queryKeys.vaults.dynamic({ id, chainId, user, type }),
+    ...queryKeys.vaults.detail({ id, chainId, user, type }),
     queryFn: () =>
       isToken
         ? getTokenVaultDynamicData({ chainId, id, user })

@@ -1,23 +1,22 @@
-const auraBalCompounderAbi = [
+export const concentratorAbi = [
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_platform",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_swap",
-        type: "address",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "constructor",
+    inputs: [],
+    name: "ClaimPaused",
+    type: "error",
   },
   {
     inputs: [],
     name: "DepositPaused",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "FailedToSendETH",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "HarvestAlreadyCalled",
     type: "error",
   },
   {
@@ -37,12 +36,27 @@ const auraBalCompounderAbi = [
   },
   {
     inputs: [],
+    name: "InsufficientDepositCap",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "InvalidAmount",
     type: "error",
   },
   {
     inputs: [],
+    name: "InvalidAsset",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "NoPendingRewards",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotUnderlyingAsset",
     type: "error",
   },
   {
@@ -96,6 +110,25 @@ const auraBalCompounderAbi = [
       {
         indexed: true,
         internalType: "address",
+        name: "_receiver",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_rewards",
+        type: "uint256",
+      },
+    ],
+    name: "Claim",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
         name: "_caller",
         type: "address",
       },
@@ -131,9 +164,21 @@ const auraBalCompounderAbi = [
         type: "address",
       },
       {
+        indexed: true,
+        internalType: "address",
+        name: "_receiver",
+        type: "address",
+      },
+      {
         indexed: false,
         internalType: "uint256",
-        name: "_amount",
+        name: "_rewards",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_platformFee",
         type: "uint256",
       },
     ],
@@ -146,24 +191,23 @@ const auraBalCompounderAbi = [
       {
         indexed: false,
         internalType: "bool",
-        name: "_pause",
+        name: "_pauseDeposit",
         type: "bool",
       },
-    ],
-    name: "PausePoolDeposit",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
       {
         indexed: false,
         internalType: "bool",
-        name: "_pause",
+        name: "_pauseWithdraw",
+        type: "bool",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "_pauseClaim",
         type: "bool",
       },
     ],
-    name: "PausePoolWithdraw",
+    name: "PauseInteractions",
     type: "event",
   },
   {
@@ -196,77 +240,86 @@ const auraBalCompounderAbi = [
     inputs: [
       {
         indexed: false,
-        internalType: "uint256",
-        name: "_percentage",
-        type: "uint256",
+        internalType: "address[]",
+        name: "_rewardAssets",
+        type: "address[]",
       },
-    ],
-    name: "UpdateHarvestBountyPercentage",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
-        name: "_owner",
+        name: "_booster",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_crvRewards",
         type: "address",
       },
     ],
-    name: "UpdateOwner",
+    name: "UpdateExternalUtils",
     type: "event",
   },
   {
     anonymous: false,
     inputs: [
       {
-        indexed: true,
+        indexed: false,
+        internalType: "uint256",
+        name: "_withdrawFeePercentage",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_platformFeePercentage",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_harvestBountyPercentage",
+        type: "uint256",
+      },
+    ],
+    name: "UpdateFees",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "compounder",
+        type: "address",
+      },
+      {
+        indexed: false,
         internalType: "address",
         name: "_platform",
         type: "address",
       },
-    ],
-    name: "UpdatePlatform",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
       {
         indexed: false,
-        internalType: "uint256",
-        name: "_feePercentage",
-        type: "uint256",
-      },
-    ],
-    name: "UpdatePlatformFeePercentage",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
         internalType: "address",
         name: "_swap",
         type: "address",
       },
-    ],
-    name: "UpdateSwap",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
       {
         indexed: false,
         internalType: "uint256",
-        name: "_feePercentage",
+        name: "_depositCap",
         type: "uint256",
       },
     ],
-    name: "UpdateWithdrawalFeePercentage",
+    name: "UpdateInternalUtils",
     type: "event",
   },
   {
@@ -314,6 +367,19 @@ const auraBalCompounderAbi = [
         internalType: "bytes32",
         name: "",
         type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "accRewardPerShare",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -400,6 +466,64 @@ const auraBalCompounderAbi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "booster",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "boosterPoolId",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_receiver",
+        type: "address",
+      },
+    ],
+    name: "claim",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "_rewards",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "compounder",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -432,6 +556,19 @@ const auraBalCompounderAbi = [
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "crvRewards",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -475,11 +612,29 @@ const auraBalCompounderAbi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "depositCap",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
         name: "_underlyingAmount",
         type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_underlyingAsset",
+        type: "address",
       },
       {
         internalType: "address",
@@ -492,7 +647,7 @@ const auraBalCompounderAbi = [
         type: "uint256",
       },
     ],
-    name: "depositUnderlying",
+    name: "depositSingleUnderlying",
     outputs: [
       {
         internalType: "uint256",
@@ -500,7 +655,7 @@ const auraBalCompounderAbi = [
         type: "uint256",
       },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -548,6 +703,57 @@ const auraBalCompounderAbi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "lastHarvestBlock",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "maxDeposit",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "maxMint",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -662,6 +868,19 @@ const auraBalCompounderAbi = [
   },
   {
     inputs: [],
+    name: "pauseClaim",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "pauseDeposit",
     outputs: [
       {
@@ -677,24 +896,21 @@ const auraBalCompounderAbi = [
     inputs: [
       {
         internalType: "bool",
-        name: "_pause",
+        name: "_pauseDeposit",
         type: "bool",
       },
-    ],
-    name: "pausePoolDeposit",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "bool",
-        name: "_pause",
+        name: "_pauseWithdraw",
+        type: "bool",
+      },
+      {
+        internalType: "bool",
+        name: "_pauseClaim",
         type: "bool",
       },
     ],
-    name: "pausePoolWithdraw",
+    name: "pauseInteractions",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -707,6 +923,25 @@ const auraBalCompounderAbi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_account",
+        type: "address",
+      },
+    ],
+    name: "pendingReward",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -785,7 +1020,7 @@ const auraBalCompounderAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "assets",
+        name: "_assets",
         type: "uint256",
       },
     ],
@@ -804,7 +1039,7 @@ const auraBalCompounderAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "shares",
+        name: "_shares",
         type: "uint256",
       },
     ],
@@ -898,6 +1133,40 @@ const auraBalCompounderAbi = [
         name: "_receiver",
         type: "address",
       },
+    ],
+    name: "redeemAndClaim",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "_assets",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_rewards",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_shares",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_underlyingAsset",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_receiver",
+        type: "address",
+      },
       {
         internalType: "address",
         name: "_owner",
@@ -909,7 +1178,7 @@ const auraBalCompounderAbi = [
         type: "uint256",
       },
     ],
-    name: "redeemUnderlying",
+    name: "redeemSingleUnderlying",
     outputs: [
       {
         internalType: "uint256",
@@ -918,6 +1187,64 @@ const auraBalCompounderAbi = [
       },
     ],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_shares",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_underlyingAsset",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_receiver",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_minAmount",
+        type: "uint256",
+      },
+    ],
+    name: "redeemUnderlyingAndClaim",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "_underlyingAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_rewards",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "rewardAssets",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -941,6 +1268,19 @@ const auraBalCompounderAbi = [
         internalType: "string",
         name: "",
         type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "totalAUM",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -1029,11 +1369,68 @@ const auraBalCompounderAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_feePercentage",
+        name: "",
         type: "uint256",
       },
     ],
-    name: "updateHarvestBountyPercentage",
+    name: "underlyingAssets",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "_rewardAssets",
+        type: "address[]",
+      },
+      {
+        internalType: "address",
+        name: "_booster",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_crvRewards",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_boosterPoolId",
+        type: "uint256",
+      },
+    ],
+    name: "updateExternalUtils",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_withdrawFeePercentage",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_platformFeePercentage",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_harvestBountyPercentage",
+        type: "uint256",
+      },
+    ],
+    name: "updateFees",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1042,37 +1439,31 @@ const auraBalCompounderAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "_owner",
+        name: "_compounder",
         type: "address",
       },
-    ],
-    name: "updateOwner",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "address",
         name: "_platform",
         type: "address",
       },
-    ],
-    name: "updatePlatform",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
+      {
+        internalType: "address",
+        name: "_swap",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
       {
         internalType: "uint256",
-        name: "_feePercentage",
+        name: "_depositCap",
         type: "uint256",
       },
     ],
-    name: "updatePlatformFeePercentage",
+    name: "updateInternalUtils",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1081,26 +1472,24 @@ const auraBalCompounderAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "_swap",
+        name: "",
         type: "address",
       },
     ],
-    name: "updateSwap",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
+    name: "userInfo",
+    outputs: [
       {
         internalType: "uint256",
-        name: "_feePercentage",
+        name: "rewards",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "rewardPerSharePaid",
         type: "uint256",
       },
     ],
-    name: "updateWithdrawFeePercentage",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -1146,5 +1535,3 @@ const auraBalCompounderAbi = [
     type: "function",
   },
 ] as const
-
-export default auraBalCompounderAbi

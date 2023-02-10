@@ -1,23 +1,12 @@
-const cvxCrvCompounderAbi = [
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_platform",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_swap",
-        type: "address",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
+export const vaultTokenAbi = [
   {
     inputs: [],
     name: "DepositPaused",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "HarvestAlreadyCalled",
     type: "error",
   },
   {
@@ -33,6 +22,11 @@ const cvxCrvCompounderAbi = [
   {
     inputs: [],
     name: "InsufficientBalance",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InsufficientDepositCap",
     type: "error",
   },
   {
@@ -146,24 +140,17 @@ const cvxCrvCompounderAbi = [
       {
         indexed: false,
         internalType: "bool",
-        name: "_pause",
+        name: "_pauseDeposit",
         type: "bool",
       },
-    ],
-    name: "PausePoolDeposit",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
       {
         indexed: false,
         internalType: "bool",
-        name: "_pause",
+        name: "_pauseWithdraw",
         type: "bool",
       },
     ],
-    name: "PausePoolWithdraw",
+    name: "PauseInteractions",
     type: "event",
   },
   {
@@ -197,76 +184,54 @@ const cvxCrvCompounderAbi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "_percentage",
+        name: "_withdrawFeePercentage",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_platformFeePercentage",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_harvestBountyPercentage",
         type: "uint256",
       },
     ],
-    name: "UpdateHarvestBountyPercentage",
+    name: "UpdateFees",
     type: "event",
   },
   {
     anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "address",
-        name: "_owner",
-        type: "address",
-      },
-    ],
-    name: "UpdateOwner",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
+        indexed: false,
         internalType: "address",
         name: "_platform",
         type: "address",
       },
-    ],
-    name: "UpdatePlatform",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
       {
         indexed: false,
-        internalType: "uint256",
-        name: "_feePercentage",
-        type: "uint256",
-      },
-    ],
-    name: "UpdatePlatformFeePercentage",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
         internalType: "address",
         name: "_swap",
         type: "address",
       },
-    ],
-    name: "UpdateSwap",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
       {
         indexed: false,
         internalType: "uint256",
-        name: "_feePercentage",
+        name: "_depositCap",
         type: "uint256",
       },
     ],
-    name: "UpdateWithdrawalFeePercentage",
+    name: "UpdateInternalUtils",
     type: "event",
   },
   {
@@ -475,10 +440,23 @@ const cvxCrvCompounderAbi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "depositCap",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
-        name: "_underlyingAssets",
+        name: "_underlyingAmount",
         type: "uint256",
       },
       {
@@ -548,6 +526,57 @@ const cvxCrvCompounderAbi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "lastHarvestBlock",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "maxDeposit",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "maxMint",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -677,24 +706,16 @@ const cvxCrvCompounderAbi = [
     inputs: [
       {
         internalType: "bool",
-        name: "_pause",
+        name: "_pauseDeposit",
         type: "bool",
       },
-    ],
-    name: "pausePoolDeposit",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "bool",
-        name: "_pause",
+        name: "_pauseWithdraw",
         type: "bool",
       },
     ],
-    name: "pausePoolWithdraw",
+    name: "pauseInteractions",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -707,45 +728,6 @@ const cvxCrvCompounderAbi = [
         internalType: "bool",
         name: "",
         type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "pending3CRVRewards",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "pendingCRVRewards",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "pendingCVXRewards",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -824,7 +806,7 @@ const cvxCrvCompounderAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "assets",
+        name: "_assets",
         type: "uint256",
       },
     ],
@@ -843,7 +825,7 @@ const cvxCrvCompounderAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "shares",
+        name: "_shares",
         type: "uint256",
       },
     ],
@@ -952,7 +934,7 @@ const cvxCrvCompounderAbi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "_underlyingAssets",
+        name: "_assets",
         type: "uint256",
       },
     ],
@@ -1068,24 +1050,21 @@ const cvxCrvCompounderAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_feePercentage",
+        name: "_withdrawFeePercentage",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_platformFeePercentage",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_harvestBountyPercentage",
         type: "uint256",
       },
     ],
-    name: "updateHarvestBountyPercentage",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_owner",
-        type: "address",
-      },
-    ],
-    name: "updateOwner",
+    name: "updateFees",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1097,47 +1076,23 @@ const cvxCrvCompounderAbi = [
         name: "_platform",
         type: "address",
       },
-    ],
-    name: "updatePlatform",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_feePercentage",
-        type: "uint256",
-      },
-    ],
-    name: "updatePlatformFeePercentage",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "address",
         name: "_swap",
         type: "address",
       },
-    ],
-    name: "updateSwap",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
+      {
+        internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
       {
         internalType: "uint256",
-        name: "_feePercentage",
+        name: "_depositCap",
         type: "uint256",
       },
     ],
-    name: "updateWithdrawFeePercentage",
+    name: "updateInternalUtils",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1184,10 +1139,4 @@ const cvxCrvCompounderAbi = [
     stateMutability: "view",
     type: "function",
   },
-  {
-    stateMutability: "payable",
-    type: "receive",
-  },
 ] as const
-
-export default cvxCrvCompounderAbi

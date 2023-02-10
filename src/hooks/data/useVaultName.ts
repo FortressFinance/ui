@@ -3,12 +3,14 @@ import { useContractRead } from "wagmi"
 import { VaultProps } from "@/lib/types"
 import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
 import { useVaultTokens } from "@/hooks/data"
-import useIsCurve from "@/hooks/useIsCurve"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useRegistryContract from "@/hooks/useRegistryContract"
+import {
+  useIsCurveCompounder,
+  useIsTokenCompounder,
+} from "@/hooks/useVaultTypes"
 
 export default function useVaultName({ asset, type }: VaultProps) {
-  const isCurve = useIsCurve(type)
+  const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
   const { data: vaultTokens } = useVaultTokens({
     asset,
