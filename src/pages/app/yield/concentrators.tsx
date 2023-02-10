@@ -3,11 +3,11 @@ import { NextPage } from "next"
 import { FC, useState } from "react"
 
 import { ConcentratorType } from "@/lib/types"
-import { useListAssetsForConcentrator } from "@/hooks/data/concentrators"
 import {
   ConcentratorVaultProps,
+  useListAssetsForConcentrator,
   useVaultForConcentrator,
-} from "@/hooks/data/concentrators/useVaultForConcentrator"
+} from "@/hooks/data/concentrators"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useClientEffect from "@/hooks/useClientEffect"
 

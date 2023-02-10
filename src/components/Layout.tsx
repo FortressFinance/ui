@@ -4,6 +4,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { FC, PropsWithChildren } from "react"
 
+import { appLink } from "@/lib/helpers"
+
 import AppProviders from "@/components/AppProviders"
 import ConnectWalletModal, {
   DisconnectWalletModal,
@@ -41,7 +43,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         <header className="sticky top-0 z-10 border-b-2 border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
             <div className="flex items-center space-x-10">
-              <Link className="group" href="/">
+              <Link className="group" href={appLink("/")}>
                 <FortressLogo
                   className="my-6 h-8 w-auto fill-white group-hover:fill-orange-400"
                   aria-label="Fortress Finance"
@@ -53,12 +55,12 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 <Menu as={DropdownMenu}>
                   <Menu.Button as={DropdownMenuButton}>Yield</Menu.Button>
                   <Menu.Items as={DropdownMenuItems}>
-                    <Menu.Item as={DropdownMenuItem} href="/yield">
+                    <Menu.Item as={DropdownMenuItem} href={appLink("/yield")}>
                       Vaults
                     </Menu.Item>
                     <Menu.Item
                       as={DropdownMenuItem}
-                      href="/yield/concentrators"
+                      href={appLink("/yield/concentrators")}
                     >
                       Concentrators
                     </Menu.Item>
