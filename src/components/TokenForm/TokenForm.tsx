@@ -60,13 +60,17 @@ const TokenForm: FC<TokenFormProps> = ({
   }
 
   const { isConnected } = useAccount()
-  const { data: inputTokenBalanceOrShare, isLoading: isLoadingInputTokenBalanceOrShare } =
-    useTokenOrNativeBalance({ address: inputTokenAddress })
+  const {
+    data: inputTokenBalanceOrShare,
+    isLoading: isLoadingInputTokenBalanceOrShare,
+  } = useTokenOrNativeBalance({ address: inputTokenAddress })
   const { data: inputToken, isLoading: isLoadingInputToken } = useTokenOrNative(
     { address: inputTokenAddress }
   )
 
-  const hideMaxBtn = Number(amountIn ?? "0.0").toFixed(3) === Number(inputTokenBalanceOrShare?.formatted ?? "0.0").toFixed(3)
+  const hideMaxBtn =
+    Number(amountIn ?? "0.0").toFixed(3) ===
+    Number(inputTokenBalanceOrShare?.formatted ?? "0.0").toFixed(3)
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -83,7 +87,10 @@ const TokenForm: FC<TokenFormProps> = ({
               lessThanBalance: (amount) =>
                 parseUnits(amount, inputToken?.decimals).lte(
                   inputTokenBalanceOrShare?.value ?? 0
-                ) || `Insufficient ${inputToken?.symbol ?? ""} ${isWithdraw? 'share' : 'balance'}`,
+                ) ||
+                `Insufficient ${inputToken?.symbol ?? ""} ${
+                  isWithdraw ? "share" : "balance"
+                }`,
             },
           })}
         />
@@ -127,7 +134,7 @@ const TokenForm: FC<TokenFormProps> = ({
           />
         </div>
 
-        <div className="relative z-[1] col-span-full col-start-1 row-start-3 px-4 pb-3 text-left text-xs h-[38px] align-bottom">
+        <div className="relative z-[1] col-span-full col-start-1 row-start-3 h-[38px] px-4 pb-3 text-left align-bottom text-xs">
           <span>
             {!isWithdraw ? "Balance: " : "Share: "}
             <Skeleton isLoading={isLoadingInputTokenBalanceOrShare}>
@@ -135,7 +142,7 @@ const TokenForm: FC<TokenFormProps> = ({
             </Skeleton>
           </span>
           <button
-            className="ml-1.5 rounded-md font-bold text-white border border-[#F0707B] hover:bg-[#1E0E1C80] px-2 py-1"
+            className="ml-1.5 rounded-md border border-[#F0707B] px-2 py-1 font-bold text-white hover:bg-[#1E0E1C80]"
             onClick={onClickMax}
             hidden={hideMaxBtn}
             type="button"
@@ -165,7 +172,9 @@ const TokenForm: FC<TokenFormProps> = ({
             {form.formState.isDirty
               ? form.formState.isValid
                 ? submitText
-                : (form.formState.errors.amountIn === undefined)? "Enter an amount" : (form.formState.errors.amountIn.message ?? "Unknown error")
+                : form.formState.errors.amountIn === undefined
+                ? "Enter an amount"
+                : form.formState.errors.amountIn.message ?? "Unknown error"
               : "Enter an amount"}
           </Button>
         ) : (
