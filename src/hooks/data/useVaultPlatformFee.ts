@@ -4,9 +4,9 @@ import { VaultProps } from "@/lib/types"
 import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
 import useVaultTokens from "@/hooks/data/useVaultTokens"
 import useActiveChainId from "@/hooks/useActiveChainId"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
+import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
-import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
+import { vaultCompounderAbi } from "@/constant/abi"
 
 export default function useVaultPlatformFee({ asset, type }: VaultProps) {
   const chainId = useActiveChainId()
@@ -21,7 +21,7 @@ export default function useVaultPlatformFee({ asset, type }: VaultProps) {
   // Fallback: contract request
   const registryQuery = useContractRead({
     chainId,
-    abi: curveCompounderAbi,
+    abi: vaultCompounderAbi,
     address: asset,
     functionName: "platformFeePercentage",
     enabled: apiCompounderQuery.isError || apiTokenQuery.isError,

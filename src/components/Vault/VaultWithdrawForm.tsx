@@ -14,13 +14,12 @@ import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
 import { useVaultTokens } from "@/hooks/data"
 import useActiveChainId from "@/hooks/useActiveChainId"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
+import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
-import auraBalCompounderAbi from "@/constant/abi/auraBALCompounderAbi"
-import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
+import { vaultCompounderAbi, vaultTokenAbi } from "@/constant/abi"
 
 const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const chainId = useActiveChainId()
@@ -68,7 +67,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const { isLoading: isLoadingPreview } = useContractRead({
     chainId,
     address: vaultAddress,
-    abi: curveCompounderAbi,
+    abi: vaultCompounderAbi,
     functionName: "previewRedeem",
     args: [value],
     onSuccess: (data) => {
@@ -79,7 +78,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const prepareWithdrawUnderlying = usePrepareContractWrite({
     chainId,
     address: vaultAddress,
-    abi: curveCompounderAbi,
+    abi: vaultCompounderAbi,
     functionName: "redeemSingleUnderlying",
     enabled: value.gt(0) && !outputIsLp && !isToken,
     args: [
@@ -99,7 +98,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const prepareTokenWithdrawUnderlying = usePrepareContractWrite({
     chainId,
     address: vaultAddress,
-    abi: auraBalCompounderAbi,
+    abi: vaultTokenAbi,
     functionName: "redeemUnderlying",
     enabled: value.gt(0) && !outputIsLp && isToken,
     args: [value, userAddress ?? "0x", userAddress ?? "0x", BigNumber.from(0)],
@@ -116,7 +115,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const prepareWithdrawLp = usePrepareContractWrite({
     chainId,
     address: vaultAddress,
-    abi: curveCompounderAbi,
+    abi: vaultCompounderAbi,
     functionName: "redeem",
     enabled: value.gt(0) && outputIsLp && !isToken,
     args: [value, userAddress ?? "0x", userAddress ?? "0x"],
@@ -130,7 +129,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const prepareTokenWithdrawLp = usePrepareContractWrite({
     chainId,
     address: vaultAddress,
-    abi: auraBalCompounderAbi,
+    abi: vaultCompounderAbi,
     functionName: "redeem",
     enabled: value.gt(0) && outputIsLp && isToken,
     args: [value, userAddress ?? "0x", userAddress ?? "0x"],

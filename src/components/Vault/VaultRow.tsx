@@ -6,7 +6,7 @@ import { VaultProps } from "@/lib/types"
 import { useVaultTokens } from "@/hooks/data"
 
 import AssetLogo from "@/components/AssetLogo"
-import { TableCell, TableRow } from "@/components/Table/TableNode"
+import { TableCell, TableRow } from "@/components/Table"
 import {
   VaultApr,
   VaultDepositedLpTokens,

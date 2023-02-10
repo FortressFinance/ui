@@ -1,27 +1,22 @@
 import { Popover, Transition } from "@headlessui/react"
-import dynamic from "next/dynamic"
-import { FC, Fragment, useState } from "react"
+import { FC, Fragment, PropsWithChildren, useState } from "react"
 import { usePopper } from "react-popper"
 
 import clsxm from "@/lib/clsxm"
-import { VaultProps } from "@/lib/types"
 
-import { TableHeader, TableRow } from "@/components/Table/TableNode"
+import { Table, TableBody, TableHeader, TableRow } from "@/components/Table"
 import TxSettingsForm from "@/components/TxSettingsForm"
 
 import Cog from "~/svg/icons/cog.svg"
 
-const VaultTableBody = dynamic(
-  () => import("@/components/Vault/VaultTableBody"),
-  { ssr: false }
-)
-
-export function capitalize(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
+type VaultTableProps = {
+  label: string
 }
 
-const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
-  const vaultTitle = `${capitalize(type)} Vaults`
+export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
+  children,
+  label,
+}) => {
   const [txSettingsCog, setTxSettingsCog] = useState<HTMLButtonElement | null>(
     null
   )
@@ -36,11 +31,10 @@ const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
   })
 
   return (
-    <div className="" role="table">
-      {/* Table headings */}
+    <Table>
       <div className="relative z-[1]" role="rowgroup">
         <TableRow className="overflow-visible rounded-b-none border-b-2 border-b-pink/30">
-          <TableHeader>{vaultTitle}</TableHeader>
+          <TableHeader>{label}</TableHeader>
           <TableHeader className="text-center">APR</TableHeader>
           <TableHeader className="text-center">TVL</TableHeader>
           <TableHeader className="text-center">Deposit</TableHeader>
@@ -90,10 +84,7 @@ const VaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
         </TableRow>
       </div>
 
-      {/* Table body */}
-      <VaultTableBody type={type} />
-    </div>
+      <TableBody>{children}</TableBody>
+    </Table>
   )
 }
-
-export default VaultTable

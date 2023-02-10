@@ -1,12 +1,21 @@
+import { Menu } from "@headlessui/react"
 import dynamic from "next/dynamic"
 import Image from "next/image"
 import Link from "next/link"
 import { FC, PropsWithChildren } from "react"
 
+import { appLink } from "@/lib/helpers"
+
 import AppProviders from "@/components/AppProviders"
 import ConnectWalletModal, {
   DisconnectWalletModal,
 } from "@/components/ConnectWallet/ConnectWalletModal"
+import {
+  DropdownMenu,
+  DropdownMenuButton,
+  DropdownMenuItem,
+  DropdownMenuItems,
+} from "@/components/DropdownMenu"
 import ExternalLinks from "@/components/ExternalLinks"
 
 import { useConnectWallet } from "@/store/connectWallet"
@@ -34,21 +43,35 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         <header className="sticky top-0 z-10 border-b-2 border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
             <div className="flex items-center space-x-10">
-              <Link className="group" href="/">
+              <Link className="group" href={appLink("/")}>
                 <FortressLogo
-                  className="my-6 h-8 w-auto fill-white group-hover:fill-pink-400"
+                  className="my-6 h-8 w-auto fill-white group-hover:fill-orange-400"
                   aria-label="Fortress Finance"
                 />
               </Link>
 
               {/* Desktop navigation */}
-              <nav className="hidden space-x-10 lg:block" aria-label="Global">
-                <Link className="hover:text-pink-400" href="/yield">
-                  Yield
-                </Link>
-                <Link className="hover:text-pink-400" href="/lend">
-                  Lend
-                </Link>
+              <nav className="hidden space-x-10 lg:flex" aria-label="Global">
+                <Menu as={DropdownMenu}>
+                  <Menu.Button as={DropdownMenuButton}>Yield</Menu.Button>
+                  <Menu.Items as={DropdownMenuItems}>
+                    <Menu.Item as={DropdownMenuItem} href={appLink("/yield")}>
+                      Vaults
+                    </Menu.Item>
+                    <Menu.Item
+                      as={DropdownMenuItem}
+                      href={appLink("/yield/concentrators")}
+                    >
+                      Concentrators
+                    </Menu.Item>
+                  </Menu.Items>
+                </Menu>
+                <span className="flex cursor-not-allowed items-center">
+                  <span className="opacity-50">Lend</span>
+                  <span className="ml-1 grow-0 rounded bg-pink-200/20 py-0.5 px-1 text-[9px] uppercase leading-tight text-pink-100/80">
+                    Coming soon
+                  </span>
+                </span>
               </nav>
             </div>
 

@@ -72,9 +72,9 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
             )}
 
             <ChevronDown
-              className={clsxm("ml-2 h-3.5 w-3.5", {
-                "fill-orange-400": chain.unsupported,
-                "fill-violet-200": !chain.unsupported,
+              className={clsxm("ml-2 w-3", {
+                "stroke-orange-400": chain.unsupported,
+                "stroke-white": !chain.unsupported,
               })}
               aria-label="Switch network"
             />

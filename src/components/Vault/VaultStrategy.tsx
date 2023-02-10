@@ -10,8 +10,8 @@ import {
   useVaultWithdrawFee,
 } from "@/hooks/data"
 import { UseVaultTokensResult } from "@/hooks/data/useVaultTokens"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
+import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
 import Button from "@/components/Button"
 import { ModalBaseProps } from "@/components/Modal/ModalBase"
