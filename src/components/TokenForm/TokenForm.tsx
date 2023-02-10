@@ -4,7 +4,7 @@ import { SubmitHandler, useController, useFormContext } from "react-hook-form"
 import { Address, useAccount } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
-import { VaultType } from "@/hooks/types"
+import { VaultType } from "@/lib/types"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 

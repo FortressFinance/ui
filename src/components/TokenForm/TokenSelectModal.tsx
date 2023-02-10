@@ -4,7 +4,7 @@ import { UseControllerReturn } from "react-hook-form"
 import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
-import { VaultType } from "@/hooks/types"
+import { VaultType } from "@/lib/types"
 import useTokensOrNative from "@/hooks/useTokensOrNative"
 
 import AssetLogo from "@/components/AssetLogo"
