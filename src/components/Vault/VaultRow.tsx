@@ -5,8 +5,10 @@ import { usePopper } from "react-popper"
 import clsxm from "@/lib/clsxm"
 import { VaultProps } from "@/lib/types"
 import { useVaultTokens } from "@/hooks/data"
-import useIsCurve from "@/hooks/useIsCurve"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
+import {
+  useIsCurveCompounder,
+  useIsTokenCompounder,
+} from "@/hooks/useVaultTypes"
 
 import AssetLogo from "@/components/AssetLogo"
 import { TableCell, TableRow } from "@/components/Table/TableNode"
@@ -41,7 +43,7 @@ const VaultRow: FC<VaultProps> = (props) => {
 
   const { isLoading } = useVaultTokens(props)
 
-  const isCurve = useIsCurve(props.type)
+  const isCurve = useIsCurveCompounder(props.type)
   const isToken = useIsTokenCompounder(props.type)
 
   const toggleVaultOpen: MouseEventHandler<

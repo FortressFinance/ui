@@ -1,6 +1,7 @@
 import { Tab } from "@headlessui/react"
 import { NextPage } from "next"
 import { FC, useState } from "react"
+import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
 import { VaultProps } from "@/lib/types"
@@ -47,13 +48,13 @@ const Yield: NextPage = () => {
 
           <Tab.Panels as={TabPanels}>
             <Tab.Panel>
-              <YieldVaultTable type="featured" />
+              <YieldVaultTable filter="featured" type="token" />
             </Tab.Panel>
             <Tab.Panel>
-              <YieldVaultTable type="crypto" />
+              <YieldVaultTable filter="crypto" type="token" />
             </Tab.Panel>
             <Tab.Panel>
-              <YieldVaultTable type="stable" />
+              <YieldVaultTable filter="stable" type="token" />
             </Tab.Panel>
             <Tab.Panel>
               <YieldVaultTable type="curve" />
@@ -71,7 +72,26 @@ const Yield: NextPage = () => {
 
 export default Yield
 
-const YieldVaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
+type FilterCategory = "featured" | "crypto" | "stable"
+
+// HARDCODE HERE AT THE MOMENT, THE BE SHOULD CLASSIFY THEM
+const addressesByFilter: Record<FilterCategory, Address[]> = {
+  featured: [
+    "0x616e8BfA43F920657B3497DBf40D6b1A02D4608d",
+    "0x5402B5F40310bDED796c7D0F3FF6683f5C0cFfdf",
+  ],
+  crypto: [
+    "0x616e8BfA43F920657B3497DBf40D6b1A02D4608d",
+    "0x5402B5F40310bDED796c7D0F3FF6683f5C0cFfdf",
+  ],
+  stable: ["0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7"],
+}
+
+type YieldVaultTableProps = Pick<VaultProps, "type"> & {
+  filter?: FilterCategory
+}
+
+const YieldVaultTable: FC<YieldVaultTableProps> = ({ filter, type }) => {
   // handle hydration mismatch
   const [ready, setReady] = useState(false)
   useClientEffect(() => setReady(true))
@@ -83,10 +103,14 @@ const YieldVaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
   const { data: vaultAddresses, isLoading } = useVaultAddresses({ type })
   const showLoadingState = isLoading || !ready
 
+  const filteredVaultAddresses = filter
+    ? vaultAddresses?.filter((a) => addressesByFilter[filter].includes(a))
+    : vaultAddresses
+
   return (
     <Table>
       <TableHeaderRow>
-        <TableHeader>Vault</TableHeader>
+        <TableHeader>{capitalizeFirstLetter(type)} Vaults</TableHeader>
         <TableHeader className="text-center">APR</TableHeader>
         <TableHeader className="text-center">TVL</TableHeader>
         <TableHeader className="text-center">Deposit</TableHeader>
@@ -98,7 +122,7 @@ const YieldVaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
       <TableBody>
         {showLoadingState ? (
           <TableLoading>Loading compounders...</TableLoading>
-        ) : !vaultAddresses?.length ? (
+        ) : !filteredVaultAddresses?.length ? (
           <TableEmpty heading="Where Vaults ser?">
             It seems we don't have {capitalizeFirstLetter(type)} Vaults on{" "}
             {network} (yet). Feel free to check out other vaults on {network} or
@@ -106,7 +130,7 @@ const YieldVaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
             back later. Don't be a stranger.
           </TableEmpty>
         ) : (
-          vaultAddresses?.map((address, i) => (
+          filteredVaultAddresses?.map((address, i) => (
             <VaultRow key={`pool-${i}`} asset={address} type={type} />
           ))
         )}

@@ -16,8 +16,8 @@ import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
 import { useVaultTokens } from "@/hooks/data"
 import useActiveChainId from "@/hooks/useActiveChainId"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
+import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 

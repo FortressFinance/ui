@@ -17,12 +17,16 @@ export const TabListGroup: FC<PropsWithChildren> = (props) => (
 export const TabButton = forwardRef<
   HTMLButtonElement,
   Parameters<typeof Tab>[0] & { children: ReactNode }
->(({ children, ...props }, ref) => {
+>(({ children, className, ...props }, ref) => {
   return (
     <button
-      className={clsxm("py-3 px-6", {
-        "bg-white text-black": props["aria-selected"] === true,
-      })}
+      className={clsxm(
+        "py-3 px-6",
+        {
+          "bg-white text-black": props["aria-selected"] === true,
+        },
+        className
+      )}
       ref={ref}
       {...props}
     >

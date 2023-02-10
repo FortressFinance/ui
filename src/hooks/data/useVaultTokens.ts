@@ -6,9 +6,11 @@ import {
 } from "@/lib/findApiVaultForAsset"
 import { VaultProps } from "@/lib/types"
 import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
-import useIsCurve from "@/hooks/useIsCurve"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useRegistryContract from "@/hooks/useRegistryContract"
+import {
+  useIsCurveCompounder,
+  useIsTokenCompounder,
+} from "@/hooks/useVaultTypes"
 
 export default function useVaultTokens({ asset, type }: VaultProps) {
   // Preferred: API request
@@ -16,7 +18,7 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
   const apiTokenQuery = useApiTokenVaults({ type })
 
   // Fallback: contract requests
-  const isCurve = useIsCurve(type)
+  const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
   const enableFallback = isToken
     ? apiTokenQuery.isError

@@ -6,7 +6,7 @@ import { TableRow } from "@/components/Table"
 export const TableLoading: FC<PropsWithChildren> = ({ children }) => {
   return (
     <TableRow
-      className="flex h-44 items-center rounded-t-none"
+      className="flex h-[88px] items-center rounded-t-none"
       aria-label={children}
     >
       <span className="col-span-full text-center" aria-hidden="true">

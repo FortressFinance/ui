@@ -2,9 +2,12 @@ import { Tab } from "@headlessui/react"
 import { NextPage } from "next"
 import { FC, useState } from "react"
 
-import { capitalizeFirstLetter } from "@/lib/helpers"
-import { VaultProps } from "@/lib/types"
-import { useVaultAddresses } from "@/hooks/data"
+import { ConcentratorType } from "@/lib/types"
+import { useListAssetsForConcentrator } from "@/hooks/data/concentrators"
+import {
+  ConcentratorVaultProps,
+  useVaultForConcentrator,
+} from "@/hooks/data/concentrators/useVaultForConcentrator"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useClientEffect from "@/hooks/useClientEffect"
 
@@ -23,7 +26,7 @@ import {
 import { TabButton, TabList, TabListGroup, TabPanels } from "@/components/Tabs"
 import VaultRow from "@/components/Vault/VaultRow"
 
-const Yield: NextPage = () => {
+const Concentrators: NextPage = () => {
   return (
     <Layout>
       <Seo templateTitle="Concentrators" />
@@ -31,47 +34,54 @@ const Yield: NextPage = () => {
       <main>
         <PageHeading>Concentrators</PageHeading>
 
-        <Tab.Group>
-          <Tab.List as={TabList}>
-            <TabListGroup>
-              <Tab as={TabButton}>Featured</Tab>
-              <Tab as={TabButton}>Crypto</Tab>
-              <Tab as={TabButton}>Stable</Tab>
-              <Tab as={TabButton}>Curve</Tab>
-              <Tab as={TabButton}>Balancer</Tab>
-            </TabListGroup>
-            <TabListGroup>
-              <Tab as={TabButton}>Holdings</Tab>
-            </TabListGroup>
-          </Tab.List>
-
-          <Tab.Panels as={TabPanels}>
-            <Tab.Panel>
-              <YieldVaultTable type="featured" />
-            </Tab.Panel>
-            <Tab.Panel>
-              <YieldVaultTable type="crypto" />
-            </Tab.Panel>
-            <Tab.Panel>
-              <YieldVaultTable type="stable" />
-            </Tab.Panel>
-            <Tab.Panel>
-              <YieldVaultTable type="curve" />
-            </Tab.Panel>
-            <Tab.Panel>
-              <YieldVaultTable type="balancer" />
-            </Tab.Panel>
-            <Tab.Panel>Holdings</Tab.Panel>
-          </Tab.Panels>
-        </Tab.Group>
+        {/* Child component because we need queryClient to retrieve vaults */}
+        <ConcentratorVaults />
       </main>
     </Layout>
   )
 }
 
-export default Yield
+export default Concentrators
 
-const YieldVaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
+type ConcentratorDefinition = { label: string; type: ConcentratorType }
+
+const concentratorDefinitiosn: ConcentratorDefinition[] = [
+  { label: "Balancer AuraBAL", type: "balancerAuraBal" },
+  { label: "Balancer ETH", type: "balancerEth" },
+  { label: "Curve cvxCRV", type: "curveCvxCrv" },
+  { label: "Curve ETH", type: "curveEth" },
+]
+
+const ConcentratorVaults: FC = () => {
+  return (
+    <>
+      <Tab.Group>
+        <Tab.List as={TabList}>
+          <TabListGroup>
+            {concentratorDefinitiosn.map(({ label, type }) => (
+              <Tab as={TabButton} key={`${type}-button`}>
+                {label}
+              </Tab>
+            ))}
+          </TabListGroup>
+        </Tab.List>
+
+        <Tab.Panels as={TabPanels}>
+          {concentratorDefinitiosn.map(({ label, type }) => (
+            <Tab.Panel key={`${type}-panel`}>
+              <ConcentratorVaultsTable label={label} type={type} />
+            </Tab.Panel>
+          ))}
+        </Tab.Panels>
+      </Tab.Group>
+    </>
+  )
+}
+
+const ConcentratorVaultsTable: FC<ConcentratorDefinition> = ({
+  label,
+  type,
+}) => {
   // handle hydration mismatch
   const [ready, setReady] = useState(false)
   useClientEffect(() => setReady(true))
@@ -80,13 +90,15 @@ const YieldVaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
   const availableChains = enabledNetworks.chains.filter((n) => n.id === chainId)
   const network = availableChains?.[0].name
 
-  const { data: vaultAddresses, isLoading } = useVaultAddresses({ type })
+  const { data: vaultAddresses, isLoading } = useListAssetsForConcentrator({
+    type,
+  })
   const showLoadingState = isLoading || !ready
 
   return (
     <Table>
       <TableHeaderRow>
-        <TableHeader>Vault</TableHeader>
+        <TableHeader>{label} Vaults</TableHeader>
         <TableHeader className="text-center">APR</TableHeader>
         <TableHeader className="text-center">TVL</TableHeader>
         <TableHeader className="text-center">Deposit</TableHeader>
@@ -97,20 +109,29 @@ const YieldVaultTable: FC<Pick<VaultProps, "type">> = ({ type }) => {
 
       <TableBody>
         {showLoadingState ? (
-          <TableLoading>Loading compounders...</TableLoading>
+          <TableLoading>Loading concentrators...</TableLoading>
         ) : !vaultAddresses?.length ? (
-          <TableEmpty heading="Where Vaults ser?">
-            It seems we don't have {capitalizeFirstLetter(type)} Vaults on{" "}
-            {network} (yet). Feel free to check out other vaults on {network} or
-            change network. New Vaults and strategies are added often, so check
+          <TableEmpty heading="Where Concentrators ser?">
+            It seems we don't have {label} Concentrators on {network} (yet).
+            Feel free to check out other Concentrators on {network} or change
+            network. New Concentrators and strategies are added often, so check
             back later. Don't be a stranger.
           </TableEmpty>
         ) : (
           vaultAddresses?.map((address, i) => (
-            <VaultRow key={`pool-${i}`} asset={address} type={type} />
+            <ConcentratorVaultRow
+              key={`pool-${i}`}
+              asset={address}
+              type={type}
+            />
           ))
         )}
       </TableBody>
     </Table>
   )
+}
+
+const ConcentratorVaultRow: FC<ConcentratorVaultProps> = (props) => {
+  const { data: vaultProps } = useVaultForConcentrator(props)
+  return <VaultRow {...vaultProps} />
 }

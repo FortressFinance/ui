@@ -1,4 +1,4 @@
-import { useQuery } from "wagmi"
+import { useQuery } from "@tanstack/react-query"
 
 import { getAuraMint, getFortAuraBalAprFallback } from "@/lib/api/vaults"
 import { VaultDynamicProps } from "@/lib/types"

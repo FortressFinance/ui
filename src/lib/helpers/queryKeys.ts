@@ -3,11 +3,11 @@ import { Address } from "wagmi"
 
 export const queryKeys = createQueryKeyStore({
   vaults: {
-    static: ({ chainId, type }: { chainId: number; type: string }) => [
+    list: ({ chainId, type }: { chainId: number; type: string }) => [
       chainId,
       type,
     ],
-    dynamic: ({
+    detail: ({
       id,
       chainId,
       user,
@@ -19,5 +19,15 @@ export const queryKeys = createQueryKeyStore({
       type: string
     }) => [chainId, type, id, user ?? "0x"],
     apr: ({ asset }: { asset: Address | undefined }) => [asset ?? "0x"],
+  },
+  concentrators: {
+    list: ({ chainId }: { chainId: number }) => [chainId],
+    detail: ({
+      chainId,
+      compounderType,
+    }: {
+      chainId: number
+      compounderType: string
+    }) => [chainId, compounderType],
   },
 })

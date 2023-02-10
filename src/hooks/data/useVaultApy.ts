@@ -7,8 +7,10 @@ import useTokenGlpVault from "@/hooks/data/aprFallbacks/useTokenGlpVault"
 import useTokenVaultGraphTotalApr from "@/hooks/data/aprFallbacks/useTokenVaultGraphTotalApr"
 import useTokenVaultSymbol from "@/hooks/data/aprFallbacks/useTokenVaultSymbol"
 import { useVaultAprFallback } from "@/hooks/data/aprFallbacks/useVaultAprFallback"
-import useIsCurve from "@/hooks/useIsCurve"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
+import {
+  useIsCurveCompounder,
+  useIsTokenCompounder,
+} from "@/hooks/useVaultTypes"
 
 export default function useVaultApy({ poolId, type }: VaultDynamicProps) {
   // Preferred: API request
@@ -124,7 +126,7 @@ export function useVaultExtraApr({ asset, poolId, type }: VaultDynamicProps) {
 }
 
 export function useVaultTotalApr({ asset, poolId, type }: VaultDynamicProps) {
-  const isCurve = useIsCurve(type)
+  const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
