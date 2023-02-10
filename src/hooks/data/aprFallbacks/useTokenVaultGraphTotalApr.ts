@@ -1,8 +1,8 @@
+import { VaultDynamicProps } from "@/lib/types"
 import useTokenAuraBalVault from "@/hooks/data/aprFallbacks/useTokenAuraBalVault"
 import useTokenCvxCrvVault from "@/hooks/data/aprFallbacks/useTokenCvxCrvVault"
 import useTokenGlpVault from "@/hooks/data/aprFallbacks/useTokenGlpVault"
 import useTokenVaultSymbol from "@/hooks/data/aprFallbacks/useTokenVaultSymbol"
-import { VaultDynamicProps } from "@/hooks/types"
 
 export default function useTokenVaultGraphTotalApr({
   asset,

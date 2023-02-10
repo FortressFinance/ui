@@ -1,23 +1,27 @@
 import { Tab } from "@headlessui/react"
 import { NextPage } from "next"
-import { Fragment } from "react"
+import { Fragment, useState } from "react"
 
 import clsxm from "@/lib/clsxm"
 
+import HoldingsTable from "@/components/Holdings/HoldingsTable"
 import Layout from "@/components/Layout"
 import Seo from "@/components/Seo"
 import VaultTable from "@/components/Vault"
 
 const Yield: NextPage = () => {
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  const pageTitle = selectedIndex == 5 ? "Holdings" : "Compounders"
+
   return (
     <Layout>
       <Seo templateTitle="Yield" />
 
       <div className="grid gap-6">
         <main>
-          <h1 className="mb-6 font-display text-5xl">Vaults</h1>
+          <h1 className="mb-6 font-display text-4xl">{pageTitle}</h1>
 
-          <Tab.Group>
+          <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
             <Tab.List className="flex gap-4">
               <div className="overflow-hidden rounded-md border-2 border-pink/30 bg-black/60">
                 <Tab as={Fragment}>
@@ -107,7 +111,9 @@ const Yield: NextPage = () => {
               <Tab.Panel>
                 <VaultTable type="balancer" />
               </Tab.Panel>
-              <Tab.Panel>Holdings</Tab.Panel>
+              <Tab.Panel>
+                <HoldingsTable />
+              </Tab.Panel>
             </Tab.Panels>
           </Tab.Group>
         </main>

@@ -2,14 +2,14 @@ import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
 import { useToken } from "wagmi"
 
+import { VaultProps } from "@/lib/types"
 import {
-  useVaultDepositedLpTokens,
+  useVaultDepositedAssets,
   useVaultName,
   useVaultPoolId,
   useVaultTotalApr,
   useVaultTvl,
 } from "@/hooks/data"
-import { VaultProps } from "@/hooks/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
 import Currency from "@/components/Currency"
@@ -59,7 +59,7 @@ export const VaultDepositedLpTokens: FC<VaultProps> = (props) => {
   const chainId = useActiveChainId()
   const { data: poolId, isLoading: isLoadingId } = useVaultPoolId(props)
   const { data: depositedTokens, isLoading: isLoadingDepositedTokens } =
-    useVaultDepositedLpTokens({
+    useVaultDepositedAssets({
       ...props,
       poolId,
     })

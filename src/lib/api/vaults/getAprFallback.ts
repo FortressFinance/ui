@@ -2,7 +2,7 @@ import axios from "axios"
 import { BigNumber } from "ethers"
 import request, { gql } from "graphql-request"
 
-import { VaultDynamicProps } from "@/hooks/types"
+import { VaultDynamicProps } from "@/lib/types"
 
 import {
   AURA_ADDRESS,
@@ -14,6 +14,9 @@ import {
   GXM_GRAPH_URL,
   LLAMA_URL,
 } from "@/constant/env"
+
+// TODO: These should use types
+// await request<Response, Variables>(...)
 
 export async function getVaultAprFallback(asset: VaultDynamicProps["asset"]) {
   const graphqlQuery = gql`
@@ -127,6 +130,7 @@ export async function getFortCvxCrvAprFallback() {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getFortAuraBalAprFallback(auraMint: any) {
   const { rewardRates, addresses, totalStaked } = await getAuraBalRewardData()
   const tvl =
@@ -192,6 +196,7 @@ export async function getBalancerTotalAprFallback(
   asset: VaultDynamicProps["asset"],
   extraTokenAwards: number | undefined,
   swapFee: number | undefined,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   auraMint: any
 ) {
   const { rewardRates, addresses, totalStaked } =
@@ -222,6 +227,7 @@ export async function getBalancerTotalAprFallback(
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function calculateAuraMintAmount(auraMint: any, BALYearlyRewards: number) {
   const reductionPerCliff = Number(auraMint.auraReductionPerCliff)
   const maxSupply = Number(auraMint.auraMaxSupply)

@@ -1,7 +1,7 @@
+import { VaultDynamicProps } from "@/lib/types"
 import { useApiVaultDynamic } from "@/hooks/api"
-import { VaultDynamicProps } from "@/hooks/types"
 
-export default function useVaultDepositedLpTokens({
+export default function useVaultDepositedAssets({
   asset: _address,
   poolId,
   type,
@@ -11,6 +11,6 @@ export default function useVaultDepositedLpTokens({
   // TODO: Fallbacks?
   return {
     ...apiQuery,
-    data: apiQuery.data?.poolDepositedLPtokens,
+    data: apiQuery.data?.poolDepositedPrimaryAssets,
   }
 }
