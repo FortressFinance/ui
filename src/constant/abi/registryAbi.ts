@@ -1,4 +1,4 @@
-const registryAbi = [
+export const registryAbi = [
   {
     inputs: [],
     stateMutability: "nonpayable",

@@ -4,7 +4,7 @@ import { ConcentratorType, VaultProps } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useRegistryContract from "@/hooks/useRegistryContract"
 
-import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
+import { vaultCompounderAbi } from "@/constant/abi"
 
 export type ConcentratorVaultProps = {
   asset: Address
@@ -34,7 +34,7 @@ export function useVaultForConcentrator({
   // get the asset for the compounder
   const assetQuery = useContractRead({
     chainId,
-    abi: curveCompounderAbi,
+    abi: vaultCompounderAbi,
     address: compounderQuery.data,
     functionName: "asset",
     enabled: compounderQuery.isSuccess,

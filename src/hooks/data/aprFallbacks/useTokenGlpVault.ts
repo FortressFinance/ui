@@ -4,7 +4,7 @@ import { getFortGlpAprFallback } from "@/lib/api/vaults"
 import { VaultDynamicProps } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
-import glpRewardsDistributorAbi from "@/constant/abi/glpRewardsDistributorAbi"
+import { glpRewardsDistributorAbi } from "@/constant/abi"
 import { GLP_REWARDS_DISTRIBUTOR_ADDRESS } from "@/constant/env"
 
 export default function useTokenGlpVault({

@@ -6,7 +6,7 @@ import { useVaultTokens } from "@/hooks/data"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
-import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
+import { vaultCompounderAbi } from "@/constant/abi"
 
 export default function useVaultWithdrawFee({ asset, type }: VaultProps) {
   const chainId = useActiveChainId()
@@ -22,7 +22,7 @@ export default function useVaultWithdrawFee({ asset, type }: VaultProps) {
   // Fallback: contract request
   const registryQuery = useContractRead({
     chainId,
-    abi: curveCompounderAbi,
+    abi: vaultCompounderAbi,
     address: asset,
     functionName: "withdrawFeePercentage",
     enabled: apiCompounderQuery.isError || apiTokenQuery.isError,

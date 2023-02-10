@@ -1,28 +1,12 @@
-const glpCompounderAbi = [
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_owner",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_platform",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_swap",
-        type: "address",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
+export const vaultCompounderAbi = [
   {
     inputs: [],
     name: "DepositPaused",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "FailedToSendETH",
     type: "error",
   },
   {
@@ -47,12 +31,27 @@ const glpCompounderAbi = [
   },
   {
     inputs: [],
+    name: "InsufficientDepositCap",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "InvalidAmount",
     type: "error",
   },
   {
     inputs: [],
+    name: "InvalidAsset",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "NoPendingRewards",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotUnderlyingAsset",
     type: "error",
   },
   {
@@ -141,9 +140,21 @@ const glpCompounderAbi = [
         type: "address",
       },
       {
+        indexed: true,
+        internalType: "address",
+        name: "_receiver",
+        type: "address",
+      },
+      {
         indexed: false,
         internalType: "uint256",
-        name: "_amount",
+        name: "_rewards",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_platformFee",
         type: "uint256",
       },
     ],
@@ -199,6 +210,37 @@ const glpCompounderAbi = [
     inputs: [
       {
         indexed: false,
+        internalType: "address[]",
+        name: "_rewardAssets",
+        type: "address[]",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_booster",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_crvRewards",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_boosterPoolId",
+        type: "uint256",
+      },
+    ],
+    name: "UpdateExternalUtils",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "uint256",
         name: "_withdrawFeePercentage",
         type: "uint256",
@@ -223,22 +265,28 @@ const glpCompounderAbi = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
         name: "_platform",
         type: "address",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
         name: "_swap",
         type: "address",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
         name: "_owner",
         type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_depositCap",
+        type: "uint256",
       },
     ],
     name: "UpdateInternalUtils",
@@ -289,19 +337,6 @@ const glpCompounderAbi = [
         internalType: "bytes32",
         name: "",
         type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "WETH",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
       },
     ],
     stateMutability: "view",
@@ -388,6 +423,32 @@ const glpCompounderAbi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "booster",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "boosterPoolId",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -420,6 +481,19 @@ const glpCompounderAbi = [
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "crvRewards",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -463,47 +537,31 @@ const glpCompounderAbi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_underlyingAssets",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "_receiver",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "_minAmount",
-        type: "uint256",
-      },
-    ],
-    name: "depositUnderlying",
+    inputs: [],
+    name: "depositCap",
     outputs: [
       {
         internalType: "uint256",
-        name: "_shares",
+        name: "",
         type: "uint256",
       },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
+      {
+        internalType: "uint256",
+        name: "_underlyingAmount",
+        type: "uint256",
+      },
       {
         internalType: "address",
         name: "_underlyingAsset",
         type: "address",
       },
       {
-        internalType: "uint256",
-        name: "_underlyingAssets",
-        type: "uint256",
-      },
-      {
         internalType: "address",
         name: "_receiver",
         type: "address",
@@ -514,7 +572,7 @@ const glpCompounderAbi = [
         type: "uint256",
       },
     ],
-    name: "depositUnderlying",
+    name: "depositSingleUnderlying",
     outputs: [
       {
         internalType: "uint256",
@@ -522,30 +580,17 @@ const glpCompounderAbi = [
         type: "uint256",
       },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
     inputs: [],
-    name: "glpHandler",
+    name: "getUnderlyingAssets",
     outputs: [
       {
-        internalType: "address",
+        internalType: "address[]",
         name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "glpManager",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
+        type: "address[]",
       },
     ],
     stateMutability: "view",
@@ -556,6 +601,11 @@ const glpCompounderAbi = [
       {
         internalType: "address",
         name: "_receiver",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_underlyingAsset",
         type: "address",
       },
       {
@@ -604,6 +654,44 @@ const glpCompounderAbi = [
   {
     inputs: [],
     name: "lastHarvestBlock",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "maxDeposit",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "maxMint",
     outputs: [
       {
         internalType: "uint256",
@@ -766,19 +854,6 @@ const glpCompounderAbi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "pendingRewards",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "address",
@@ -851,7 +926,7 @@ const glpCompounderAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "assets",
+        name: "_assets",
         type: "uint256",
       },
     ],
@@ -870,7 +945,7 @@ const glpCompounderAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "shares",
+        name: "_shares",
         type: "uint256",
       },
     ],
@@ -955,14 +1030,14 @@ const glpCompounderAbi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_underlyingAsset",
-        type: "address",
-      },
-      {
         internalType: "uint256",
         name: "_shares",
         type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_underlyingAsset",
+        type: "address",
       },
       {
         internalType: "address",
@@ -980,11 +1055,11 @@ const glpCompounderAbi = [
         type: "uint256",
       },
     ],
-    name: "redeemUnderlying",
+    name: "redeemSingleUnderlying",
     outputs: [
       {
         internalType: "uint256",
-        name: "_underlyingAssets",
+        name: "_underlyingAmount",
         type: "uint256",
       },
     ],
@@ -995,65 +1070,11 @@ const glpCompounderAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_shares",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "_receiver",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_owner",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "_minAmount",
-        type: "uint256",
-      },
-    ],
-    name: "redeemUnderlying",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "_underlyingAssets",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "rewardHandler",
-    outputs: [
-      {
-        internalType: "address",
         name: "",
-        type: "address",
+        type: "uint256",
       },
     ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "rewardTracker",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "sGLP",
+    name: "rewardAssets",
     outputs: [
       {
         internalType: "address",
@@ -1085,19 +1106,6 @@ const glpCompounderAbi = [
         internalType: "string",
         name: "",
         type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "totalAUM",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -1186,6 +1194,53 @@ const glpCompounderAbi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "underlyingAssets",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "_rewardAssets",
+        type: "address[]",
+      },
+      {
+        internalType: "address",
+        name: "_booster",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_crvRewards",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_boosterPoolId",
+        type: "uint256",
+      },
+    ],
+    name: "updateExternalUtils",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_withdrawFeePercentage",
         type: "uint256",
       },
@@ -1209,34 +1264,6 @@ const glpCompounderAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "_rewardHandler",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_rewardsTracker",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_glpHandler",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_glpManager",
-        type: "address",
-      },
-    ],
-    name: "updateGlpContracts",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
         name: "_platform",
         type: "address",
       },
@@ -1249,6 +1276,11 @@ const glpCompounderAbi = [
         internalType: "address",
         name: "_owner",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_depositCap",
+        type: "uint256",
       },
     ],
     name: "updateInternalUtils",
@@ -1299,5 +1331,3 @@ const glpCompounderAbi = [
     type: "function",
   },
 ] as const
-
-export default glpCompounderAbi
