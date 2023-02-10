@@ -1,5 +1,6 @@
 import Image from "next/image"
 import { FC } from "react"
+import { Address } from "wagmi"
 
 import { VaultType } from "@/hooks/types"
 
@@ -11,7 +12,7 @@ import CurveLogo from "~/images/assets/curve.png"
 import FortressCurveLogo from "~/images/assets/curve.png"
 
 type MultiLayerTokenLogoProps = {
-  tokens: `0x${string}`[] | readonly `0x${string}`[] | undefined
+  tokens: Address
   vaultType: VaultType
   isLpToken: boolean
   className: string

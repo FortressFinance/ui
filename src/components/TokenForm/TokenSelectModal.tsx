@@ -74,7 +74,6 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
                   onClick={clickHandler}
                   onKeyDown={keyHandler}
                 >
-                  {" "}
                   <div className="relative row-span-2 row-start-1 h-7 w-7">
                     {token.isLpToken ? (
                       <MultiLayerTokenLogo
