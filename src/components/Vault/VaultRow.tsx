@@ -11,7 +11,7 @@ import {
 } from "@/hooks/useVaultTypes"
 
 import AssetLogo from "@/components/AssetLogo"
-import { TableCell, TableRow } from "@/components/Table/TableNode"
+import { TableCell, TableRow } from "@/components/Table"
 import TxSettingsForm from "@/components/TxSettingsForm"
 import {
   VaultApr,

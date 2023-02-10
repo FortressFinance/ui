@@ -1,6 +1,6 @@
 import { FC } from "react"
 
-import { TableHeader, TableRow } from "@/components/Table/TableNode"
+import { TableHeader, TableRow } from "@/components/Table"
 
 const HoldingsTable: FC = () => {
   return (
