@@ -13,7 +13,7 @@ import {
 
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
-import { VaultProps } from "@/lib/types"
+import { VaultDepositProps } from "@/lib/types"
 import { useVaultTokens } from "@/hooks/data"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
@@ -24,7 +24,7 @@ import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 import auraBalCompounderAbi from "@/constant/abi/auraBALCompounderAbi"
 import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
 
-const VaultDepositForm: FC<VaultProps> = (props) => {
+const VaultDepositForm: FC<VaultDepositProps> = (props) => {
   const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
@@ -91,6 +91,15 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const approve = useContractWrite(prepareApprove.config)
   const waitApprove = useWaitForTransaction({
     hash: approve.data?.hash,
+  })
+
+  const slippage = 
+  const { isLoading: isLoadingPreview } = useCurveAssetToYbToken({
+    chainId,
+    id: props.poolId,
+    token: inputTokenAddress,
+    amount: amountIn,
+    slippa
   })
   // Preview deposit method
   const { isLoading: isLoadingPreview } = useContractRead({

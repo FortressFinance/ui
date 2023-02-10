@@ -19,5 +19,18 @@ export const queryKeys = createQueryKeyStore({
       type: string
     }) => [chainId, type, id, user ?? "0x"],
     apr: ({ asset }: { asset: Address | undefined }) => [asset ?? "0x"],
+    previewDeposit: ({ chainId,
+      isCurve,
+      id,
+      token = "0x",
+      amount,
+      slippage }: {
+      chainId: number
+      isCurve: boolean
+      id: number | undefined
+      token: Address | undefined,
+      amount: string,
+      slippage: number
+    }) => [isCurve, id, token, chainId, amount, slippage],
   },
 })

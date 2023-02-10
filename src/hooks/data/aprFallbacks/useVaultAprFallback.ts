@@ -13,7 +13,7 @@ export function useVaultAprFallback({
 }) {
   return useQuery({
     ...queryKeys.vaults.apr({ asset }),
-    queryFn: async () => await getVaultAprFallback(asset),
+    queryFn: () => getVaultAprFallback(asset),
     retry: false,
     enabled,
   })

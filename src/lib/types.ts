@@ -12,3 +12,8 @@ export type VaultProps = {
 export type VaultDynamicProps = VaultProps & {
   poolId: CompounderVaultStaticData["poolId"] | undefined
 }
+
+export type VaultDepositProps = VaultProps & {
+  poolId: CompounderVaultStaticData["poolId"] | undefined
+}
+
