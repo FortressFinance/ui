@@ -13,16 +13,10 @@ import { enabledNetworks } from "@/components/AppProviders"
 import Layout from "@/components/Layout"
 import { PageHeading } from "@/components/PageHeading"
 import Seo from "@/components/Seo"
-import {
-  Table,
-  TableBody,
-  TableEmpty,
-  TableHeader,
-  TableHeaderRow,
-  TableLoading,
-} from "@/components/Table"
+import { TableEmpty, TableLoading } from "@/components/Table"
 import { TabButton, TabList, TabListGroup, TabPanels } from "@/components/Tabs"
 import VaultRow from "@/components/Vault/VaultRow"
+import { VaultTable } from "@/components/Vault/VaultTable"
 
 const Yield: NextPage = () => {
   return (
@@ -108,33 +102,21 @@ const YieldVaultTable: FC<YieldVaultTableProps> = ({ filter, type }) => {
     : vaultAddresses
 
   return (
-    <Table>
-      <TableHeaderRow>
-        <TableHeader>{capitalizeFirstLetter(type)} Vaults</TableHeader>
-        <TableHeader className="text-center">APR</TableHeader>
-        <TableHeader className="text-center">TVL</TableHeader>
-        <TableHeader className="text-center">Deposit</TableHeader>
-        <TableHeader>
-          <span className="sr-only">Vault actions</span>
-        </TableHeader>
-      </TableHeaderRow>
-
-      <TableBody>
-        {showLoadingState ? (
-          <TableLoading>Loading compounders...</TableLoading>
-        ) : !filteredVaultAddresses?.length ? (
-          <TableEmpty heading="Where Vaults ser?">
-            It seems we don't have {capitalizeFirstLetter(type)} Vaults on{" "}
-            {network} (yet). Feel free to check out other vaults on {network} or
-            change network. New Vaults and strategies are added often, so check
-            back later. Don't be a stranger.
-          </TableEmpty>
-        ) : (
-          filteredVaultAddresses?.map((address, i) => (
-            <VaultRow key={`pool-${i}`} asset={address} type={type} />
-          ))
-        )}
-      </TableBody>
-    </Table>
+    <VaultTable label={`${capitalizeFirstLetter(type)} Vaults`}>
+      {showLoadingState ? (
+        <TableLoading>Loading compounders...</TableLoading>
+      ) : !filteredVaultAddresses?.length ? (
+        <TableEmpty heading="Where Vaults ser?">
+          It seems we don't have {capitalizeFirstLetter(type)} Vaults on{" "}
+          {network} (yet). Feel free to check out other vaults on {network} or
+          change network. New Vaults and strategies are added often, so check
+          back later. Don't be a stranger.
+        </TableEmpty>
+      ) : (
+        filteredVaultAddresses?.map((address, i) => (
+          <VaultRow key={`pool-${i}`} asset={address} type={type} />
+        ))
+      )}
+    </VaultTable>
   )
 }

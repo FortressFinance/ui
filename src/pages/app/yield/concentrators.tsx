@@ -15,16 +15,10 @@ import { enabledNetworks } from "@/components/AppProviders"
 import Layout from "@/components/Layout"
 import { PageHeading } from "@/components/PageHeading"
 import Seo from "@/components/Seo"
-import {
-  Table,
-  TableBody,
-  TableEmpty,
-  TableHeader,
-  TableHeaderRow,
-  TableLoading,
-} from "@/components/Table"
+import { TableEmpty, TableLoading } from "@/components/Table"
 import { TabButton, TabList, TabListGroup, TabPanels } from "@/components/Tabs"
 import VaultRow from "@/components/Vault/VaultRow"
+import { VaultTable } from "@/components/Vault/VaultTable"
 
 const Concentrators: NextPage = () => {
   return (
@@ -96,38 +90,22 @@ const ConcentratorVaultsTable: FC<ConcentratorDefinition> = ({
   const showLoadingState = isLoading || !ready
 
   return (
-    <Table>
-      <TableHeaderRow>
-        <TableHeader>{label} Vaults</TableHeader>
-        <TableHeader className="text-center">APR</TableHeader>
-        <TableHeader className="text-center">TVL</TableHeader>
-        <TableHeader className="text-center">Deposit</TableHeader>
-        <TableHeader>
-          <span className="sr-only">Vault actions</span>
-        </TableHeader>
-      </TableHeaderRow>
-
-      <TableBody>
-        {showLoadingState ? (
-          <TableLoading>Loading concentrators...</TableLoading>
-        ) : !vaultAddresses?.length ? (
-          <TableEmpty heading="Where Concentrators ser?">
-            It seems we don't have {label} Concentrators on {network} (yet).
-            Feel free to check out other Concentrators on {network} or change
-            network. New Concentrators and strategies are added often, so check
-            back later. Don't be a stranger.
-          </TableEmpty>
-        ) : (
-          vaultAddresses?.map((address, i) => (
-            <ConcentratorVaultRow
-              key={`pool-${i}`}
-              asset={address}
-              type={type}
-            />
-          ))
-        )}
-      </TableBody>
-    </Table>
+    <VaultTable label={`${label} Vaults`}>
+      {showLoadingState ? (
+        <TableLoading>Loading concentrators...</TableLoading>
+      ) : !vaultAddresses?.length ? (
+        <TableEmpty heading="Where Concentrators ser?">
+          It seems we don't have {label} Concentrators on {network} (yet). Feel
+          free to check out other Concentrators on {network} or change network.
+          New Concentrators and strategies are added often, so check back later.
+          Don't be a stranger.
+        </TableEmpty>
+      ) : (
+        vaultAddresses?.map((address, i) => (
+          <ConcentratorVaultRow key={`pool-${i}`} asset={address} type={type} />
+        ))
+      )}
+    </VaultTable>
   )
 }
 
