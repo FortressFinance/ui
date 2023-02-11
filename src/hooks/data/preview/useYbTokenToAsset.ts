@@ -4,7 +4,10 @@ import { VaultType } from "@/lib/types"
 import { useBalancerYbTokenToAsset } from "@/hooks/data/preview/useBalancerYbTokenToAsset"
 import { useCurveYbTokenToAsset } from "@/hooks/data/preview/useCurveYbTokenToAsset"
 import { useTokenYbTokenToAsset } from "@/hooks/data/preview/useTokenYbTokenToAsset"
-import { useIsCurveCompounder, useIsTokenCompounder } from "@/hooks/useVaultTypes"
+import {
+  useIsCurveCompounder,
+  useIsTokenCompounder,
+} from "@/hooks/useVaultTypes"
 
 import { useTxSettings } from "@/store/txSettings"
 
@@ -15,11 +18,11 @@ export function useYbTokenToAsset({
   id,
   token = "0x",
   amount,
-  type
+  type,
 }: {
   chainId: number
   id: number | undefined
-  token: Address | undefined,
+  token: Address | undefined
   amount: string
   type: VaultType
 }) {
@@ -32,7 +35,7 @@ export function useYbTokenToAsset({
       ? DEFAULT_SLIPPAGE.toFixed(2)
       : txSettings.slippageTolerance.toFixed(3)
   )
-  
+
   const enableCurveAssetToYbToken = !isToken && isCurve
   const curvePreviewQuery = useCurveYbTokenToAsset({
     chainId,
@@ -40,7 +43,7 @@ export function useYbTokenToAsset({
     token,
     amount,
     slippage,
-    enabled: enableCurveAssetToYbToken
+    enabled: enableCurveAssetToYbToken,
   })
 
   const enableBalancerAssetToYbToken = !isToken && !isCurve
@@ -50,7 +53,7 @@ export function useYbTokenToAsset({
     token,
     amount,
     slippage,
-    enabled: enableBalancerAssetToYbToken
+    enabled: enableBalancerAssetToYbToken,
   })
 
   const enableTokenAssetToYbToken = isToken
@@ -59,26 +62,24 @@ export function useYbTokenToAsset({
     id,
     token,
     amount,
-    enabled: enableTokenAssetToYbToken
+    enabled: enableTokenAssetToYbToken,
   })
 
-  if(amount === "0"){
+  if (amount === "0") {
     // avoid render infinite loop
     return {
       isLoading: false,
       data: {
-        resultFormated: "0,0"
-      }
+        resultFormated: "0,0",
+      },
     }
   }
 
-  if(!curvePreviewQuery.isError)
-  {
+  if (!curvePreviewQuery.isError) {
     return curvePreviewQuery
   }
 
-  if(!balancerPreviewQuery.isError)
-  {
+  if (!balancerPreviewQuery.isError) {
     return balancerPreviewQuery
   }
 

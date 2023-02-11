@@ -13,7 +13,6 @@ export type VaultDynamicProps = VaultProps & {
   poolId: CompounderVaultStaticData["poolId"] | undefined
 }
 
-
 export type ConcentratorType =
   | "balancerAuraBal"
   | "balancerEth"

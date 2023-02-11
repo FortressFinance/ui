@@ -93,21 +93,21 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     hash: approve.data?.hash,
   })
 
-  const { isLoading: isLoadingPreview, data: assetToYbToken } = useAssetToYbToken({
-    chainId,
-    id: poolId,
-    token: inputTokenAddress,
-    amount: value.toString(),
-    type: props.type
-  })
+  const { isLoading: isLoadingPreview, data: assetToYbToken } =
+    useAssetToYbToken({
+      chainId,
+      id: poolId,
+      token: inputTokenAddress,
+      amount: value.toString(),
+      type: props.type,
+    })
 
   useEffect(() => {
-    if(assetToYbToken)
-    {
+    if (assetToYbToken) {
       form.setValue("amountOut", assetToYbToken.resultFormated)
     }
-  }, [assetToYbToken, form])  
-  
+  }, [assetToYbToken, form])
+
   // Configure depositUnderlying method
   const prepareDepositUnderlying = usePrepareContractWrite({
     chainId,

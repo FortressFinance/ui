@@ -14,19 +14,33 @@ export function useBalancerAssetToYbToken({
 }: {
   chainId: number
   id: number | undefined
-  token: Address | undefined,
-  amount: string,
-  slippage: number,
+  token: Address | undefined
+  amount: string
+  slippage: number
   enabled: boolean
 }) {
-
   return useQuery({
-    ...queryKeys.vaults.previewDeposit({ chainId, isCurve:false, id, token, amount, slippage }),
-    queryFn: () => getCompounderVaultsPreviewDeposit({chainId, isCurve:false, id, token, amount, slippage}),
+    ...queryKeys.vaults.previewDeposit({
+      chainId,
+      isCurve: false,
+      id,
+      token,
+      amount,
+      slippage,
+    }),
+    queryFn: () =>
+      getCompounderVaultsPreviewDeposit({
+        chainId,
+        isCurve: false,
+        id,
+        token,
+        amount,
+        slippage,
+      }),
     retry: false,
     enabled,
   })
-  
+
   // Preview deposit method
   // const { isLoading: isLoadingPreview } = useContractRead({
   //   chainId,

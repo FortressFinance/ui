@@ -62,20 +62,20 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   }
 
   // Preview redeem method
-  const { isLoading: isLoadingPreview, data: ybTokenToAsset } = useYbTokenToAsset({
-    chainId,
-    id: poolId,
-    token: outputTokenAddress,
-    amount: value.toString(),
-    type: props.type
-  })
+  const { isLoading: isLoadingPreview, data: ybTokenToAsset } =
+    useYbTokenToAsset({
+      chainId,
+      id: poolId,
+      token: outputTokenAddress,
+      amount: value.toString(),
+      type: props.type,
+    })
 
   useEffect(() => {
-    if(ybTokenToAsset)
-    {
+    if (ybTokenToAsset) {
       form.setValue("amountOut", ybTokenToAsset.resultFormated)
     }
-  }, [ybTokenToAsset, form])  
+  }, [ybTokenToAsset, form])
 
   // Configure redeemUnderlying method
   const prepareWithdrawUnderlying = usePrepareContractWrite({

@@ -13,14 +13,13 @@ export function useTokenYbTokenToAsset({
 }: {
   chainId: number
   id: number | undefined
-  token: Address | undefined,
-  amount: string,
+  token: Address | undefined
+  amount: string
   enabled: boolean
 }) {
-
   return useQuery({
     ...queryKeys.vaults.previewTokenRedeem({ chainId, id, token, amount }),
-    queryFn: () => getTokenVaultsPreviewRedeem({chainId, id, token, amount }),
+    queryFn: () => getTokenVaultsPreviewRedeem({ chainId, id, token, amount }),
     retry: false,
     enabled,
   })

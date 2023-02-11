@@ -14,20 +14,34 @@ export function useCurveYbTokenToAsset({
 }: {
   chainId: number
   id: number | undefined
-  token: Address | undefined,
-  amount: string,
-  slippage: number,
+  token: Address | undefined
+  amount: string
+  slippage: number
   enabled: boolean
 }) {
-
   return useQuery({
-    ...queryKeys.vaults.previewRedeem({ chainId, isCurve:true, id, token, amount, slippage }),
-    queryFn: () => getCompounderVaultsPreviewRedeem({chainId, isCurve:true, id, token, amount, slippage}),
+    ...queryKeys.vaults.previewRedeem({
+      chainId,
+      isCurve: true,
+      id,
+      token,
+      amount,
+      slippage,
+    }),
+    queryFn: () =>
+      getCompounderVaultsPreviewRedeem({
+        chainId,
+        isCurve: true,
+        id,
+        token,
+        amount,
+        slippage,
+      }),
     retry: false,
     enabled,
   })
-  
-  // Preview deposit method  
+
+  // Preview deposit method
   // const { isLoading: isLoadingPreview } = useContractRead({
   //   chainId,
   //   address: vaultAddress,
