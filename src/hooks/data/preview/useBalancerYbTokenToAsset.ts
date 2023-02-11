@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query"
 import { Address } from "wagmi"
 
-import { getCompounderVaultsPreviewDeposit } from "@/lib/api/vaults/getCompounderVaultsPreviewDeposit"
+import { getCompounderVaultsPreviewRedeem } from "@/lib/api/vaults/getCompounderVaultsPreviewRedeem"
 import { queryKeys } from "@/lib/helpers"
 
-export function useCurveAssetToYbToken({
+export function useBalancerYbTokenToAsset({
   chainId,
   id,
   token = "0x",
@@ -21,8 +21,8 @@ export function useCurveAssetToYbToken({
 }) {
 
   return useQuery({
-    ...queryKeys.vaults.previewDeposit({ chainId, isCurve:true, id, token, amount, slippage }),
-    queryFn: () => getCompounderVaultsPreviewDeposit({chainId, isCurve:true, id, token, amount, slippage}),
+    ...queryKeys.vaults.previewRedeem({ chainId, isCurve:false, id, token, amount, slippage }),
+    queryFn: () => getCompounderVaultsPreviewRedeem({chainId, isCurve:false, id, token, amount, slippage}),
     retry: false,
     enabled,
   })

@@ -73,9 +73,10 @@ const TokenForm: FC<TokenFormProps> = ({
     { address: inputTokenAddress }
   )
 
-  const hideMaxBtn =
+  const hideMaxBtn = inputTokenBalanceOrShare === undefined || inputTokenBalanceOrShare.formatted === undefined || Number(inputTokenBalanceOrShare.formatted) === 0 ||
+    (!!inputTokenBalanceOrShare && !!inputTokenBalanceOrShare?.formatted && Number(inputTokenBalanceOrShare.formatted) !== 0  &&
     Number(amountIn ?? "0.0").toFixed(3) ===
-    Number(inputTokenBalanceOrShare?.formatted ?? "0.0").toFixed(3)
+    Number(inputTokenBalanceOrShare?.formatted ?? "0.0").toFixed(3))
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>

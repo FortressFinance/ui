@@ -2,7 +2,7 @@ import axios from "axios"
 import { BigNumber } from "ethers"
 import request, { gql } from "graphql-request"
 
-import { VaultDynamicProps } from "@/lib/types"
+import { VaultProps } from "@/lib/types"
 
 import {
   AURA_ADDRESS,
@@ -18,7 +18,7 @@ import {
 // TODO: These should use types
 // await request<Response, Variables>(...)
 
-export async function getVaultAprFallback(asset: VaultDynamicProps["asset"]) {
+export async function getVaultAprFallback(asset: VaultProps["asset"]) {
   const graphqlQuery = gql`
     query Pool($lpToken: String!) {
       pools(where: { lpToken: $lpToken }) {
@@ -193,7 +193,7 @@ async function getAuraBalRewardData() {
 }
 
 export async function getBalancerTotalAprFallback(
-  asset: VaultDynamicProps["asset"],
+  asset: VaultProps["asset"],
   extraTokenAwards: number | undefined,
   swapFee: number | undefined,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -268,7 +268,7 @@ async function getTokenPriceUsd(token: string) {
   return ethToken?.price
 }
 
-export async function fetchApiAuraFinance(asset: VaultDynamicProps["asset"]) {
+export async function fetchApiAuraFinance(asset: VaultProps["asset"]) {
   const resp = await axios.get(`${AURA_FINANCE_URL}`)
   const pools = resp?.data?.pools
   const relevantAsset = pools.find((pool: { id: string }) => {
@@ -301,7 +301,7 @@ export async function getAuraMint() {
   return data?.global
 }
 
-async function getAuraRewardDataByAsset(asset: VaultDynamicProps["asset"]) {
+async function getAuraRewardDataByAsset(asset: VaultProps["asset"]) {
   const graphqlQuery = gql`
     query Pool($lpToken: Bytes!) {
       pools(where: { lpToken: $lpToken }) {

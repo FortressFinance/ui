@@ -1,10 +1,9 @@
 import { BigNumber } from "ethers"
-import { formatUnits, parseUnits } from "ethers/lib/utils.js"
-import { FC } from "react"
+import { parseUnits } from "ethers/lib/utils.js"
+import { FC, useEffect } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
   useAccount,
-  useContractRead,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
@@ -12,7 +11,8 @@ import {
 
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
-import { useVaultTokens } from "@/hooks/data"
+import { useVaultPoolId, useVaultTokens } from "@/hooks/data"
+import { useYbTokenToAsset } from "@/hooks/data/preview/useYbTokenToAsset"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
@@ -22,6 +22,7 @@ import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 import { vaultCompounderAbi, vaultTokenAbi } from "@/constant/abi"
 
 const VaultWithdrawForm: FC<VaultProps> = (props) => {
+  const { data: poolId } = useVaultPoolId(props)
   const chainId = useActiveChainId()
   const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
@@ -53,9 +54,6 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   // Calculate + fetch information on selected tokens
   const outputIsLp = outputTokenAddress === lpTokenOrAsset
   const { data: ybToken } = useTokenOrNative({ address: vaultAddress })
-  const { data: outputToken } = useTokenOrNative({
-    address: outputTokenAddress,
-  })
   const value = parseUnits(amountIn || "0", ybToken?.decimals || 18)
 
   const onWithdrawSuccess = () => {
@@ -64,16 +62,21 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   }
 
   // Preview redeem method
-  const { isLoading: isLoadingPreview } = useContractRead({
+  const { isLoading: isLoadingPreview, data: ybTokenToAsset } = useYbTokenToAsset({
     chainId,
-    address: vaultAddress,
-    abi: vaultCompounderAbi,
-    functionName: "previewRedeem",
-    args: [value],
-    onSuccess: (data) => {
-      form.setValue("amountOut", formatUnits(data, outputToken?.decimals || 18))
-    },
+    id: poolId,
+    token: outputTokenAddress,
+    amount: value.toString(),
+    type: props.type
   })
+
+  useEffect(() => {
+    if(ybTokenToAsset)
+    {
+      form.setValue("amountOut", ybTokenToAsset.resultFormated)
+    }
+  }, [ybTokenToAsset, form])  
+
   // Configure redeemUnderlying method
   const prepareWithdrawUnderlying = usePrepareContractWrite({
     chainId,

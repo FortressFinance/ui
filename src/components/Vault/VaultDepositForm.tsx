@@ -1,6 +1,6 @@
 import { BigNumber, ethers } from "ethers"
-import { formatUnits, parseUnits } from "ethers/lib/utils.js"
-import { FC } from "react"
+import { parseUnits } from "ethers/lib/utils.js"
+import { FC, useEffect } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
   erc20ABI,
@@ -13,8 +13,9 @@ import {
 
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
-import { VaultDepositProps } from "@/lib/types"
-import { useVaultTokens } from "@/hooks/data"
+import { VaultProps } from "@/lib/types"
+import { useVaultPoolId, useVaultTokens } from "@/hooks/data"
+import { useAssetToYbToken } from "@/hooks/data/preview/useAssetToYbToken"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
@@ -23,7 +24,8 @@ import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
 import { vaultCompounderAbi, vaultTokenAbi } from "@/constant/abi"
 
-const VaultDepositForm: FC<VaultDepositProps> = (props) => {
+const VaultDepositForm: FC<VaultProps> = (props) => {
+  const { data: poolId } = useVaultPoolId(props)
   const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
@@ -55,7 +57,6 @@ const VaultDepositForm: FC<VaultDepositProps> = (props) => {
   // Calculate + fetch information on selected tokens
   const inputIsLp = inputTokenAddress === lpTokenOrAsset
   const inputIsEth = isEthTokenAddress(inputTokenAddress)
-  const { data: ybToken } = useTokenOrNative({ address: vaultAddress })
   const { data: inputToken } = useTokenOrNative({
     address: inputTokenAddress,
   })
@@ -92,25 +93,21 @@ const VaultDepositForm: FC<VaultDepositProps> = (props) => {
     hash: approve.data?.hash,
   })
 
-  const slippage = 
-  const { isLoading: isLoadingPreview } = useCurveAssetToYbToken({
+  const { isLoading: isLoadingPreview, data: assetToYbToken } = useAssetToYbToken({
     chainId,
-    id: props.poolId,
+    id: poolId,
     token: inputTokenAddress,
-    amount: amountIn,
-    slippa
+    amount: value.toString(),
+    type: props.type
   })
-  // Preview deposit method
-  const { isLoading: isLoadingPreview } = useContractRead({
-    chainId,
-    abi: vaultCompounderAbi,
-    address: vaultAddress,
-    functionName: "previewDeposit",
-    args: [value],
-    onSuccess: (data) => {
-      form.setValue("amountOut", formatUnits(data, ybToken?.decimals || 18))
-    },
-  })
+
+  useEffect(() => {
+    if(assetToYbToken)
+    {
+      form.setValue("amountOut", assetToYbToken.resultFormated)
+    }
+  }, [assetToYbToken, form])  
+  
   // Configure depositUnderlying method
   const prepareDepositUnderlying = usePrepareContractWrite({
     chainId,

@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query"
 import { Address } from "wagmi"
 
-import { getCompounderVaultsPreviewDeposit } from "@/lib/api/vaults/getCompounderVaultsPreviewDeposit"
+import { getCompounderVaultsPreviewRedeem } from "@/lib/api/vaults/getCompounderVaultsPreviewRedeem"
 import { queryKeys } from "@/lib/helpers"
 
-export function useCurveAssetToYbToken({
+export function useCurveYbTokenToAsset({
   chainId,
   id,
   token = "0x",
@@ -21,21 +21,21 @@ export function useCurveAssetToYbToken({
 }) {
 
   return useQuery({
-    ...queryKeys.vaults.previewDeposit({ chainId, isCurve:true, id, token, amount, slippage }),
-    queryFn: () => getCompounderVaultsPreviewDeposit({chainId, isCurve:true, id, token, amount, slippage}),
+    ...queryKeys.vaults.previewRedeem({ chainId, isCurve:true, id, token, amount, slippage }),
+    queryFn: () => getCompounderVaultsPreviewRedeem({chainId, isCurve:true, id, token, amount, slippage}),
     retry: false,
     enabled,
   })
   
-  // Preview deposit method
+  // Preview deposit method  
   // const { isLoading: isLoadingPreview } = useContractRead({
   //   chainId,
-  //   abi: vaultCompounderAbi,
   //   address: vaultAddress,
-  //   functionName: "previewDeposit",
+  //   abi: vaultCompounderAbi,
+  //   functionName: "previewRedeem",
   //   args: [value],
   //   onSuccess: (data) => {
-  //     form.setValue("amountOut", formatUnits(data, ybToken?.decimals || 18))
+  //     form.setValue("amountOut", formatUnits(data, outputToken?.decimals || 18))
   //   },
   // })
 }
