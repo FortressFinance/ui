@@ -10,6 +10,7 @@ import useActiveChainId from "@/hooks/useActiveChainId"
 import useClientEffect from "@/hooks/useClientEffect"
 
 import { enabledNetworks } from "@/components/AppProviders"
+import HoldingsTable from "@/components/Holdings/HoldingsTable"
 import Layout from "@/components/Layout"
 import { PageHeading } from "@/components/PageHeading"
 import Seo from "@/components/Seo"
@@ -56,7 +57,9 @@ const Yield: NextPage = () => {
             <Tab.Panel>
               <YieldVaultTable type="balancer" />
             </Tab.Panel>
-            <Tab.Panel>Holdings</Tab.Panel>
+            <Tab.Panel>
+              <HoldingsTable />
+            </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>
       </main>
