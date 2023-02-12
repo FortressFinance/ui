@@ -1,6 +1,6 @@
 import { BigNumber, ethers } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
-import { FC, useEffect } from "react"
+import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
   erc20ABI,
@@ -15,7 +15,7 @@ import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
 import { useVaultPoolId, useVaultTokens } from "@/hooks/data"
-import { useAssetToYbToken } from "@/hooks/data/preview/useAssetToYbToken"
+import { usePreviewDeposit } from "@/hooks/data/preview/usePreviewDeposit"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
@@ -93,20 +93,19 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     hash: approve.data?.hash,
   })
 
-  const { isLoading: isLoadingPreview, data: assetToYbToken } = useAssetToYbToken({
+  const { isLoading: isLoadingPreview } = usePreviewDeposit({
     chainId,
     id: poolId,
     token: inputTokenAddress,
     amount: value.toString(),
-    type: props.type
+    type: props.type,
+    onSuccess: (data) => {
+      form.setValue("amountOut", data.resultFormated)
+    },
+    onError: (error) => {
+      form.resetField("amountOut")
+    },
   })
-
-  useEffect(() => {
-    if(assetToYbToken)
-    {
-      form.setValue("amountOut", assetToYbToken.resultFormated)
-    }
-  }, [assetToYbToken, form])  
   
   // Configure depositUnderlying method
   const prepareDepositUnderlying = usePrepareContractWrite({

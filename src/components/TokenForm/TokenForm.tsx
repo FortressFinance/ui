@@ -73,10 +73,7 @@ const TokenForm: FC<TokenFormProps> = ({
     { address: inputTokenAddress }
   )
 
-  const hideMaxBtn = inputTokenBalanceOrShare === undefined || inputTokenBalanceOrShare.formatted === undefined || Number(inputTokenBalanceOrShare.formatted) === 0 ||
-    (!!inputTokenBalanceOrShare && !!inputTokenBalanceOrShare?.formatted && Number(inputTokenBalanceOrShare.formatted) !== 0  &&
-    Number(amountIn ?? "0.0").toFixed(3) ===
-    Number(inputTokenBalanceOrShare?.formatted ?? "0.0").toFixed(3))
+  const showMaxBtn = inputTokenBalanceOrShare?.value?.gt(0) && inputTokenBalanceOrShare?.formatted !== amountIn
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -150,7 +147,7 @@ const TokenForm: FC<TokenFormProps> = ({
           <button
             className="ml-1.5 rounded-md border border-[#F0707B] px-2 py-1 font-bold text-white hover:bg-[#1E0E1C80]"
             onClick={onClickMax}
-            hidden={hideMaxBtn}
+            disabled={!showMaxBtn}
             type="button"
           >
             Max

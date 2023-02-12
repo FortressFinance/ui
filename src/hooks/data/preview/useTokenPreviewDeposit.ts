@@ -1,21 +1,26 @@
 import { useQuery } from "@tanstack/react-query"
 import { Address } from "wagmi"
 
+import { PreviewData } from "@/lib/api/vaults/getCompounderVaultsPreviewDeposit"
 import { getTokenVaultsPreviewDeposit } from "@/lib/api/vaults/getTokenVaultsPreviewDeposit"
 import { queryKeys } from "@/lib/helpers"
 
-export function useTokenAssetToYbToken({
+export function useTokenPreviewDeposit({
   chainId,
   id,
   token = "0x",
   amount,
   enabled,
+  onSuccess,
+  onError
 }: {
   chainId: number
   id: number | undefined
   token: Address | undefined,
-  amount: string,
+  amount: string
   enabled: boolean
+  onSuccess: ((data: PreviewData) => void) | undefined
+  onError: ((err: unknown) => void) | undefined
 }) {
 
   return useQuery({
@@ -23,5 +28,7 @@ export function useTokenAssetToYbToken({
     queryFn: () => getTokenVaultsPreviewDeposit({chainId, id, token, amount }),
     retry: false,
     enabled,
+    onSuccess,
+    onError
   })
 }

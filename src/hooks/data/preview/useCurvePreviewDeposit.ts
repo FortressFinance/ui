@@ -1,30 +1,36 @@
 import { useQuery } from "@tanstack/react-query"
 import { Address } from "wagmi"
 
-import { getCompounderVaultsPreviewRedeem } from "@/lib/api/vaults/getCompounderVaultsPreviewRedeem"
+import { getCompounderVaultsPreviewDeposit, PreviewData } from "@/lib/api/vaults/getCompounderVaultsPreviewDeposit"
 import { queryKeys } from "@/lib/helpers"
 
-export function useBalancerYbTokenToAsset({
+export function useCurvePreviewDeposit({
   chainId,
   id,
   token = "0x",
   amount,
   slippage,
   enabled,
+  onSuccess,
+  onError
 }: {
   chainId: number
   id: number | undefined
   token: Address | undefined,
-  amount: string,
-  slippage: number,
+  amount: string
+  slippage: number
   enabled: boolean
+  onSuccess: ((data: PreviewData) => void) | undefined
+  onError: ((err: unknown) => void) | undefined
 }) {
 
   return useQuery({
-    ...queryKeys.vaults.previewRedeem({ chainId, isCurve:false, id, token, amount, slippage }),
-    queryFn: () => getCompounderVaultsPreviewRedeem({chainId, isCurve:false, id, token, amount, slippage}),
+    ...queryKeys.vaults.previewDeposit({ chainId, isCurve:true, id, token, amount, slippage }),
+    queryFn: () => getCompounderVaultsPreviewDeposit({chainId, isCurve:true, id, token, amount, slippage}),
     retry: false,
     enabled,
+    onSuccess,
+    onError
   })
   
   // Preview deposit method

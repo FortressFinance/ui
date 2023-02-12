@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
-import { FC, useEffect } from "react"
+import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
   useAccount,
@@ -12,7 +12,7 @@ import {
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
 import { useVaultPoolId, useVaultTokens } from "@/hooks/data"
-import { useYbTokenToAsset } from "@/hooks/data/preview/useYbTokenToAsset"
+import { usePreviewRedeem } from "@/hooks/data/preview/usePreviewRedeem"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
@@ -62,20 +62,19 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   }
 
   // Preview redeem method
-  const { isLoading: isLoadingPreview, data: ybTokenToAsset } = useYbTokenToAsset({
+  const { isLoading: isLoadingPreview } = usePreviewRedeem({
     chainId,
     id: poolId,
     token: outputTokenAddress,
     amount: value.toString(),
-    type: props.type
+    type: props.type,
+    onSuccess: (data) => {
+      form.setValue("amountOut", data.resultFormated)
+    },
+    onError: (error) => {
+      form.resetField("amountOut")
+    },
   })
-
-  useEffect(() => {
-    if(ybTokenToAsset)
-    {
-      form.setValue("amountOut", ybTokenToAsset.resultFormated)
-    }
-  }, [ybTokenToAsset, form])  
 
   // Configure redeemUnderlying method
   const prepareWithdrawUnderlying = usePrepareContractWrite({
