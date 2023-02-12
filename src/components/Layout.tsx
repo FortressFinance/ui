@@ -69,7 +69,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
             <div className="flex items-center">
               <NetworkSelector />
-              <ConnectWalletButton className="hidden space-x-10 lg:block" />
+              <ConnectWalletButton className="px-2 md:px-5 text-sm md:text-base" />
             </div>
 
             {/* Mobile navigation */}
@@ -89,14 +89,11 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute right-0 my-3 w-56 origin-top-right divide-y divide-gray-500 bg-white text-xl text-black focus:outline-none">
-                  <Menu.Item>
-                    <ConnectWalletButton className="m-3 justify-self-center md:hidden" />
-                  </Menu.Item>
+                <Menu.Items className="absolute right-0 my-3 px-3 w-56 origin-top-right divide-y divide-gray-500 bg-white text-xl text-black focus:outline-none">
                   {menuItems.map((item, index) => (
                     <Menu.Item key={`menu-item-${index}`}>
                       <Link
-                        className="m-3 block text-xl leading-loose hover:text-pink-400"
+                        className="p-2 block text-xl leading-loose hover:text-pink-400"
                         href={item.href}
                       >
                         {item.name}
