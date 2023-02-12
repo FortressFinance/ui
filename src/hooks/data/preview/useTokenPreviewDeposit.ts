@@ -16,16 +16,15 @@ export function useTokenPreviewDeposit({
 }: {
   chainId: number
   id: number | undefined
-  token: Address | undefined,
+  token: Address | undefined
   amount: string
   enabled: boolean
   onSuccess: ((data: PreviewData) => void) | undefined
   onError: ((err: unknown) => void) | undefined
 }) {
-
   return useQuery({
     ...queryKeys.vaults.previewTokenDeposit({ chainId, id, token, amount }),
-    queryFn: () => getTokenVaultsPreviewDeposit({chainId, id, token, amount }),
+    queryFn: () => getTokenVaultsPreviewDeposit({ chainId, id, token, amount }),
     retry: false,
     enabled,
     onSuccess,

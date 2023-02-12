@@ -24,16 +24,30 @@ export function useBalancerPreviewRedeem({
   onSuccess: ((data: PreviewData) => void) | undefined
   onError: ((err: unknown) => void) | undefined
 }) {
-
   return useQuery({
-    ...queryKeys.vaults.previewRedeem({ chainId, isCurve:false, id, token, amount, slippage }),
-    queryFn: () => getCompounderVaultsPreviewRedeem({chainId, isCurve:false, id, token, amount, slippage}),
+    ...queryKeys.vaults.previewRedeem({
+      chainId,
+      isCurve: false,
+      id,
+      token,
+      amount,
+      slippage,
+    }),
+    queryFn: () =>
+      getCompounderVaultsPreviewRedeem({
+        chainId,
+        isCurve: false,
+        id,
+        token,
+        amount,
+        slippage,
+      }),
     retry: false,
     enabled,
     onSuccess,
     onError
   })
-  
+
   // Preview deposit method
   // const { isLoading: isLoadingPreview } = useContractRead({
   //   chainId,

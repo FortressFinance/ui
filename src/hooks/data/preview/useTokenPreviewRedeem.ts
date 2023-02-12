@@ -22,10 +22,9 @@ export function useTokenPreviewRedeem({
   onSuccess: ((data: PreviewData) => void) | undefined
   onError: ((err: unknown) => void) | undefined
 }) {
-
   return useQuery({
     ...queryKeys.vaults.previewTokenRedeem({ chainId, id, token, amount }),
-    queryFn: () => getTokenVaultsPreviewRedeem({chainId, id, token, amount }),
+    queryFn: () => getTokenVaultsPreviewRedeem({ chainId, id, token, amount }),
     retry: false,
     enabled,
     onSuccess,

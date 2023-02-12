@@ -16,23 +16,37 @@ export function useCurvePreviewDeposit({
 }: {
   chainId: number
   id: number | undefined
-  token: Address | undefined,
+  token: Address | undefined
   amount: string
   slippage: number
   enabled: boolean
   onSuccess: ((data: PreviewData) => void) | undefined
   onError: ((err: unknown) => void) | undefined
 }) {
-
   return useQuery({
-    ...queryKeys.vaults.previewDeposit({ chainId, isCurve:true, id, token, amount, slippage }),
-    queryFn: () => getCompounderVaultsPreviewDeposit({chainId, isCurve:true, id, token, amount, slippage}),
+    ...queryKeys.vaults.previewDeposit({
+      chainId,
+      isCurve: true,
+      id,
+      token,
+      amount,
+      slippage,
+    }),
+    queryFn: () =>
+      getCompounderVaultsPreviewDeposit({
+        chainId,
+        isCurve: true,
+        id,
+        token,
+        amount,
+        slippage,
+      }),
     retry: false,
     enabled,
     onSuccess,
     onError
   })
-  
+
   // Preview deposit method
   // const { isLoading: isLoadingPreview } = useContractRead({
   //   chainId,

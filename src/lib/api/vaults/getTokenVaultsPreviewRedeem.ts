@@ -12,8 +12,8 @@ export async function getTokenVaultsPreviewRedeem({
 }: {
   chainId: number
   id: number | undefined
-  token: Address | undefined,
-  amount: string,
+  token: Address | undefined
+  amount: string
 }) {
   const resp = await fortressApi.post<PreviewData>(
     "Token_Compounder/previewDeposit",

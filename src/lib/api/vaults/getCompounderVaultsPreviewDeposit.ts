@@ -20,8 +20,8 @@ export async function getCompounderVaultsPreviewDeposit({
   chainId: number
   isCurve: boolean
   id: number | undefined
-  token: Address | undefined,
-  amount: string,
+  token: Address | undefined
+  amount: string
   slippage: number
 }) {
   const resp = await fortressApi.post<PreviewData>(

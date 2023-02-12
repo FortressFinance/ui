@@ -19,19 +19,25 @@ export const queryKeys = createQueryKeyStore({
       type: string
     }) => [chainId, type, id, user ?? "0x"],
     apr: ({ asset }: { asset: Address | undefined }) => [asset ?? "0x"],
-    previewTokenDeposit: ({ chainId,
+    previewTokenDeposit: ({
+      chainId,
       id,
       token = "0x",
-      amount }: { chainId: number 
+      amount,
+    }: {
+      chainId: number
       id: number | undefined
       token: Address | undefined
-      amount: string }) => [chainId, id, token, amount],  
-    previewDeposit: ({ chainId,
+      amount: string
+    }) => [chainId, id, token, amount],
+    previewDeposit: ({
+      chainId,
       isCurve,
       id,
       token = "0x",
       amount,
-      slippage }: {
+      slippage,
+    }: {
       chainId: number
       isCurve: boolean
       id: number | undefined
@@ -39,19 +45,25 @@ export const queryKeys = createQueryKeyStore({
       amount: string
       slippage: number
     }) => [chainId, id, token, isCurve, amount, slippage],
-    previewTokenRedeem: ({ chainId,
+    previewTokenRedeem: ({
+      chainId,
       id,
       token = "0x",
-      amount }: { chainId: number 
+      amount,
+    }: {
+      chainId: number
       id: number | undefined
       token: Address | undefined
-      amount: string }) => [chainId, id, token, amount],  
-    previewRedeem: ({ chainId,
+      amount: string
+    }) => [chainId, id, token, amount],
+    previewRedeem: ({
+      chainId,
       isCurve,
       id,
       token = "0x",
       amount,
-      slippage }: {
+      slippage,
+    }: {
       chainId: number
       isCurve: boolean
       id: number | undefined
