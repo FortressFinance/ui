@@ -133,7 +133,11 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
             <Dialog.Title as="h1" className="mb-4 font-bold">
               Vault description
             </Dialog.Title>
-            <VaultStrategyText type={type} underlyingAssets={underlyingAssets} asset={asset} />
+            <VaultStrategyText
+              type={type}
+              underlyingAssets={underlyingAssets}
+              asset={asset}
+            />
           </div>
           <div>
             <h1 className="mb-4 font-bold max-md:mt-4">APR</h1>
@@ -197,22 +201,63 @@ type VaultStrategyTextProps = {
 const VaultStrategyText: FC<VaultStrategyTextProps> = ({
   type,
   underlyingAssets,
-  asset
+  asset,
 }) => {
   const isToken = useIsTokenCompounder(type)
   const { data: token } = useTokenOrNative({ address: asset })
   const { data: vaultTokens } = useVaultTokens({
     asset,
-    type
+    type,
   })
-  const { data: ybToken } = useTokenOrNative({ address: vaultTokens.ybTokenAddress })
+  const { data: ybToken } = useTokenOrNative({
+    address: vaultTokens.ybTokenAddress,
+  })
   return (
     <>
-    {isToken ? (
-      // THE TEXT HERE WAS WRITTEN FOR THE GLP COUMPOUNDER
-      <div className="max-h-[120px] overflow-auto">
-        <p className="leading-loose text-justify">
-          This vault accepts deposits in form of its primary asset {token?.symbol.toLocaleUpperCase()} and any of its underlying assets mentioned below, all of which will be converted to staked {token?.symbol.toLocaleUpperCase()} automatically. <br/>Deposited assets are used to provide liquidity for GMX traders, earning trading fees plus GMX emissions on its staked {token?.symbol.toLocaleUpperCase()}. <br/>The vault auto-compounds the accumulated rewards periodically into more staked {token?.symbol.toLocaleUpperCase()}. <br/>Investors receive vault shares as ERC20 tokens called {ybToken?.symbol.toLocaleUpperCase()}, representing their pro-rata share of the compounding funds. <br/>Investors can use {ybToken?.symbol.toLocaleUpperCase()} in other Fortress products or integrated protocols. <br/>The staked {token?.symbol.toLocaleUpperCase()} contains the following basket of assets:{" "}
+      {isToken ? (
+        // THE TEXT HERE WAS WRITTEN FOR THE GLP COUMPOUNDER
+        <div className="max-h-[120px] overflow-auto">
+          <p className="text-justify leading-loose">
+            This vault accepts deposits in form of its primary asset{" "}
+            {token?.symbol.toLocaleUpperCase()} and any of its underlying assets
+            mentioned below, all of which will be converted to staked{" "}
+            {token?.symbol.toLocaleUpperCase()} automatically. <br />
+            Deposited assets are used to provide liquidity for GMX traders,
+            earning trading fees plus GMX emissions on its staked{" "}
+            {token?.symbol.toLocaleUpperCase()}. <br />
+            The vault auto-compounds the accumulated rewards periodically into
+            more staked {token?.symbol.toLocaleUpperCase()}. <br />
+            Investors receive vault shares as ERC20 tokens called{" "}
+            {ybToken?.symbol.toLocaleUpperCase()}, representing their pro-rata
+            share of the compounding funds. <br />
+            Investors can use {ybToken?.symbol.toLocaleUpperCase()} in other
+            Fortress products or integrated protocols. <br />
+            The staked {token?.symbol.toLocaleUpperCase()} contains the
+            following basket of assets:{" "}
+            {underlyingAssets?.map((address, index) => (
+              <Fragment key={`underlying-asset-${index}`}>
+                {underlyingAssets.length > 2 &&
+                index > 0 &&
+                index !== underlyingAssets.length - 1
+                  ? ", "
+                  : index > 0
+                  ? " and "
+                  : null}
+                <TokenSymbol
+                  key={`token-symbol-${index}`}
+                  address={(address ?? "0x") as `0x${string}`}
+                />
+              </Fragment>
+            ))}
+            .
+          </p>
+        </div>
+      ) : (
+        <p className="leading-loose">
+          This token represents a {type === "curve" ? "Curve" : "Balancer"}{" "}
+          liquidity pool. Holders earn fees from users trading in the pool, and
+          can also deposit the LP to Curve's gauges to earn CRV emissions. This
+          Curve v2 crypto pool contains{" "}
           {underlyingAssets?.map((address, index) => (
             <Fragment key={`underlying-asset-${index}`}>
               {underlyingAssets.length > 2 &&
@@ -230,31 +275,7 @@ const VaultStrategyText: FC<VaultStrategyTextProps> = ({
           ))}
           .
         </p>
-      </div>
-    ) : (
-      <p className="leading-loose">
-        This token represents a {type === "curve" ? "Curve" : "Balancer"}{" "}
-        liquidity pool. Holders earn fees from users trading in the pool,
-        and can also deposit the LP to Curve's gauges to earn CRV
-        emissions. This Curve v2 crypto pool contains{" "}
-        {underlyingAssets?.map((address, index) => (
-          <Fragment key={`underlying-asset-${index}`}>
-            {underlyingAssets.length > 2 &&
-            index > 0 &&
-            index !== underlyingAssets.length - 1
-              ? ", "
-              : index > 0
-              ? " and "
-              : null}
-            <TokenSymbol
-              key={`token-symbol-${index}`}
-              address={(address ?? "0x") as `0x${string}`}
-            />
-          </Fragment>
-        ))}
-        .
-      </p>
-    )}
-    </>    
+      )}
+    </>
   )
 }
