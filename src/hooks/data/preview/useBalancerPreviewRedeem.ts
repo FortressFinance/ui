@@ -13,7 +13,7 @@ export function useBalancerPreviewRedeem({
   slippage,
   enabled,
   onSuccess,
-  onError
+  onError,
 }: {
   chainId: number
   id: number | undefined
@@ -45,7 +45,7 @@ export function useBalancerPreviewRedeem({
     retry: false,
     enabled,
     onSuccess,
-    onError
+    onError,
   })
 
   // Preview deposit method

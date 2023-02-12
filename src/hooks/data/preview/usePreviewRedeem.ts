@@ -6,7 +6,10 @@ import { useBalancerPreviewRedeem } from "@/hooks/data/preview/useBalancerPrevie
 import { useCurvePreviewRedeem } from "@/hooks/data/preview/useCurvePreviewRedeem"
 import { useTokenPreviewRedeem } from "@/hooks/data/preview/useTokenPreviewRedeem"
 import { useSlippageSetting } from "@/hooks/useSlippageSetting"
-import { useIsCurveCompounder, useIsTokenCompounder } from "@/hooks/useVaultTypes"
+import {
+  useIsCurveCompounder,
+  useIsTokenCompounder,
+} from "@/hooks/useVaultTypes"
 
 export function usePreviewRedeem({
   chainId,
@@ -15,11 +18,11 @@ export function usePreviewRedeem({
   amount,
   type,
   onSuccess,
-  onError
+  onError,
 }: {
   chainId: number
   id: number | undefined
-  token: Address | undefined,
+  token: Address | undefined
   amount: string
   type: VaultType
   onSuccess: ((data: PreviewData) => void) | undefined
@@ -29,7 +32,7 @@ export function usePreviewRedeem({
   const isToken = useIsTokenCompounder(type)
 
   const slippage = useSlippageSetting()
-  
+
   const enableCurveAssetToYbToken = !isToken && isCurve
   const curvePreviewQuery = useCurvePreviewRedeem({
     chainId,
@@ -39,7 +42,7 @@ export function usePreviewRedeem({
     slippage,
     enabled: enableCurveAssetToYbToken,
     onSuccess,
-    onError
+    onError,
   })
 
   const enableBalancerAssetToYbToken = !isToken && !isCurve
@@ -51,7 +54,7 @@ export function usePreviewRedeem({
     slippage,
     enabled: enableBalancerAssetToYbToken,
     onSuccess,
-    onError
+    onError,
   })
 
   const enableTokenAssetToYbToken = isToken
@@ -62,16 +65,14 @@ export function usePreviewRedeem({
     amount,
     enabled: enableTokenAssetToYbToken,
     onSuccess,
-    onError
+    onError,
   })
 
-  if(!curvePreviewQuery.isError)
-  {
+  if (!curvePreviewQuery.isError) {
     return curvePreviewQuery
   }
 
-  if(!balancerPreviewQuery.isError)
-  {
+  if (!balancerPreviewQuery.isError) {
     return balancerPreviewQuery
   }
 

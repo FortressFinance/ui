@@ -1,7 +1,10 @@
 import { useQuery } from "@tanstack/react-query"
 import { Address } from "wagmi"
 
-import { getCompounderVaultsPreviewDeposit, PreviewData } from "@/lib/api/vaults/getCompounderVaultsPreviewDeposit"
+import {
+  getCompounderVaultsPreviewDeposit,
+  PreviewData,
+} from "@/lib/api/vaults/getCompounderVaultsPreviewDeposit"
 import { queryKeys } from "@/lib/helpers"
 
 export function useBalancerPreviewDeposit({
@@ -12,7 +15,7 @@ export function useBalancerPreviewDeposit({
   slippage,
   enabled,
   onSuccess,
-  onError
+  onError,
 }: {
   chainId: number
   id: number | undefined
@@ -44,7 +47,7 @@ export function useBalancerPreviewDeposit({
     retry: false,
     enabled,
     onSuccess,
-    onError
+    onError,
   })
 
   // Preview deposit method

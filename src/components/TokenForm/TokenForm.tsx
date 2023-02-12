@@ -73,7 +73,9 @@ const TokenForm: FC<TokenFormProps> = ({
     { address: inputTokenAddress }
   )
 
-  const showMaxBtn = inputTokenBalanceOrShare?.value?.gt(0) && inputTokenBalanceOrShare?.formatted !== amountIn
+  const showMaxBtn =
+    inputTokenBalanceOrShare?.value?.gt(0) &&
+    inputTokenBalanceOrShare?.formatted !== amountIn
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>

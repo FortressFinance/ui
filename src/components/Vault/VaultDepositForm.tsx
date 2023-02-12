@@ -106,7 +106,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
       form.resetField("amountOut")
     },
   })
-  
+
   // Configure depositUnderlying method
   const prepareDepositUnderlying = usePrepareContractWrite({
     chainId,

@@ -12,7 +12,7 @@ export function useTokenPreviewRedeem({
   amount,
   enabled,
   onSuccess,
-  onError
+  onError,
 }: {
   chainId: number
   id: number | undefined
@@ -28,6 +28,6 @@ export function useTokenPreviewRedeem({
     retry: false,
     enabled,
     onSuccess,
-    onError
+    onError,
   })
 }

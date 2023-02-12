@@ -6,9 +6,10 @@ import { useBalancerPreviewDeposit } from "@/hooks/data/preview/useBalancerPrevi
 import { useCurvePreviewDeposit } from "@/hooks/data/preview/useCurvePreviewDeposit"
 import { useTokenPreviewDeposit } from "@/hooks/data/preview/useTokenPreviewDeposit"
 import { useSlippageSetting } from "@/hooks/useSlippageSetting"
-import { useIsCurveCompounder, useIsTokenCompounder } from "@/hooks/useVaultTypes"
-
-
+import {
+  useIsCurveCompounder,
+  useIsTokenCompounder,
+} from "@/hooks/useVaultTypes"
 
 export function usePreviewDeposit({
   chainId,
@@ -17,11 +18,11 @@ export function usePreviewDeposit({
   amount,
   type,
   onSuccess,
-  onError
+  onError,
 }: {
   chainId: number
   id: number | undefined
-  token: Address | undefined,
+  token: Address | undefined
   amount: string
   type: VaultType
   onSuccess: ((data: PreviewData) => void) | undefined
@@ -31,7 +32,7 @@ export function usePreviewDeposit({
   const isToken = useIsTokenCompounder(type)
 
   const slippage = useSlippageSetting()
-  
+
   const enableCurveAssetToYbToken = !isToken && isCurve
   const curvePreviewQuery = useCurvePreviewDeposit({
     chainId,
@@ -41,7 +42,7 @@ export function usePreviewDeposit({
     slippage,
     enabled: enableCurveAssetToYbToken,
     onSuccess,
-    onError
+    onError,
   })
 
   const enableBalancerAssetToYbToken = !isToken && !isCurve
@@ -53,7 +54,7 @@ export function usePreviewDeposit({
     slippage,
     enabled: enableBalancerAssetToYbToken,
     onSuccess,
-    onError
+    onError,
   })
 
   const enableTokenAssetToYbToken = isToken
@@ -64,16 +65,14 @@ export function usePreviewDeposit({
     amount,
     enabled: enableTokenAssetToYbToken,
     onSuccess,
-    onError
+    onError,
   })
 
-  if(!curvePreviewQuery.isError)
-  {
+  if (!curvePreviewQuery.isError) {
     return curvePreviewQuery
   }
 
-  if(!balancerPreviewQuery.isError)
-  {
+  if (!balancerPreviewQuery.isError) {
     return balancerPreviewQuery
   }
 
