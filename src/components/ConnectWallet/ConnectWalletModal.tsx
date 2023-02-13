@@ -33,10 +33,13 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
   return (
     <OrangeModal isOpen={isOpen} onClose={onClose}>
       <div className="grid grid-cols-5 grid-rows-1 gap-4">
-        <Dialog.Title as="h1" className="col-span-3 col-start-2 text-center font-display text-4xl">
+        <Dialog.Title
+          as="h1"
+          className="col-span-3 col-start-2 text-center font-display text-4xl"
+        >
           Connect Wallet
         </Dialog.Title>
-        <button onClick={onClose} className="py-2 justify-self-end self-start">
+        <button onClick={onClose} className="self-start justify-self-end py-2">
           <BiXCircle className="h-8 w-8" />
         </button>
       </div>
@@ -143,7 +146,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
         >
           Account
         </Dialog.Title>
-        <button onClick={onClose} className="py-2 justify-self-end self-start">
+        <button onClick={onClose} className="self-start justify-self-end py-2">
           <BiXCircle className="h-8 w-8" />
         </button>
       </div>
