@@ -82,12 +82,12 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
           </div>
         </header>
 
-        <div className="layout py-8">{children}</div>
+        <div className="layout py-4 md:py-8">{children}</div>
 
         <footer className="layout py-6">
-          <div className="grid grid-cols-3 grid-rows-1 gap-4">
+          <div className="grid grid-cols-1 grid-rows-2 gap-4 md:grid-cols-3 md:grid-rows-1">
             <a
-              className="col-start-2 ml-3 items-center rounded-full bg-black/40 py-1 text-center text-xs font-medium leading-5 text-white/70 hover:bg-black/60 hover:text-white/90"
+              className="ml-3 items-center rounded-full bg-black/40 py-1 text-center text-xs font-medium leading-5 text-white/70 hover:bg-black/60 hover:text-white/90 md:col-start-2"
               href="https://docs.fortress.finance/protocol/risks"
               target="_blank"
               rel="noreferrer"
