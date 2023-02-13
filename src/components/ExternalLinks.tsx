@@ -16,7 +16,7 @@ const ExternalLinks: FC<ExternalLinksProps> = ({
 }) => {
   return (
     <nav
-      className={clsxm("flex justify-end gap-6", className)}
+      className={clsxm("flex justify-center md:justify-end gap-6", className)}
       aria-label="Links"
     >
       <Link href="https://twitter.com/fortress_fi" target="_blank">
