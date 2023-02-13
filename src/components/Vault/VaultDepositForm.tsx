@@ -1,5 +1,5 @@
 import { BigNumber, ethers } from "ethers"
-import { formatUnits, parseUnits } from "ethers/lib/utils.js"
+import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
@@ -14,7 +14,8 @@ import {
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
-import { useVaultTokens } from "@/hooks/data"
+import { useVaultPoolId, useVaultTokens } from "@/hooks/data"
+import { usePreviewDeposit } from "@/hooks/data/preview/usePreviewDeposit"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
@@ -24,6 +25,7 @@ import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 import { vaultCompounderAbi, vaultTokenAbi } from "@/constant/abi"
 
 const VaultDepositForm: FC<VaultProps> = (props) => {
+  const { data: poolId } = useVaultPoolId(props)
   const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
@@ -55,7 +57,6 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   // Calculate + fetch information on selected tokens
   const inputIsLp = inputTokenAddress === lpTokenOrAsset
   const inputIsEth = isEthTokenAddress(inputTokenAddress)
-  const { data: ybToken } = useTokenOrNative({ address: vaultAddress })
   const { data: inputToken } = useTokenOrNative({
     address: inputTokenAddress,
   })
@@ -91,17 +92,21 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const waitApprove = useWaitForTransaction({
     hash: approve.data?.hash,
   })
-  // Preview deposit method
-  const { isLoading: isLoadingPreview } = useContractRead({
+
+  const { isLoading: isLoadingPreview } = usePreviewDeposit({
     chainId,
-    abi: vaultCompounderAbi,
-    address: vaultAddress,
-    functionName: "previewDeposit",
-    args: [value],
+    id: poolId,
+    token: inputTokenAddress,
+    amount: value.toString(),
+    type: props.type,
     onSuccess: (data) => {
-      form.setValue("amountOut", formatUnits(data, ybToken?.decimals || 18))
+      form.setValue("amountOut", data.resultFormated)
+    },
+    onError: (error) => {
+      form.resetField("amountOut")
     },
   })
+
   // Configure depositUnderlying method
   const prepareDepositUnderlying = usePrepareContractWrite({
     chainId,

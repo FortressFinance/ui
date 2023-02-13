@@ -10,6 +10,7 @@ import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 
 import Button from "@/components/Button"
 import ConnectWalletButton from "@/components/ConnectWallet/ConnectWalletButton"
+import Skeleton from "@/components/Skeleton"
 import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
 import TokenSelectModal from "@/components/TokenForm/TokenSelectModal"
 
@@ -48,22 +49,37 @@ const TokenForm: FC<TokenFormProps> = ({
   const form = useFormContext<TokenFormValues>()
   const inputTokenAddress = form.watch("inputToken")
   const outputTokenAddress = form.watch("outputToken")
+  const amountIn = form.watch("amountIn")
 
   const tokenSelectField = useController({
     name: isWithdraw ? "outputToken" : "inputToken",
     control: form.control,
   })
 
+  const onClickMax = () => {
+    form.setValue("amountIn", inputTokenBalanceOrShare?.formatted ?? "0.0", {
+      shouldDirty: true,
+      shouldValidate: true,
+      shouldTouch: true,
+    })
+  }
+
   const { isConnected } = useAccount()
-  const { data: inputTokenBalance, isLoading: isLoadingInputTokenBalance } =
-    useTokenOrNativeBalance({ address: inputTokenAddress })
+  const {
+    data: inputTokenBalanceOrShare,
+    isLoading: isLoadingInputTokenBalanceOrShare,
+  } = useTokenOrNativeBalance({ address: inputTokenAddress })
   const { data: inputToken, isLoading: isLoadingInputToken } = useTokenOrNative(
     { address: inputTokenAddress }
   )
 
+  const showMaxBtn =
+    inputTokenBalanceOrShare?.value?.gt(0) &&
+    inputTokenBalanceOrShare?.formatted !== amountIn
+
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
-      <div className="grid-row-[1fr,auto,max-content] grid w-full grid-cols-[auto,auto] rounded-md">
+      <div className="grid-row-[1fr,auto,auto,max-content] grid w-full grid-cols-[auto,auto] rounded-md">
         {/* inputToken input */}
         <input
           className="peer relative z-[2] col-start-1 row-start-1 block w-full text-ellipsis bg-transparent px-4 pt-4 pb-2 text-2xl placeholder-white/50 focus:outline-none md:text-4xl"
@@ -75,8 +91,11 @@ const TokenForm: FC<TokenFormProps> = ({
               positive: (amount) => Number(amount) > 0 || "Enter an amount",
               lessThanBalance: (amount) =>
                 parseUnits(amount, inputToken?.decimals).lte(
-                  inputTokenBalance?.value ?? 0
-                ) || `Insufficient ${inputToken?.symbol ?? ""} balance`,
+                  inputTokenBalanceOrShare?.value ?? 0
+                ) ||
+                `Insufficient ${inputToken?.symbol ?? ""} ${
+                  isWithdraw ? "share" : "balance"
+                }`,
             },
           })}
         />
@@ -97,7 +116,7 @@ const TokenForm: FC<TokenFormProps> = ({
         {/* outputToken input */}
         <input
           className={clsxm(
-            "peer relative z-[2] col-start-1 row-start-3 block w-full text-ellipsis bg-transparent px-4 pb-4 pt-1 text-xl text-white/60 placeholder-white/50 focus:outline-none",
+            "peer relative z-[2] col-start-1 row-start-2 block w-full text-ellipsis bg-transparent px-4 pb-4 pt-1 text-xl text-white/60 placeholder-white/50 focus:outline-none",
             { "animate-pulse": isLoadingPreview }
           )}
           step="any"
@@ -107,7 +126,7 @@ const TokenForm: FC<TokenFormProps> = ({
           {...form.register("amountOut")}
         />
         {/* outputToken select button */}
-        <div className="relative z-[1] col-start-2 row-start-3 flex items-start space-x-1 justify-self-end pr-4 pb-4">
+        <div className="relative z-[1] col-start-2 row-start-2 flex items-start space-x-1 justify-self-end pr-4 pb-4">
           <TokenSelectButton
             canChange={
               isWithdraw &&
@@ -118,6 +137,23 @@ const TokenForm: FC<TokenFormProps> = ({
             tokenAddress={outputTokenAddress}
             onClick={() => setTokenSelectMode("outputToken")}
           />
+        </div>
+
+        <div className="relative z-[1] col-span-full col-start-1 row-start-3 h-[38px] px-4 pb-3 text-left align-bottom text-xs">
+          <span>
+            {!isWithdraw ? "Balance: " : "Share: "}
+            <Skeleton isLoading={isLoadingInputTokenBalanceOrShare}>
+              {inputTokenBalanceOrShare?.formatted ?? "0.0"}
+            </Skeleton>
+          </span>
+          <button
+            className="ml-1.5 rounded-md border border-[#F0707B] px-2 py-1 font-bold text-white hover:bg-[#1E0E1C80]"
+            onClick={onClickMax}
+            disabled={!showMaxBtn}
+            type="button"
+          >
+            Max
+          </button>
         </div>
 
         {/* Focus styles */}
@@ -133,7 +169,7 @@ const TokenForm: FC<TokenFormProps> = ({
             disabled={!form.formState.isValid}
             isLoading={
               isLoadingInputToken ||
-              isLoadingInputTokenBalance ||
+              isLoadingInputTokenBalanceOrShare ||
               isLoadingTransaction
             }
             type="submit"
@@ -141,7 +177,9 @@ const TokenForm: FC<TokenFormProps> = ({
             {form.formState.isDirty
               ? form.formState.isValid
                 ? submitText
-                : form.formState.errors.amountIn?.message ?? "Unknown error"
+                : form.formState.errors.amountIn === undefined
+                ? "Enter an amount"
+                : form.formState.errors.amountIn.message ?? "Unknown error"
               : "Enter an amount"}
           </Button>
         ) : (
