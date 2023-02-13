@@ -13,7 +13,10 @@ type Data = {
 }
 
 export const getServerSideProps: GetServerSideProps<Data> = async (context) => {
-  const host = context.req.headers.host || "fortress.finance"
+  const host = (context.req.headers.host || "fortress.finance").replace(
+    /^www./,
+    ""
+  )
   const appUrl =
     process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
       ? `https://${host}/app`
