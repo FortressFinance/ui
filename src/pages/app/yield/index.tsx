@@ -30,14 +30,26 @@ const Yield: NextPage = () => {
         <Tab.Group>
           <Tab.List as={TabList}>
             <TabListGroup className="max-w-[70%]">
-              <Tab as={TabButton} className="basis-0 max-w-[33%]" >Featured</Tab>
-              <Tab as={TabButton} className="basis-0 max-w-[33%]" >Crypto</Tab>
-              <Tab as={TabButton} className="basis-0 max-w-[33%]" >Stable</Tab>
-              <Tab as={TabButton} className="basis-0 max-w-[33%]" >Curve</Tab>
-              <Tab as={TabButton} className="basis-0 max-w-[33%]" >Balancer</Tab>
+              <Tab as={TabButton} className="max-w-[33%] basis-0">
+                Featured
+              </Tab>
+              <Tab as={TabButton} className="max-w-[33%] basis-0">
+                Crypto
+              </Tab>
+              <Tab as={TabButton} className="max-w-[33%] basis-0">
+                Stable
+              </Tab>
+              <Tab as={TabButton} className="max-w-[33%] basis-0">
+                Curve
+              </Tab>
+              <Tab as={TabButton} className="max-w-[33%] basis-0">
+                Balancer
+              </Tab>
             </TabListGroup>
             <TabListGroup className="max-h-[38px] md:max-h-[56px]">
-              <Tab as={TabButton} className="basis-0">Holdings</Tab>
+              <Tab as={TabButton} className="basis-0">
+                Holdings
+              </Tab>
             </TabListGroup>
           </Tab.List>
 
