@@ -22,11 +22,11 @@ otherwise content at the bottom is always faded out */
 
   /* The content mask is a linear gradient from top to bottom */
   --mask-image-content: linear-gradient(
-      to bottom,
-      currentColor,
-      black var(--mask-height),
-      black calc(100% - var(--mask-height)),
-      transparent
+    to bottom,
+    currentColor,
+    black var(--mask-height),
+    black calc(100% - var(--mask-height)),
+    transparent
   );
 
   /* Here we scale the content gradient to the width of the container 
