@@ -43,7 +43,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
         <div>
           <Menu.Button
             className={clsxm(
-              "text-medium x x inline-flex w-full items-center justify-center space-x-2 rounded-md border-2 bg-black/20 py-1 px-2 text-sm font-medium text-white hover:bg-black/30 md:py-3 md:px-4 md:text-base",
+              "text-medium inline-flex w-full items-center justify-center space-x-2 rounded-md border-2 bg-black/20 py-1 px-2 text-sm font-medium text-white hover:bg-black/30 md:py-3 md:px-4 md:text-base",
               {
                 "border-orange-400 text-orange-400": chain.unsupported,
                 "border-transparent": !chain.unsupported,
