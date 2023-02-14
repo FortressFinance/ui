@@ -22,8 +22,8 @@ export default function useVaultAddresses({ type }: { type: VaultType }) {
     functionName: isToken
       ? "getTokenCompoundersList"
       : isCurve
-        ? "getCurveCompoundersList"
-        : "getBalancerCompoundersList",
+      ? "getCurveCompoundersList"
+      : "getBalancerCompoundersList",
     enabled: apiCompounderQuery.isError || apiTokenQuery.isError,
   })
 
