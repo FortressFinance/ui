@@ -53,7 +53,11 @@ const ConcentratorVaults: FC = () => {
         <Tab.List as={TabList}>
           <TabListGroup>
             {concentratorDefinitiosn.map(({ label, type }) => (
-              <Tab as={TabButton} key={`${type}-button`} className="w-[50%] basis-0">
+              <Tab
+                as={TabButton}
+                key={`${type}-button`}
+                className="w-[50%] basis-0"
+              >
                 {label}
               </Tab>
             ))}
