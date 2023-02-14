@@ -38,17 +38,6 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
     state.setConnectModal,
   ])
 
-  const menuItems = [
-    {
-      name: "Vaults",
-      href: "/vaults",
-    },
-    {
-      name: "Lend",
-      href: "/lend",
-    },
-  ]
-
   return (
     <AppProviders>
       <div className="relative z-[1] grid min-h-screen grid-cols-1 grid-rows-[auto,1fr,auto]">
@@ -110,16 +99,15 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 leaveTo="transform opacity-0 scale-95"
               >
                 <Menu.Items className="absolute right-0 my-3 w-56 origin-top-right divide-y divide-gray-500 bg-white px-3 text-xl text-black focus:outline-none">
-                  {menuItems.map((item, index) => (
-                    <Menu.Item key={`menu-item-${index}`}>
-                      <Link
-                        className="block p-2 text-xl leading-loose hover:text-pink-400"
-                        href={item.href}
-                      >
-                        {item.name}
-                      </Link>
-                    </Menu.Item>
-                  ))}
+                  <Menu.Item as={DropdownMenuItem} href={appLink("/yield")}>
+                    Vaults
+                  </Menu.Item>
+                  <Menu.Item
+                    as={DropdownMenuItem}
+                    href={appLink("/yield/concentrators")}
+                  >
+                    Concentrators
+                  </Menu.Item>
                 </Menu.Items>
               </Transition>
             </Menu>
