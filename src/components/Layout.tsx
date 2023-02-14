@@ -49,7 +49,11 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                   className="my-6 h-8 w-auto fill-white group-hover:hidden"
                   aria-label="Fortress Finance"
                 />
-                <Image className="h-8 my-6 w-auto hidden group-hover:flex" src={FortressLogoAnimated} alt="" />
+                <Image
+                  className="my-6 hidden h-8 w-auto group-hover:flex"
+                  src={FortressLogoAnimated}
+                  alt=""
+                />
               </Link>
 
               {/* Desktop navigation */}
