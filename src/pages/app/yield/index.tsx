@@ -107,7 +107,8 @@ const YieldVaultTable: FC<YieldVaultTableProps> = ({ filter, type }) => {
 
   const chainId = useActiveChainId()
   const availableChains = enabledNetworks.chains.filter((n) => n.id === chainId)
-  const network = availableChains?.[0].name
+  const supportedChain = availableChains?.[0]
+  const network = supportedChain?.name
 
   const { data: vaultAddresses, isLoading } = useVaultAddresses({ type })
   const showLoadingState = isLoading || !ready
@@ -120,6 +121,10 @@ const YieldVaultTable: FC<YieldVaultTableProps> = ({ filter, type }) => {
     <VaultTable label={`${capitalizeFirstLetter(type)} Vaults`}>
       {showLoadingState ? (
         <TableLoading>Loading compounders...</TableLoading>
+      ) : !supportedChain ? (
+        <TableEmpty heading="Unsupported network">
+          Please switch to a supported network to view Vaults.
+        </TableEmpty>
       ) : !filteredVaultAddresses?.length ? (
         <TableEmpty heading="Where Vaults ser?">
           It seems we don't have {capitalizeFirstLetter(type)} Vaults on{" "}

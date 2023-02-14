@@ -82,7 +82,8 @@ const ConcentratorVaultsTable: FC<ConcentratorDefinition> = ({
 
   const chainId = useActiveChainId()
   const availableChains = enabledNetworks.chains.filter((n) => n.id === chainId)
-  const network = availableChains?.[0].name
+  const supportedChain = availableChains?.[0]
+  const network = supportedChain?.name
 
   const { data: vaultAddresses, isLoading } = useListAssetsForConcentrator({
     type,
@@ -93,6 +94,10 @@ const ConcentratorVaultsTable: FC<ConcentratorDefinition> = ({
     <VaultTable label={`${label} Vaults`}>
       {showLoadingState ? (
         <TableLoading>Loading concentrators...</TableLoading>
+      ) : !supportedChain ? (
+        <TableEmpty heading="Unsupported network">
+          Please switch to a supported network to view Concentrators.
+        </TableEmpty>
       ) : !vaultAddresses?.length ? (
         <TableEmpty heading="Where Concentrators ser?">
           It seems we don't have {label} Concentrators on {network} (yet). Feel
