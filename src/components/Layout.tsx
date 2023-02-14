@@ -20,6 +20,7 @@ import ExternalLinks from "@/components/ExternalLinks"
 
 import { useConnectWallet } from "@/store/connectWallet"
 
+import FortressLogoAnimated from "~/images/fortress-animated-logo.gif"
 import FortressBackground from "~/images/fortress-background.gif"
 import FortressLogo from "~/svg/fortress-logo.svg"
 
@@ -45,8 +46,14 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
             <div className="flex items-center space-x-10">
               <Link className="group" href={appLink("/")}>
                 <FortressLogo
-                  className="my-6 h-8 w-auto fill-white group-hover:fill-orange-400"
+                  className="my-6 h-8 w-auto fill-white group-hover:hidden"
                   aria-label="Fortress Finance"
+                />
+                <Image
+                  className="my-6 hidden h-8 w-auto group-hover:flex"
+                  priority
+                  src={FortressLogoAnimated}
+                  alt=""
                 />
               </Link>
 

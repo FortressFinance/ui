@@ -5,6 +5,7 @@ import { ButtonLink } from "@/components/Button"
 import ExternalLinks from "@/components/ExternalLinks"
 import Seo from "@/components/Seo"
 
+import FortressLogoAnimated from "~/images/fortress-animated-logo.gif"
 import SwordImage from "~/images/sword.gif"
 import FortressLogo from "~/svg/fortress-logo.svg"
 
@@ -31,10 +32,16 @@ const HomePage: NextPage<
       <Seo />
 
       <div className="grid h-full w-full grid-cols-1 grid-rows-[auto,1fr,auto] bg-dark">
-        <header className="layout flex items-center justify-between py-10">
+        <header className="layout group flex items-center justify-between py-10">
           <FortressLogo
-            className="h-auto w-7 fill-white"
+            className="h-auto w-7 fill-white group-hover:hidden"
             aria-label="Fortress Finance"
+          />
+          <Image
+            className="hidden h-auto w-7 group-hover:flex"
+            priority
+            src={FortressLogoAnimated}
+            alt=""
           />
         </header>
 
@@ -44,7 +51,6 @@ const HomePage: NextPage<
             <div className="mb-6 w-28 -scale-x-100 lg:hidden">
               <Image src={SwordImage} priority alt="" />
             </div>
-
             <div>
               <h1 className="font-display text-4xl uppercase lg:max-w-2xl lg:text-7xl">
                 Fortress Finance is a new arbitrage protocol.
