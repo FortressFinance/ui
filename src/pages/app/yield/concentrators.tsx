@@ -39,7 +39,7 @@ export default Concentrators
 
 type ConcentratorDefinition = { label: string; type: ConcentratorType }
 
-const concentratorDefinitiosn: ConcentratorDefinition[] = [
+const concentratorDefinitions: ConcentratorDefinition[] = [
   { label: "Balancer AuraBAL", type: "balancerAuraBal" },
   { label: "Balancer ETH", type: "balancerEth" },
   { label: "Curve cvxCRV", type: "curveCvxCrv" },
@@ -52,7 +52,7 @@ const ConcentratorVaults: FC = () => {
       <Tab.Group>
         <Tab.List as={TabList}>
           <TabListGroup>
-            {concentratorDefinitiosn.map(({ label, type }) => (
+            {concentratorDefinitions.map(({ label, type }) => (
               <Tab as={TabButton} key={`${type}-button`}>
                 {label}
               </Tab>
@@ -61,7 +61,7 @@ const ConcentratorVaults: FC = () => {
         </Tab.List>
 
         <Tab.Panels as={TabPanels}>
-          {concentratorDefinitiosn.map(({ label, type }) => (
+          {concentratorDefinitions.map(({ label, type }) => (
             <Tab.Panel key={`${type}-panel`}>
               <ConcentratorVaultsTable label={label} type={type} />
             </Tab.Panel>
