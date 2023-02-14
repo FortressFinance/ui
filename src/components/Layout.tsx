@@ -1,8 +1,9 @@
-import { Menu } from "@headlessui/react"
+import { Menu, Transition } from "@headlessui/react"
 import dynamic from "next/dynamic"
 import Image from "next/image"
 import Link from "next/link"
-import { FC, PropsWithChildren } from "react"
+import { FC, Fragment, PropsWithChildren } from "react"
+import { RxHamburgerMenu } from "react-icons/rx"
 
 import { appLink } from "@/lib/helpers"
 
@@ -84,8 +85,39 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
             <div className="flex items-center">
               <NetworkSelector />
-              <ConnectWalletButton />
+              <ConnectWalletButton className="px-2 text-sm md:px-5 md:text-base" />
             </div>
+
+            {/* Mobile navigation */}
+            <Menu
+              as="div"
+              className="relative inline-block text-left md:hidden"
+            >
+              <Menu.Button>
+                <RxHamburgerMenu className="ml-3 h-8 w-8" />
+              </Menu.Button>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute right-0 my-3 w-56 origin-top-right divide-y divide-gray-500 bg-white px-3 text-xl text-black focus:outline-none">
+                  <Menu.Item as={DropdownMenuItem} href={appLink("/yield")}>
+                    Vaults
+                  </Menu.Item>
+                  <Menu.Item
+                    as={DropdownMenuItem}
+                    href={appLink("/yield/concentrators")}
+                  >
+                    Concentrators
+                  </Menu.Item>
+                </Menu.Items>
+              </Transition>
+            </Menu>
           </div>
         </header>
 
