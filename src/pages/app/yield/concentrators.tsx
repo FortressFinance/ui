@@ -96,7 +96,7 @@ const ConcentratorVaultsTable: FC<ConcentratorDefinition> = ({
         <TableLoading>Loading concentrators...</TableLoading>
       ) : !supportedChain ? (
         <TableEmpty heading="Unsupported network">
-          Please switch to a supported network to view Vaults.
+          Please switch to a supported network to view Concentrators.
         </TableEmpty>
       ) : !vaultAddresses?.length ? (
         <TableEmpty heading="Where Concentrators ser?">
