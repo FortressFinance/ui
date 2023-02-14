@@ -1,5 +1,5 @@
 import { BigNumber, ethers } from "ethers"
-import { formatUnits, parseUnits } from "ethers/lib/utils.js"
+import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
@@ -13,18 +13,19 @@ import {
 
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
-import { useVaultTokens } from "@/hooks/data"
-import { VaultProps } from "@/hooks/types"
+import { VaultProps } from "@/lib/types"
+import { useVaultPoolId, useVaultTokens } from "@/hooks/data"
+import { usePreviewDeposit } from "@/hooks/data/preview/usePreviewDeposit"
 import useActiveChainId from "@/hooks/useActiveChainId"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
+import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
-import auraBalCompounderAbi from "@/constant/abi/auraBALCompounderAbi"
-import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
+import { vaultCompounderAbi, vaultTokenAbi } from "@/constant/abi"
 
 const VaultDepositForm: FC<VaultProps> = (props) => {
+  const { data: poolId } = useVaultPoolId(props)
   const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
@@ -56,7 +57,6 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   // Calculate + fetch information on selected tokens
   const inputIsLp = inputTokenAddress === lpTokenOrAsset
   const inputIsEth = isEthTokenAddress(inputTokenAddress)
-  const { data: ybToken } = useTokenOrNative({ address: vaultAddress })
   const { data: inputToken } = useTokenOrNative({
     address: inputTokenAddress,
   })
@@ -64,6 +64,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
 
   // Check token approval if necessary
   const { data: allowance, isLoading: isLoadingAllowance } = useContractRead({
+    chainId,
     abi: erc20ABI,
     address: inputTokenAddress,
     functionName: "allowance",
@@ -80,6 +81,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
 
   // Configure approve method
   const prepareApprove = usePrepareContractWrite({
+    chainId,
     abi: erc20ABI,
     address: inputTokenAddress,
     functionName: "approve",
@@ -90,20 +92,25 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const waitApprove = useWaitForTransaction({
     hash: approve.data?.hash,
   })
-  // Preview deposit method
-  const { isLoading: isLoadingPreview } = useContractRead({
+
+  const { isLoading: isLoadingPreview } = usePreviewDeposit({
     chainId,
-    abi: curveCompounderAbi,
-    address: vaultAddress,
-    functionName: "previewDeposit",
-    args: [value],
+    id: poolId,
+    token: inputTokenAddress,
+    amount: value.toString(),
+    type: props.type,
     onSuccess: (data) => {
-      form.setValue("amountOut", formatUnits(data, ybToken?.decimals || 18))
+      form.setValue("amountOut", data.resultFormated)
+    },
+    onError: (error) => {
+      form.resetField("amountOut")
     },
   })
+
   // Configure depositUnderlying method
   const prepareDepositUnderlying = usePrepareContractWrite({
-    abi: curveCompounderAbi,
+    chainId,
+    abi: vaultCompounderAbi,
     address: vaultAddress,
     functionName: "depositSingleUnderlying",
     enabled: value.gt(0) && !requiresApproval && !inputIsLp && !isToken,
@@ -117,7 +124,8 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   })
 
   const prepareTokenDepositUnderlying = usePrepareContractWrite({
-    abi: auraBalCompounderAbi,
+    chainId,
+    abi: vaultTokenAbi,
     address: vaultAddress,
     functionName: "depositUnderlying",
     enabled: value.gt(0) && !requiresApproval && !inputIsLp && isToken,
@@ -133,7 +141,8 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
 
   // Configure depositLp method
   const prepareDepositLp = usePrepareContractWrite({
-    abi: curveCompounderAbi,
+    chainId,
+    abi: vaultCompounderAbi,
     address: vaultAddress,
     functionName: "deposit",
     enabled: value.gt(0) && !requiresApproval && inputIsLp && !isToken,
@@ -146,7 +155,8 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   })
 
   const prepareTokenDepositLp = usePrepareContractWrite({
-    abi: auraBalCompounderAbi,
+    chainId,
+    abi: vaultCompounderAbi,
     address: vaultAddress,
     functionName: "deposit",
     enabled: value.gt(0) && !requiresApproval && inputIsLp && isToken,
@@ -202,10 +212,11 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
           }
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
-          tokenAddreseses={[
-            ...(lpTokenOrAsset ? [lpTokenOrAsset ?? "0x"] : []),
+          tokenAddresses={[
             ...(underlyingAssets?.filter((a) => a !== lpTokenOrAsset) || []),
           ]}
+          lpToken={lpTokenOrAsset}
+          vaultType={props.type}
         />
       </FormProvider>
     </div>

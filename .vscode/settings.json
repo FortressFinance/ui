@@ -5,6 +5,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": true
   },
-  "headwind.runOnSave": false,
-  "typescript.preferences.importModuleSpecifier": "non-relative"
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "barrelr.useDoubleQuotes": true,
+  "barrelr.useSemiColons": false
 }

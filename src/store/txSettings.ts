@@ -1,5 +1,7 @@
 import { create } from "zustand"
 
+import { DEFAULT_SLIPPAGE } from "@/constant/env"
+
 export interface TxSettingsStore {
   isSlippageAuto: boolean
   slippageTolerance: number
@@ -11,7 +13,7 @@ export interface TxSettingsStore {
 
 export const useTxSettings = create<TxSettingsStore>((set, _get) => ({
   isSlippageAuto: true,
-  slippageTolerance: 0.05,
+  slippageTolerance: DEFAULT_SLIPPAGE,
   txDeadlineMinutes: 30,
   toggleSlippageAuto: () =>
     set(({ isSlippageAuto }) => ({ isSlippageAuto: !isSlippageAuto })),

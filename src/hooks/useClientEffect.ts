@@ -1,7 +1,10 @@
 import { DependencyList, EffectCallback, useEffect } from "react"
 
 // useEffect that only runs in the browser (i.e. not during server rendering)
-const useClientEffect = (effect: EffectCallback, deps?: DependencyList) => {
+export const useClientEffect = (
+  effect: EffectCallback,
+  deps?: DependencyList
+) => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       effect()

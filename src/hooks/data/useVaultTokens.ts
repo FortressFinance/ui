@@ -4,11 +4,13 @@ import {
   findApiCompounderVaultForAsset,
   findApiTokenVaultForAsset,
 } from "@/lib/findApiVaultForAsset"
+import { VaultProps } from "@/lib/types"
 import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
-import { VaultProps } from "@/hooks/types"
-import useIsCurve from "@/hooks/useIsCurve"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useRegistryContract from "@/hooks/useRegistryContract"
+import {
+  useIsCurveCompounder,
+  useIsTokenCompounder,
+} from "@/hooks/useVaultTypes"
 
 export default function useVaultTokens({ asset, type }: VaultProps) {
   // Preferred: API request
@@ -16,7 +18,7 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
   const apiTokenQuery = useApiTokenVaults({ type })
 
   // Fallback: contract requests
-  const isCurve = useIsCurve(type)
+  const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
   const enableFallback = isToken
     ? apiTokenQuery.isError
@@ -27,8 +29,8 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
     functionName: isToken
       ? "getTokenCompounder"
       : isCurve
-      ? "getCurveCompounder"
-      : "getBalancerCompounder",
+        ? "getCurveCompounder"
+        : "getBalancerCompounder",
     args: [asset ?? "0x"],
     enabled: enableFallback,
   })
@@ -37,30 +39,26 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
     functionName: isToken
       ? "getTokenCompoundersList"
       : isCurve
-      ? "getCurveCompounderUnderlyingAssets"
-      : "getBalancerCompounderUnderlyingAssets",
+        ? "getCurveCompounderUnderlyingAssets"
+        : "getBalancerCompounderUnderlyingAssets",
     args: [regGetCompounder.data ?? "0x"],
     enabled: enableFallback && !!regGetCompounder.data,
   })
 
   // Prioritize API response until it has errored
-  if (isToken && !apiTokenQuery.isError && apiTokenQuery.data !== null) {
+  if (isToken && !apiTokenQuery.isError) {
     const matchedVault = findApiTokenVaultForAsset(apiTokenQuery.data, asset)
     return {
       ...apiTokenQuery,
       data: {
         ybTokenAddress: matchedVault?.token.ybToken.address,
-        underlyingAssetAddresses: matchedVault?.token.underlyingAssets.map(
-          (a) => a.address
-        ),
+        underlyingAssetAddresses: matchedVault?.token.underlyingAssets
+          .map((a) => a.address)
+          .concat([matchedVault?.token.baseAsset.address ?? "0x"]),
       },
     }
   }
-  if (
-    !isToken &&
-    !apiCompounderQuery.isError &&
-    apiCompounderQuery.data !== null
-  ) {
+  if (!isToken && !apiCompounderQuery.isError) {
     const matchedVault = findApiCompounderVaultForAsset(
       apiCompounderQuery.data,
       asset

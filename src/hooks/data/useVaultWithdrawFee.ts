@@ -1,12 +1,12 @@
 import { useContractRead } from "wagmi"
 
+import { VaultProps } from "@/lib/types"
 import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
 import { useVaultTokens } from "@/hooks/data"
-import { VaultProps } from "@/hooks/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
+import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
-import curveCompounderAbi from "@/constant/abi/curveCompounderAbi"
+import { vaultCompounderAbi } from "@/constant/abi"
 
 export default function useVaultWithdrawFee({ asset, type }: VaultProps) {
   const chainId = useActiveChainId()
@@ -22,18 +22,14 @@ export default function useVaultWithdrawFee({ asset, type }: VaultProps) {
   // Fallback: contract request
   const registryQuery = useContractRead({
     chainId,
-    abi: curveCompounderAbi,
+    abi: vaultCompounderAbi,
     address: asset,
     functionName: "withdrawFeePercentage",
     enabled: apiCompounderQuery.isError || apiTokenQuery.isError,
     select: (data) => data.toString(),
   })
   // Prioritize API response until it has errored
-  if (
-    !apiCompounderQuery.isError &&
-    apiCompounderQuery.data !== null &&
-    !isToken
-  ) {
+  if (!apiCompounderQuery.isError && !isToken) {
     return {
       ...apiCompounderQuery,
       data: apiCompounderQuery.data?.find(
@@ -41,7 +37,7 @@ export default function useVaultWithdrawFee({ asset, type }: VaultProps) {
       )?.withdrawalFee,
     }
   }
-  if (!apiTokenQuery.isError && apiTokenQuery.data !== null && isToken) {
+  if (!apiTokenQuery.isError && isToken) {
     return {
       ...apiTokenQuery,
       data: apiTokenQuery.data?.find(

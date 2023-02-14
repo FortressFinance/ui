@@ -5,7 +5,7 @@ import { useNetwork, useSwitchNetwork } from "wagmi"
 import clsxm from "@/lib/clsxm"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
-import { enabledNetworks, mainnetFork } from "@/components/WagmiProvider"
+import { enabledNetworks, mainnetFork } from "@/components/AppProviders"
 
 import { useActiveChain } from "@/store/activeChain"
 
@@ -72,9 +72,9 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
             )}
 
             <ChevronDown
-              className={clsxm("ml-1 h-3.5 w-3.5 md:ml-2", {
-                "fill-orange-400": chain.unsupported,
-                "fill-violet-200": !chain.unsupported,
+              className={clsxm("ml-2 w-3", {
+                "stroke-orange-400": chain.unsupported,
+                "stroke-white": !chain.unsupported,
               })}
               aria-label="Switch network"
             />

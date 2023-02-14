@@ -1,17 +1,17 @@
 import { FC } from "react"
 
+import { VaultProps } from "@/lib/types"
 import {
   useVaultAuraApr,
   useVaultBalApr,
   useVaultCrvApr,
   useVaultCvxApr,
   useVaultEthApr,
-  useVaultExraApr,
+  useVaultExtraApr,
   useVaultGmxApr,
   useVaultPoolId,
   useVaultTotalApr,
 } from "@/hooks/data"
-import { VaultProps } from "@/hooks/types"
 
 import Percentage from "@/components/Percentage"
 import Skeleton from "@/components/Skeleton"
@@ -47,7 +47,7 @@ export const TokenApr: FC<VaultProps> = (props) => {
     poolId,
   })
   const { data: extraRewardsApr, isLoading: isLoadingExtraRewardsApr } =
-    useVaultExraApr({
+    useVaultExtraApr({
       ...props,
       poolId,
     })

@@ -1,7 +1,7 @@
+import { VaultProps } from "@/lib/types"
 import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
 import { useVaultTokens } from "@/hooks/data"
-import { VaultProps } from "@/hooks/types"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
+import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
 export default function useVaultPoolId({ asset, type }: VaultProps) {
   const isToken = useIsTokenCompounder(type)

@@ -1,14 +1,16 @@
 import { useContractRead } from "wagmi"
 
+import { VaultProps } from "@/lib/types"
 import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
 import { useVaultTokens } from "@/hooks/data"
-import { VaultProps } from "@/hooks/types"
-import useIsCurve from "@/hooks/useIsCurve"
-import useIsTokenCompounder from "@/hooks/useIsTokenCompounder"
 import useRegistryContract from "@/hooks/useRegistryContract"
+import {
+  useIsCurveCompounder,
+  useIsTokenCompounder,
+} from "@/hooks/useVaultTypes"
 
 export default function useVaultName({ asset, type }: VaultProps) {
-  const isCurve = useIsCurve(type)
+  const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
   const { data: vaultTokens } = useVaultTokens({
     asset,
@@ -31,11 +33,7 @@ export default function useVaultName({ asset, type }: VaultProps) {
     enabled: apiCompounderQuery.isError || apiTokenQuery.isError,
   })
   // Prioritize API response until it has errored
-  if (
-    !apiCompounderQuery.isError &&
-    apiCompounderQuery.data !== null &&
-    !isToken
-  ) {
+  if (!apiCompounderQuery.isError && !isToken) {
     return {
       ...apiCompounderQuery,
       data: apiCompounderQuery.data?.find(
@@ -43,7 +41,7 @@ export default function useVaultName({ asset, type }: VaultProps) {
       )?.poolName,
     }
   }
-  if (!apiTokenQuery.isError && apiTokenQuery.data !== null && isToken) {
+  if (!apiTokenQuery.isError && isToken) {
     return {
       ...apiTokenQuery,
       data: apiTokenQuery.data?.find(
