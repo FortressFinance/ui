@@ -37,7 +37,7 @@ const HomePage: NextPage<
             className="h-auto w-7 fill-white group-hover:hidden"
             aria-label="Fortress Finance"
           />
-          <Image className="h-auto w-7 hidden group-hover:flex" src={FortressLogoAnimated} alt="" />
+          <Image className="h-auto w-7 hidden group-hover:flex" priority src={FortressLogoAnimated} alt="" />
         </header>
 
         <main className="grid h-full w-full items-center justify-center">
