@@ -32,12 +32,17 @@ const HomePage: NextPage<
       <Seo />
 
       <div className="grid h-full w-full grid-cols-1 grid-rows-[auto,1fr,auto] bg-dark">
-        <header className="group layout flex items-center justify-between py-10">
+        <header className="layout group flex items-center justify-between py-10">
           <FortressLogo
             className="h-auto w-7 fill-white group-hover:hidden"
             aria-label="Fortress Finance"
           />
-          <Image className="h-auto w-7 hidden group-hover:flex" priority src={FortressLogoAnimated} alt="" />
+          <Image
+            className="hidden h-auto w-7 group-hover:flex"
+            priority
+            src={FortressLogoAnimated}
+            alt=""
+          />
         </header>
 
         <main className="grid h-full w-full items-center justify-center">
