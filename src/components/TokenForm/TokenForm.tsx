@@ -3,6 +3,7 @@ import { FC, useState } from "react"
 import { SubmitHandler, useController, useFormContext } from "react-hook-form"
 import { Address, useAccount } from "wagmi"
 
+import { toFixed } from "@/lib/api/util/format"
 import clsxm from "@/lib/clsxm"
 import { VaultType } from "@/lib/types"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
@@ -143,7 +144,7 @@ const TokenForm: FC<TokenFormProps> = ({
           <span>
             {!isWithdraw ? "Balance: " : "Share: "}
             <Skeleton isLoading={isLoadingInputTokenBalanceOrShare}>
-              {inputTokenBalanceOrShare?.formatted ?? "0.0"}
+              {toFixed(inputTokenBalanceOrShare?.formatted ?? "0.0", 2)}
             </Skeleton>
           </span>
           <button

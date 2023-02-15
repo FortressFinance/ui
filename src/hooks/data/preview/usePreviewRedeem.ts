@@ -68,11 +68,11 @@ export function usePreviewRedeem({
     onError,
   })
 
-  if (!curvePreviewQuery.isError) {
+  if (enableCurveAssetToYbToken) {
     return curvePreviewQuery
   }
 
-  if (!balancerPreviewQuery.isError) {
+  if (enableBalancerAssetToYbToken) {
     return balancerPreviewQuery
   }
 
