@@ -1,26 +1,46 @@
 import { useMemo } from "react"
-import { useNetwork } from "wagmi"
+
+import useActiveChainId from "@/hooks/useActiveChainId"
+
+import { enabledNetworks } from "@/components/AppProviders"
 
 const TOKEN_LOGOS_API_URL =
   "https://raw.githubusercontent.com/FortressFinance/assets/master/blockchains"
 
 const getTokenLogoURI = (
-  network = "ethereum",
-  tokenAddress: `0x${string}` = "0x5E8422345238F34275888049021821E8E08CAa1e"
+  networkName: string | undefined,
+  tokenAddress: `0x${string}`
 ) => {
-  // return `${TOKEN_LOGOS_API_URL}/${network}/assets/${tokenAddress}/logo.png`
-  // TODO - Handle various networks during testing - currently retrieve just from ethereum
-  return `${TOKEN_LOGOS_API_URL}/ethereum/assets/${tokenAddress}/logo.png`
+  let network = "ethereum"; //default
+
+  switch (networkName) {
+    case "ethereum":
+    case "mainnet":
+    case "mainnetFork":
+      network = "ethereum"
+      break;
+    case "arbitrum":
+    case "arbitrumFork":
+      network = "arbitrum"
+      break;
+    default:
+      network = "ethereum"
+  }
+
+  return `${TOKEN_LOGOS_API_URL}/${network}/assets/${tokenAddress}/logo.png`
 }
 
 export default function useCurrencyLogoURI(token: `0x${string}`): {
   logoURI: string
 } {
-  const { chain } = useNetwork()
+  const chainId = useActiveChainId()
+  const availableChains = enabledNetworks.chains.filter((n) => n.id === chainId)
+  const supportedChain = availableChains?.[0]
+  const network = supportedChain?.network
 
   return useMemo(() => {
-    const logoURI = getTokenLogoURI(chain?.name, token)
+    const logoURI = getTokenLogoURI(network, token)
 
     return { logoURI }
-  }, [token, chain])
+  }, [token, network])
 }
