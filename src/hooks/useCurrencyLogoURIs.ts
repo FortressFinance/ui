@@ -11,18 +11,18 @@ const getTokenLogoURI = (
   networkName: string | undefined,
   tokenAddress: `0x${string}`
 ) => {
-  let network = "ethereum"; //default
+  let network = "ethereum" //default
 
   switch (networkName) {
     case "ethereum":
     case "mainnet":
     case "mainnetFork":
       network = "ethereum"
-      break;
+      break
     case "arbitrum":
     case "arbitrumFork":
       network = "arbitrum"
-      break;
+      break
     default:
       network = "ethereum"
   }
