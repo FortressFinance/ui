@@ -144,7 +144,7 @@ const TokenForm: FC<TokenFormProps> = ({
           <span>
             {!isWithdraw ? "Balance: " : "Share: "}
             <Skeleton isLoading={isLoadingInputTokenBalanceOrShare}>
-              {toFixed(inputTokenBalanceOrShare?.formatted ?? "0.0", 2)}
+              {toFixed(inputTokenBalanceOrShare?.formatted ?? "0.0", 6)}
             </Skeleton>
           </span>
           <button
