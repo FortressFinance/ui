@@ -19,8 +19,8 @@ export const getServerSideProps: GetServerSideProps<Data> = async (context) => {
     process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
       ? `https://${host}/app`
       : host.includes("localhost")
-      ? `http://app.${host}`
-      : `https://app.${host}`
+        ? `http://app.${host}`
+        : `https://app.${host}`
   return { props: { appUrl } }
 }
 
@@ -77,7 +77,7 @@ const HomePage: NextPage<
         </main>
 
         <footer className="layout py-10">
-          <ExternalLinks className="justify-center md:justify-end" />
+          <ExternalLinks showHelp className="justify-center md:justify-end" />
         </footer>
       </div>
     </div>
