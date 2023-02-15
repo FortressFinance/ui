@@ -19,8 +19,8 @@ export const getServerSideProps: GetServerSideProps<Data> = async (context) => {
     process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
       ? `https://${host}/app`
       : host.includes("localhost")
-        ? `http://app.${host}`
-        : `https://app.${host}`
+      ? `http://app.${host}`
+      : `https://app.${host}`
   return { props: { appUrl } }
 }
 
