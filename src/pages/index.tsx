@@ -77,7 +77,7 @@ const HomePage: NextPage<
         </main>
 
         <footer className="layout py-10">
-          <ExternalLinks className="justify-center md:justify-end" />
+          <ExternalLinks showHelp className="justify-center md:justify-end" />
         </footer>
       </div>
     </div>
