@@ -32,9 +32,9 @@ const ExternalLinks: FC<ExternalLinksProps> = ({
         <SiDiscord className="h-5 w-5" />
       </Link>
       {showHelp && (
-        <span>
+        <Link href="https://i.redd.it/loxkwqhjakd61.png" target="_blank">
           <BiHelpCircle className="h-5 w-5" />
-        </span>
+        </Link>
       )}
     </nav>
   )
