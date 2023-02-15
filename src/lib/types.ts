@@ -13,8 +13,12 @@ export type VaultDynamicProps = VaultProps & {
   poolId: CompounderVaultStaticData["poolId"] | undefined
 }
 
-export type ConcentratorType =
-  | "balancerAuraBal"
-  | "balancerEth"
-  | "curveCvxCrv"
-  | "curveEth"
+export type ConcentratorType = "curve" | "balancer" | "solidly"
+export type ConcentratorTargetAsset = "auraBAL" | "ETH" | "cvxCRV"
+
+export type FilterCategory =
+  | "featured"
+  | "crypto"
+  | "stable"
+  | "balancer"
+  | "curve"
