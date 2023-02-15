@@ -46,8 +46,8 @@ export const CurveBalancerApr: FC<VaultProps> = (props) => {
     <>
       {totalApr !== undefined && (
         <>
-          <dt className="font-semibold text-base align-bottom">Total APR</dt>
-          <dd className="text-right font-semibold text-base align-bottom">
+          <dt className="align-bottom text-base font-semibold">Total APR</dt>
+          <dd className="text-right align-bottom text-base font-semibold">
             <Skeleton isLoading={isLoadingId || isLoadingTotalApr}>
               <Percentage>{totalApr}</Percentage>
             </Skeleton>
@@ -56,8 +56,8 @@ export const CurveBalancerApr: FC<VaultProps> = (props) => {
       )}
       {baseApr !== undefined && (
         <>
-          <dt className="align-bottom my-auto">Base APR</dt>
-          <dd className="text-right align-bottom my-auto">
+          <dt className="my-auto align-bottom">Base APR</dt>
+          <dd className="my-auto text-right align-bottom">
             <Skeleton isLoading={isLoadingId || isLoadingBaseApr}>
               <Percentage>{baseApr}</Percentage>
             </Skeleton>
@@ -66,8 +66,8 @@ export const CurveBalancerApr: FC<VaultProps> = (props) => {
       )}
       {crvApr !== undefined && (
         <>
-          <dt className="align-bottom my-auto">CRV APR</dt>
-          <dd className="text-right align-bottom my-auto">
+          <dt className="my-auto align-bottom">CRV APR</dt>
+          <dd className="my-auto text-right align-bottom">
             <Skeleton isLoading={isLoadingId || isLoadingCrvApr}>
               <Percentage>{crvApr}</Percentage>
             </Skeleton>
@@ -76,8 +76,8 @@ export const CurveBalancerApr: FC<VaultProps> = (props) => {
       )}
       {cvxApr !== undefined && (
         <>
-          <dt className="align-bottom my-auto">CVX APR</dt>
-          <dd className="text-right align-bottom my-auto">
+          <dt className="my-auto align-bottom">CVX APR</dt>
+          <dd className="my-auto text-right align-bottom">
             <Skeleton isLoading={isLoadingId || isLoadingCvxApr}>
               <Percentage>{cvxApr}</Percentage>
             </Skeleton>
@@ -86,8 +86,8 @@ export const CurveBalancerApr: FC<VaultProps> = (props) => {
       )}
       {extraRewardsApr !== undefined && (
         <>
-          <dt className="align-bottom my-auto">Extra Rewards APR</dt>
-          <dd className="text-right align-bottom my-auto">
+          <dt className="my-auto align-bottom">Extra Rewards APR</dt>
+          <dd className="my-auto text-right align-bottom">
             <Skeleton isLoading={isLoadingId || isLoadingExtraRewardsApr}>
               <Percentage>{extraRewardsApr}</Percentage>
             </Skeleton>
