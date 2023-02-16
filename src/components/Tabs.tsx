@@ -4,7 +4,7 @@ import { FC, forwardRef, PropsWithChildren, ReactNode } from "react"
 import clsxm from "@/lib/clsxm"
 
 export const TabList = forwardRef<HTMLDivElement>((props, ref) => (
-  <div className="flex grow gap-4" ref={ref} {...props} />
+  <div className="flex gap-4 max-md:grow" ref={ref} {...props} />
 ))
 
 export const TabListGroup: FC<PropsWithChildren<{ className?: string }>> = ({
@@ -13,7 +13,7 @@ export const TabListGroup: FC<PropsWithChildren<{ className?: string }>> = ({
 }) => (
   <div
     className={clsxm(
-      "flex grow flex-wrap overflow-hidden rounded-md border-2 border-pink/30 bg-black/60",
+      "flex overflow-hidden rounded-md border-2 border-pink/30 bg-black/60 max-md:grow max-md:flex-wrap",
       className
     )}
     {...props}
@@ -27,7 +27,7 @@ export const TabButton = forwardRef<
   return (
     <button
       className={clsxm(
-        "grow py-2 px-4 md:py-3 md:px-6",
+        "py-2 px-4 max-md:grow md:py-3 md:px-6",
         {
           "bg-white text-black": props["aria-selected"] === true,
         },

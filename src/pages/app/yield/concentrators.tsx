@@ -2,23 +2,18 @@ import { Tab } from "@headlessui/react"
 import { NextPage } from "next"
 import { FC, useState } from "react"
 
-import { ConcentratorType } from "@/lib/types"
-import {
-  ConcentratorVaultProps,
-  useListAssetsForConcentrator,
-  useVaultForConcentrator,
-} from "@/hooks/data/concentrators"
-import useActiveChainId from "@/hooks/useActiveChainId"
-import useClientEffect from "@/hooks/useClientEffect"
+import { ConcentratorTargetAsset } from "@/lib/types"
 
-import { enabledNetworks } from "@/components/AppProviders"
+import {
+  ConcentratorMenu,
+  ConcentratorRewards,
+  ConcentratorVaultTable,
+} from "@/components/Concentrator"
+import HoldingsTable from "@/components/Holdings/HoldingsTable"
 import Layout from "@/components/Layout"
 import { PageHeading } from "@/components/PageHeading"
 import Seo from "@/components/Seo"
-import { TableEmpty, TableLoading } from "@/components/Table"
 import { TabButton, TabList, TabListGroup, TabPanels } from "@/components/Tabs"
-import VaultRow from "@/components/Vault/VaultRow"
-import { VaultTable } from "@/components/Vault/VaultTable"
 
 const Concentrators: NextPage = () => {
   return (
@@ -37,88 +32,82 @@ const Concentrators: NextPage = () => {
 
 export default Concentrators
 
-type ConcentratorDefinition = { label: string; type: ConcentratorType }
-
-const concentratorDefinitiosn: ConcentratorDefinition[] = [
-  { label: "Balancer AuraBAL", type: "balancerAuraBal" },
-  { label: "Balancer ETH", type: "balancerEth" },
-  { label: "Curve cvxCRV", type: "curveCvxCrv" },
-  { label: "Curve ETH", type: "curveEth" },
-]
-
 const ConcentratorVaults: FC = () => {
+  const [concentratorTargetAsset, setConcentratorTargetAsset] =
+    useState<ConcentratorTargetAsset>("auraBAL")
+
   return (
-    <>
-      <Tab.Group>
+    <div className="grid grid-cols-1 max-lg:gap-y-6 lg:grid-cols-4 lg:gap-x-4">
+      <Tab.Group as="div" className="max-lg:row-start-2 lg:col-span-3">
         <Tab.List as={TabList}>
-          <TabListGroup>
-            {concentratorDefinitiosn.map(({ label, type }) => (
-              <Tab
-                as={TabButton}
-                key={`${type}-button`}
-                className="w-[50%] basis-0"
-              >
-                {label}
-              </Tab>
-            ))}
+          <TabListGroup className="max-md:max-w-[70%]">
+            <Tab as={TabButton} className="max-md:max-w-[33%] max-md:basis-0">
+              Featured
+            </Tab>
+            <Tab as={TabButton} className="max-md:max-w-[33%] max-md:basis-0">
+              Crypto
+            </Tab>
+            <Tab as={TabButton} className="max-md:max-w-[33%] max-md:basis-0">
+              Stable
+            </Tab>
+            <Tab as={TabButton} className="max-md:max-w-[33%] max-md:basis-0">
+              Curve
+            </Tab>
+            <Tab as={TabButton} className="max-md:max-w-[33%] max-md:basis-0">
+              Balancer
+            </Tab>
+          </TabListGroup>
+          <TabListGroup className="max-md:max-h-[38px]">
+            <Tab as={TabButton} className="basis-0">
+              Holdings
+            </Tab>
           </TabListGroup>
         </Tab.List>
 
         <Tab.Panels as={TabPanels}>
-          {concentratorDefinitiosn.map(({ label, type }) => (
-            <Tab.Panel key={`${type}-panel`}>
-              <ConcentratorVaultsTable label={label} type={type} />
-            </Tab.Panel>
-          ))}
+          <Tab.Panel>
+            <ConcentratorVaultTable
+              concentratorTargetAsset={concentratorTargetAsset}
+              filterCategory="featured"
+            />
+          </Tab.Panel>
+          <Tab.Panel>
+            <ConcentratorVaultTable
+              concentratorTargetAsset={concentratorTargetAsset}
+              filterCategory="crypto"
+            />
+          </Tab.Panel>
+          <Tab.Panel>
+            <ConcentratorVaultTable
+              concentratorTargetAsset={concentratorTargetAsset}
+              filterCategory="stable"
+            />
+          </Tab.Panel>
+          <Tab.Panel>
+            <ConcentratorVaultTable
+              concentratorTargetAsset={concentratorTargetAsset}
+              filterCategory="curve"
+            />
+          </Tab.Panel>
+          <Tab.Panel>
+            <ConcentratorVaultTable
+              concentratorTargetAsset={concentratorTargetAsset}
+              filterCategory="balancer"
+            />
+          </Tab.Panel>
+          <Tab.Panel>
+            <HoldingsTable />
+          </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
-    </>
+
+      <div className="space-y-6 max-lg:row-start-1">
+        <ConcentratorMenu
+          concentratorTargetAsset={concentratorTargetAsset}
+          setConcentratorTargetAsset={setConcentratorTargetAsset}
+        />
+        <ConcentratorRewards />
+      </div>
+    </div>
   )
-}
-
-const ConcentratorVaultsTable: FC<ConcentratorDefinition> = ({
-  label,
-  type,
-}) => {
-  // handle hydration mismatch
-  const [ready, setReady] = useState(false)
-  useClientEffect(() => setReady(true))
-
-  const chainId = useActiveChainId()
-  const availableChains = enabledNetworks.chains.filter((n) => n.id === chainId)
-  const supportedChain = availableChains?.[0]
-  const network = supportedChain?.name
-
-  const { data: vaultAddresses, isLoading } = useListAssetsForConcentrator({
-    type,
-  })
-  const showLoadingState = isLoading || !ready
-
-  return (
-    <VaultTable label={`${label} Vaults`}>
-      {showLoadingState ? (
-        <TableLoading>Loading concentrators...</TableLoading>
-      ) : !supportedChain ? (
-        <TableEmpty heading="Unsupported network">
-          Please switch to a supported network to view Concentrators.
-        </TableEmpty>
-      ) : !vaultAddresses?.length ? (
-        <TableEmpty heading="Where Concentrators ser?">
-          It seems we don't have {label} Concentrators on {network} (yet). Feel
-          free to check out other Concentrators on {network} or change network.
-          New Concentrators and strategies are added often, so check back later.
-          Don't be a stranger.
-        </TableEmpty>
-      ) : (
-        vaultAddresses?.map((address, i) => (
-          <ConcentratorVaultRow key={`pool-${i}`} asset={address} type={type} />
-        ))
-      )}
-    </VaultTable>
-  )
-}
-
-const ConcentratorVaultRow: FC<ConcentratorVaultProps> = (props) => {
-  const { data: vaultProps } = useVaultForConcentrator(props)
-  return <VaultRow {...vaultProps} />
 }
