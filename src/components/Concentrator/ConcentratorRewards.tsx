@@ -26,7 +26,8 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
   // take the first one, because they all have the same vaultAssetAddress
   const firstVaultForThisConcentrator = vaultsForThisConcentrator.data?.[0]
   // use the vaultAssetAddress to get the concentrator address
-  const concentratorAddress = useConcentratorAddress({
+  // TODO: use concentratorAddress to interact with concentrator contract
+  const _concentratorAddress = useConcentratorAddress({
     concentratorTargetAsset,
     vaultAssetAddress: firstVaultForThisConcentrator?.vaultAssetAddress,
     vaultType: firstVaultForThisConcentrator?.vaultType,
