@@ -52,7 +52,7 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
                         }
                       )}
                     >
-                      <Cog className="h-6 w-6" />
+                      <Cog className="h-5 w-5" />
                     </button>
                   </Popover.Button>
 
