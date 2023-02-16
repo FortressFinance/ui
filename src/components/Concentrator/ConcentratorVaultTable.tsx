@@ -50,7 +50,7 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
           Please switch to a supported network to view Concentrators.
         </TableEmpty>
       ) : !filteredConcentratorVaults.data?.length ? (
-        <TableEmpty heading="Where Concentrators ser?">
+        <TableEmpty heading="Where Concentrator Vaults ser?">
           It seems we don't have {concentratorTargetAsset} Concentrator Vaults
           for {capitalizeFirstLetter(filterCategory)} (yet).
         </TableEmpty>

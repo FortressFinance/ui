@@ -25,7 +25,7 @@ export const TableEmpty: FC<PropsWithChildren<TableEmptyProps>> = ({
   children,
 }) => {
   return (
-    <TableRow className="flex h-44 items-center rounded-t-none">
+    <TableRow className="flex h-48 items-center rounded-t-none">
       <div className="col-span-full">
         <h2 className="mb-3 text-center text-2xl font-semibold">{heading}</h2>
         <p className="mx-auto max-w-3xl text-center text-sm">{children}</p>

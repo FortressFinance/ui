@@ -83,7 +83,7 @@ export function useConcentratorVault({
   vaultType,
 }: {
   concentratorTargetAsset: ConcentratorTargetAsset
-  vaultAssetAddress: Address | undefined
+  vaultAssetAddress?: Address
   vaultType: VaultType
 }) {
   const chainId = useActiveChainId()
@@ -123,4 +123,28 @@ export function useConcentratorVault({
       type: vaultType,
     },
   }
+}
+
+export function useConcentratorAddress({
+  concentratorTargetAsset,
+  vaultAssetAddress,
+  vaultType,
+}: {
+  concentratorTargetAsset: ConcentratorTargetAsset
+  vaultAssetAddress?: Address
+  vaultType?: VaultType
+}) {
+  return useContractRead({
+    ...useRegistryContract(),
+    functionName:
+      concentratorTargetAsset === "auraBAL"
+        ? "getBalancerAuraBalConcentrator"
+        : concentratorTargetAsset === "cvxCRV"
+        ? "getCurveCvxCrvConcentrator"
+        : vaultType === "balancer"
+        ? "getBalancerEthConcentrators"
+        : "getCurveEthConcentrators",
+    args: [vaultAssetAddress ?? "0x"],
+    enabled: !!vaultAssetAddress && !!vaultType,
+  })
 }
