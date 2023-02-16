@@ -101,7 +101,7 @@ const ConcentratorVaults: FC = () => {
         </Tab.Panels>
       </Tab.Group>
 
-      <div className="space-y-4 max-lg:row-start-1">
+      <div className="space-y-6 max-lg:row-start-1">
         <ConcentratorMenu
           concentratorTargetAsset={concentratorTargetAsset}
           setConcentratorTargetAsset={setConcentratorTargetAsset}
