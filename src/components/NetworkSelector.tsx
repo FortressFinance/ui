@@ -38,12 +38,12 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
   }
 
   return (
-    <div className="min-w-30 mr-3 text-right">
+    <div className="min-w-30 mr-2 text-right md:mr-3">
       <Menu as="div" className="relative inline-block text-left">
         <div>
           <Menu.Button
             className={clsxm(
-              "text-medium inline-flex w-full items-center justify-center space-x-2 rounded-md border-2 bg-black/20 px-4 py-3 font-medium text-white hover:bg-black/30",
+              "text-medium inline-flex w-full items-center justify-center space-x-2 rounded-md border-2 bg-black/20 py-1 px-2 text-sm font-medium text-white hover:bg-black/30 md:py-3 md:px-4 md:text-base",
               {
                 "border-orange-400 text-orange-400": chain.unsupported,
                 "border-transparent": !chain.unsupported,
@@ -56,13 +56,13 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
               <>
                 {chainId === mainnetFork.id ? (
                   <EthereumLogo
-                    className="mr-2 h-5 w-5"
+                    className="md-mr-2 mr-1 h-5 w-5"
                     aria-hidden="true"
                     aria-label="Ethereum"
                   />
                 ) : (
                   <ArbitrumLogo
-                    className="mr-2 h-5 w-5"
+                    className="mr-1 h-5 w-5 md:mr-2"
                     aria-hidden="true"
                     aria-label="Arbitrum one"
                   />

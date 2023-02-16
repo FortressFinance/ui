@@ -1,9 +1,9 @@
 import { Dialog } from "@headlessui/react"
 import Link from "next/link"
 import { FC, Fragment, MouseEventHandler, useState } from "react"
-import { useAccount } from "wagmi"
+import { Address, useAccount } from "wagmi"
 
-import { VaultProps } from "@/lib/types"
+import { VaultProps, VaultType } from "@/lib/types"
 import {
   useVaultPlatformFee,
   useVaultTokens,
@@ -93,26 +93,28 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
 }) => {
   const { connector } = useAccount()
 
-  const { data: token } = useTokenOrNative({ address: asset })
+  const { data: vaultTokens } = useVaultTokens({ type, asset })
+
+  const { data: ybToken } = useTokenOrNative({
+    address: vaultTokens.ybTokenAddress,
+  })
   const isToken = useIsTokenCompounder(type)
 
   const addTokenToWallet: MouseEventHandler<HTMLButtonElement> = () => {
-    if (token && token.address && connector && connector.watchAsset) {
-      connector.watchAsset(token)
+    if (ybToken && ybToken.address && connector && connector.watchAsset) {
+      connector.watchAsset(ybToken)
     }
   }
+  const label = `Add ${ybToken?.symbol} to wallet`
 
   return (
     <PurpleModal className="max-xl:max-w-4xl xl:max-w-5xl" {...modalProps}>
       <PurpleModalHeader className="flex justify-between space-x-4">
         <div className="flex space-x-4">
           {!!connector && !!connector.watchAsset && (
-            <Tooltip label="Add token to wallet">
+            <Tooltip label={label}>
               <button className="h-6 w-6" onClick={addTokenToWallet}>
-                <AddToWallet
-                  className="h-6 w-6"
-                  aria-label="Add token to wallet"
-                />
+                <AddToWallet className="h-6 w-6" aria-label={label} />
               </button>
             </Tooltip>
           )}
@@ -133,28 +135,11 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
             <Dialog.Title as="h1" className="mb-4 font-bold">
               Vault description
             </Dialog.Title>
-            <p className="leading-loose">
-              This token represents a {type === "curve" ? "Curve" : "Balancer"}{" "}
-              liquidity pool. Holders earn fees from users trading in the pool,
-              and can also deposit the LP to Curve's gauges to earn CRV
-              emissions. This Curve v2 crypto pool contains{" "}
-              {underlyingAssets?.map((address, index) => (
-                <Fragment key={`underlying-asset-${index}`}>
-                  {underlyingAssets.length > 2 &&
-                  index > 0 &&
-                  index !== underlyingAssets.length - 1
-                    ? ", "
-                    : index > 0
-                    ? " and "
-                    : null}
-                  <TokenSymbol
-                    key={`token-symbol-${index}`}
-                    address={(address ?? "0x") as `0x${string}`}
-                  />
-                </Fragment>
-              ))}
-              .
-            </p>
+            <VaultStrategyText
+              type={type}
+              underlyingAssets={underlyingAssets}
+              asset={asset}
+            />
           </div>
           <div>
             <h1 className="mb-4 font-bold max-md:mt-4">APR</h1>
@@ -206,5 +191,102 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
         </div>
       </PurpleModalContent>
     </PurpleModal>
+  )
+}
+
+type VaultStrategyTextProps = {
+  type: VaultType
+  underlyingAssets: UseVaultTokensResult["data"]["underlyingAssetAddresses"]
+  asset: Address | undefined
+}
+
+const VaultStrategyText: FC<VaultStrategyTextProps> = ({
+  type,
+  underlyingAssets,
+  asset,
+}) => {
+  const isToken = useIsTokenCompounder(type)
+  const { data: token } = useTokenOrNative({ address: asset })
+  const { data: vaultTokens } = useVaultTokens({
+    asset,
+    type,
+  })
+  const { data: ybToken } = useTokenOrNative({
+    address: vaultTokens.ybTokenAddress,
+  })
+  return (
+    <>
+      {isToken ? (
+        // THE TEXT HERE WAS WRITTEN FOR THE GLP COUMPOUNDER
+        <div className="masked-overflow max-h-[120px] overflow-y-auto">
+          <p className="text-justify leading-loose">
+            This vault accepts deposits in form of its primary asset{" "}
+            {token?.symbol} and any of its underlying assets mentioned below,
+            all of which will be converted to staked {token?.symbol}{" "}
+            automatically.{" "}
+          </p>
+          <p className="text-justify leading-loose">
+            Deposited assets are used to provide liquidity for GMX traders,
+            earning trading fees plus GMX emissions on its staked{" "}
+            {token?.symbol}.{" "}
+          </p>
+          <p className="text-justify leading-loose">
+            The vault auto-compounds the accumulated rewards periodically into
+            more staked {token?.symbol}.{" "}
+          </p>
+          <p className="text-justify leading-loose">
+            Investors receive vault shares as ERC20 tokens called{" "}
+            {ybToken?.symbol}, representing their pro-rata share of the
+            compounding funds.{" "}
+          </p>
+          <p className="text-justify leading-loose">
+            Investors can use {ybToken?.symbol} in other Fortress products or
+            integrated protocols.{" "}
+          </p>
+          <p className="text-justify leading-loose">
+            The staked {token?.symbol} contains the following basket of assets:{" "}
+            {underlyingAssets?.map((address, index) => (
+              <Fragment key={`underlying-asset-${index}`}>
+                {underlyingAssets.length > 2 &&
+                index > 0 &&
+                index !== underlyingAssets.length - 1
+                  ? ", "
+                  : index > 0
+                  ? " and "
+                  : null}
+                <TokenSymbol
+                  key={`token-symbol-${index}`}
+                  address={(address ?? "0x") as `0x${string}`}
+                />
+              </Fragment>
+            ))}
+            .
+          </p>
+        </div>
+      ) : (
+        <p className="leading-loose">
+          This token represents a {type === "curve" ? "Curve" : "Balancer"}{" "}
+          liquidity pool. Holders earn fees from users trading in the pool, and
+          can also deposit the LP to Curve's gauges to earn CRV emissions. This
+          Curve v2 crypto pool contains{" "}
+          {underlyingAssets?.map((address, index) => (
+            <Fragment key={`underlying-asset-${index}`}>
+              {underlyingAssets.length > 2 &&
+              index > 0 &&
+              index !== underlyingAssets.length - 1
+                ? ", "
+                : index > 0
+                ? " and "
+                : null}
+              <TokenSymbol
+                key={`token-symbol-${index}`}
+                address={(address ?? "0x") as `0x${string}`}
+              />
+            </Fragment>
+          ))}
+          .
+        </p>
+      )}
+    </>
   )
 }
