@@ -13,7 +13,7 @@ export const TabListGroup: FC<PropsWithChildren<{ className?: string }>> = ({
 }) => (
   <div
     className={clsxm(
-      "flex overflow-hidden rounded-md border border-pink/30 bg-pink-900/80 backdrop-blur-md max-md:grow max-md:flex-wrap",
+      "flex rounded-md border border-pink/30 bg-pink-900/80 backdrop-blur-md max-md:grow max-md:flex-wrap",
       className
     )}
     {...props}
@@ -27,7 +27,7 @@ export const TabButton = forwardRef<
   return (
     <button
       className={clsxm(
-        "transition-color py-2 px-4 duration-200 hover:bg-white hover:text-pink-900 ui-selected:bg-white ui-selected:text-pink-900 max-md:grow md:py-3 md:px-6",
+        "transition-color py-2 px-4 duration-200 first:rounded-l-md last:rounded-r-md hover:bg-white hover:text-pink-900 ui-selected:bg-white ui-selected:text-pink-900 max-md:grow md:py-3 md:px-6",
         className
       )}
       ref={ref}
