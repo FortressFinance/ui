@@ -42,7 +42,7 @@ const VaultRow: FC<VaultProps> = (props) => {
         >
           {/* Row of vault info */}
           <TableCell className="pointer-events-none sm:grid sm:grid-cols-[max-content,auto,max-content] sm:items-center sm:space-x-3">
-            <div className=" relative hidden h-10 w-10 items-center justify-center rounded-full bg-white sm:flex">
+            <div className="relative hidden h-10 w-10 items-center justify-center rounded-full bg-white sm:flex">
               <AssetLogo
                 className="h-6 w-6"
                 name={props.type}

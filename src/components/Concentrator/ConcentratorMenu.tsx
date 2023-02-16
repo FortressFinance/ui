@@ -38,7 +38,7 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
     <Menu as={DropdownMenu}>
       <Menu.Button
         as={TabButton}
-        className="group flex w-full items-center gap-3 rounded-md border-2 border-pink/30 bg-black/60 text-white hover:bg-pink-900 hover:text-orange-400 focus-visible:bg-pink-900 focus-visible:text-orange-400 ui-open:rounded-b-none ui-open:border-b-0 ui-open:bg-pink-900 md:px-4"
+        className="pink-900 group flex w-full items-center gap-3 rounded-md border border-pink/30 bg-pink-900/80 text-white backdrop-blur-md focus-visible:bg-white focus-visible:text-pink-900 ui-open:rounded-b-none ui-open:border-b-0 ui-open:bg-pink-900 ui-open:hover:bg-pink-900 ui-open:hover:text-white ui-not-open:hover:text-pink-900 md:px-4"
         disabled={isLoading}
       >
         <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-left">
@@ -48,15 +48,15 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
               : "Loading concentrator..."}
           </Skeleton>
         </div>
-        <ChevronDown className="w-3 shrink-0 stroke-white group-hover:stroke-orange-400 group-focus-visible:stroke-orange-400" />
+        <ChevronDown className="w-3 shrink-0 stroke-white group-focus-visible:stroke-pink-900 ui-open:rotate-180 ui-not-open:group-hover:stroke-pink-900" />
       </Menu.Button>
-      <Menu.Items className="divide-y divide-pink-700 overflow-hidden rounded-b-md border-l-2 border-r-2 border-b-2 border-pink/30 bg-pink-900 focus-visible:outline-none">
+      <Menu.Items className="divide-y divide-pink/30 overflow-hidden rounded-b-md border-l border-r border-b border-pink/30 bg-pink-900/80 backdrop-blur-md focus-visible:outline-none">
         {clientReady &&
           concentratorTargetAssets.data?.map((targetAsset, index) => (
             <Menu.Item
               as="button"
               key={`concentrator-menu-item-${index}`}
-              className="block w-full overflow-hidden text-ellipsis whitespace-nowrap px-4 py-3 text-left hover:text-orange-400 ui-active:text-orange-400"
+              className="block w-full overflow-hidden text-ellipsis whitespace-nowrap px-4 py-3 text-left ui-active:bg-white ui-active:text-pink-900"
               onClick={() => setConcentratorTargetAsset(targetAsset)}
             >
               {targetAsset}

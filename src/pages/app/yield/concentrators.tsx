@@ -2,7 +2,8 @@ import { Tab } from "@headlessui/react"
 import { NextPage } from "next"
 import { FC, useState } from "react"
 
-import { ConcentratorTargetAsset } from "@/lib/types"
+import { capitalizeFirstLetter } from "@/lib/helpers"
+import { ConcentratorTargetAsset, FilterCategory } from "@/lib/types"
 
 import {
   ConcentratorMenu,
@@ -32,81 +33,73 @@ const Concentrators: NextPage = () => {
 
 export default Concentrators
 
+const filterCategories: FilterCategory[] = [
+  "featured",
+  "crypto",
+  "curve",
+  "balancer",
+  "stable",
+]
+
 const ConcentratorVaults: FC = () => {
   const [concentratorTargetAsset, setConcentratorTargetAsset] =
     useState<ConcentratorTargetAsset>("auraBAL")
+  const [filterIndex, setFilterIndex] = useState(0)
 
   return (
-    <div className="grid grid-cols-1 max-lg:gap-y-6 lg:grid-cols-4 lg:gap-x-4">
-      <Tab.Group as="div" className="max-lg:row-start-2 lg:col-span-3">
-        <Tab.List as={TabList}>
-          <TabListGroup className="max-md:max-w-[70%]">
-            <Tab as={TabButton} className="max-md:max-w-[33%] max-md:basis-0">
-              Featured
-            </Tab>
-            <Tab as={TabButton} className="max-md:max-w-[33%] max-md:basis-0">
-              Crypto
-            </Tab>
-            <Tab as={TabButton} className="max-md:max-w-[33%] max-md:basis-0">
-              Stable
-            </Tab>
-            <Tab as={TabButton} className="max-md:max-w-[33%] max-md:basis-0">
-              Curve
-            </Tab>
-            <Tab as={TabButton} className="max-md:max-w-[33%] max-md:basis-0">
-              Balancer
-            </Tab>
-          </TabListGroup>
-          <TabListGroup className="max-md:max-h-[38px]">
-            <Tab as={TabButton} className="basis-0">
-              Holdings
-            </Tab>
-          </TabListGroup>
-        </Tab.List>
+    <div className="grid grid-cols-1 max-lg:gap-y-4 lg:grid-cols-12 lg:gap-x-4">
+      <Tab.Group
+        // Not a huge fan of this but it is what it is
+        // Maybe can be removed with better registry functions
+        onChange={(index) => setFilterIndex(index)}
+      >
+        <div className="max-lg:row-start-2 lg:col-span-8 xl:col-span-9">
+          <Tab.List as={TabList}>
+            <TabListGroup className="max-md:max-w-[70%]">
+              {filterCategories.map((filterCategory, index) => (
+                <Tab
+                  as={TabButton}
+                  key={`tab-${index}`}
+                  className="max-md:max-w-[33%] max-md:basis-0"
+                >
+                  {capitalizeFirstLetter(filterCategory)}
+                </Tab>
+              ))}
+            </TabListGroup>
 
-        <Tab.Panels as={TabPanels}>
-          <Tab.Panel>
-            <ConcentratorVaultTable
-              concentratorTargetAsset={concentratorTargetAsset}
-              filterCategory="featured"
-            />
-          </Tab.Panel>
-          <Tab.Panel>
-            <ConcentratorVaultTable
-              concentratorTargetAsset={concentratorTargetAsset}
-              filterCategory="crypto"
-            />
-          </Tab.Panel>
-          <Tab.Panel>
-            <ConcentratorVaultTable
-              concentratorTargetAsset={concentratorTargetAsset}
-              filterCategory="stable"
-            />
-          </Tab.Panel>
-          <Tab.Panel>
-            <ConcentratorVaultTable
-              concentratorTargetAsset={concentratorTargetAsset}
-              filterCategory="curve"
-            />
-          </Tab.Panel>
-          <Tab.Panel>
-            <ConcentratorVaultTable
-              concentratorTargetAsset={concentratorTargetAsset}
-              filterCategory="balancer"
-            />
-          </Tab.Panel>
-          <Tab.Panel>
-            <HoldingsTable />
-          </Tab.Panel>
-        </Tab.Panels>
+            <TabListGroup className="max-md:max-h-[38px]">
+              <Tab as={TabButton} className="basis-0">
+                Holdings
+              </Tab>
+            </TabListGroup>
+          </Tab.List>
+
+          <Tab.Panels as={TabPanels}>
+            {filterCategories.map((filterCategory, index) => (
+              <Tab.Panel key={`tab-panel-${index}`}>
+                <ConcentratorVaultTable
+                  concentratorTargetAsset={concentratorTargetAsset}
+                  filterCategory={filterCategory}
+                />
+              </Tab.Panel>
+            ))}
+
+            <Tab.Panel>
+              <HoldingsTable />
+            </Tab.Panel>
+          </Tab.Panels>
+        </div>
       </Tab.Group>
 
-      <div className="space-y-6 max-lg:row-start-1">
+      <div className="space-y-4 max-lg:row-start-1 lg:col-span-4 xl:col-span-3">
         <ConcentratorMenu
           concentratorTargetAsset={concentratorTargetAsset}
           setConcentratorTargetAsset={setConcentratorTargetAsset}
         />
-        <ConcentratorRewards />
+        <ConcentratorRewards
+          concentratorTargetAsset={concentratorTargetAsset}
+          filterCategory={filterCategories[filterIndex]}
+        />
       </div>
     </div>
   )

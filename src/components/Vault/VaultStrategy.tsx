@@ -57,7 +57,7 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
         isLoading={isLoading}
         onClick={toggleStrategyOpen}
       >
-        Stategy
+        Strategy
       </Button>
       <VaultStrategyModal
         isOpen={isStrategyOpen}
