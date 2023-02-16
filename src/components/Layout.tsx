@@ -14,7 +14,6 @@ import ConnectWalletModal, {
 import {
   DropdownMenu,
   DropdownMenuButton,
-  DropdownMenuItem,
   DropdownMenuItemLink,
   DropdownMenuItems,
 } from "@/components/DropdownMenu"
@@ -110,11 +109,11 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 leaveTo="transform opacity-0 scale-95"
               >
                 <Menu.Items className="absolute right-0 my-3 w-56 origin-top-right divide-y divide-gray-500 bg-white px-3 text-xl text-black focus:outline-none">
-                  <Menu.Item as={DropdownMenuItem} href={appLink("/yield")}>
+                  <Menu.Item as={DropdownMenuItemLink} href={appLink("/yield")}>
                     Vaults
                   </Menu.Item>
                   <Menu.Item
-                    as={DropdownMenuItem}
+                    as={DropdownMenuItemLink}
                     href={appLink("/yield/concentrators")}
                   >
                     Concentrators

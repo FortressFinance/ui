@@ -84,12 +84,3 @@ export const DropdownMenuItemLink = forwardRef<
     />
   )
 })
-
-type DropdownMenuItemProps = PropsWithChildren<Parameters<typeof Menu.Item>[0]>
-
-export const DropdownMenuItem = forwardRef<
-  HTMLButtonElement,
-  DropdownMenuItemProps
->((props, ref) => {
-  return <button className="cursor-pointer" ref={ref} {...props} />
-})
