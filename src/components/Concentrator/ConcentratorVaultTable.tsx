@@ -5,7 +5,7 @@ import { capitalizeFirstLetter } from "@/lib/helpers"
 import { ConcentratorTargetAsset, FilterCategory, VaultType } from "@/lib/types"
 import {
   useConcentratorVault,
-  useConcentratorVaultAddresses,
+  useFilteredConcentratorVaults,
 } from "@/hooks/data/concentrators"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import { useClientReady } from "@/hooks/util/useClientReady"
@@ -17,27 +17,25 @@ import { VaultTable } from "@/components/Vault/VaultTable"
 
 type ConcentratorVaultTableProps = {
   concentratorTargetAsset: ConcentratorTargetAsset
-  filter: FilterCategory
-  vaultType: VaultType
+  filterCategory: FilterCategory
 }
 
 export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
   concentratorTargetAsset,
-  filter,
-  vaultType,
+  filterCategory,
 }) => {
   const clientReady = useClientReady()
-  const concentratorVaultAddresses = useConcentratorVaultAddresses({
+  const filteredConcentratorVaults = useFilteredConcentratorVaults({
     concentratorTargetAsset,
-    vaultType,
+    filterCategory,
   })
 
   // TODO: should handle failure
   const showLoadingState =
     !clientReady ||
-    concentratorVaultAddresses.isLoading ||
+    filteredConcentratorVaults.isLoading ||
     !concentratorTargetAsset
-  const label = capitalizeFirstLetter(filter)
+  const label = capitalizeFirstLetter(filterCategory)
 
   const chainId = useActiveChainId()
   const availableChains = enabledNetworks.chains.filter((n) => n.id === chainId)
@@ -51,22 +49,22 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
         <TableEmpty heading="Unsupported network">
           Please switch to a supported network to view Concentrators.
         </TableEmpty>
-      ) : !concentratorVaultAddresses.data?.length ? (
+      ) : !filteredConcentratorVaults.data?.length ? (
         <TableEmpty heading="Where Concentrators ser?">
-          It seems we don't have {label} Concentrator Vaults for{" "}
-          {capitalizeFirstLetter(vaultType)} (yet). Feel free to check out other
-          Concentrator Vaults or try changing network. New Concentrators and
-          strategies are added often, so check back later. Don't be a stranger.
+          It seems we don't have {concentratorTargetAsset} Concentrator Vaults
+          for {capitalizeFirstLetter(filterCategory)} (yet).
         </TableEmpty>
       ) : (
-        concentratorVaultAddresses.data?.map((vaultAssetAddress, i) => (
-          <ConcentratorVaultRow
-            key={`pool-${i}`}
-            concentratorTargetAsset={concentratorTargetAsset}
-            vaultAssetAddress={vaultAssetAddress}
-            vaultType={vaultType}
-          />
-        ))
+        filteredConcentratorVaults.data?.map(
+          ({ concentratorTargetAsset, vaultAssetAddress, vaultType }, i) => (
+            <ConcentratorVaultRow
+              key={`pool-${i}`}
+              concentratorTargetAsset={concentratorTargetAsset}
+              vaultAssetAddress={vaultAssetAddress}
+              vaultType={vaultType}
+            />
+          )
+        )
       )}
     </VaultTable>
   )

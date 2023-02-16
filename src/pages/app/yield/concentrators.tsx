@@ -68,36 +68,31 @@ const ConcentratorVaults: FC = () => {
           <Tab.Panel>
             <ConcentratorVaultTable
               concentratorTargetAsset={concentratorTargetAsset}
-              filter="featured"
-              vaultType="token"
+              filterCategory="featured"
             />
           </Tab.Panel>
           <Tab.Panel>
             <ConcentratorVaultTable
               concentratorTargetAsset={concentratorTargetAsset}
-              filter="crypto"
-              vaultType="token"
+              filterCategory="crypto"
             />
           </Tab.Panel>
           <Tab.Panel>
             <ConcentratorVaultTable
               concentratorTargetAsset={concentratorTargetAsset}
-              filter="stable"
-              vaultType="token"
+              filterCategory="stable"
             />
           </Tab.Panel>
           <Tab.Panel>
             <ConcentratorVaultTable
               concentratorTargetAsset={concentratorTargetAsset}
-              filter="curve"
-              vaultType="curve"
+              filterCategory="curve"
             />
           </Tab.Panel>
           <Tab.Panel>
             <ConcentratorVaultTable
               concentratorTargetAsset={concentratorTargetAsset}
-              filter="balancer"
-              vaultType="balancer"
+              filterCategory="balancer"
             />
           </Tab.Panel>
           <Tab.Panel>
