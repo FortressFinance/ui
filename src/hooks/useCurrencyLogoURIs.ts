@@ -5,7 +5,7 @@ const TOKEN_LOGOS_API_URL =
   "https://raw.githubusercontent.com/FortressFinance/assets/master/blockchains"
 
 const getTokenLogoURI = (
-  network = "ethereum",
+  _network = "ethereum",
   tokenAddress: `0x${string}` = "0x5E8422345238F34275888049021821E8E08CAa1e"
 ) => {
   // return `${TOKEN_LOGOS_API_URL}/${network}/assets/${tokenAddress}/logo.png`

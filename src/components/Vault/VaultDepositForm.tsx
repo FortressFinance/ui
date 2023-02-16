@@ -102,7 +102,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     onSuccess: (data) => {
       form.setValue("amountOut", data.resultFormated)
     },
-    onError: (error) => {
+    onError: (_error) => {
       form.resetField("amountOut")
     },
   })
