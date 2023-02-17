@@ -1,6 +1,7 @@
-import { parseUnits } from "ethers/lib/utils.js"
+import { parseUnits } from "ethers/lib/utils.js";
 import { FC, useState } from "react"
-import { SubmitHandler, useController, useFormContext } from "react-hook-form"
+import React from "react";
+import { Controller, SubmitHandler, useController, useFormContext } from "react-hook-form"
 import { Address, useAccount } from "wagmi"
 
 import { toFixed } from "@/lib/api/util/format"
@@ -77,29 +78,64 @@ const TokenForm: FC<TokenFormProps> = ({
   const showMaxBtn =
     inputTokenBalanceOrShare?.value?.gt(0) &&
     inputTokenBalanceOrShare?.formatted !== amountIn
+  
+  const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
+  const escapeRegExp = (string: string): string => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
+  }
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <div className="grid-row-[1fr,auto,auto,max-content] grid w-full grid-cols-[auto,auto] rounded-md">
         {/* inputToken input */}
-        <input
-          className="peer relative z-[2] col-start-1 row-start-1 block w-full text-ellipsis bg-transparent px-4 pt-4 pb-2 text-2xl placeholder-white/50 focus:outline-none md:text-4xl"
-          step="any"
-          type="number"
-          placeholder="0.0"
-          {...form.register("amountIn", {
-            validate: {
-              positive: (amount) => Number(amount) > 0 || "Enter an amount",
-              lessThanBalance: (amount) =>
-                parseUnits(amount, inputToken?.decimals).lte(
+        <Controller
+          control={form.control}
+          name="amountIn"
+          rules={{
+            maxLength: 79,
+            pattern: /^[0-9]*[.,]?[0-9]*$/i
+          }}
+          render={({
+            field: { onChange, onBlur, value, name, ref },
+            fieldState: { invalid, isTouched, isDirty, error },
+            formState,
+          }) => (
+            <input
+              className="peer relative z-[2] col-start-1 row-start-1 block w-full text-ellipsis bg-transparent px-4 pt-4 pb-2 text-2xl placeholder-white/50 focus:outline-none md:text-4xl"
+              step="any"
+              // universal input options
+              inputMode="decimal"
+              autoComplete="off"
+              autoCorrect="off"
+              // text-specific options
+              type="text"
+              spellCheck="false"
+              placeholder="0.0"
+              onBlur={onBlur} // notify when input is touched
+              //ref={ref}
+              name={name}
+              value={value}
+              onChange={(event) => {
+                const amount = event.target.value
+                if(Number(amount) <= 0){
+                  error = {message: "Enter an amount", type: "value"}
+                }
+                else if(parseUnits(amount, inputToken?.decimals).gt(
                   inputTokenBalanceOrShare?.value ?? 0
-                ) ||
-                `Insufficient ${inputToken?.symbol ?? ""} ${
-                  isWithdraw ? "share" : "balance"
-                }`,
-            },
-          })}
+                )){                                   
+                  error = {message:  `Insufficient ${inputToken?.symbol ?? ""} ${
+                    isWithdraw ? "share" : "balance"
+                  }`, type: "value"}
+                }
+                const formatted = amount.replace(/,/g, '.')
+                if (formatted === '' || inputRegex.test(escapeRegExp(formatted))) {
+                  onChange(formatted)
+                }
+              }}
+            />
+          )}
         />
+        
         {/* inputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-1 flex items-start justify-self-end pr-4 pt-4">
           <TokenSelectButton
@@ -121,7 +157,8 @@ const TokenForm: FC<TokenFormProps> = ({
             { "animate-pulse": isLoadingPreview }
           )}
           step="any"
-          type="number"
+          type="text"
+          lang="en"
           placeholder="0.0"
           disabled={true}
           {...form.register("amountOut")}
@@ -175,6 +212,7 @@ const TokenForm: FC<TokenFormProps> = ({
             }
             type="submit"
           >
+            {console.log(">>>>>>>>>>", form.formState.errors.amountIn)}
             {form.formState.isDirty
               ? form.formState.isValid
                 ? submitText
