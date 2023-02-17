@@ -1,7 +1,12 @@
-import { parseUnits } from "ethers/lib/utils.js";
+import { parseUnits } from "ethers/lib/utils.js"
 import { FC, useState } from "react"
-import React from "react";
-import { Controller, SubmitHandler, useController, useFormContext } from "react-hook-form"
+import React from "react"
+import {
+  Controller,
+  SubmitHandler,
+  useController,
+  useFormContext,
+} from "react-hook-form"
 import { Address, useAccount } from "wagmi"
 
 import { toFixed } from "@/lib/api/util/format"
@@ -78,10 +83,10 @@ const TokenForm: FC<TokenFormProps> = ({
   const showMaxBtn =
     inputTokenBalanceOrShare?.value?.gt(0) &&
     inputTokenBalanceOrShare?.formatted !== amountIn
-  
+
   const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
   const escapeRegExp = (string: string): string => {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") // $& means the whole matched string
   }
 
   return (
@@ -93,7 +98,7 @@ const TokenForm: FC<TokenFormProps> = ({
           name="amountIn"
           rules={{
             maxLength: 79,
-            pattern: /^[0-9]*[.,]?[0-9]*$/i
+            pattern: /^[0-9]*[.,]?[0-9]*$/i,
           }}
           render={({
             field: { onChange, onBlur, value, name, ref },
@@ -117,25 +122,32 @@ const TokenForm: FC<TokenFormProps> = ({
               value={value}
               onChange={(event) => {
                 const amount = event.target.value
-                if(Number(amount) <= 0){
-                  error = {message: "Enter an amount", type: "value"}
+                if (Number(amount) <= 0) {
+                  error = { message: "Enter an amount", type: "value" }
+                } else if (
+                  parseUnits(amount, inputToken?.decimals).gt(
+                    inputTokenBalanceOrShare?.value ?? 0
+                  )
+                ) {
+                  error = {
+                    message: `Insufficient ${inputToken?.symbol ?? ""} ${
+                      isWithdraw ? "share" : "balance"
+                    }`,
+                    type: "value",
+                  }
                 }
-                else if(parseUnits(amount, inputToken?.decimals).gt(
-                  inputTokenBalanceOrShare?.value ?? 0
-                )){                                   
-                  error = {message:  `Insufficient ${inputToken?.symbol ?? ""} ${
-                    isWithdraw ? "share" : "balance"
-                  }`, type: "value"}
-                }
-                const formatted = amount.replace(/,/g, '.')
-                if (formatted === '' || inputRegex.test(escapeRegExp(formatted))) {
+                const formatted = amount.replace(/,/g, ".")
+                if (
+                  formatted === "" ||
+                  inputRegex.test(escapeRegExp(formatted))
+                ) {
                   onChange(formatted)
                 }
               }}
             />
           )}
         />
-        
+
         {/* inputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-1 flex items-start justify-self-end pr-4 pt-4">
           <TokenSelectButton
