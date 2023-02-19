@@ -93,7 +93,17 @@ const TokenForm: FC<TokenFormProps> = ({
           name="amountIn"
           rules={{
             maxLength: 79,
-            pattern: /^[0-9]*[.,]?[0-9]*$/i
+            pattern: /^[0-9]*[.,]?[0-9]*$/i,
+            validate: {
+              positive: (amount) => Number(amount) > 0 || "Enter an amount",
+              lessThanBalance: (amount) =>
+                parseUnits(amount, inputToken?.decimals).lte(
+                  inputTokenBalanceOrShare?.value ?? 0
+                ) ||
+                `Insufficient ${inputToken?.symbol ?? ""} ${
+                  isWithdraw ? "share" : "balance"
+                }`,
+            },
           }}
           render={({
             field: { onChange, onBlur, value, name, ref },
@@ -112,21 +122,11 @@ const TokenForm: FC<TokenFormProps> = ({
               spellCheck="false"
               placeholder="0.0"
               onBlur={onBlur} // notify when input is touched
-              //ref={ref}
+              ref={ref}
               name={name}
               value={value}
               onChange={(event) => {
                 const amount = event.target.value
-                if(Number(amount) <= 0){
-                  error = {message: "Enter an amount", type: "value"}
-                }
-                else if(parseUnits(amount, inputToken?.decimals).gt(
-                  inputTokenBalanceOrShare?.value ?? 0
-                )){                                   
-                  error = {message:  `Insufficient ${inputToken?.symbol ?? ""} ${
-                    isWithdraw ? "share" : "balance"
-                  }`, type: "value"}
-                }
                 const formatted = amount.replace(/,/g, '.')
                 if (formatted === '' || inputRegex.test(escapeRegExp(formatted))) {
                   onChange(formatted)
@@ -212,7 +212,6 @@ const TokenForm: FC<TokenFormProps> = ({
             }
             type="submit"
           >
-            {console.log(">>>>>>>>>>", form.formState.errors.amountIn)}
             {form.formState.isDirty
               ? form.formState.isValid
                 ? submitText
