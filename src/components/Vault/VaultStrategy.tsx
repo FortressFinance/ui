@@ -57,7 +57,7 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
         isLoading={isLoading}
         onClick={toggleStrategyOpen}
       >
-        Stategy
+        Strategy
       </Button>
       <VaultStrategyModal
         isOpen={isStrategyOpen}
@@ -93,9 +93,11 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
 }) => {
   const { connector } = useAccount()
 
-  const { data: vaultTokens } = useVaultTokens({ type, asset})
+  const { data: vaultTokens } = useVaultTokens({ type, asset })
 
-  const { data: ybToken } = useTokenOrNative({ address: vaultTokens.ybTokenAddress })
+  const { data: ybToken } = useTokenOrNative({
+    address: vaultTokens.ybTokenAddress,
+  })
   const isToken = useIsTokenCompounder(type)
 
   const addTokenToWallet: MouseEventHandler<HTMLButtonElement> = () => {
@@ -112,10 +114,7 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
           {!!connector && !!connector.watchAsset && (
             <Tooltip label={label}>
               <button className="h-6 w-6" onClick={addTokenToWallet}>
-                <AddToWallet
-                  className="h-6 w-6"
-                  aria-label={label}
-                />
+                <AddToWallet className="h-6 w-6" aria-label={label} />
               </button>
             </Tooltip>
           )}
@@ -219,29 +218,33 @@ const VaultStrategyText: FC<VaultStrategyTextProps> = ({
     <>
       {isToken ? (
         // THE TEXT HERE WAS WRITTEN FOR THE GLP COUMPOUNDER
-        <div className="max-h-[120px] overflow-y-auto masked-overflow">
+        <div className="masked-overflow max-h-[120px] overflow-y-auto">
           <p className="text-justify leading-loose">
             This vault accepts deposits in form of its primary asset{" "}
-            {token?.symbol} and any of its underlying assets
-            mentioned below, all of which will be converted to staked{" "}
-            {token?.symbol} automatically. </p>
+            {token?.symbol} and any of its underlying assets mentioned below,
+            all of which will be converted to staked {token?.symbol}{" "}
+            automatically.{" "}
+          </p>
           <p className="text-justify leading-loose">
             Deposited assets are used to provide liquidity for GMX traders,
             earning trading fees plus GMX emissions on its staked{" "}
-            {token?.symbol}. </p>
+            {token?.symbol}.{" "}
+          </p>
           <p className="text-justify leading-loose">
             The vault auto-compounds the accumulated rewards periodically into
-            more staked {token?.symbol}. </p>
+            more staked {token?.symbol}.{" "}
+          </p>
           <p className="text-justify leading-loose">
             Investors receive vault shares as ERC20 tokens called{" "}
-            {ybToken?.symbol}, representing their pro-rata
-            share of the compounding funds. </p>
+            {ybToken?.symbol}, representing their pro-rata share of the
+            compounding funds.{" "}
+          </p>
           <p className="text-justify leading-loose">
-            Investors can use {ybToken?.symbol} in other
-            Fortress products or integrated protocols. </p>
+            Investors can use {ybToken?.symbol} in other Fortress products or
+            integrated protocols.{" "}
+          </p>
           <p className="text-justify leading-loose">
-            The staked {token?.symbol} contains the
-            following basket of assets:{" "}
+            The staked {token?.symbol} contains the following basket of assets:{" "}
             {underlyingAssets?.map((address, index) => (
               <Fragment key={`underlying-asset-${index}`}>
                 {underlyingAssets.length > 2 &&

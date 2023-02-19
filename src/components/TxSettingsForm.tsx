@@ -65,7 +65,7 @@ const TxSettingsForm: FC = () => {
             </span>
 
             {/* Focus styles */}
-            <div className="col-span-2 col-start-1 row-span-1 row-start-1 rounded-md border-2 border-transparent bg-white peer-focus:border-black peer-disabled:border-black/0 peer-disabled:bg-white/25">
+            <div className="col-span-2 col-start-1 row-span-1 row-start-1 rounded-md border border-transparent bg-white peer-focus:border-black peer-disabled:border-black/0 peer-disabled:bg-white/25">
               &nbsp;
             </div>
           </div>

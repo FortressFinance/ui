@@ -4,7 +4,7 @@ import { FC, forwardRef, PropsWithChildren, ReactNode } from "react"
 import clsxm from "@/lib/clsxm"
 
 export const TabList = forwardRef<HTMLDivElement>((props, ref) => (
-  <div className="flex grow gap-4" ref={ref} {...props} />
+  <div className="flex gap-4 max-md:grow" ref={ref} {...props} />
 ))
 
 export const TabListGroup: FC<PropsWithChildren<{ className?: string }>> = ({
@@ -13,7 +13,7 @@ export const TabListGroup: FC<PropsWithChildren<{ className?: string }>> = ({
 }) => (
   <div
     className={clsxm(
-      "flex grow flex-wrap overflow-hidden rounded-md border-2 border-pink/30 bg-black/60",
+      "flex rounded-md border border-pink/30 bg-pink-900/80 backdrop-blur-md max-md:grow max-md:flex-wrap",
       className
     )}
     {...props}
@@ -27,10 +27,7 @@ export const TabButton = forwardRef<
   return (
     <button
       className={clsxm(
-        "grow py-2 px-4 md:py-3 md:px-6",
-        {
-          "bg-white text-black": props["aria-selected"] === true,
-        },
+        "transition-color py-2 px-4 duration-200 first:rounded-l-md last:rounded-r-md hover:bg-white hover:text-pink-900 ui-selected:bg-white ui-selected:text-pink-900 max-md:grow md:py-3 md:px-6",
         className
       )}
       ref={ref}
@@ -42,5 +39,5 @@ export const TabButton = forwardRef<
 })
 
 export const TabPanels = forwardRef<HTMLDivElement>((props, ref) => (
-  <div className="mt-6" ref={ref} {...props} />
+  <div className="mt-4" ref={ref} {...props} />
 ))

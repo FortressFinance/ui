@@ -1,13 +1,13 @@
 import { Tab } from "@headlessui/react"
 import { NextPage } from "next"
-import { FC, useState } from "react"
+import { FC } from "react"
 import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
-import { VaultProps } from "@/lib/types"
+import { FilterCategory, VaultProps } from "@/lib/types"
 import { useVaultAddresses } from "@/hooks/data"
 import useActiveChainId from "@/hooks/useActiveChainId"
-import useClientEffect from "@/hooks/useClientEffect"
+import { useClientReady } from "@/hooks/util/useClientReady"
 
 import { enabledNetworks } from "@/components/AppProviders"
 import HoldingsTable from "@/components/Holdings/HoldingsTable"
@@ -81,8 +81,6 @@ const Yield: NextPage = () => {
 
 export default Yield
 
-type FilterCategory = "featured" | "crypto" | "stable"
-
 // HARDCODE HERE AT THE MOMENT, THE BE SHOULD CLASSIFY THEM
 const addressesByFilter: Record<FilterCategory, Address[]> = {
   featured: [
@@ -94,6 +92,8 @@ const addressesByFilter: Record<FilterCategory, Address[]> = {
     "0x5402B5F40310bDED796c7D0F3FF6683f5C0cFfdf",
   ],
   stable: ["0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7"],
+  curve: [],
+  balancer: [],
 }
 
 type YieldVaultTableProps = Pick<VaultProps, "type"> & {
@@ -102,8 +102,7 @@ type YieldVaultTableProps = Pick<VaultProps, "type"> & {
 
 const YieldVaultTable: FC<YieldVaultTableProps> = ({ filter, type }) => {
   // handle hydration mismatch
-  const [ready, setReady] = useState(false)
-  useClientEffect(() => setReady(true))
+  const ready = useClientReady()
 
   const chainId = useActiveChainId()
   const availableChains = enabledNetworks.chains.filter((n) => n.id === chainId)

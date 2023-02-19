@@ -25,10 +25,7 @@ export const DropdownMenuButton = forwardRef<
   return (
     <button
       className={clsxm(
-        "group flex items-center gap-2 stroke-white hover:stroke-orange-400 hover:text-orange-400",
-        {
-          "stroke-orange-400 text-orange-400": props["aria-expanded"] === true,
-        },
+        "transition-color group flex items-center gap-2 stroke-white duration-200 hover:stroke-pink-300 hover:text-pink-300 ui-open:stroke-pink-300 ui-open:text-pink-300",
         className
       )}
       ref={ref}
@@ -60,7 +57,7 @@ export const DropdownMenuItems = forwardRef<
     >
       <div
         className={clsxm(
-          "absolute left-0 top-0 min-w-[12rem] translate-y-8 divide-y divide-pink-700 rounded-md border border-pink-700 bg-pink-900",
+          "absolute left-0 top-0 min-w-[12rem] translate-y-8 divide-y divide-pink-700 overflow-hidden rounded-md border border-pink-700 bg-pink-900 focus-visible:outline-none",
           className
         )}
         ref={ref}
@@ -70,15 +67,18 @@ export const DropdownMenuItems = forwardRef<
   )
 })
 
-type DropdownMenuItemProps = LinkProps & { className?: string }
+type DropdownMenuItemLinkProps = LinkProps & { className?: string }
 
-export const DropdownMenuItem = forwardRef<
+export const DropdownMenuItemLink = forwardRef<
   HTMLAnchorElement,
-  DropdownMenuItemProps
+  DropdownMenuItemLinkProps
 >(({ className, ...props }, ref) => {
   return (
     <Link
-      className={clsxm("block px-3 py-2.5 hover:text-orange-400", className)}
+      className={clsxm(
+        "block px-3 py-2.5 ui-active:bg-white ui-active:text-pink-900",
+        className
+      )}
       ref={ref}
       {...props}
     />

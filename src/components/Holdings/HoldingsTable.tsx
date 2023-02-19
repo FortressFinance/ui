@@ -7,7 +7,7 @@ const HoldingsTable: FC = () => {
     <div className="" role="table">
       {/* Table headings */}
       <div className="" role="rowgroup">
-        <TableRow className="rounded-b-none border-b-2 border-b-pink/30">
+        <TableRow className="rounded-b-none border-b border-b-pink/30">
           <TableHeader>Holdings</TableHeader>
           <TableHeader className="text-center">APR</TableHeader>
           <TableHeader className="text-center">TVL</TableHeader>
@@ -19,7 +19,7 @@ const HoldingsTable: FC = () => {
       </div>
 
       {/* Table body */}
-      <TableRow className="flex h-44 items-center rounded-t-none">
+      <TableRow className="flex h-48 items-center rounded-t-none">
         <div className="col-span-full">
           <h2 className="mb-3 text-center text-2xl font-semibold">
             Well this is awkward...
