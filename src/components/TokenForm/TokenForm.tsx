@@ -1,7 +1,12 @@
-import { parseUnits } from "ethers/lib/utils.js";
+import { parseUnits } from "ethers/lib/utils.js"
 import { FC, useState } from "react"
-import React from "react";
-import { Controller, SubmitHandler, useController, useFormContext } from "react-hook-form"
+import React from "react"
+import {
+  Controller,
+  SubmitHandler,
+  useController,
+  useFormContext,
+} from "react-hook-form"
 import { Address, useAccount } from "wagmi"
 
 import { toFixed } from "@/lib/api/util/format"
@@ -78,10 +83,10 @@ const TokenForm: FC<TokenFormProps> = ({
   const showMaxBtn =
     inputTokenBalanceOrShare?.value?.gt(0) &&
     inputTokenBalanceOrShare?.formatted !== amountIn
-  
+
   const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
   const escapeRegExp = (string: string): string => {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") // $& means the whole matched string
   }
 
   return (
@@ -135,7 +140,7 @@ const TokenForm: FC<TokenFormProps> = ({
             />
           )}
         />
-        
+
         {/* inputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-1 flex items-start justify-self-end pr-4 pt-4">
           <TokenSelectButton
