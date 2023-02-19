@@ -43,7 +43,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
         <div>
           <Menu.Button
             className={clsxm(
-              "text-medium inline-flex w-full items-center justify-center space-x-2 rounded-md border-2 bg-black/20 py-1 px-2 text-sm font-medium text-white hover:bg-black/30 md:py-3 md:px-4 md:text-base",
+              "text-medium inline-flex w-full items-center justify-center space-x-2 rounded-md border bg-black/20 py-1 px-2 text-sm font-medium text-white hover:bg-black/30 md:py-3 md:px-4 md:text-base",
               {
                 "border-orange-400 text-orange-400": chain.unsupported,
                 "border-transparent": !chain.unsupported,
@@ -89,7 +89,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-orange-400 text-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md border border-black/60 bg-orange-400 text-white shadow-lg focus:outline-none">
             <div className="px-1 py-1 ">
               {enabledNetworks.chains.map((curChain, index) => (
                 <Menu.Item

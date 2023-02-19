@@ -4,11 +4,11 @@ import { useRouter } from "next/router"
 const defaultMeta = {
   title: "Fortress Finance",
   siteName: "Fortress Finance",
-  description: "",
+  description: "", // TODO: site meta description
   url: "https://fortress.finance",
   type: "website",
   robots: "follow, index",
-  image: "https://fortress.finance/images/large-og.png",
+  image: "https://fortress.finance/images/fortress-og.png",
 }
 
 type SeoProps = {

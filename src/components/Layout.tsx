@@ -14,7 +14,7 @@ import ConnectWalletModal, {
 import {
   DropdownMenu,
   DropdownMenuButton,
-  DropdownMenuItem,
+  DropdownMenuItemLink,
   DropdownMenuItems,
 } from "@/components/DropdownMenu"
 import ExternalLinks from "@/components/ExternalLinks"
@@ -42,7 +42,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <AppProviders>
       <div className="relative z-[1] grid min-h-screen grid-cols-1 grid-rows-[auto,1fr,auto]">
-        <header className="sticky top-0 z-10 border-b-2 border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
+        <header className="sticky top-0 z-10 border-b border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
             <div className="flex items-center space-x-10">
               <Link className="group" href={appLink("/")}>
@@ -63,11 +63,14 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 <Menu as={DropdownMenu}>
                   <Menu.Button as={DropdownMenuButton}>Yield</Menu.Button>
                   <Menu.Items as={DropdownMenuItems}>
-                    <Menu.Item as={DropdownMenuItem} href={appLink("/yield")}>
+                    <Menu.Item
+                      as={DropdownMenuItemLink}
+                      href={appLink("/yield")}
+                    >
                       Vaults
                     </Menu.Item>
                     <Menu.Item
-                      as={DropdownMenuItem}
+                      as={DropdownMenuItemLink}
                       href={appLink("/yield/concentrators")}
                     >
                       Concentrators
@@ -106,11 +109,11 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 leaveTo="transform opacity-0 scale-95"
               >
                 <Menu.Items className="absolute right-0 my-3 w-56 origin-top-right divide-y divide-gray-500 bg-white px-3 text-xl text-black focus:outline-none">
-                  <Menu.Item as={DropdownMenuItem} href={appLink("/yield")}>
+                  <Menu.Item as={DropdownMenuItemLink} href={appLink("/yield")}>
                     Vaults
                   </Menu.Item>
                   <Menu.Item
-                    as={DropdownMenuItem}
+                    as={DropdownMenuItemLink}
                     href={appLink("/yield/concentrators")}
                   >
                     Concentrators
@@ -126,7 +129,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         <footer className="layout py-6">
           <div className="grid grid-cols-1 grid-rows-2 gap-4 md:grid-cols-3 md:grid-rows-1">
             <a
-              className="ml-3 items-center rounded-full bg-black/40 py-1 text-center text-xs font-medium leading-5 text-white/70 hover:bg-black/60 hover:text-white/90 md:col-start-2"
+              className="ml-3 items-center rounded-full bg-black/40 py-1 text-center text-xs font-medium leading-5 text-white/70 hover:bg-pink-900/70 hover:text-white/90 md:col-start-2"
               href="https://docs.fortress.finance/protocol/risks"
               target="_blank"
               rel="noreferrer"

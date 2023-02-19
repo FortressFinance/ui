@@ -29,7 +29,7 @@ export const TableRow: FC<PropsWithChildren<TableRowProps>> = ({
   return (
     <div
       className={clsx(
-        "relative grid grid-cols-[4fr,1fr,1fr,1fr,3.5rem] items-center gap-x-2 overflow-hidden rounded-md bg-black/60 p-3 text-xs backdrop-blur-md sm:text-sm md:gap-x-3 lg:px-6 lg:text-base",
+        "relative grid grid-cols-[4fr,1fr,1fr,1fr,3.5rem] items-center gap-x-2 overflow-hidden rounded-md bg-pink-900/80 p-3 text-xs backdrop-blur-md sm:text-sm md:gap-x-3 lg:px-6 lg:text-base",
         className
       )}
       role="row"
@@ -59,10 +59,7 @@ export const TableHeaderRow: FC<PropsWithChildren<TableRowProps>> = ({
   return (
     <div role="rowgroup">
       <TableRow
-        className={clsxm(
-          "rounded-b-none border-b-2 border-b-pink/30",
-          className
-        )}
+        className={clsxm("rounded-b-none border-b border-b-pink/30", className)}
         {...props}
       >
         {children}
