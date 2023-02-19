@@ -31,7 +31,7 @@ const buttonClasses = (
   variant: ButtonVariant = "base"
 ) =>
   clsxm(
-    "inline-grid grid-cols-1 grid-rows-1 items-center justify-center rounded-md px-5 py-3 disabled:opacity-75",
+    "inline-grid grid-cols-1 grid-rows-1 font-medium items-center justify-center rounded px-5 py-3 disabled:opacity-75",
     {
       "text-lg lg:text-xl": size === "large",
       "text-xs lg:text-xs": size === "small",
