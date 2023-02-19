@@ -18,7 +18,8 @@ export const queryKeys = createQueryKeyStore({
       user: Address | undefined
       type: string
     }) => [chainId, type, id, user ?? "0x"],
-    apr: ({ asset }: { asset: Address | undefined }) => [asset ?? "0x"],
+    apy: ({ asset }: { asset: Address | undefined }) => ["apy", asset ?? "0x"],
+    apr: ({ asset }: { asset: Address | undefined }) => ["apr", asset ?? "0x"],
     previewTokenDeposit: ({
       chainId,
       id,
