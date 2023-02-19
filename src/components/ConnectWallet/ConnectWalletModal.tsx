@@ -74,8 +74,8 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
       {error && <div className="mt-6 text-center">{error.message}</div>}
 
       <div className="mt-6 text-center font-mono text-xs">
-        By connecting a wallet, you agree to XXXX Terms of Service and
-        acknowledge that you have read and understand the XXXX Protocol
+        By connecting a wallet, you agree to Fortress Finance Terms of Service and
+        acknowledge that you have read and understand the Fortress Finance Protocol
         Disclaimer
       </div>
     </OrangeModal>
