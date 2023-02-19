@@ -8,7 +8,7 @@ import { useVaultTokens } from "@/hooks/data"
 import AssetLogo from "@/components/AssetLogo"
 import { TableCell, TableRow } from "@/components/Table"
 import {
-  VaultApr,
+  VaultApy,
   VaultDepositedLpTokens,
   VaultName,
   VaultTvl,
@@ -53,7 +53,7 @@ const VaultRow: FC<VaultProps> = (props) => {
             <VaultStrategyButton {...props} />
           </TableCell>
           <TableCell className="pointer-events-none text-center">
-            <VaultApr {...props} />
+            <VaultApy {...props} />
           </TableCell>
           <TableCell className="pointer-events-none text-center">
             <VaultTvl {...props} />

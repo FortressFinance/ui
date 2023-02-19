@@ -7,7 +7,6 @@ import {
   useVaultDepositedAssets,
   useVaultName,
   useVaultPoolId,
-  useVaultTotalApr,
   useVaultTvl,
 } from "@/hooks/data"
 import useVaultApy from "@/hooks/data/useVaultApy"
@@ -36,20 +35,6 @@ export const VaultApy: FC<VaultProps> = (props) => {
   return (
     <Skeleton isLoading={isLoadingId || isLoading}>
       <Percentage>{totalApy ?? 0}</Percentage>
-    </Skeleton>
-  )
-}
-
-export const VaultApr: FC<VaultProps> = (props) => {
-  const { data: poolId, isLoading: isLoadingId } = useVaultPoolId(props)
-  const { data: totalApr, isLoading } = useVaultTotalApr({
-    ...props,
-    poolId,
-  })
-
-  return (
-    <Skeleton isLoading={isLoadingId || isLoading}>
-      <Percentage>{totalApr ?? 0}</Percentage>
     </Skeleton>
   )
 }
