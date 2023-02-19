@@ -9,7 +9,7 @@ const HoldingsTable: FC = () => {
       <div className="" role="rowgroup">
         <TableRow className="rounded-b-none border-b border-b-pink/30">
           <TableHeader>Holdings</TableHeader>
-          <TableHeader className="text-center">APR</TableHeader>
+          <TableHeader className="text-center">APY</TableHeader>
           <TableHeader className="text-center">TVL</TableHeader>
           <TableHeader className="text-center">Deposit</TableHeader>
           <TableHeader>

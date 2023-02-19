@@ -10,6 +10,7 @@ import {
   useVaultTotalApr,
   useVaultTvl,
 } from "@/hooks/data"
+import useVaultApy from "@/hooks/data/useVaultApy"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
 import Currency from "@/components/Currency"
@@ -21,6 +22,20 @@ export const VaultName: FC<VaultProps> = (props) => {
   return (
     <Skeleton isLoading={isLoading}>
       {isLoading ? "Loading vault..." : vaultName}
+    </Skeleton>
+  )
+}
+
+export const VaultApy: FC<VaultProps> = (props) => {
+  const { data: poolId, isLoading: isLoadingId } = useVaultPoolId(props)
+  const { data: totalApy, isLoading } = useVaultApy({
+    ...props,
+    poolId,
+  })
+
+  return (
+    <Skeleton isLoading={isLoadingId || isLoading}>
+      <Percentage>{totalApy ?? 0}</Percentage>
     </Skeleton>
   )
 }
