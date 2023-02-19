@@ -188,6 +188,8 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     }
   }
 
+  console.log(underlyingAssets)
+
   return (
     <div className="rounded-md bg-white/10 p-4">
       <h2 className="mb-3 text-center font-medium">Deposit</h2>

@@ -6,11 +6,14 @@ import {
 } from "@/lib/findApiVaultForAsset"
 import { VaultProps } from "@/lib/types"
 import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
+import useActiveChainId from "@/hooks/useActiveChainId"
 import useRegistryContract from "@/hooks/useRegistryContract"
 import {
   useIsCurveCompounder,
   useIsTokenCompounder,
 } from "@/hooks/useVaultTypes"
+
+import { vaultCompounderAbi } from "@/constant/abi"
 
 export default function useVaultTokens({ asset, type }: VaultProps) {
   // Preferred: API request
@@ -18,6 +21,7 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
   const apiTokenQuery = useApiTokenVaults({ type })
 
   // Fallback: contract requests
+  const chainId = useActiveChainId()
   const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
   const enableFallback = isToken
@@ -34,15 +38,12 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
     args: [asset ?? "0x"],
     enabled: enableFallback,
   })
-  const regGetUnderlying = useContractRead({
-    ...useRegistryContract(),
-    functionName: isToken
-      ? "getTokenCompoundersList"
-      : isCurve
-      ? "getCurveCompounderUnderlyingAssets"
-      : "getBalancerCompounderUnderlyingAssets",
-    args: [regGetCompounder.data ?? "0x"],
-    enabled: enableFallback && !!regGetCompounder.data,
+  const vaultGetUnderlying = useContractRead({
+    chainId,
+    address: regGetCompounder.data,
+    abi: vaultCompounderAbi,
+    functionName: "getUnderlyingAssets",
+    enabled: enableFallback && !isToken && !!regGetCompounder.data,
   })
 
   // Prioritize API response until it has errored
@@ -75,14 +76,15 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
   }
 
   // Fallback to contract data after failure
-  const queries = [regGetCompounder, regGetUnderlying]
+  const queries = [regGetCompounder, vaultGetUnderlying]
   return {
     isError: queries.some((q) => q.isError),
     isLoading: queries.some((q) => q.isLoading),
     isFetching: queries.some((q) => q.isFetching),
     data: {
       ybTokenAddress: regGetCompounder.data,
-      underlyingAssetAddresses: regGetUnderlying.data,
+      underlyingAssetAddresses:
+        isToken && asset ? [asset] : vaultGetUnderlying.data,
     },
   }
 }
