@@ -11,6 +11,7 @@ import {
   useWaitForTransaction,
 } from "wagmi"
 
+import { toFixed } from "@/lib/api/util/format"
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
@@ -100,9 +101,9 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     amount: value.toString(),
     type: props.type,
     onSuccess: (data) => {
-      form.setValue("amountOut", data.resultFormated)
+      form.setValue("amountOut", toFixed(data.resultFormated ?? "0.0", 6))
     },
-    onError: (_error) => {
+    onError: () => {
       form.resetField("amountOut")
     },
   })
