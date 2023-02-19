@@ -12,7 +12,11 @@ import {
   useIsTokenCompounder,
 } from "@/hooks/useVaultTypes"
 
-export default function useVaultApy({ asset, poolId, type }: VaultDynamicProps) {
+export default function useVaultApy({
+  asset,
+  poolId,
+  type,
+}: VaultDynamicProps) {
   const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
   // Preferred: API request
@@ -39,8 +43,8 @@ export default function useVaultApy({ asset, poolId, type }: VaultDynamicProps) 
   const n = yearInSecond / compoundPeriod
 
   if (isCurveFallbackEnabled) {
-    const totalApr = curveVaultGraphTotalApr.data?? 0
-    const apy = (1 + totalApr/n)**n - 1
+    const totalApr = curveVaultGraphTotalApr.data ?? 0
+    const apy = (1 + totalApr / n) ** n - 1
     return {
       ...curveVaultGraphTotalApr,
       data: apy,
@@ -48,8 +52,8 @@ export default function useVaultApy({ asset, poolId, type }: VaultDynamicProps) 
   }
 
   if (isBalancerFallbackEnabled) {
-    const totalApr = balancerVaultGraphTotalApr.data?? 0
-    const apy = (1 + totalApr/n)**n - 1
+    const totalApr = balancerVaultGraphTotalApr.data ?? 0
+    const apy = (1 + totalApr / n) ** n - 1
     return {
       ...balancerVaultGraphTotalApr,
       data: apy,
@@ -57,14 +61,13 @@ export default function useVaultApy({ asset, poolId, type }: VaultDynamicProps) 
   }
 
   if (isTokenFallbackEnabled) {
-    const totalApr = tokenVaultGraphTotalApr.data?? 0
-    const apy = (1 + totalApr/n)**n - 1
+    const totalApr = tokenVaultGraphTotalApr.data ?? 0
+    const apy = (1 + totalApr / n) ** n - 1
     return {
       ...tokenVaultGraphTotalApr,
       data: apy,
     }
   }
-
 
   return {
     ...apiQuery,
