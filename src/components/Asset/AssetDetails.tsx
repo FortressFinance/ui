@@ -1,13 +1,17 @@
 import { FC } from "react"
+import { Address } from "wagmi"
 
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 import { useClientReady } from "@/hooks/util/useClientReady"
 
-import { AssetProps } from "@/components/Asset/types"
 import Skeleton from "@/components/Skeleton"
 
-export const AssetSymbol: FC<AssetProps> = ({ address }) => {
+export type AssetDetailsProps = {
+  address: Address | undefined
+}
+
+export const AssetSymbol: FC<AssetDetailsProps> = ({ address }) => {
   const isReady = useClientReady()
   const { data: token, isLoading } = useTokenOrNative({ address })
   return (
@@ -17,7 +21,7 @@ export const AssetSymbol: FC<AssetProps> = ({ address }) => {
   )
 }
 
-export const AssetBalance: FC<AssetProps> = ({ address }) => {
+export const AssetBalance: FC<AssetDetailsProps> = ({ address }) => {
   const isReady = useClientReady()
   const { data: balance, isLoading } = useTokenOrNativeBalance({ address })
   return (
