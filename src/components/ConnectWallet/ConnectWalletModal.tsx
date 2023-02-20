@@ -79,6 +79,7 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
         <Link
           href="https://docs.fortress.finance/protocol"
           className="font-bold underline"
+          target="_blank"
         >
           Fortress Protocol documentation
         </Link>{" "}
@@ -86,6 +87,7 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
         <Link
           href="https://docs.fortress.finance/protocol/risks"
           className="font-bold underline"
+          target="_blank"
         >
           risks.
         </Link>
@@ -213,6 +215,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
         <Link
           href="https://docs.fortress.finance/protocol"
           className="font-bold underline"
+          target="_blank"
         >
           Fortress Protocol documentation
         </Link>{" "}
@@ -220,6 +223,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
         <Link
           href="https://docs.fortress.finance/protocol/risks"
           className="font-bold underline"
+          target="_blank"
         >
           risks.
         </Link>
