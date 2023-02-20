@@ -129,13 +129,20 @@ export function useConcentratorVault({
 
 export function useConcentratorAddress({
   concentratorTargetAsset,
-  vaultAssetAddress,
-  vaultType,
+  filterCategory,
 }: {
   concentratorTargetAsset: Address
-  vaultAssetAddress?: Address
-  vaultType?: VaultType
+  filterCategory: FilterCategory
 }) {
+  // this is pretty convoluted...
+  // get the vaults relevant to this concentrator
+  const vaultsForThisConcentrator = useFilteredConcentratorVaults({
+    concentratorTargetAsset,
+    filterCategory,
+  })
+  // take the first one, because they all have the same vaultAssetAddress
+  const firstVaultForThisConcentrator = vaultsForThisConcentrator.data?.[0]
+  // use the vaultAssetAddress to get the concentrator address
   return useContractRead({
     ...useRegistryContract(),
     functionName:
@@ -144,10 +151,12 @@ export function useConcentratorAddress({
         : concentratorTargetAsset ===
           "0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7"
         ? "getCurveCvxCrvConcentrator"
-        : vaultType === "balancer"
+        : firstVaultForThisConcentrator?.vaultType === "balancer"
         ? "getBalancerEthConcentrators"
         : "getCurveEthConcentrators",
-    args: [vaultAssetAddress ?? "0x"],
-    enabled: !!vaultAssetAddress && !!vaultType,
+    args: [firstVaultForThisConcentrator?.vaultAssetAddress ?? "0x"],
+    enabled:
+      !!firstVaultForThisConcentrator?.vaultAssetAddress &&
+      !!firstVaultForThisConcentrator?.vaultType,
   })
 }

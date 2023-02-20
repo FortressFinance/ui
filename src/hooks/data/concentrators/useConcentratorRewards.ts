@@ -4,6 +4,7 @@ import {
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
+  useWaitForTransaction,
 } from "wagmi"
 
 import useActiveChainId from "@/hooks/useActiveChainId"
@@ -40,12 +41,14 @@ export function useConcentratorClaim({
     abi: concentratorAbi,
     functionName: "claim",
     enabled: !!userAddress,
+    args: [userAddress ?? "0x"],
   })
   const write = useContractWrite(prepareWrite.config)
+  const waitWrite = useWaitForTransaction({ hash: write.data?.hash })
   return {
     error: prepareWrite.error || write.error,
     isError: prepareWrite.isError || write.isError,
-    isLoading: prepareWrite.isLoading || write.isLoading,
-    write,
+    isLoading: prepareWrite.isLoading || write.isLoading || waitWrite.isLoading,
+    write: write?.write,
   }
 }
