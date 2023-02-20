@@ -28,7 +28,7 @@ export function middleware(req: NextRequest) {
   // Get the current host (e,g, "app", "")
   const currentHost =
     process.env.NODE_ENV === "production" && process.env.VERCEL === "1"
-      ? hostname.replace(".fortress.finance", "")
+      ? hostname.replace(".fortress.finance", "").replace(".staging", "")
       : hostname.replace(".localhost:3000", "")
 
   // Rewrite app.* subdomain requests to pages/app
