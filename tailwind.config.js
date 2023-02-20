@@ -47,6 +47,11 @@ module.exports = {
           900: "#1e0d1c",
         },
       },
+      screens: {
+        "3xl": "1920px",
+        "4xl": "2560px",
+        "5xl": "3840px",
+      },
     },
   },
   plugins: [require("@headlessui/tailwindcss")],

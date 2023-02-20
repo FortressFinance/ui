@@ -7,6 +7,7 @@ import { RxHamburgerMenu } from "react-icons/rx"
 
 import { appLink } from "@/lib/helpers"
 
+import AnimatedBackground from "@/components/AnimatedBackground"
 import AppProviders from "@/components/AppProviders"
 import ConnectWalletModal, {
   DisconnectWalletModal,
@@ -22,7 +23,6 @@ import ExternalLinks from "@/components/ExternalLinks"
 import { useConnectWallet } from "@/store/connectWallet"
 
 import FortressLogoAnimated from "~/images/fortress-animated-logo.gif"
-import FortressBackground from "~/images/fortress-background.gif"
 import FortressLogo from "~/svg/fortress-logo.svg"
 
 const ConnectWalletButton = dynamic(
@@ -143,13 +143,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         </footer>
       </div>
 
-      <div className="fixed inset-0 z-0 flex h-screen w-screen items-center justify-center overflow-hidden">
-        <Image
-          src={FortressBackground}
-          className="min-h-full min-w-full object-cover"
-          priority
-          alt=""
-        />
+      <div className="fixed inset-0 z-0 flex h-screen w-screen overflow-hidden">
+        <AnimatedBackground />
       </div>
 
       <ConnectWalletModal
