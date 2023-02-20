@@ -73,10 +73,24 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
 
       {error && <div className="mt-6 text-center">{error.message}</div>}
 
-      <div className="mt-6 text-center font-mono text-xs">
-        By connecting a wallet, you agree to XXXX Terms of Service and
-        acknowledge that you have read and understand the XXXX Protocol
-        Disclaimer
+      <div className="mt-6 text-justify font-mono text-xs">
+        By connecting your wallet to Fortress finance, you acknowledge that you
+        have read and understand the{" "}
+        <Link
+          href="https://docs.fortress.finance/protocol"
+          className="font-bold underline"
+          target="_blank"
+        >
+          Fortress Protocol documentation
+        </Link>{" "}
+        and acknowledge smart contract security{" "}
+        <Link
+          href="https://docs.fortress.finance/protocol/risks"
+          className="font-bold underline"
+          target="_blank"
+        >
+          risks.
+        </Link>
       </div>
     </OrangeModal>
   )
@@ -195,12 +209,13 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
           </Link>
         </div>
       </div>
-      <div className="w-7/8 mt-2 text-xs">
+      <div className="mt-6 text-justify font-mono text-xs">
         By connecting your wallet to Fortress finance, you acknowledge that you
         have read and understand the{" "}
         <Link
           href="https://docs.fortress.finance/protocol"
           className="font-bold underline"
+          target="_blank"
         >
           Fortress Protocol documentation
         </Link>{" "}
@@ -208,8 +223,9 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
         <Link
           href="https://docs.fortress.finance/protocol/risks"
           className="font-bold underline"
+          target="_blank"
         >
-          Risks.
+          risks.
         </Link>
       </div>
     </ConnectWalletModalBase>
