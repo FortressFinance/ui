@@ -1,6 +1,7 @@
 import { Address, useContractRead, useContractReads } from "wagmi"
 
-import { ConcentratorTargetAsset, FilterCategory, VaultType } from "@/lib/types"
+import { ETH_TOKEN_ADDRESS } from "@/lib/isEthTokenAddress"
+import { FilterCategory, VaultType } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useRegistryContract from "@/hooks/useRegistryContract"
 
@@ -15,11 +16,11 @@ const filterCategoryByIndex: FilterCategory[][] = [
   ["balancer"],
   ["curve"],
 ]
-const targetAssetByIndex: ConcentratorTargetAsset[] = [
-  "auraBAL",
-  "cvxCRV",
-  "ETH",
-  "ETH",
+const targetAssetByIndex: Address[] = [
+  "0x616e8BfA43F920657B3497DBf40D6b1A02D4608d",
+  "0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7",
+  ETH_TOKEN_ADDRESS,
+  ETH_TOKEN_ADDRESS,
 ]
 const vaultTypeByIndex: VaultType[] = ["token", "token", "balancer", "curve"]
 
@@ -62,7 +63,7 @@ export function useFilteredConcentratorVaults({
   concentratorTargetAsset,
   filterCategory,
 }: {
-  concentratorTargetAsset: ConcentratorTargetAsset
+  concentratorTargetAsset: Address
   filterCategory: FilterCategory
 }) {
   const allConcentratorVaults = useAllConcentratorVaults()
@@ -82,7 +83,7 @@ export function useConcentratorVault({
   vaultAssetAddress,
   vaultType,
 }: {
-  concentratorTargetAsset: ConcentratorTargetAsset
+  concentratorTargetAsset: Address
   vaultAssetAddress?: Address
   vaultType: VaultType
 }) {
@@ -92,9 +93,10 @@ export function useConcentratorVault({
   const compounderQuery = useContractRead({
     ...useRegistryContract(),
     functionName:
-      concentratorTargetAsset === "auraBAL"
+      concentratorTargetAsset === "0x616e8BfA43F920657B3497DBf40D6b1A02D4608d"
         ? "getBalancerAuraBalConcentratorCompounder"
-        : concentratorTargetAsset === "cvxCRV"
+        : concentratorTargetAsset ===
+          "0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7"
         ? "getCurveCvxCrvConcentratorCompounder"
         : vaultType === "balancer"
         ? "getBalancerEthConcentratorCompounder"
@@ -130,16 +132,17 @@ export function useConcentratorAddress({
   vaultAssetAddress,
   vaultType,
 }: {
-  concentratorTargetAsset: ConcentratorTargetAsset
+  concentratorTargetAsset: Address
   vaultAssetAddress?: Address
   vaultType?: VaultType
 }) {
   return useContractRead({
     ...useRegistryContract(),
     functionName:
-      concentratorTargetAsset === "auraBAL"
+      concentratorTargetAsset === "0x616e8BfA43F920657B3497DBf40D6b1A02D4608d"
         ? "getBalancerAuraBalConcentrator"
-        : concentratorTargetAsset === "cvxCRV"
+        : concentratorTargetAsset ===
+          "0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7"
         ? "getCurveCvxCrvConcentrator"
         : vaultType === "balancer"
         ? "getBalancerEthConcentrators"

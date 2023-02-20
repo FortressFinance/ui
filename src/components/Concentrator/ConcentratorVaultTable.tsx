@@ -2,7 +2,7 @@ import { FC } from "react"
 import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
-import { ConcentratorTargetAsset, FilterCategory, VaultType } from "@/lib/types"
+import { FilterCategory, VaultType } from "@/lib/types"
 import {
   useConcentratorVault,
   useFilteredConcentratorVaults,
@@ -16,7 +16,7 @@ import VaultRow from "@/components/Vault/VaultRow"
 import { VaultTable } from "@/components/Vault/VaultTable"
 
 type ConcentratorVaultTableProps = {
-  concentratorTargetAsset: ConcentratorTargetAsset
+  concentratorTargetAsset: Address
   filterCategory: FilterCategory
 }
 
@@ -71,7 +71,7 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
 }
 
 type ConcentratorVaultRowProps = {
-  concentratorTargetAsset: ConcentratorTargetAsset
+  concentratorTargetAsset: Address
   vaultAssetAddress: Address
   vaultType: VaultType
 }

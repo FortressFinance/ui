@@ -9,12 +9,12 @@ import CurveLogo from "~/images/assets/curve.png"
 
 type AssetLogoProps = {
   name: string
-  className: string
+  className?: string
   style?: CSSProperties
   tokenAddress?: `0x${string}`
 }
 
-const AssetLogo: FC<AssetLogoProps> = ({
+export const AssetLogo: FC<AssetLogoProps> = ({
   className,
   name,
   tokenAddress,
@@ -43,5 +43,3 @@ const AssetLogo: FC<AssetLogoProps> = ({
     </span>
   )
 }
-
-export default AssetLogo

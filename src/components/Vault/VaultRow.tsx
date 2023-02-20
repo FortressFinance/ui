@@ -5,7 +5,7 @@ import clsxm from "@/lib/clsxm"
 import { VaultProps } from "@/lib/types"
 import { useVaultTokens } from "@/hooks/data"
 
-import AssetLogo from "@/components/AssetLogo"
+import { AssetLogo } from "@/components/Asset"
 import { TableCell, TableRow } from "@/components/Table"
 import {
   VaultApy,

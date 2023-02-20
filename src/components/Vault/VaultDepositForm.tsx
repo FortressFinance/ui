@@ -52,6 +52,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     reValidateMode: "onChange",
   })
 
+  console.log(underlyingAssets)
   // Watch form values
   const amountIn = form.watch("amountIn")
   const inputTokenAddress = form.watch("inputToken")

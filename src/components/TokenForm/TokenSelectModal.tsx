@@ -7,7 +7,7 @@ import clsxm from "@/lib/clsxm"
 import { VaultType } from "@/lib/types"
 import useTokensOrNative from "@/hooks/useTokensOrNative"
 
-import AssetLogo from "@/components/AssetLogo"
+import { AssetLogo } from "@/components/Asset"
 import { ModalBaseProps } from "@/components/Modal/ModalBase"
 import PurpleModal, { PurpleModalContent } from "@/components/Modal/PurpleModal"
 import MultiLayerTokenLogo from "@/components/MultiLayerTokenLogo"

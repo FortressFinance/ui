@@ -4,7 +4,7 @@ import { Address } from "wagmi"
 
 import { VaultType } from "@/lib/types"
 
-import AssetLogo from "@/components/AssetLogo"
+import { AssetLogo } from "@/components/Asset"
 
 import BalancerLogo from "~/images/assets/balancer.png"
 import FortressBalancerLogo from "~/images/assets/balancer.png"

@@ -1,9 +1,10 @@
 import { Tab } from "@headlessui/react"
 import { NextPage } from "next"
 import { FC, useState } from "react"
+import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
-import { ConcentratorTargetAsset, FilterCategory } from "@/lib/types"
+import { FilterCategory } from "@/lib/types"
 
 import {
   ConcentratorMenu,
@@ -43,7 +44,7 @@ const filterCategories: FilterCategory[] = [
 
 const ConcentratorVaults: FC = () => {
   const [concentratorTargetAsset, setConcentratorTargetAsset] =
-    useState<ConcentratorTargetAsset>("auraBAL")
+    useState<Address>("0x616e8BfA43F920657B3497DBf40D6b1A02D4608d")
   const [filterIndex, setFilterIndex] = useState(0)
 
   return (
