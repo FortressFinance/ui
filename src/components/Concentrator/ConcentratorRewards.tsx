@@ -7,7 +7,7 @@ import {
   useFilteredConcentratorVaults,
 } from "@/hooks/data/concentrators"
 
-import { AssetLogo, AssetSymbol } from "@/components/Asset"
+import { AssetBalance, AssetLogo, AssetSymbol } from "@/components/Asset"
 import Button from "@/components/Button"
 
 type ConcentratorRewardsProps = {
@@ -40,9 +40,6 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
       <div className="grid grid-cols-[auto,1fr,auto] items-center gap-2 py-4">
         <div className="relative h-9 w-9 rounded-full bg-white">
           <AssetLogo name="token" tokenAddress={concentratorTargetAsset} />
-          {/* TODO: Need logos for target assets */}
-          {/* Should we have those hardcoded? Should we get them by address? How to get address? */}
-          {/* <AssetLogo name={concentratorTargetAsset} className="h-6 w-6" /> */}
         </div>
         <div>
           <h1 className="text-sm">Concentrator</h1>
@@ -71,7 +68,8 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
           </dd>
           <dt className="text-xs font-medium text-white/80">Balance</dt>
           <dd className="text-right text-xs font-medium text-white/80">
-            132 <AssetSymbol address={concentratorTargetAsset} />
+            <AssetBalance address={concentratorTargetAsset} />{" "}
+            <AssetSymbol address={concentratorTargetAsset} />
           </dd>
           <dt className="text-sm font-semibold leading-relaxed">
             <span className="bg-gradient-to-r from-orange to-pink bg-clip-text text-transparent">
