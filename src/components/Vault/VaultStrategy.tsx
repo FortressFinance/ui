@@ -13,6 +13,7 @@ import { UseVaultTokensResult } from "@/hooks/data/useVaultTokens"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
+import { AssetSymbol } from "@/components/Asset"
 import Button from "@/components/Button"
 import { ModalBaseProps } from "@/components/Modal/ModalBase"
 import PurpleModal, {
@@ -20,7 +21,6 @@ import PurpleModal, {
   PurpleModalHeader,
 } from "@/components/Modal/PurpleModal"
 import Percentage from "@/components/Percentage"
-import TokenSymbol from "@/components/TokenSymbol"
 import Tooltip from "@/components/Tooltip"
 import { CurveBalancerApr } from "@/components/Vault/APR/CurveBalancerApr"
 import { TokenApr } from "@/components/Vault/APR/TokenApr"
@@ -254,9 +254,9 @@ const VaultStrategyText: FC<VaultStrategyTextProps> = ({
                   : index > 0
                   ? " and "
                   : null}
-                <TokenSymbol
+                <AssetSymbol
                   key={`token-symbol-${index}`}
-                  address={(address ?? "0x") as `0x${string}`}
+                  assetAddress={(address ?? "0x") as `0x${string}`}
                 />
               </Fragment>
             ))}
@@ -278,9 +278,9 @@ const VaultStrategyText: FC<VaultStrategyTextProps> = ({
                 : index > 0
                 ? " and "
                 : null}
-              <TokenSymbol
+              <AssetSymbol
                 key={`token-symbol-${index}`}
-                address={(address ?? "0x") as `0x${string}`}
+                assetAddress={(address ?? "0x") as `0x${string}`}
               />
             </Fragment>
           ))}
