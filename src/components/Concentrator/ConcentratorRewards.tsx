@@ -48,7 +48,7 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
           <h1 className="text-sm">Concentrator</h1>
           <h2 className="font-semibold">
             <span className="bg-gradient-to-r from-orange to-pink bg-clip-text text-transparent">
-              <AssetSymbol assetAddress={concentratorTargetAsset} />
+              <AssetSymbol address={concentratorTargetAsset} />
             </span>
           </h2>
         </div>
@@ -71,7 +71,7 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
           </dd>
           <dt className="text-xs font-medium text-white/80">Balance</dt>
           <dd className="text-right text-xs font-medium text-white/80">
-            132 <AssetSymbol assetAddress={concentratorTargetAsset} />
+            132 <AssetSymbol address={concentratorTargetAsset} />
           </dd>
           <dt className="text-sm font-semibold leading-relaxed">
             <span className="bg-gradient-to-r from-orange to-pink bg-clip-text text-transparent">
@@ -79,7 +79,7 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
             </span>
           </dt>
           <dd className="text-right text-sm font-bold leading-relaxed">
-            121 <AssetSymbol assetAddress={concentratorTargetAsset} />
+            121 <AssetSymbol address={concentratorTargetAsset} />
           </dd>
         </dl>
 

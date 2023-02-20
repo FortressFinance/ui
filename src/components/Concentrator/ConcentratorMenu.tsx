@@ -42,7 +42,7 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
         disabled={isLoading}
       >
         <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-left">
-          <AssetSymbol assetAddress={concentratorTargetAsset} />
+          <AssetSymbol address={concentratorTargetAsset} />
         </div>
         <ChevronDown className="w-3 shrink-0 stroke-white group-focus-visible:stroke-pink-900 ui-open:rotate-180 ui-not-open:group-hover:stroke-pink-900" />
       </Menu.Button>
@@ -55,7 +55,7 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
               className="block w-full overflow-hidden text-ellipsis whitespace-nowrap px-4 py-3 text-left ui-active:bg-white ui-active:text-pink-900"
               onClick={() => setConcentratorTargetAsset(targetAsset)}
             >
-              <AssetSymbol assetAddress={targetAsset} />
+              <AssetSymbol address={targetAsset} />
             </Menu.Item>
           ))}
       </Menu.Items>

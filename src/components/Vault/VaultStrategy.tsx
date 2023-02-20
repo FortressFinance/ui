@@ -206,13 +206,9 @@ const VaultStrategyText: FC<VaultStrategyTextProps> = ({
   asset,
 }) => {
   const isToken = useIsTokenCompounder(type)
-  const { data: token } = useTokenOrNative({ address: asset })
   const { data: vaultTokens } = useVaultTokens({
     asset,
     type,
-  })
-  const { data: ybToken } = useTokenOrNative({
-    address: vaultTokens.ybTokenAddress,
   })
   return (
     <>
@@ -221,30 +217,32 @@ const VaultStrategyText: FC<VaultStrategyTextProps> = ({
         <div className="masked-overflow max-h-[120px] overflow-y-auto">
           <p className="text-justify leading-loose">
             This vault accepts deposits in form of its primary asset{" "}
-            {token?.symbol} and any of its underlying assets mentioned below,
-            all of which will be converted to staked {token?.symbol}{" "}
-            automatically.{" "}
+            <AssetSymbol address={asset} /> and any of its underlying assets
+            mentioned below, all of which will be converted to staked{" "}
+            <AssetSymbol address={asset} /> automatically.
           </p>
           <p className="text-justify leading-loose">
             Deposited assets are used to provide liquidity for GMX traders,
             earning trading fees plus GMX emissions on its staked{" "}
-            {token?.symbol}.{" "}
+            <AssetSymbol address={asset} />
           </p>
           <p className="text-justify leading-loose">
             The vault auto-compounds the accumulated rewards periodically into
-            more staked {token?.symbol}.{" "}
+            more staked <AssetSymbol address={asset} />
           </p>
           <p className="text-justify leading-loose">
             Investors receive vault shares as ERC20 tokens called{" "}
-            {ybToken?.symbol}, representing their pro-rata share of the
-            compounding funds.{" "}
+            <AssetSymbol address={vaultTokens.ybTokenAddress} />, representing
+            their pro-rata share of the compounding funds.{" "}
           </p>
           <p className="text-justify leading-loose">
-            Investors can use {ybToken?.symbol} in other Fortress products or
-            integrated protocols.{" "}
+            Investors can use{" "}
+            <AssetSymbol address={vaultTokens.ybTokenAddress} /> in other
+            Fortress products or integrated protocols.{" "}
           </p>
           <p className="text-justify leading-loose">
-            The staked {token?.symbol} contains the following basket of assets:{" "}
+            The staked <AssetSymbol address={asset} /> contains the following
+            basket of assets:{" "}
             {underlyingAssets?.map((address, index) => (
               <Fragment key={`underlying-asset-${index}`}>
                 {underlyingAssets.length > 2 &&
@@ -256,7 +254,7 @@ const VaultStrategyText: FC<VaultStrategyTextProps> = ({
                   : null}
                 <AssetSymbol
                   key={`token-symbol-${index}`}
-                  assetAddress={(address ?? "0x") as `0x${string}`}
+                  address={(address ?? "0x") as `0x${string}`}
                 />
               </Fragment>
             ))}
@@ -280,7 +278,7 @@ const VaultStrategyText: FC<VaultStrategyTextProps> = ({
                 : null}
               <AssetSymbol
                 key={`token-symbol-${index}`}
-                assetAddress={(address ?? "0x") as `0x${string}`}
+                address={(address ?? "0x") as `0x${string}`}
               />
             </Fragment>
           ))}
