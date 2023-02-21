@@ -52,9 +52,9 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
       ...apiTokenQuery,
       data: {
         ybTokenAddress: matchedVault?.token.ybToken.address,
-        underlyingAssetAddresses: matchedVault?.token.underlyingAssets
+        underlyingAssetAddresses: matchedVault?.token.assets
           .map((a) => a.address)
-          .concat([matchedVault?.token.baseAsset.address ?? "0x"]),
+          .concat([matchedVault?.token.primaryAsset.address ?? "0x"]),
       },
     }
   }
@@ -67,7 +67,7 @@ export default function useVaultTokens({ asset, type }: VaultProps) {
       ...apiCompounderQuery,
       data: {
         ybTokenAddress: matchedVault?.token.ybToken.address,
-        underlyingAssetAddresses: matchedVault?.token.assets.map(
+        underlyingAssetAddresses: matchedVault?.token.underlyingAssets?.map(
           (a) => a.address
         ),
       },
