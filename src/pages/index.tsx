@@ -29,7 +29,7 @@ const HomePage: NextPage<
 > = ({ appUrl }) => {
   return (
     <div className="h-screen w-screen bg-gradient-to-br from-pink to-orange p-2 lg:p-4">
-      <Seo />
+      <Seo description="Fortress provides composable financial products for passive DeFi investors"/>
 
       <div className="grid h-full w-full grid-cols-1 grid-rows-[auto,1fr,auto] bg-dark">
         <header className="layout group flex items-center justify-between py-10">
