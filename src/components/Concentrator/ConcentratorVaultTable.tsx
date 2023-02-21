@@ -2,13 +2,14 @@ import { FC } from "react"
 import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
-import { FilterCategory, VaultType } from "@/lib/types"
+import { FilterCategory, TargetAsset, VaultType } from "@/lib/types"
 import {
-  useConcentratorVault,
-  useFilteredConcentratorVaults,
+  useConcentrator,
+  useListConcentrators,
 } from "@/hooks/data/concentrators"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import { useClientReady } from "@/hooks/util/useClientReady"
+import { useFilteredConcentrators } from "@/hooks/util/useConcentratorHelpers"
 
 import { enabledNetworks } from "@/components/AppProviders"
 import { TableEmpty, TableLoading } from "@/components/Table"
@@ -16,7 +17,7 @@ import VaultRow from "@/components/Vault/VaultRow"
 import { VaultTable } from "@/components/Vault/VaultTable"
 
 type ConcentratorVaultTableProps = {
-  concentratorTargetAsset: Address
+  concentratorTargetAsset: TargetAsset
   filterCategory: FilterCategory
 }
 
@@ -25,16 +26,16 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
   filterCategory,
 }) => {
   const clientReady = useClientReady()
-  const filteredConcentratorVaults = useFilteredConcentratorVaults({
+  const concentratorsList = useListConcentrators()
+  const filteredConcentratorVaults = useFilteredConcentrators({
+    concentratorsList,
     concentratorTargetAsset,
     filterCategory,
   })
 
   // TODO: should handle failure
   const showLoadingState =
-    !clientReady ||
-    filteredConcentratorVaults.isLoading ||
-    !concentratorTargetAsset
+    !clientReady || concentratorsList.isLoading || !concentratorTargetAsset
   const label = capitalizeFirstLetter(filterCategory)
 
   const chainId = useActiveChainId()
@@ -49,13 +50,13 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
         <TableEmpty heading="Unsupported network">
           Please switch to a supported network to view Concentrators.
         </TableEmpty>
-      ) : !filteredConcentratorVaults.data?.length ? (
+      ) : !filteredConcentratorVaults?.length ? (
         <TableEmpty heading="Where Concentrator Vaults ser?">
           It seems we don't have {concentratorTargetAsset} Concentrator Vaults
           for {capitalizeFirstLetter(filterCategory)} (yet).
         </TableEmpty>
       ) : (
-        filteredConcentratorVaults.data?.map(
+        filteredConcentratorVaults?.map(
           ({ concentratorTargetAsset, vaultAssetAddress, vaultType }, i) => (
             <ConcentratorVaultRow
               key={`pool-${i}`}
@@ -71,12 +72,18 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
 }
 
 type ConcentratorVaultRowProps = {
-  concentratorTargetAsset: Address
+  concentratorTargetAsset: TargetAsset
   vaultAssetAddress: Address
   vaultType: VaultType
 }
 
 const ConcentratorVaultRow: FC<ConcentratorVaultRowProps> = (props) => {
-  const { data: vaultProps } = useConcentratorVault(props)
-  return <VaultRow {...vaultProps} />
+  const concentrator = useConcentrator(props)
+  if (!concentrator.data || !concentrator.data?.vault.type) return null
+  return (
+    <VaultRow
+      asset={concentrator.data.vault.asset}
+      type={concentrator.data.vault.type}
+    />
+  )
 }

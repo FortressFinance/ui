@@ -1,7 +1,6 @@
 import { Address, useContractRead, useContractReads } from "wagmi"
 
-import { ETH_TOKEN_ADDRESS } from "@/lib/isEthTokenAddress"
-import { FilterCategory, VaultType } from "@/lib/types"
+import { FilterCategory, TargetAsset, VaultType } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useRegistryContract from "@/hooks/useRegistryContract"
 
@@ -16,15 +15,10 @@ const filterCategoryByIndex: FilterCategory[][] = [
   ["balancer"],
   ["curve"],
 ]
-const targetAssetByIndex: Address[] = [
-  "0x616e8BfA43F920657B3497DBf40D6b1A02D4608d",
-  "0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7",
-  ETH_TOKEN_ADDRESS,
-  ETH_TOKEN_ADDRESS,
-]
+const targetAssetByIndex: TargetAsset[] = ["auraBAL", "cvxCRV", "ETH", "ETH"]
 const vaultTypeByIndex: VaultType[] = ["token", "token", "balancer", "curve"]
 
-export function useAllConcentratorVaults() {
+export function useListConcentrators() {
   const registryContract = useRegistryContract()
   return useContractReads({
     contracts: [
@@ -59,104 +53,71 @@ export function useAllConcentratorVaults() {
   })
 }
 
-export function useFilteredConcentratorVaults({
-  concentratorTargetAsset,
-  filterCategory,
-}: {
-  concentratorTargetAsset: Address
-  filterCategory: FilterCategory
-}) {
-  const allConcentratorVaults = useAllConcentratorVaults()
-
-  return {
-    ...allConcentratorVaults,
-    data: allConcentratorVaults.data?.filter(
-      (v) =>
-        v.filterCategories.includes(filterCategory) &&
-        v.concentratorTargetAsset === concentratorTargetAsset
-    ),
-  }
-}
-
-export function useConcentratorVault({
+export function useConcentrator({
   concentratorTargetAsset,
   vaultAssetAddress,
   vaultType,
 }: {
-  concentratorTargetAsset: Address
+  concentratorTargetAsset?: TargetAsset
   vaultAssetAddress?: Address
-  vaultType: VaultType
+  vaultType?: VaultType
 }) {
   const chainId = useActiveChainId()
 
   // get the compounder address for this concentrator
-  const compounderQuery = useContractRead({
-    ...useRegistryContract(),
-    functionName:
-      concentratorTargetAsset === "0x616e8BfA43F920657B3497DBf40D6b1A02D4608d"
-        ? "getBalancerAuraBalConcentratorCompounder"
-        : concentratorTargetAsset ===
-          "0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7"
-        ? "getCurveCvxCrvConcentratorCompounder"
-        : vaultType === "balancer"
-        ? "getBalancerEthConcentratorCompounder"
-        : "getCurveEthConcentratorsCompounder",
-    args: [vaultAssetAddress ?? "0x"],
-    enabled: !!vaultAssetAddress,
+  const registryContract = useRegistryContract()
+  const concentratorQueries = useContractReads({
+    contracts: [
+      {
+        ...registryContract,
+        functionName:
+          concentratorTargetAsset === "auraBAL"
+            ? "getBalancerAuraBalConcentratorCompounder"
+            : concentratorTargetAsset === "cvxCRV"
+            ? "getCurveCvxCrvConcentratorCompounder"
+            : vaultType === "balancer"
+            ? "getBalancerEthConcentratorCompounder"
+            : "getCurveEthConcentratorsCompounder",
+        args: [vaultAssetAddress ?? "0x"],
+      },
+      {
+        ...registryContract,
+        functionName:
+          concentratorTargetAsset === "auraBAL"
+            ? "getBalancerAuraBalConcentrator"
+            : concentratorTargetAsset === "cvxCRV"
+            ? "getCurveCvxCrvConcentrator"
+            : vaultType === "balancer"
+            ? "getBalancerEthConcentrators"
+            : "getCurveEthConcentrators",
+        args: [vaultAssetAddress ?? "0x"],
+      },
+    ],
+    enabled: !!vaultAssetAddress && !!vaultType,
   })
 
   // get the asset for the compounder
   const assetQuery = useContractRead({
     chainId,
     abi: vaultCompounderAbi,
-    address: compounderQuery.data,
+    address: concentratorQueries.data?.[0],
     functionName: "asset",
-    enabled: compounderQuery.isSuccess,
+    enabled: concentratorQueries.isSuccess,
   })
 
   // return normalized data "VaultProps"
-  const queries = [compounderQuery, assetQuery]
+  const queries = [concentratorQueries, assetQuery]
   return {
     isError: queries.some((q) => q.isError),
     isLoading: queries.some((q) => q.isLoading),
     isFetching: queries.some((q) => q.isFetching),
     data: {
-      asset: assetQuery.data,
-      type: vaultType,
+      compounderAddress: concentratorQueries.data?.[0],
+      concentratorAddress: concentratorQueries.data?.[1],
+      vault: {
+        asset: assetQuery.data,
+        type: vaultType,
+      },
     },
   }
-}
-
-export function useConcentratorAddress({
-  concentratorTargetAsset,
-  filterCategory,
-}: {
-  concentratorTargetAsset: Address
-  filterCategory: FilterCategory
-}) {
-  // this is pretty convoluted...
-  // get the vaults relevant to this concentrator
-  const vaultsForThisConcentrator = useFilteredConcentratorVaults({
-    concentratorTargetAsset,
-    filterCategory,
-  })
-  // take the first one, because they all have the same vaultAssetAddress
-  const firstVaultForThisConcentrator = vaultsForThisConcentrator.data?.[0]
-  // use the vaultAssetAddress to get the concentrator address
-  return useContractRead({
-    ...useRegistryContract(),
-    functionName:
-      concentratorTargetAsset === "0x616e8BfA43F920657B3497DBf40D6b1A02D4608d"
-        ? "getBalancerAuraBalConcentrator"
-        : concentratorTargetAsset ===
-          "0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7"
-        ? "getCurveCvxCrvConcentrator"
-        : firstVaultForThisConcentrator?.vaultType === "balancer"
-        ? "getBalancerEthConcentrators"
-        : "getCurveEthConcentrators",
-    args: [firstVaultForThisConcentrator?.vaultAssetAddress ?? "0x"],
-    enabled:
-      !!firstVaultForThisConcentrator?.vaultAssetAddress &&
-      !!firstVaultForThisConcentrator?.vaultType,
-  })
 }

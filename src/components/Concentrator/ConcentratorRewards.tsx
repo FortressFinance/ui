@@ -1,22 +1,27 @@
 import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
-import { Address } from "wagmi"
 
-import { FilterCategory } from "@/lib/types"
+import { FilterCategory, TargetAsset } from "@/lib/types"
 import {
-  useConcentratorAddress,
+  useConcentrator,
   useConcentratorClaim,
   useConcentratorPendingReward,
+  useListConcentrators,
 } from "@/hooks/data/concentrators"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import { useClientReady } from "@/hooks/util/useClientReady"
+import { useFirstConcentrator } from "@/hooks/util/useConcentratorHelpers"
 
-import { AssetBalance, AssetLogo, AssetSymbol } from "@/components/Asset"
 import Button from "@/components/Button"
+import {
+  ConcentratorTargetAssetBalance,
+  ConcentratorTargetAssetLogo,
+  ConcentratorTargetAssetSymbol,
+} from "@/components/Concentrator/ConcentratorTargetAsset"
 import Skeleton from "@/components/Skeleton"
 
 type ConcentratorRewardsProps = {
-  concentratorTargetAsset: Address
+  concentratorTargetAsset: TargetAsset
   filterCategory: FilterCategory
 }
 
@@ -28,13 +33,17 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
     <div className="divide-y divide-pink/30 rounded-md bg-pink-900/80 px-4 backdrop-blur-md">
       <div className="grid grid-cols-[auto,1fr,auto] items-center gap-2 py-4">
         <div className="relative h-9 w-9 rounded-full bg-white">
-          <AssetLogo name="token" tokenAddress={concentratorTargetAsset} />
+          <ConcentratorTargetAssetLogo
+            concentratorTargetAsset={concentratorTargetAsset}
+          />
         </div>
         <div>
           <h1 className="text-sm">Concentrator</h1>
           <h2 className="font-semibold">
             <span className="bg-gradient-to-r from-orange to-pink bg-clip-text text-transparent">
-              <AssetSymbol address={concentratorTargetAsset} />
+              <ConcentratorTargetAssetSymbol
+                concentratorTargetAsset={concentratorTargetAsset}
+              />
             </span>
           </h2>
         </div>
@@ -57,8 +66,12 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
           </dd>
           <dt className="text-xs font-medium text-white/80">Balance</dt>
           <dd className="text-right text-xs font-medium text-white/80">
-            <AssetBalance address={concentratorTargetAsset} />{" "}
-            <AssetSymbol address={concentratorTargetAsset} />
+            <ConcentratorTargetAssetBalance
+              concentratorTargetAsset={concentratorTargetAsset}
+            />{" "}
+            <ConcentratorTargetAssetSymbol
+              concentratorTargetAsset={concentratorTargetAsset}
+            />
           </dd>
           <dt className="text-sm font-semibold leading-relaxed">
             <span className="bg-gradient-to-r from-orange to-pink bg-clip-text text-transparent">
@@ -70,7 +83,9 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
               concentratorTargetAsset={concentratorTargetAsset}
               filterCategory={filterCategory}
             />{" "}
-            <AssetSymbol address={concentratorTargetAsset} />
+            <ConcentratorTargetAssetSymbol
+              concentratorTargetAsset={concentratorTargetAsset}
+            />
           </dd>
         </dl>
 
@@ -88,14 +103,23 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
   filterCategory,
 }) => {
   const isReady = useClientReady()
-  const concentratorAddress = useConcentratorAddress({
+  const concentratorsList = useListConcentrators()
+  const firstConcentrator = useFirstConcentrator({
+    concentratorsList,
     concentratorTargetAsset,
     filterCategory,
   })
-  const rewardsBalance = useConcentratorPendingReward({
-    concentratorAddress: concentratorAddress.data,
+  const concentrator = useConcentrator({
+    concentratorTargetAsset,
+    vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
+    vaultType: firstConcentrator?.vaultType,
   })
-  const rewardToken = useTokenOrNative({ address: concentratorTargetAsset })
+  const rewardsBalance = useConcentratorPendingReward({
+    concentratorAddress: concentrator.data?.concentratorAddress,
+  })
+  const rewardToken = useTokenOrNative({
+    address: concentrator.data?.compounderAddress,
+  })
   const formatted = ethers.utils.formatUnits(
     rewardsBalance.data ?? BigNumber.from(0),
     rewardToken.data?.decimals ?? 18
@@ -103,7 +127,11 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
   return (
     <Skeleton
       isLoading={
-        concentratorAddress.isLoading || rewardsBalance.isLoading || !isReady
+        concentratorsList.isLoading ||
+        concentrator.isLoading ||
+        rewardsBalance.isLoading ||
+        rewardToken.isLoading ||
+        !isReady
       }
     >
       {formatted}
@@ -116,21 +144,34 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
   filterCategory,
 }) => {
   const isReady = useClientReady()
-  const concentratorAddress = useConcentratorAddress({
+  const concentratorsList = useListConcentrators()
+  const firstConcentrator = useFirstConcentrator({
+    concentratorsList,
     concentratorTargetAsset,
     filterCategory,
   })
+  const concentrator = useConcentrator({
+    concentratorTargetAsset,
+    vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
+    vaultType: firstConcentrator?.vaultType,
+  })
   const rewardsBalance = useConcentratorPendingReward({
-    concentratorAddress: concentratorAddress.data,
+    concentratorAddress: concentrator.data?.concentratorAddress,
   })
   const claim = useConcentratorClaim({
-    concentratorAddress: concentratorAddress.data,
+    concentratorAddress: concentrator.data?.concentratorAddress,
   })
   return (
     <Button
       className="mt-4 w-full py-2"
       disabled={rewardsBalance.data?.eq(0) || !isReady}
-      isLoading={concentratorAddress.isLoading || claim.isLoading || !isReady}
+      isLoading={
+        concentratorsList.isLoading ||
+        concentrator.isLoading ||
+        rewardsBalance.isLoading ||
+        claim.isLoading ||
+        !isReady
+      }
       onClick={() => claim.write?.()}
     >
       Claim

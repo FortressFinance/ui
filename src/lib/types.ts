@@ -19,3 +19,5 @@ export type FilterCategory =
   | "stable"
   | "balancer"
   | "curve"
+
+export type TargetAsset = "auraBAL" | "cvxCRV" | "ETH"

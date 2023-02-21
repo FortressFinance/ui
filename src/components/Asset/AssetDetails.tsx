@@ -9,13 +9,16 @@ import Skeleton from "@/components/Skeleton"
 
 export type AssetDetailsProps = {
   address: Address | undefined
+  isLoading?: boolean
 }
 
-export const AssetSymbol: FC<AssetDetailsProps> = ({ address }) => {
+export const AssetSymbol: FC<AssetDetailsProps> = ({ address, isLoading }) => {
   const isReady = useClientReady()
-  const { data: token, isLoading } = useTokenOrNative({ address })
+  const { data: token, isLoading: isLoadingToken } = useTokenOrNative({
+    address,
+  })
   return (
-    <Skeleton isLoading={!address || isLoading || !isReady}>
+    <Skeleton isLoading={!address || isLoading || isLoadingToken || !isReady}>
       {isReady && token?.symbol ? token.symbol : "Loading..."}
     </Skeleton>
   )

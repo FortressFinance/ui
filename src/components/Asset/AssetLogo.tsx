@@ -8,7 +8,7 @@ import BalancerLogo from "~/images/assets/balancer.png"
 import CurveLogo from "~/images/assets/curve.png"
 
 type AssetLogoProps = {
-  name: string
+  name?: string
   className?: string
   style?: CSSProperties
   tokenAddress?: `0x${string}`
@@ -36,6 +36,8 @@ export const AssetLogo: FC<AssetLogoProps> = ({
         return <Image src="" priority alt="" fill />
     }
   }
+
+  if (!name) return null
 
   return (
     <span className={className} style={style}>
