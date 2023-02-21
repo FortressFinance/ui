@@ -4,7 +4,6 @@ import { useToken } from "wagmi"
 
 import { VaultProps } from "@/lib/types"
 import {
-  useVaultDepositedAssets,
   useVaultName,
   useVaultPoolId,
   useVaultTotalApr,
@@ -12,6 +11,7 @@ import {
 } from "@/hooks/data"
 import useVaultApy from "@/hooks/data/useVaultApy"
 import useActiveChainId from "@/hooks/useActiveChainId"
+import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 
 import Currency from "@/components/Currency"
 import Percentage from "@/components/Percentage"
@@ -72,27 +72,26 @@ export const VaultTvl: FC<VaultProps> = (props) => {
 
 export const VaultDepositedLpTokens: FC<VaultProps> = (props) => {
   const chainId = useActiveChainId()
-  const { data: poolId, isLoading: isLoadingId } = useVaultPoolId(props)
-  const { data: depositedTokens, isLoading: isLoadingDepositedTokens } =
-    useVaultDepositedAssets({
-      ...props,
-      poolId,
-    })
   const { data: lpTokenOrAsset, isLoading: isLoadingLpTokenOrAsset } = useToken(
     {
       chainId,
       address: props.asset,
     }
   )
+  const {
+    data: inputTokenShare,
+    isLoading: isLoadingInputTokenShare,
+  } = useTokenOrNativeBalance({ address: lpTokenOrAsset?.address })
+
   const formatted = ethers.utils.formatUnits(
-    BigNumber.from(depositedTokens ?? 0),
+    BigNumber.from(inputTokenShare?.value ?? 0),
     lpTokenOrAsset?.decimals ?? 18
   )
 
   return (
     <Skeleton
       isLoading={
-        isLoadingId || isLoadingDepositedTokens || isLoadingLpTokenOrAsset
+        isLoadingInputTokenShare || isLoadingLpTokenOrAsset
       }
     >
       <Currency abbreviate>{formatted}</Currency>
