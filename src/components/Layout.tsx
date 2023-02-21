@@ -67,7 +67,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                       as={DropdownMenuItemLink}
                       href={appLink("/yield")}
                     >
-                      Vaults
+                      Compounders
                     </Menu.Item>
                     <Menu.Item
                       as={DropdownMenuItemLink}
@@ -110,7 +110,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               >
                 <Menu.Items className="absolute right-0 my-3 w-56 origin-top-right divide-y divide-gray-500 bg-white px-3 text-xl text-black focus:outline-none">
                   <Menu.Item as={DropdownMenuItemLink} href={appLink("/yield")}>
-                    Vaults
+                    Compounders
                   </Menu.Item>
                   <Menu.Item
                     as={DropdownMenuItemLink}
