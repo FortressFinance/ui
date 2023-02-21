@@ -78,10 +78,8 @@ export const VaultDepositedLpTokens: FC<VaultProps> = (props) => {
       address: props.asset,
     }
   )
-  const {
-    data: inputTokenShare,
-    isLoading: isLoadingInputTokenShare,
-  } = useTokenOrNativeBalance({ address: lpTokenOrAsset?.address })
+  const { data: inputTokenShare, isLoading: isLoadingInputTokenShare } =
+    useTokenOrNativeBalance({ address: lpTokenOrAsset?.address })
 
   const formatted = ethers.utils.formatUnits(
     BigNumber.from(inputTokenShare?.value ?? 0),
@@ -89,11 +87,7 @@ export const VaultDepositedLpTokens: FC<VaultProps> = (props) => {
   )
 
   return (
-    <Skeleton
-      isLoading={
-        isLoadingInputTokenShare || isLoadingLpTokenOrAsset
-      }
-    >
+    <Skeleton isLoading={isLoadingInputTokenShare || isLoadingLpTokenOrAsset}>
       <Currency abbreviate>{formatted}</Currency>
     </Skeleton>
   )
