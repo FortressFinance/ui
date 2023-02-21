@@ -1,0 +1,12 @@
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_HOOK_URL: ${{ secrets.DEPLOY_HOOK_URL }}
+    steps:
+      - run: curl -X POST -d {} "$env:DEPLOY_HOOK_URL"
