@@ -56,7 +56,8 @@ const HomePage: NextPage<
                 Fortress Finance
               </h1>
               <p className="mt-4 text-xl lg:mt-6 lg:text-3xl">
-                Fortress provides composable financial products for passive DeFi investors.
+                Fortress provides composable financial products for passive DeFi
+                investors.
               </p>
               <ButtonLink
                 className="mt-6 px-8"
