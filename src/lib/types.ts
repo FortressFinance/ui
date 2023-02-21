@@ -10,7 +10,7 @@ export type VaultProps = {
 }
 
 export type VaultDynamicProps = VaultProps & {
-  poolId: CompounderVaultStaticData["poolId"] | undefined
+  poolId: CompounderVaultStaticData["id"] | undefined
 }
 
 export type ConcentratorTargetAsset = "auraBAL" | "ETH" | "cvxCRV"

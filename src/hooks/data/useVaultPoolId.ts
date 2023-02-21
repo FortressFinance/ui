@@ -18,7 +18,7 @@ export default function useVaultPoolId({ asset, type }: VaultProps) {
       ...apiCompounderQuery,
       data: apiCompounderQuery.data?.find(
         (p) => p.token.ybToken.address === vaultTokens.ybTokenAddress
-      )?.poolId,
+      )?.id,
     }
   }
 
@@ -26,6 +26,6 @@ export default function useVaultPoolId({ asset, type }: VaultProps) {
     ...apiTokenQuery,
     data: apiTokenQuery.data?.find(
       (p) => p.token.ybToken.address === vaultTokens.ybTokenAddress
-    )?.vaultId,
+    )?.id,
   }
 }

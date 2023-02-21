@@ -10,12 +10,12 @@ export function findApiCompounderVaultForAsset(
   data: UseQueryResult<CompounderVaultStaticData[]>["data"],
   asset: Address | undefined
 ) {
-  return data?.find((v) => v.token.LPtoken.address === asset)
+  return data?.find((v) => v.token.primaryAsset.address === asset)
 }
 
 export function findApiTokenVaultForAsset(
   data: UseQueryResult<TokenVaultStaticData[]>["data"],
   asset: Address | undefined
 ) {
-  return data?.find((v) => v.token.baseAsset.address === asset)
+  return data?.find((v) => v.token.primaryAsset.address === asset)
 }
