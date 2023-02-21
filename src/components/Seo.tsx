@@ -4,7 +4,7 @@ import { useRouter } from "next/router"
 const defaultMeta = {
   title: "Fortress Finance",
   siteName: "Fortress Finance",
-  description: "", // TODO: site meta description
+  description: "Fortress provides composable financial products for passive DeFi investors", 
   url: "https://fortress.finance",
   type: "website",
   robots: "follow, index",
