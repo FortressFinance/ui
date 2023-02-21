@@ -15,7 +15,8 @@ import { toFixed } from "@/lib/api/util/format"
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
-import { useVaultPoolId, useVaultTokens } from "@/hooks/data"
+import { useVaultPoolId } from "@/hooks/data"
+import { useCompounder } from "@/hooks/data/compounders"
 import { usePreviewDeposit } from "@/hooks/data/preview/usePreviewDeposit"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
@@ -30,15 +31,15 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
-  const { data: vaultTokens } = useVaultTokens(props)
+  const { data: compounder } = useCompounder(props)
 
   const lpTokenOrAsset = isToken
-    ? vaultTokens.underlyingAssetAddresses?.[
-        vaultTokens.underlyingAssetAddresses?.length - 1
+    ? compounder.underlyingAssetAddresses?.[
+        compounder.underlyingAssetAddresses?.length - 1
       ]
     : props.asset
-  const vaultAddress = vaultTokens.ybTokenAddress ?? "0x"
-  const underlyingAssets = vaultTokens.underlyingAssetAddresses
+  const vaultAddress = compounder.ybTokenAddress ?? "0x"
+  const underlyingAssets = compounder.underlyingAssetAddresses
 
   // Configure form
   const form = useForm<TokenFormValues>({
@@ -46,7 +47,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
       amountIn: "",
       amountOut: "",
       inputToken: lpTokenOrAsset,
-      outputToken: vaultTokens.ybTokenAddress,
+      outputToken: compounder.ybTokenAddress,
     },
     mode: "all",
     reValidateMode: "onChange",

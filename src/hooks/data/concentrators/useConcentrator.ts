@@ -1,57 +1,10 @@
 import { Address, useContractRead, useContractReads } from "wagmi"
 
-import { FilterCategory, TargetAsset, VaultType } from "@/lib/types"
+import { TargetAsset, VaultType } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useRegistryContract from "@/hooks/useRegistryContract"
 
 import { vaultCompounderAbi } from "@/constant/abi"
-
-// This hardcoding will need to be replaced either with improved contracts
-// or with chain-aware values for production
-
-const filterCategoryByIndex: FilterCategory[][] = [
-  ["balancer", "crypto", "featured", "stable"],
-  ["curve", "crypto", "featured"],
-  ["balancer"],
-  ["curve"],
-]
-const targetAssetByIndex: TargetAsset[] = ["auraBAL", "cvxCRV", "ETH", "ETH"]
-const vaultTypeByIndex: VaultType[] = ["token", "token", "balancer", "curve"]
-
-export function useListConcentrators() {
-  const registryContract = useRegistryContract()
-  return useContractReads({
-    contracts: [
-      {
-        ...registryContract,
-        functionName: "getBalancerAuraBalConcentratorsList",
-      },
-      {
-        ...registryContract,
-        functionName: "getCurveCvxCrvConcentratorsList",
-      },
-      {
-        ...registryContract,
-        functionName: "getBalancerEthConcentratorsList",
-      },
-      {
-        ...registryContract,
-        functionName: "getCurveEthConcentratorsList",
-      },
-    ],
-    select: (data) =>
-      data
-        .map((vaultAssetAddresses, index) =>
-          vaultAssetAddresses.map((vaultAssetAddress) => ({
-            concentratorTargetAsset: targetAssetByIndex[index],
-            filterCategories: filterCategoryByIndex[index],
-            vaultAssetAddress: vaultAssetAddress,
-            vaultType: vaultTypeByIndex[index],
-          }))
-        )
-        .flat(),
-  })
-}
 
 export function useConcentrator({
   concentratorTargetAsset,
@@ -92,6 +45,18 @@ export function useConcentrator({
             : "getCurveEthConcentrators",
         args: [vaultAssetAddress ?? "0x"],
       },
+      {
+        ...registryContract,
+        functionName:
+          concentratorTargetAsset === "auraBAL"
+            ? "getBalancerAuraBalConcentratorSymbol"
+            : concentratorTargetAsset === "cvxCRV"
+            ? "getCurveCvxCrvConcentratorSymbol"
+            : vaultType === "balancer"
+            ? "getBalancerEthConcentratorsSymbol"
+            : "getCurveEthConcentratorsSymbol",
+        args: [vaultAssetAddress ?? "0x"],
+      },
     ],
     enabled: !!vaultAssetAddress && !!vaultType,
   })
@@ -100,7 +65,7 @@ export function useConcentrator({
   const assetQuery = useContractRead({
     chainId,
     abi: vaultCompounderAbi,
-    address: concentratorQueries.data?.[0],
+    address: concentratorQueries.data?.[1],
     functionName: "asset",
     enabled: concentratorQueries.isSuccess,
   })

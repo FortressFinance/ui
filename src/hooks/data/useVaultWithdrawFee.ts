@@ -2,7 +2,7 @@ import { useContractRead } from "wagmi"
 
 import { VaultProps } from "@/lib/types"
 import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
-import { useVaultTokens } from "@/hooks/data"
+import { useCompounder } from "@/hooks/data/compounders"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
@@ -11,7 +11,7 @@ import { vaultCompounderAbi } from "@/constant/abi"
 export default function useVaultWithdrawFee({ asset, type }: VaultProps) {
   const chainId = useActiveChainId()
   const isToken = useIsTokenCompounder(type)
-  const { data: vaultTokens } = useVaultTokens({
+  const { data: vaultTokens } = useCompounder({
     asset,
     type,
   })

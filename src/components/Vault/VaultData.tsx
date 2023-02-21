@@ -5,10 +5,10 @@ import { useToken } from "wagmi"
 import { VaultProps } from "@/lib/types"
 import {
   useVaultDepositedAssets,
-  useVaultName,
   useVaultPoolId,
   useVaultTvl,
 } from "@/hooks/data"
+import { useCompounder } from "@/hooks/data/compounders"
 import useVaultApy from "@/hooks/data/useVaultApy"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
@@ -17,10 +17,10 @@ import Percentage from "@/components/Percentage"
 import Skeleton from "@/components/Skeleton"
 
 export const VaultName: FC<VaultProps> = (props) => {
-  const { data: vaultName, isLoading } = useVaultName(props)
+  const { data: compounder, isLoading } = useCompounder(props)
   return (
     <Skeleton isLoading={isLoading}>
-      {isLoading ? "Loading vault..." : vaultName}
+      {isLoading ? "Loading vault..." : compounder.name}
     </Skeleton>
   )
 }

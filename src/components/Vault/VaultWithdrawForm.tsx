@@ -12,7 +12,8 @@ import {
 import { toFixed } from "@/lib/api/util/format"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
-import { useVaultPoolId, useVaultTokens } from "@/hooks/data"
+import { useVaultPoolId } from "@/hooks/data"
+import { useCompounder } from "@/hooks/data/compounders"
 import { usePreviewRedeem } from "@/hooks/data/preview/usePreviewRedeem"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
@@ -27,7 +28,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const chainId = useActiveChainId()
   const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
-  const { data: vaultTokens } = useVaultTokens(props)
+  const { data: vaultTokens } = useCompounder(props)
 
   const lpTokenOrAsset = isToken
     ? vaultTokens.underlyingAssetAddresses?.[

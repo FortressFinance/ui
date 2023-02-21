@@ -5,7 +5,7 @@ import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
 import { FilterCategory, VaultProps } from "@/lib/types"
-import { useVaultAddresses } from "@/hooks/data"
+import { useListCompounders } from "@/hooks/data/compounders"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import { useClientReady } from "@/hooks/util/useClientReady"
 
@@ -109,12 +109,12 @@ const YieldVaultTable: FC<YieldVaultTableProps> = ({ filter, type }) => {
   const supportedChain = availableChains?.[0]
   const network = supportedChain?.name
 
-  const { data: vaultAddresses, isLoading } = useVaultAddresses({ type })
+  const { data: compoundersList, isLoading } = useListCompounders({ type })
   const showLoadingState = isLoading || !ready
 
-  const filteredVaultAddresses = filter
-    ? vaultAddresses?.filter((a) => addressesByFilter[filter].includes(a))
-    : vaultAddresses
+  const filteredCompounders = filter
+    ? compoundersList?.filter((a) => addressesByFilter[filter].includes(a))
+    : compoundersList
 
   return (
     <VaultTable label={`${capitalizeFirstLetter(type)} Vaults`}>
@@ -124,7 +124,7 @@ const YieldVaultTable: FC<YieldVaultTableProps> = ({ filter, type }) => {
         <TableEmpty heading="Unsupported network">
           Please switch to a supported network to view Vaults.
         </TableEmpty>
-      ) : !filteredVaultAddresses?.length ? (
+      ) : !filteredCompounders?.length ? (
         <TableEmpty heading="Where Vaults ser?">
           It seems we don't have {capitalizeFirstLetter(type)} Vaults on{" "}
           {network} (yet). Feel free to check out other vaults on {network} or
@@ -132,7 +132,7 @@ const YieldVaultTable: FC<YieldVaultTableProps> = ({ filter, type }) => {
           back later. Don't be a stranger.
         </TableEmpty>
       ) : (
-        filteredVaultAddresses?.map((address, i) => (
+        filteredCompounders?.map((address, i) => (
           <VaultRow key={`pool-${i}`} asset={address} type={type} />
         ))
       )}

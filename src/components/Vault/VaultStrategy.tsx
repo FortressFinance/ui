@@ -4,12 +4,8 @@ import { FC, Fragment, MouseEventHandler, useState } from "react"
 import { Address, useAccount } from "wagmi"
 
 import { VaultProps, VaultType } from "@/lib/types"
-import {
-  useVaultPlatformFee,
-  useVaultTokens,
-  useVaultWithdrawFee,
-} from "@/hooks/data"
-import { UseVaultTokensResult } from "@/hooks/data/useVaultTokens"
+import { useVaultPlatformFee, useVaultWithdrawFee } from "@/hooks/data"
+import { useCompounder } from "@/hooks/data/compounders"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
@@ -32,7 +28,7 @@ import ExternalLink from "~/svg/icons/external-link.svg"
 const VaultStrategyButton: FC<VaultProps> = (props) => {
   const [isStrategyOpen, setIsStrategyOpen] = useState(false)
 
-  const { data: vaultTokens, ...vaultTokensQuery } = useVaultTokens(props)
+  const { data: vaultTokens, ...vaultTokensQuery } = useCompounder(props)
   const { data: platformFeePercentage, ...platformFeeQuery } =
     useVaultPlatformFee(props)
   const { data: withdrawFeePercentage, ...withdrawFeeQuery } =
@@ -76,7 +72,9 @@ export default VaultStrategyButton
 
 type VaultStrategyModalProps = VaultProps &
   ModalBaseProps & {
-    underlyingAssets: UseVaultTokensResult["data"]["underlyingAssetAddresses"]
+    underlyingAssets: ReturnType<
+      typeof useCompounder
+    >["data"]["underlyingAssetAddresses"]
     platformFeePercentage: string | number | undefined
     withdrawFeePercentage: string | number | undefined
     depositFeePercentage: string | number | undefined
@@ -93,7 +91,7 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
 }) => {
   const { connector } = useAccount()
 
-  const { data: vaultTokens } = useVaultTokens({ type, asset })
+  const { data: vaultTokens } = useCompounder({ type, asset })
 
   const { data: ybToken } = useTokenOrNative({
     address: vaultTokens.ybTokenAddress,
@@ -196,7 +194,9 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
 
 type VaultStrategyTextProps = {
   type: VaultType
-  underlyingAssets: UseVaultTokensResult["data"]["underlyingAssetAddresses"]
+  underlyingAssets: ReturnType<
+    typeof useCompounder
+  >["data"]["underlyingAssetAddresses"]
   asset: Address | undefined
 }
 
@@ -206,7 +206,7 @@ const VaultStrategyText: FC<VaultStrategyTextProps> = ({
   asset,
 }) => {
   const isToken = useIsTokenCompounder(type)
-  const { data: vaultTokens } = useVaultTokens({
+  const { data: vaultTokens } = useCompounder({
     asset,
     type,
   })
