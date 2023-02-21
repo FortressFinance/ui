@@ -3,6 +3,7 @@ import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
+  Address,
   erc20ABI,
   useAccount,
   useContractRead,
@@ -214,7 +215,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
           tokenAddresses={[
-            ...(underlyingAssets?.filter((a) => a !== lpTokenOrAsset) || []),
+            ...(underlyingAssets?.filter((a: Address|undefined) => a !== lpTokenOrAsset) || []),
           ]}
           lpToken={lpTokenOrAsset}
           vaultType={props.type}

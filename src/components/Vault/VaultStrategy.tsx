@@ -245,7 +245,7 @@ const VaultStrategyText: FC<VaultStrategyTextProps> = ({
           </p>
           <p className="text-justify leading-loose">
             The staked {token?.symbol} contains the following basket of assets:{" "}
-            {underlyingAssets?.map((address, index) => (
+            {underlyingAssets?.map((address: Address|undefined, index: number) => (
               <Fragment key={`underlying-asset-${index}`}>
                 {underlyingAssets.length > 2 &&
                 index > 0 &&
@@ -269,7 +269,7 @@ const VaultStrategyText: FC<VaultStrategyTextProps> = ({
           liquidity pool. Holders earn fees from users trading in the pool, and
           can also deposit the LP to Curve's gauges to earn CRV emissions. This
           Curve v2 crypto pool contains{" "}
-          {underlyingAssets?.map((address, index) => (
+          {underlyingAssets?.map((address: Address|undefined, index: number) => (
             <Fragment key={`underlying-asset-${index}`}>
               {underlyingAssets.length > 2 &&
               index > 0 &&

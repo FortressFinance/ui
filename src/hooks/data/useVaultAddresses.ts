@@ -31,14 +31,15 @@ export default function useVaultAddresses({ type }: { type: VaultType }) {
   if (!apiCompounderQuery.isError && !isToken) {
     return {
       ...apiCompounderQuery,
-      data: apiCompounderQuery.data?.map((p) => p.token.LPtoken?.address),
+      data: apiCompounderQuery.data?.map((p) => p.token.primaryAsset?.address),
     }
   }
+
 
   if (!apiTokenQuery.isError && isToken) {
     return {
       ...apiTokenQuery,
-      data: apiTokenQuery.data?.map((p) => p.token.baseAsset.address),
+      data: apiTokenQuery.data?.map((p) => p.token.primaryAsset.address),
     }
   }
   const filterRegistryQuery = {
