@@ -3,7 +3,7 @@ import { FC, Fragment, MouseEventHandler, useState } from "react"
 
 import clsxm from "@/lib/clsxm"
 import { VaultProps } from "@/lib/types"
-import { useCompounder } from "@/hooks/data/compounders"
+import { useVault } from "@/hooks/data/vaults"
 
 import { AssetLogo } from "@/components/Asset"
 import { TableCell, TableRow } from "@/components/Table"
@@ -22,7 +22,7 @@ import ChevronDownCircle from "~/svg/icons/chevron-down-circle.svg"
 const VaultRow: FC<VaultProps> = (props) => {
   const [isVaultOpen, setIsVaultOpen] = useState(false)
 
-  const { isLoading } = useCompounder(props)
+  const { isLoading } = useVault(props)
 
   const toggleVaultOpen: MouseEventHandler<
     HTMLButtonElement | HTMLDivElement

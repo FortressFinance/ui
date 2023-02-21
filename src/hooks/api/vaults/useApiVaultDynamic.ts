@@ -19,7 +19,7 @@ export function useApiVaultDynamic({
   poolId: id,
 }: {
   type: VaultType
-  poolId: CompounderVaultStaticData["poolId"]
+  poolId: CompounderVaultStaticData["id"]
 }) {
   const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)

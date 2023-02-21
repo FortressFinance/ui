@@ -5,12 +5,13 @@ import { CompounderVaultStaticData } from "@/lib/api/vaults"
 export type VaultType = "balancer" | "curve" | "token"
 
 export type VaultProps = {
-  asset: Address | undefined
+  asset?: Address
   type: VaultType
+  vaultAddress?: Address
 }
 
 export type VaultDynamicProps = VaultProps & {
-  poolId: CompounderVaultStaticData["poolId"] | undefined
+  poolId: CompounderVaultStaticData["id"] | undefined
 }
 
 export type FilterCategory =

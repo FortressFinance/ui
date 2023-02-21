@@ -84,6 +84,7 @@ const ConcentratorVaultRow: FC<ConcentratorVaultRowProps> = (props) => {
     <VaultRow
       asset={concentrator.data.vault.asset}
       type={concentrator.data.vault.type}
+      vaultAddress={concentrator.data.ybTokenAddress}
     />
   )
 }

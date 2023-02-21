@@ -1,11 +1,11 @@
 import { Dialog } from "@headlessui/react"
 import Link from "next/link"
 import { FC, Fragment, MouseEventHandler, useState } from "react"
-import { Address, useAccount } from "wagmi"
+import { useAccount } from "wagmi"
 
-import { VaultProps, VaultType } from "@/lib/types"
-import { useVaultPlatformFee, useVaultWithdrawFee } from "@/hooks/data"
-import { useCompounder } from "@/hooks/data/compounders"
+import { VaultProps } from "@/lib/types"
+import { useCompounderFees } from "@/hooks/data/compounders"
+import { useVault } from "@/hooks/data/vaults"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
@@ -28,16 +28,11 @@ import ExternalLink from "~/svg/icons/external-link.svg"
 const VaultStrategyButton: FC<VaultProps> = (props) => {
   const [isStrategyOpen, setIsStrategyOpen] = useState(false)
 
-  const { data: vaultTokens, ...vaultTokensQuery } = useCompounder(props)
-  const { data: platformFeePercentage, ...platformFeeQuery } =
-    useVaultPlatformFee(props)
-  const { data: withdrawFeePercentage, ...withdrawFeeQuery } =
-    useVaultWithdrawFee(props)
+  const vault = useVault(props)
+  const fees = useCompounderFees(props)
   const depositFeePercentage = 0 // HARDCODED IT TO ZERO FOR NOW
 
-  const isLoading = [platformFeeQuery, withdrawFeeQuery, vaultTokensQuery].some(
-    (q) => q.isLoading
-  )
+  const isLoading = [fees, vault].some((q) => q.isLoading)
 
   const toggleStrategyOpen: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
@@ -58,9 +53,8 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
       <VaultStrategyModal
         isOpen={isStrategyOpen}
         onClose={() => setIsStrategyOpen(false)}
-        underlyingAssets={vaultTokens.underlyingAssetAddresses}
-        platformFeePercentage={platformFeePercentage}
-        withdrawFeePercentage={withdrawFeePercentage}
+        platformFeePercentage={fees.data?.platformFee}
+        withdrawFeePercentage={fees.data?.withdrawFee}
         depositFeePercentage={depositFeePercentage}
         {...props}
       />
@@ -72,9 +66,6 @@ export default VaultStrategyButton
 
 type VaultStrategyModalProps = VaultProps &
   ModalBaseProps & {
-    underlyingAssets: ReturnType<
-      typeof useCompounder
-    >["data"]["underlyingAssetAddresses"]
     platformFeePercentage: string | number | undefined
     withdrawFeePercentage: string | number | undefined
     depositFeePercentage: string | number | undefined
@@ -83,7 +74,7 @@ type VaultStrategyModalProps = VaultProps &
 const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
   asset,
   type,
-  underlyingAssets,
+  vaultAddress,
   platformFeePercentage,
   withdrawFeePercentage,
   depositFeePercentage,
@@ -91,11 +82,7 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
 }) => {
   const { connector } = useAccount()
 
-  const { data: vaultTokens } = useCompounder({ type, asset })
-
-  const { data: ybToken } = useTokenOrNative({
-    address: vaultTokens.ybTokenAddress,
-  })
+  const { data: ybToken } = useTokenOrNative({ address: vaultAddress })
   const isToken = useIsTokenCompounder(type)
 
   const addTokenToWallet: MouseEventHandler<HTMLButtonElement> = () => {
@@ -135,8 +122,8 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
             </Dialog.Title>
             <VaultStrategyText
               type={type}
-              underlyingAssets={underlyingAssets}
               asset={asset}
+              vaultAddress={vaultAddress}
             />
           </div>
           <div>
@@ -192,29 +179,15 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
   )
 }
 
-type VaultStrategyTextProps = {
-  type: VaultType
-  underlyingAssets: ReturnType<
-    typeof useCompounder
-  >["data"]["underlyingAssetAddresses"]
-  asset: Address | undefined
-}
-
-const VaultStrategyText: FC<VaultStrategyTextProps> = ({
-  type,
-  underlyingAssets,
-  asset,
-}) => {
+const VaultStrategyText: FC<VaultProps> = ({ asset, type, vaultAddress }) => {
   const isToken = useIsTokenCompounder(type)
-  const { data: vaultTokens } = useCompounder({
-    asset,
-    type,
-  })
+  const vault = useVault({ asset, type, vaultAddress })
+  const underlyingAssets = vault.data?.underlyingAssets
   return (
     <>
       {isToken ? (
         // THE TEXT HERE WAS WRITTEN FOR THE GLP COUMPOUNDER
-        <div className="masked-overflow max-h-[120px] overflow-y-auto">
+        <div className="masked-overflow max-h-32 overflow-y-auto">
           <p className="text-justify leading-loose">
             This vault accepts deposits in form of its primary asset{" "}
             <AssetSymbol address={asset} /> and any of its underlying assets
@@ -232,12 +205,11 @@ const VaultStrategyText: FC<VaultStrategyTextProps> = ({
           </p>
           <p className="text-justify leading-loose">
             Investors receive vault shares as ERC20 tokens called{" "}
-            <AssetSymbol address={vaultTokens.ybTokenAddress} />, representing
-            their pro-rata share of the compounding funds.{" "}
+            <AssetSymbol address={vaultAddress} />, representing their pro-rata
+            share of the compounding funds.{" "}
           </p>
           <p className="text-justify leading-loose">
-            Investors can use{" "}
-            <AssetSymbol address={vaultTokens.ybTokenAddress} /> in other
+            Investors can use <AssetSymbol address={vaultAddress} /> in other
             Fortress products or integrated protocols.{" "}
           </p>
           <p className="text-justify leading-loose">

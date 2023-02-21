@@ -55,12 +55,12 @@ const ConcentratorVaults: FC = () => {
       >
         <div className="max-lg:row-start-2 lg:col-span-8 xl:col-span-9">
           <Tab.List as={TabList}>
-            <TabListGroup className="max-md:max-w-[70%]">
+            <TabListGroup className="max-md:max-w-2/3">
               {filterCategories.map((filterCategory, index) => (
                 <Tab
                   as={TabButton}
                   key={`tab-${index}`}
-                  className="max-md:max-w-[33%] max-md:basis-0"
+                  className="max-md:max-w-1/3 max-md:basis-0"
                 >
                   {capitalizeFirstLetter(filterCategory)}
                 </Tab>

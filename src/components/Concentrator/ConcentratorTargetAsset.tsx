@@ -28,7 +28,7 @@ export const ConcentratorTargetAssetSymbol: FC<
   })
   return (
     <AssetSymbol
-      address={concentrator.data?.compounderAddress}
+      address={concentrator.data?.rewardTokenAddress}
       isLoading={concentratorsList.isLoading || concentrator.isLoading}
     />
   )
@@ -49,7 +49,7 @@ export const ConcentratorTargetAssetBalance: FC<
   })
   return (
     <AssetBalance
-      address={concentrator.data?.compounderAddress}
+      address={concentrator.data?.rewardTokenAddress}
       isLoading={concentratorsList.isLoading || concentrator.isLoading}
     />
   )
@@ -70,7 +70,7 @@ export const ConcentratorTargetAssetLogo: FC<ConcentratorTargetAssetProps> = ({
   })
   return (
     <AssetLogo
-      tokenAddress={concentrator.data?.compounderAddress}
+      tokenAddress={concentrator.data?.rewardTokenAddress}
       name="token"
     />
   )

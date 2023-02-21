@@ -1,4 +1,4 @@
-import { useContractRead, useContractReads } from "wagmi"
+import { useContractReads } from "wagmi"
 
 import {
   findApiCompounderVaultForAsset,
@@ -6,17 +6,14 @@ import {
 } from "@/lib/findApiVaultForAsset"
 import { VaultProps } from "@/lib/types"
 import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
-import useActiveChainId from "@/hooks/useActiveChainId"
 import useRegistryContract from "@/hooks/useRegistryContract"
 import {
   useIsCurveCompounder,
   useIsTokenCompounder,
 } from "@/hooks/useVaultTypes"
 
-import { vaultCompounderAbi } from "@/constant/abi"
-
 export function useCompounder({ asset, type }: VaultProps) {
-  const chainId = useActiveChainId()
+  // const chainId = useActiveChainId()
   const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
 
@@ -49,15 +46,18 @@ export function useCompounder({ asset, type }: VaultProps) {
           : "getBalancerCompounder",
         args: [asset ?? "0x"],
       },
+      {
+        ...registryContract,
+        functionName: isToken
+          ? // dummy request that returns the same type of data
+            "getTokenCompoundersList"
+          : isCurve
+          ? "getCurveCompounderUnderlyingAssets"
+          : "getBalancerCompounderUnderlyingAssets",
+        args: [asset ?? "0x"],
+      },
     ],
     enabled: !!asset && enableFallback,
-  })
-  const underlyingAssets = useContractRead({
-    chainId,
-    address: compounderInfo.data?.[1],
-    abi: vaultCompounderAbi,
-    functionName: "getUnderlyingAssets",
-    enabled: enableFallback && !isToken && !!compounderInfo.data?.[1],
   })
 
   // Prioritize API response until it has errored
@@ -69,11 +69,11 @@ export function useCompounder({ asset, type }: VaultProps) {
     return {
       ...apiTokenQuery,
       data: {
-        name: matchedCompounder?.vaultName,
+        name: matchedCompounder?.name,
         ybTokenAddress: matchedCompounder?.token.ybToken.address,
-        underlyingAssetAddresses: matchedCompounder?.token.underlyingAssets
+        underlyingAssetAddresses: matchedCompounder?.token.assets
           .map((a) => a.address)
-          .concat([matchedCompounder.token.baseAsset.address ?? "0x"]),
+          .concat([matchedCompounder.token.primaryAsset.address ?? "0x"]),
       },
     }
   }
@@ -86,26 +86,25 @@ export function useCompounder({ asset, type }: VaultProps) {
     return {
       ...apiCompounderQuery,
       data: {
-        name: matchedCompounder?.poolName,
+        name: matchedCompounder?.name,
         ybTokenAddress: matchedCompounder?.token.ybToken.address,
-        underlyingAssetAddresses: matchedCompounder?.token.assets.map(
-          (a) => a.address
-        ),
+        underlyingAssetAddresses:
+          matchedCompounder?.token.underlyingAssets?.map((a) => a.address),
       },
     }
   }
 
   // Fallback to contract data after failure
-  const queries = [compounderInfo, underlyingAssets]
   return {
-    isError: queries.some((q) => q.isError),
-    isLoading: queries.some((q) => q.isLoading),
-    isFetching: queries.some((q) => q.isFetching),
+    ...compounderInfo,
     data: {
       name: compounderInfo.data?.[0],
       ybTokenAddress: compounderInfo.data?.[1],
-      underlyingAssetAddresses:
-        isToken && asset ? [asset] : underlyingAssets.data,
+      underlyingAssetAddresses: isToken
+        ? asset
+          ? [asset]
+          : []
+        : compounderInfo.data?.[2],
     },
   }
 }

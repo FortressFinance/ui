@@ -49,12 +49,24 @@ export function useConcentrator({
         ...registryContract,
         functionName:
           concentratorTargetAsset === "auraBAL"
-            ? "getBalancerAuraBalConcentratorSymbol"
+            ? "getBalancerAuraBalConcentratorName"
             : concentratorTargetAsset === "cvxCRV"
-            ? "getCurveCvxCrvConcentratorSymbol"
+            ? "getCurveCvxCrvConcentratorName"
             : vaultType === "balancer"
-            ? "getBalancerEthConcentratorsSymbol"
-            : "getCurveEthConcentratorsSymbol",
+            ? "getBalancerEthConcentratorsName"
+            : "getCurveEthConcentratorsName",
+        args: [vaultAssetAddress ?? "0x"],
+      },
+      {
+        ...registryContract,
+        functionName:
+          concentratorTargetAsset === "auraBAL"
+            ? "getBalancerAuraBalConcentratorUnderlyingAssets"
+            : concentratorTargetAsset === "cvxCRV"
+            ? "getCurveCvxCrvConcentratorUnderlyingAssets"
+            : vaultType === "balancer"
+            ? "getBalancerEthConcentratorsUnderlyingAssets"
+            : "getCurveEthConcentratorsUnderlyingAssets",
         args: [vaultAssetAddress ?? "0x"],
       },
     ],
@@ -71,14 +83,13 @@ export function useConcentrator({
   })
 
   // return normalized data "VaultProps"
-  const queries = [concentratorQueries, assetQuery]
   return {
-    isError: queries.some((q) => q.isError),
-    isLoading: queries.some((q) => q.isLoading),
-    isFetching: queries.some((q) => q.isFetching),
+    ...concentratorQueries,
     data: {
-      compounderAddress: concentratorQueries.data?.[0],
-      concentratorAddress: concentratorQueries.data?.[1],
+      name: concentratorQueries.data?.[2],
+      ybTokenAddress: concentratorQueries.data?.[1],
+      underlyingAssetAddresses: concentratorQueries.data?.[3],
+      rewardTokenAddress: concentratorQueries.data?.[0],
       vault: {
         asset: assetQuery.data,
         type: vaultType,

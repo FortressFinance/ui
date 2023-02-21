@@ -4,8 +4,8 @@ import { fortressApi, handledResponse } from "@/lib/api/util"
 
 export type CompounderVaultStaticData = {
   isCurve?: boolean
-  poolId?: number
-  poolName: string
+  id?: number
+  name: string
   platformFee: string
   withdrawalFee: string
   token: {
@@ -15,14 +15,14 @@ export type CompounderVaultStaticData = {
       symbol?: string
       name?: string
     }
-    LPtoken: {
+    primaryAsset: {
       address: Address
       isLpToken: boolean
       decimals?: number
       symbol?: string
       name?: string
     }
-    assets: {
+    underlyingAssets: {
       address: Address
       isLpToken: boolean
       decimals?: number

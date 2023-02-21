@@ -115,10 +115,10 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
     vaultType: firstConcentrator?.vaultType,
   })
   const rewardsBalance = useConcentratorPendingReward({
-    concentratorAddress: concentrator.data?.concentratorAddress,
+    concentratorAddress: concentrator.data?.ybTokenAddress,
   })
   const rewardToken = useTokenOrNative({
-    address: concentrator.data?.compounderAddress,
+    address: concentrator.data?.rewardTokenAddress,
   })
   const formatted = ethers.utils.formatUnits(
     rewardsBalance.data ?? BigNumber.from(0),
@@ -156,10 +156,10 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
     vaultType: firstConcentrator?.vaultType,
   })
   const rewardsBalance = useConcentratorPendingReward({
-    concentratorAddress: concentrator.data?.concentratorAddress,
+    concentratorAddress: concentrator.data?.ybTokenAddress,
   })
   const claim = useConcentratorClaim({
-    concentratorAddress: concentrator.data?.concentratorAddress,
+    concentratorAddress: concentrator.data?.rewardTokenAddress,
   })
   return (
     <Button

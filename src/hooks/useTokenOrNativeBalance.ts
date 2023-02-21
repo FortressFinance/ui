@@ -16,5 +16,6 @@ export default function useTokenOrNativeBalance({
     chainId,
     token: isEth ? undefined : address,
     watch: true,
+    enabled: address !== "0x",
   })
 }

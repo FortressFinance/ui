@@ -1,6 +1,8 @@
 import { VaultProps } from "@/lib/types"
 import { useApiVaultDynamic } from "@/hooks/api"
 
+// TODO: Support Concentrator vaults
+
 type UseVaultTvlParams = VaultProps & {
   poolId: number | undefined
 }

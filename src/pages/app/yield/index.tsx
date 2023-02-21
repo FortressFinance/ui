@@ -5,7 +5,7 @@ import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
 import { FilterCategory, VaultProps } from "@/lib/types"
-import { useListCompounders } from "@/hooks/data/compounders"
+import { useCompounder, useListCompounders } from "@/hooks/data/compounders"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import { useClientReady } from "@/hooks/util/useClientReady"
 
@@ -29,20 +29,20 @@ const Yield: NextPage = () => {
 
         <Tab.Group>
           <Tab.List as={TabList}>
-            <TabListGroup className="max-w-[70%]">
-              <Tab as={TabButton} className="max-w-[33%] basis-0">
+            <TabListGroup className="max-w-2/3">
+              <Tab as={TabButton} className="max-w-1/3 basis-0">
                 Featured
               </Tab>
-              <Tab as={TabButton} className="max-w-[33%] basis-0">
+              <Tab as={TabButton} className="max-w-1/3 basis-0">
                 Crypto
               </Tab>
-              <Tab as={TabButton} className="max-w-[33%] basis-0">
+              <Tab as={TabButton} className="max-w-1/3 basis-0">
                 Stable
               </Tab>
-              <Tab as={TabButton} className="max-w-[33%] basis-0">
+              <Tab as={TabButton} className="max-w-1/3 basis-0">
                 Curve
               </Tab>
-              <Tab as={TabButton} className="max-w-[33%] basis-0">
+              <Tab as={TabButton} className="max-w-1/3 basis-0">
                 Balancer
               </Tab>
             </TabListGroup>
@@ -133,9 +133,16 @@ const YieldVaultTable: FC<YieldVaultTableProps> = ({ filter, type }) => {
         </TableEmpty>
       ) : (
         filteredCompounders?.map((address, i) => (
-          <VaultRow key={`pool-${i}`} asset={address} type={type} />
+          <YieldVaultRow key={`pool-${i}`} asset={address} type={type} />
         ))
       )}
     </VaultTable>
   )
+}
+
+type YieldVaultRowProps = Pick<VaultProps, "asset" | "type">
+
+const YieldVaultRow: FC<YieldVaultRowProps> = (props) => {
+  const compounder = useCompounder(props)
+  return <VaultRow {...props} vaultAddress={compounder.data?.ybTokenAddress} />
 }

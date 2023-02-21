@@ -1,85 +1,59 @@
 import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
-import { useToken } from "wagmi"
 
 import { VaultProps } from "@/lib/types"
-import {
-  useVaultDepositedAssets,
-  useVaultPoolId,
-  useVaultTvl,
-} from "@/hooks/data"
-import { useCompounder } from "@/hooks/data/compounders"
+import { useVaultPoolId, useVaultTvl } from "@/hooks/data"
 import useVaultApy from "@/hooks/data/useVaultApy"
-import useActiveChainId from "@/hooks/useActiveChainId"
+import { useVault } from "@/hooks/data/vaults"
+import useTokenOrNative from "@/hooks/useTokenOrNative"
 
 import Currency from "@/components/Currency"
 import Percentage from "@/components/Percentage"
 import Skeleton from "@/components/Skeleton"
 
 export const VaultName: FC<VaultProps> = (props) => {
-  const { data: compounder, isLoading } = useCompounder(props)
+  const vault = useVault(props)
   return (
-    <Skeleton isLoading={isLoading}>
-      {isLoading ? "Loading vault..." : compounder.name}
+    <Skeleton isLoading={vault.isLoading}>
+      {vault.isLoading ? "Loading vault..." : vault.data.name}
     </Skeleton>
   )
 }
 
 export const VaultApy: FC<VaultProps> = (props) => {
-  const { data: poolId, isLoading: isLoadingId } = useVaultPoolId(props)
-  const { data: totalApy, isLoading } = useVaultApy({
-    ...props,
-    poolId,
-  })
+  const poolId = useVaultPoolId(props)
+  const totalApy = useVaultApy({ ...props, poolId: poolId.data })
 
   return (
-    <Skeleton isLoading={isLoadingId || isLoading}>
-      <Percentage>{totalApy ?? 0}</Percentage>
+    <Skeleton isLoading={poolId.isLoading || totalApy.isLoading}>
+      <Percentage>{totalApy.data ?? 0}</Percentage>
     </Skeleton>
   )
 }
 
 export const VaultTvl: FC<VaultProps> = (props) => {
-  const { data: poolId, isLoading: isLoadingId } = useVaultPoolId(props)
-  const { data: tvl, isLoading } = useVaultTvl({
-    ...props,
-    poolId,
-  })
+  const poolId = useVaultPoolId(props)
+  const tvl = useVaultTvl({ ...props, poolId: poolId.data })
 
   return (
-    <Skeleton isLoading={isLoadingId || isLoading}>
+    <Skeleton isLoading={poolId.isLoading || tvl.isLoading}>
       <Currency symbol="$" abbreviate>
-        {tvl ?? 0}
+        {tvl.data ?? 0}
       </Currency>
     </Skeleton>
   )
 }
 
 export const VaultDepositedLpTokens: FC<VaultProps> = (props) => {
-  const chainId = useActiveChainId()
-  const { data: poolId, isLoading: isLoadingId } = useVaultPoolId(props)
-  const { data: depositedTokens, isLoading: isLoadingDepositedTokens } =
-    useVaultDepositedAssets({
-      ...props,
-      poolId,
-    })
-  const { data: lpTokenOrAsset, isLoading: isLoadingLpTokenOrAsset } = useToken(
-    {
-      chainId,
-      address: props.asset,
-    }
-  )
+  const vault = useVault(props)
+  const lpTokenOrAsset = useTokenOrNative({ address: props.asset })
   const formatted = ethers.utils.formatUnits(
-    BigNumber.from(depositedTokens ?? 0),
-    lpTokenOrAsset?.decimals ?? 18
+    BigNumber.from(vault.data.totalAssets ?? 0),
+    lpTokenOrAsset.data?.decimals ?? 18
   )
 
   return (
-    <Skeleton
-      isLoading={
-        isLoadingId || isLoadingDepositedTokens || isLoadingLpTokenOrAsset
-      }
-    >
+    <Skeleton isLoading={vault.isLoading || lpTokenOrAsset.isLoading}>
       <Currency abbreviate>{formatted}</Currency>
     </Skeleton>
   )
