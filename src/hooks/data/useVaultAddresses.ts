@@ -35,7 +35,6 @@ export default function useVaultAddresses({ type }: { type: VaultType }) {
     }
   }
 
-
   if (!apiTokenQuery.isError && isToken) {
     return {
       ...apiTokenQuery,

@@ -245,7 +245,34 @@ const VaultStrategyText: FC<VaultStrategyTextProps> = ({
           </p>
           <p className="text-justify leading-loose">
             The staked {token?.symbol} contains the following basket of assets:{" "}
-            {underlyingAssets?.map((address: Address|undefined, index: number) => (
+            {underlyingAssets?.map(
+              (address: Address | undefined, index: number) => (
+                <Fragment key={`underlying-asset-${index}`}>
+                  {underlyingAssets.length > 2 &&
+                  index > 0 &&
+                  index !== underlyingAssets.length - 1
+                    ? ", "
+                    : index > 0
+                    ? " and "
+                    : null}
+                  <TokenSymbol
+                    key={`token-symbol-${index}`}
+                    address={(address ?? "0x") as `0x${string}`}
+                  />
+                </Fragment>
+              )
+            )}
+            .
+          </p>
+        </div>
+      ) : (
+        <p className="leading-loose">
+          This token represents a {type === "curve" ? "Curve" : "Balancer"}{" "}
+          liquidity pool. Holders earn fees from users trading in the pool, and
+          can also deposit the LP to Curve's gauges to earn CRV emissions. This
+          Curve v2 crypto pool contains{" "}
+          {underlyingAssets?.map(
+            (address: Address | undefined, index: number) => (
               <Fragment key={`underlying-asset-${index}`}>
                 {underlyingAssets.length > 2 &&
                 index > 0 &&
@@ -259,31 +286,8 @@ const VaultStrategyText: FC<VaultStrategyTextProps> = ({
                   address={(address ?? "0x") as `0x${string}`}
                 />
               </Fragment>
-            ))}
-            .
-          </p>
-        </div>
-      ) : (
-        <p className="leading-loose">
-          This token represents a {type === "curve" ? "Curve" : "Balancer"}{" "}
-          liquidity pool. Holders earn fees from users trading in the pool, and
-          can also deposit the LP to Curve's gauges to earn CRV emissions. This
-          Curve v2 crypto pool contains{" "}
-          {underlyingAssets?.map((address: Address|undefined, index: number) => (
-            <Fragment key={`underlying-asset-${index}`}>
-              {underlyingAssets.length > 2 &&
-              index > 0 &&
-              index !== underlyingAssets.length - 1
-                ? ", "
-                : index > 0
-                ? " and "
-                : null}
-              <TokenSymbol
-                key={`token-symbol-${index}`}
-                address={(address ?? "0x") as `0x${string}`}
-              />
-            </Fragment>
-          ))}
+            )
+          )}
           .
         </p>
       )}
