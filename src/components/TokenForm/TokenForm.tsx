@@ -132,8 +132,11 @@ const TokenForm: FC<TokenFormProps> = ({
               value={value}
               onChange={(event) => {
                 const amount = event.target.value
-                const formatted = amount.replace(/,/g, '.')
-                if (formatted === '' || inputRegex.test(escapeRegExp(formatted))) {
+                const formatted = amount.replace(/,/g, ".")
+                if (
+                  formatted === "" ||
+                  inputRegex.test(escapeRegExp(formatted))
+                ) {
                   onChange(formatted)
                 }
               }}
