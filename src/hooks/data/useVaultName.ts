@@ -38,7 +38,7 @@ export default function useVaultName({ asset, type }: VaultProps) {
       ...apiCompounderQuery,
       data: apiCompounderQuery.data?.find(
         (p) => p.token.ybToken.address === vaultTokens.ybTokenAddress
-      )?.poolName,
+      )?.name,
     }
   }
   if (!apiTokenQuery.isError && isToken) {
@@ -46,7 +46,7 @@ export default function useVaultName({ asset, type }: VaultProps) {
       ...apiTokenQuery,
       data: apiTokenQuery.data?.find(
         (p) => p.token.ybToken.address === vaultTokens.ybTokenAddress
-      )?.vaultName,
+      )?.name,
     }
   }
   // Fallback to contract data after failure

@@ -3,8 +3,8 @@ import { Address } from "wagmi"
 import { fortressApi, handledResponse } from "@/lib/api/util"
 
 export type TokenVaultStaticData = {
-  vaultId: number
-  vaultName: string
+  id: number
+  name: string
   platformFee: number
   withdrawalFee: number
   token: {
@@ -14,13 +14,13 @@ export type TokenVaultStaticData = {
       symbol?: string
       name?: string
     }
-    baseAsset: {
+    primaryAsset: {
       address: Address
       decimals: number
       symbol?: string
       name?: string
     }
-    underlyingAssets: {
+    assets: {
       address: Address
       decimals: number
       symbol?: string
