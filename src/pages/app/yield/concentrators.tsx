@@ -19,7 +19,10 @@ import { TabButton, TabList, TabListGroup, TabPanels } from "@/components/Tabs"
 const Concentrators: NextPage = () => {
   return (
     <Layout>
-      <Seo templateTitle="Concentrators" description="Concentrators automatically re-invest earnings into specific target assets"/>
+      <Seo
+        templateTitle="Concentrators"
+        description="Concentrators automatically re-invest earnings into specific target assets"
+      />
 
       <main>
         <PageHeading>Concentrators</PageHeading>
