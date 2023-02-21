@@ -53,11 +53,10 @@ const HomePage: NextPage<
             </div>
             <div>
               <h1 className="font-display text-4xl uppercase lg:max-w-2xl lg:text-7xl">
-                Fortress Finance is a new arbitrage protocol.
+                Fortress Finance
               </h1>
               <p className="mt-4 text-xl lg:mt-6 lg:text-3xl">
-                Fortress introduces a new suite of tools built on Curve and
-                Balancer.
+                Fortress provides composable financial products for passive DeFi investors.
               </p>
               <ButtonLink
                 className="mt-6 px-8"
