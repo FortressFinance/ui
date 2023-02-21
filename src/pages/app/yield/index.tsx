@@ -22,7 +22,10 @@ import { VaultTable } from "@/components/Vault/VaultTable"
 const Yield: NextPage = () => {
   return (
     <Layout>
-      <Seo templateTitle="Vaults" description="Compounders automatically re-invest earnings back into their own strategy" />
+      <Seo
+        templateTitle="Vaults"
+        description="Compounders automatically re-invest earnings back into their own strategy"
+      />
 
       <main>
         <PageHeading>Vaults</PageHeading>
