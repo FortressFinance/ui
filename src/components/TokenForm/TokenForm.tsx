@@ -110,11 +110,7 @@ const TokenForm: FC<TokenFormProps> = ({
                 }`,
             },
           }}
-          render={({
-            field: { onChange, onBlur, value, name, ref },
-            fieldState: { invalid, isTouched, isDirty, error },
-            formState,
-          }) => (
+          render={({ field: { onChange, onBlur, value, name, ref } }) => (
             <input
               className="peer relative z-[2] col-start-1 row-start-1 block w-full text-ellipsis bg-transparent px-4 pt-4 pb-2 text-2xl placeholder-white/50 focus:outline-none md:text-4xl"
               step="any"
