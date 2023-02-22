@@ -10,6 +10,7 @@ import useActiveChainId from "@/hooks/useActiveChainId"
 import { useClientReady } from "@/hooks/util/useClientReady"
 
 import { enabledNetworks } from "@/components/AppProviders"
+import { Consent } from "@/components/Disclaimer/Consent"
 import HoldingsTable from "@/components/Holdings/HoldingsTable"
 import Layout from "@/components/Layout"
 import { PageHeading } from "@/components/PageHeading"
@@ -26,6 +27,7 @@ const Yield: NextPage = () => {
 
       <main>
         <PageHeading>Vaults</PageHeading>
+        <Consent />
 
         <Tab.Group>
           <Tab.List as={TabList}>
