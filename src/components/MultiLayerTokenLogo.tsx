@@ -83,7 +83,7 @@ const MultiLayerTokenLogo: FC<MultiLayerTokenLogoProps> = ({
   const positions = getSubLogosPositions(tokens?.length, size / 4, size / 4)
 
   return (
-    <span className="relative h-8 w-8" style={{ fontSize: 12 }}>
+    <span className="relative h-8 w-8 text-xs">
       <BaseLogo
         vaultType={vaultType}
         isLpToken={isLpToken}
