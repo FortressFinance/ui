@@ -11,7 +11,7 @@ const HoldingsTable: FC = () => {
           <TableHeader>Holdings</TableHeader>
           <TableHeader className="text-center">APY</TableHeader>
           <TableHeader className="text-center">TVL</TableHeader>
-          <TableHeader className="text-center">Deposit</TableHeader>
+          <TableHeader className="text-center">Balance</TableHeader>
           <TableHeader>
             <span className="sr-only">Vault actions</span>
           </TableHeader>
