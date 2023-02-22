@@ -11,7 +11,10 @@ import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
 import { vaultCompounderAbi } from "@/constant/abi"
 
-export function useCompounderFees({ asset, type }: VaultProps) {
+// TODO: Implement full fees support
+const HARDCODED_FEES = { depositFee: "0", performanceFee: "0" }
+
+export function useVaultFees({ asset, type }: VaultProps) {
   const chainId = useActiveChainId()
   const isToken = useIsTokenCompounder(type)
 
@@ -47,6 +50,7 @@ export function useCompounderFees({ asset, type }: VaultProps) {
     return {
       ...apiCompounderQuery,
       data: {
+        ...HARDCODED_FEES,
         platformFee: matchedCompounder?.platformFee
           ? String(matchedCompounder.platformFee)
           : undefined,
@@ -64,6 +68,7 @@ export function useCompounderFees({ asset, type }: VaultProps) {
     return {
       ...apiTokenQuery,
       data: {
+        ...HARDCODED_FEES,
         platformFee: matchedCompounder?.platformFee
           ? String(matchedCompounder.platformFee)
           : undefined,
@@ -78,6 +83,7 @@ export function useCompounderFees({ asset, type }: VaultProps) {
   return {
     ...fees,
     data: {
+      ...HARDCODED_FEES,
       platformFee: fees.data?.[0],
       withdrawFee: fees.data?.[1],
     },

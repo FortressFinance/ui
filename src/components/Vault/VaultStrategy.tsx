@@ -4,8 +4,7 @@ import { FC, Fragment, MouseEventHandler, useState } from "react"
 import { useAccount } from "wagmi"
 
 import { VaultProps } from "@/lib/types"
-import { useCompounderFees } from "@/hooks/data/compounders"
-import { useVault } from "@/hooks/data/vaults"
+import { useVault, useVaultFees } from "@/hooks/data/vaults"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
@@ -17,6 +16,7 @@ import PurpleModal, {
   PurpleModalHeader,
 } from "@/components/Modal/PurpleModal"
 import Percentage from "@/components/Percentage"
+import Skeleton from "@/components/Skeleton"
 import Tooltip from "@/components/Tooltip"
 import { CurveBalancerApr } from "@/components/Vault/APR/CurveBalancerApr"
 import { TokenApr } from "@/components/Vault/APR/TokenApr"
@@ -27,12 +27,6 @@ import ExternalLink from "~/svg/icons/external-link.svg"
 
 const VaultStrategyButton: FC<VaultProps> = (props) => {
   const [isStrategyOpen, setIsStrategyOpen] = useState(false)
-
-  const vault = useVault(props)
-  const fees = useCompounderFees(props)
-  const depositFeePercentage = 0 // HARDCODED IT TO ZERO FOR NOW
-
-  const isLoading = [fees, vault].some((q) => q.isLoading)
 
   const toggleStrategyOpen: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
@@ -45,7 +39,6 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
       <Button
         className="pointer-events-auto hidden transition-all duration-150 active:translate-y-0 enabled:hover:-translate-y-1 enabled:hover:shadow-button-glow enabled:hover:contrast-150 md:inline-grid"
         size="small"
-        isLoading={isLoading}
         onClick={toggleStrategyOpen}
       >
         Strategy
@@ -53,9 +46,6 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
       <VaultStrategyModal
         isOpen={isStrategyOpen}
         onClose={() => setIsStrategyOpen(false)}
-        platformFeePercentage={fees.data?.platformFee}
-        withdrawFeePercentage={fees.data?.withdrawFee}
-        depositFeePercentage={depositFeePercentage}
         {...props}
       />
     </>
@@ -64,26 +54,20 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
 
 export default VaultStrategyButton
 
-type VaultStrategyModalProps = VaultProps &
-  ModalBaseProps & {
-    platformFeePercentage: string | number | undefined
-    withdrawFeePercentage: string | number | undefined
-    depositFeePercentage: string | number | undefined
-  }
+type VaultStrategyModalProps = VaultProps & ModalBaseProps
 
 const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
-  asset,
-  type,
-  vaultAddress,
-  platformFeePercentage,
-  withdrawFeePercentage,
-  depositFeePercentage,
-  ...modalProps
+  isOpen,
+  onClose,
+  ...vaultProps
 }) => {
   const { connector } = useAccount()
+  const fees = useVaultFees(vaultProps)
 
-  const { data: ybToken } = useTokenOrNative({ address: vaultAddress })
-  const isToken = useIsTokenCompounder(type)
+  const { data: ybToken } = useTokenOrNative({
+    address: vaultProps.vaultAddress,
+  })
+  const isToken = useIsTokenCompounder(vaultProps.type)
 
   const addTokenToWallet: MouseEventHandler<HTMLButtonElement> = () => {
     if (ybToken && ybToken.address && connector && connector.watchAsset) {
@@ -93,7 +77,11 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
   const label = `Add ${ybToken?.symbol} to wallet`
 
   return (
-    <PurpleModal className="max-xl:max-w-4xl xl:max-w-5xl" {...modalProps}>
+    <PurpleModal
+      className="max-xl:max-w-4xl xl:max-w-5xl"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
       <PurpleModalHeader className="flex justify-between space-x-4">
         <div className="flex space-x-4">
           {!!connector && !!connector.watchAsset && (
@@ -104,12 +92,15 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
             </Tooltip>
           )}
           <Tooltip label="View contract">
-            <Link href={`https://arbiscan.io/address/${asset}`} target="_blank">
+            <Link
+              href={`https://arbiscan.io/address/${vaultProps.asset}`}
+              target="_blank"
+            >
               <ExternalLink className="h-6 w-6" aria-label="View contract" />
             </Link>
           </Tooltip>
         </div>
-        <button className="h-6 w-6" onClick={modalProps.onClose}>
+        <button className="h-6 w-6" onClick={onClose}>
           <Close className="h-6 w-6" aria-label="Close" />
         </button>
       </PurpleModalHeader>
@@ -120,19 +111,15 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
             <Dialog.Title as="h1" className="mb-4 font-bold">
               Vault description
             </Dialog.Title>
-            <VaultStrategyText
-              type={type}
-              asset={asset}
-              vaultAddress={vaultAddress}
-            />
+            <VaultStrategyText {...vaultProps} />
           </div>
           <div>
             <h1 className="mb-4 font-bold max-md:mt-4">APR</h1>
             <dl className="gap-x06 grid grid-cols-4 gap-y-3 gap-x-6">
               {isToken ? (
-                <TokenApr asset={asset} type={type} />
+                <TokenApr {...vaultProps} />
               ) : (
-                <CurveBalancerApr asset={asset} type={type} />
+                <CurveBalancerApr {...vaultProps} />
               )}
             </dl>
           </div>
@@ -147,14 +134,18 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
               fee
             </dt>
             <dd className="col-start-1 row-start-2 text-4xl font-semibold">
-              <Percentage truncate>{depositFeePercentage ?? 0}</Percentage>
+              <Skeleton isLoading={fees.isLoading}>
+                <Percentage truncate>{fees.data.depositFee ?? "0"}</Percentage>
+              </Skeleton>
             </dd>
             <dt className="text-sm">
               Withdrawal <br />
               fee
             </dt>
             <dd className="col-start-2 row-start-2 text-4xl font-semibold">
-              <Percentage truncate>{withdrawFeePercentage ?? 0}</Percentage>
+              <Skeleton isLoading={fees.isLoading}>
+                <Percentage truncate>{fees.data.withdrawFee ?? "0"}</Percentage>
+              </Skeleton>
             </dd>
             <dt className="text-sm">
               Management
@@ -162,7 +153,9 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
               fee
             </dt>
             <dd className="col-start-3 row-start-2 text-4xl font-semibold">
-              <Percentage truncate>{platformFeePercentage ?? 0}</Percentage>
+              <Skeleton isLoading={fees.isLoading}>
+                <Percentage truncate>{fees.data.platformFee ?? "0"}</Percentage>
+              </Skeleton>
             </dd>
             <dt className="text-sm">
               Performance
@@ -170,7 +163,11 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
               fee
             </dt>
             <dd className="col-start-4 row-start-2 text-4xl font-semibold">
-              <Percentage truncate>0</Percentage>
+              <Skeleton isLoading={fees.isLoading}>
+                <Percentage truncate>
+                  {fees.data.performanceFee ?? "0"}
+                </Percentage>
+              </Skeleton>
             </dd>
           </dl>
         </div>
