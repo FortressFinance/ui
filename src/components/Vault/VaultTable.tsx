@@ -37,7 +37,7 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
           <TableHeader>{label}</TableHeader>
           <TableHeader className="text-center">APY</TableHeader>
           <TableHeader className="text-center">TVL</TableHeader>
-          <TableHeader className="text-center">Deposit</TableHeader>
+          <TableHeader className="text-center">Balance</TableHeader>
           <TableHeader>
             <Popover className="relative flex justify-end">
               {({ open }) => (

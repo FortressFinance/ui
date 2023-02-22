@@ -224,10 +224,7 @@ const VaultStrategyText: FC<VaultProps> = ({ asset, type, vaultAddress }) => {
                   : index > 0
                   ? " and "
                   : null}
-                <AssetSymbol
-                  key={`token-symbol-${index}`}
-                  address={(address ?? "0x") as `0x${string}`}
-                />
+                <AssetSymbol key={`token-symbol-${index}`} address={address} />
               </Fragment>
             ))}
             .
@@ -248,10 +245,7 @@ const VaultStrategyText: FC<VaultProps> = ({ asset, type, vaultAddress }) => {
                 : index > 0
                 ? " and "
                 : null}
-              <AssetSymbol
-                key={`token-symbol-${index}`}
-                address={(address ?? "0x") as `0x${string}`}
-              />
+              <AssetSymbol key={`token-symbol-${index}`} address={address} />
             </Fragment>
           ))}
           .

@@ -22,10 +22,13 @@ import { VaultTable } from "@/components/Vault/VaultTable"
 const Yield: NextPage = () => {
   return (
     <Layout>
-      <Seo templateTitle="Vaults" />
+      <Seo
+        templateTitle="Compounders"
+        description="Compounders automatically re-invest earnings back into their own strategy"
+      />
 
       <main>
-        <PageHeading>Vaults</PageHeading>
+        <PageHeading>Compounders</PageHeading>
 
         <Tab.Group>
           <Tab.List as={TabList}>
@@ -117,19 +120,19 @@ const YieldVaultTable: FC<YieldVaultTableProps> = ({ filter, type }) => {
     : compoundersList
 
   return (
-    <VaultTable label={`${capitalizeFirstLetter(type)} Vaults`}>
+    <VaultTable label={`${capitalizeFirstLetter(type)} Compounders`}>
       {showLoadingState ? (
         <TableLoading>Loading compounders...</TableLoading>
       ) : !supportedChain ? (
         <TableEmpty heading="Unsupported network">
-          Please switch to a supported network to view Vaults.
+          Please switch to a supported network to view Compounders.
         </TableEmpty>
       ) : !filteredCompounders?.length ? (
-        <TableEmpty heading="Where Vaults ser?">
-          It seems we don't have {capitalizeFirstLetter(type)} Vaults on{" "}
-          {network} (yet). Feel free to check out other vaults on {network} or
-          change network. New Vaults and strategies are added often, so check
-          back later. Don't be a stranger.
+        <TableEmpty heading="Where Compounders ser?">
+          It seems we don't have {capitalizeFirstLetter(type)} Compounders on{" "}
+          {network} (yet). Feel free to check out other compounders on {network}{" "}
+          or change network. New Compounders and strategies are added often, so
+          check back later. Don't be a stranger.
         </TableEmpty>
       ) : (
         filteredCompounders?.map((address, i) => (

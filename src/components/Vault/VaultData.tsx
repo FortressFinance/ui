@@ -1,12 +1,11 @@
-import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
 
 import { VaultProps } from "@/lib/types"
 import { useVaultPoolId, useVaultTvl } from "@/hooks/data"
 import useVaultApy from "@/hooks/data/useVaultApy"
 import { useVault } from "@/hooks/data/vaults"
-import useTokenOrNative from "@/hooks/useTokenOrNative"
 
+import { AssetBalance } from "@/components/Asset"
 import Currency from "@/components/Currency"
 import Percentage from "@/components/Percentage"
 import Skeleton from "@/components/Skeleton"
@@ -46,15 +45,5 @@ export const VaultTvl: FC<VaultProps> = (props) => {
 
 export const VaultDepositedLpTokens: FC<VaultProps> = (props) => {
   const vault = useVault(props)
-  const lpTokenOrAsset = useTokenOrNative({ address: props.asset })
-  const formatted = ethers.utils.formatUnits(
-    BigNumber.from(vault.data.totalAssets ?? 0),
-    lpTokenOrAsset.data?.decimals ?? 18
-  )
-
-  return (
-    <Skeleton isLoading={vault.isLoading || lpTokenOrAsset.isLoading}>
-      <Currency abbreviate>{formatted}</Currency>
-    </Skeleton>
-  )
+  return <AssetBalance address={props.asset} isLoading={vault.isLoading} />
 }
