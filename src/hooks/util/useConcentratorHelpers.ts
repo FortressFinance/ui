@@ -12,7 +12,7 @@ export function useFilteredConcentrators({
 }) {
   return concentratorsList.data?.filter(
     (v) =>
-      v.concentratorTargetAsset === concentratorTargetAsset &&
+      v?.concentratorTargetAsset === concentratorTargetAsset &&
       (filterCategory ? v.filterCategories.includes(filterCategory) : true)
   )
 }
