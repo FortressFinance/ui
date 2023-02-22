@@ -7,7 +7,7 @@ type UseVaultTvlParams = VaultProps & {
   poolId: number | undefined
 }
 
-export default function useVaultTvl({
+export function useVaultTvl({
   asset: _address,
   poolId,
   type,

@@ -1,9 +1,12 @@
 import { FC } from "react"
 
 import { VaultProps } from "@/lib/types"
-import { useVaultPoolId, useVaultTvl } from "@/hooks/data"
-import useVaultApy from "@/hooks/data/useVaultApy"
-import { useVault } from "@/hooks/data/vaults"
+import {
+  useVault,
+  useVaultApy,
+  useVaultPoolId,
+  useVaultTvl,
+} from "@/hooks/data/vaults"
 
 import { AssetBalance } from "@/components/Asset"
 import Currency from "@/components/Currency"

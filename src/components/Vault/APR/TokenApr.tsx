@@ -11,7 +11,7 @@ import {
   useVaultGmxApr,
   useVaultPoolId,
   useVaultTotalApr,
-} from "@/hooks/data"
+} from "@/hooks/data/vaults"
 
 import Percentage from "@/components/Percentage"
 import Skeleton from "@/components/Skeleton"

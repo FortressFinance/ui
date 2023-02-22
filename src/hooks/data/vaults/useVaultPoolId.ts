@@ -8,7 +8,7 @@ import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
 // TODO: Support Concentrator vaults
 
-export default function useVaultPoolId({ asset, type }: VaultProps) {
+export function useVaultPoolId({ asset, type }: VaultProps) {
   const isToken = useIsTokenCompounder(type)
 
   // Preferred: API request
