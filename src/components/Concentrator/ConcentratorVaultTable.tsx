@@ -3,13 +3,13 @@ import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
 import { FilterCategory, TargetAsset, VaultType } from "@/lib/types"
+import { useCompounderAsset } from "@/hooks/data/compounders"
 import {
-  useConcentrator,
+  useConcentratorVault,
   useListConcentrators,
 } from "@/hooks/data/concentrators"
 import useActiveChainId from "@/hooks/useActiveChainId"
-import { useClientReady } from "@/hooks/util/useClientReady"
-import { useFilteredConcentrators } from "@/hooks/util/useConcentratorHelpers"
+import { useClientReady, useFilteredConcentrators } from "@/hooks/util"
 
 import { enabledNetworks } from "@/components/AppProviders"
 import { TableEmpty, TableLoading } from "@/components/Table"
@@ -78,13 +78,15 @@ type ConcentratorVaultRowProps = {
 }
 
 const ConcentratorVaultRow: FC<ConcentratorVaultRowProps> = (props) => {
-  const concentrator = useConcentrator(props)
-  if (!concentrator.data || !concentrator.data?.vault.type) return null
+  const concentrator = useConcentratorVault(props)
+  const asset = useCompounderAsset({ asset: concentrator.data?.ybTokenAddress })
+  if (!concentrator.data || !asset.data)
+    return <TableLoading>Loading concentrators...</TableLoading>
   return (
     <VaultRow
-      asset={concentrator.data.vault.asset}
-      type={concentrator.data.vault.type}
-      vaultAddress={concentrator.data.ybTokenAddress}
+      asset={concentrator.data?.rewardTokenAddress}
+      type={props.vaultType}
+      vaultAddress={concentrator.data?.ybTokenAddress}
     />
   )
 }

@@ -3,7 +3,7 @@ import { Dispatch, FC, SetStateAction } from "react"
 
 import { TargetAsset } from "@/lib/types"
 import { useConcentratorTargetAssets } from "@/hooks/data/concentrators/useConcentratorTargetAssets"
-import { useClientReady } from "@/hooks/util/useClientReady"
+import { useClientReady } from "@/hooks/util"
 
 import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"
 import { DropdownMenu } from "@/components/DropdownMenu"

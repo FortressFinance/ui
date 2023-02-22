@@ -135,7 +135,7 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
             </dt>
             <dd className="col-start-1 row-start-2 text-4xl font-semibold">
               <Skeleton isLoading={fees.isLoading}>
-                <Percentage truncate>{fees.data.depositFee ?? "0"}</Percentage>
+                <Percentage truncate>{fees.data?.depositFee ?? "0"}</Percentage>
               </Skeleton>
             </dd>
             <dt className="text-sm">
@@ -144,7 +144,9 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
             </dt>
             <dd className="col-start-2 row-start-2 text-4xl font-semibold">
               <Skeleton isLoading={fees.isLoading}>
-                <Percentage truncate>{fees.data.withdrawFee ?? "0"}</Percentage>
+                <Percentage truncate>
+                  {fees.data?.withdrawFee ?? "0"}
+                </Percentage>
               </Skeleton>
             </dd>
             <dt className="text-sm">
@@ -154,7 +156,9 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
             </dt>
             <dd className="col-start-3 row-start-2 text-4xl font-semibold">
               <Skeleton isLoading={fees.isLoading}>
-                <Percentage truncate>{fees.data.platformFee ?? "0"}</Percentage>
+                <Percentage truncate>
+                  {fees.data?.platformFee ?? "0"}
+                </Percentage>
               </Skeleton>
             </dd>
             <dt className="text-sm">
@@ -165,7 +169,7 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
             <dd className="col-start-4 row-start-2 text-4xl font-semibold">
               <Skeleton isLoading={fees.isLoading}>
                 <Percentage truncate>
-                  {fees.data.performanceFee ?? "0"}
+                  {fees.data?.performanceFee ?? "0"}
                 </Percentage>
               </Skeleton>
             </dd>

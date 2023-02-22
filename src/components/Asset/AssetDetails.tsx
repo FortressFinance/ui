@@ -3,7 +3,7 @@ import { Address } from "wagmi"
 
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
-import { useClientReady } from "@/hooks/util/useClientReady"
+import { useClientReady } from "@/hooks/util"
 
 import Skeleton from "@/components/Skeleton"
 

@@ -39,7 +39,7 @@ export function useListConcentrators() {
     select: (data) =>
       data
         .map((vaultAssetAddresses, index) =>
-          vaultAssetAddresses.map((vaultAssetAddress) => ({
+          vaultAssetAddresses?.map((vaultAssetAddress) => ({
             concentratorTargetAsset: targetAssetByIndex[index],
             filterCategories: filterCategoryByIndex[index],
             vaultAssetAddress: vaultAssetAddress,

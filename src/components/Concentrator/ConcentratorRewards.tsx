@@ -3,14 +3,13 @@ import { FC } from "react"
 
 import { FilterCategory, TargetAsset } from "@/lib/types"
 import {
-  useConcentrator,
   useConcentratorClaim,
   useConcentratorPendingReward,
+  useConcentratorVault,
   useListConcentrators,
 } from "@/hooks/data/concentrators"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
-import { useClientReady } from "@/hooks/util/useClientReady"
-import { useFirstConcentrator } from "@/hooks/util/useConcentratorHelpers"
+import { useClientReady, useFirstConcentrator } from "@/hooks/util"
 
 import Button from "@/components/Button"
 import {
@@ -109,7 +108,7 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
     concentratorTargetAsset,
     filterCategory,
   })
-  const concentrator = useConcentrator({
+  const concentrator = useConcentratorVault({
     concentratorTargetAsset,
     vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
     vaultType: firstConcentrator?.vaultType,
@@ -150,7 +149,7 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
     concentratorTargetAsset,
     filterCategory,
   })
-  const concentrator = useConcentrator({
+  const concentrator = useConcentratorVault({
     concentratorTargetAsset,
     vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
     vaultType: firstConcentrator?.vaultType,

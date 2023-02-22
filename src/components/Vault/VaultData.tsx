@@ -17,7 +17,7 @@ export const VaultName: FC<VaultProps> = (props) => {
   const vault = useVault(props)
   return (
     <Skeleton isLoading={vault.isLoading}>
-      {vault.isLoading ? "Loading vault..." : vault.data.name}
+      {vault.isLoading ? "Loading vault..." : vault.data?.name}
     </Skeleton>
   )
 }

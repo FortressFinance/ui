@@ -5,9 +5,12 @@ import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
 import { FilterCategory, VaultProps } from "@/lib/types"
-import { useCompounder, useListCompounders } from "@/hooks/data/compounders"
+import {
+  useCompounderVault,
+  useListCompounders,
+} from "@/hooks/data/compounders"
 import useActiveChainId from "@/hooks/useActiveChainId"
-import { useClientReady } from "@/hooks/util/useClientReady"
+import { useClientReady } from "@/hooks/util"
 
 import { enabledNetworks } from "@/components/AppProviders"
 import HoldingsTable from "@/components/Holdings/HoldingsTable"
@@ -146,6 +149,6 @@ const YieldVaultTable: FC<YieldVaultTableProps> = ({ filter, type }) => {
 type YieldVaultRowProps = Pick<VaultProps, "asset" | "type">
 
 const YieldVaultRow: FC<YieldVaultRowProps> = (props) => {
-  const compounder = useCompounder(props)
-  return <VaultRow {...props} vaultAddress={compounder.data?.ybTokenAddress} />
+  const vaultAddress = useCompounderVault(props)
+  return <VaultRow {...props} vaultAddress={vaultAddress.data} />
 }

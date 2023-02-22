@@ -2,10 +2,10 @@ import { FC } from "react"
 
 import { TargetAsset } from "@/lib/types"
 import {
-  useConcentrator,
+  useConcentratorVault,
   useListConcentrators,
 } from "@/hooks/data/concentrators"
-import { useFirstConcentrator } from "@/hooks/util/useConcentratorHelpers"
+import { useFirstConcentrator } from "@/hooks/util"
 
 import { AssetBalance, AssetLogo, AssetSymbol } from "@/components/Asset"
 
@@ -21,7 +21,7 @@ export const ConcentratorTargetAssetSymbol: FC<
     concentratorsList,
     concentratorTargetAsset,
   })
-  const concentrator = useConcentrator({
+  const concentrator = useConcentratorVault({
     concentratorTargetAsset,
     vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
     vaultType: firstConcentrator?.vaultType ?? "balancer",
@@ -42,7 +42,7 @@ export const ConcentratorTargetAssetBalance: FC<
     concentratorsList,
     concentratorTargetAsset,
   })
-  const concentrator = useConcentrator({
+  const concentrator = useConcentratorVault({
     concentratorTargetAsset,
     vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
     vaultType: firstConcentrator?.vaultType ?? "balancer",
@@ -63,7 +63,7 @@ export const ConcentratorTargetAssetLogo: FC<ConcentratorTargetAssetProps> = ({
     concentratorsList,
     concentratorTargetAsset,
   })
-  const concentrator = useConcentrator({
+  const concentrator = useConcentratorVault({
     concentratorTargetAsset,
     vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
     vaultType: firstConcentrator?.vaultType ?? "balancer",
