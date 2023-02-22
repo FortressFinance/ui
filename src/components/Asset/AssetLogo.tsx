@@ -1,6 +1,7 @@
 import Image from "next/image"
 import { CSSProperties, FC, useMemo, useState } from "react"
 import { BiErrorCircle } from "react-icons/bi"
+import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 import useCurrencyLogoURI from "@/hooks/useCurrencyLogoURIs"
@@ -12,7 +13,7 @@ type AssetLogoProps = {
   name?: string
   className?: string
   style?: CSSProperties
-  tokenAddress?: `0x${string}`
+  tokenAddress?: Address
 }
 
 export const AssetLogo: FC<AssetLogoProps> = ({
