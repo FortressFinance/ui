@@ -83,7 +83,10 @@ function useApiTokenVault({ asset, type }: VaultProps) {
       name: matchedVault?.name ?? "",
       symbol: matchedVault?.token.primaryAsset.symbol ?? "",
       decimals: matchedVault?.token.primaryAsset.decimals ?? 18,
-      underlyingAssets: [asset] as Address[],
+      underlyingAssets: [
+        ...(matchedVault?.token.assets?.map((a) => a.address) ?? []),
+        asset,
+      ] as Address[],
     },
   }
 }
