@@ -1,9 +1,10 @@
 import Image from "next/image"
-import { CSSProperties, FC } from "react"
+import { CSSProperties, FC, useMemo, useState } from "react"
+import { BiErrorCircle } from "react-icons/bi"
 
+import clsxm from "@/lib/clsxm"
 import useCurrencyLogoURI from "@/hooks/useCurrencyLogoURIs"
 
-import AuraLogo from "~/images/assets/aura.png"
 import BalancerLogo from "~/images/assets/balancer.png"
 import CurveLogo from "~/images/assets/curve.png"
 
@@ -20,28 +21,40 @@ export const AssetLogo: FC<AssetLogoProps> = ({
   tokenAddress,
   style,
 }) => {
-  const { logoURI } = useCurrencyLogoURI(tokenAddress || "0x")
+  const [isError, setIsError] = useState(false)
 
-  const getImage = (name: string) => {
+  const { logoURI } = useCurrencyLogoURI(tokenAddress || "0x")
+  const isStatic = name === "curve" || name === "balancer"
+  const imageSrc = useMemo(() => {
     switch (name) {
       case "curve":
-        return <Image src={CurveLogo} priority alt="" />
+        return CurveLogo
       case "balancer":
-        return <Image src={BalancerLogo} priority alt="" />
-      case "crypto":
-        return <Image src={AuraLogo} priority alt="" />
+        return BalancerLogo
       case "token":
-        return <Image src={logoURI} priority alt="" fill />
+        return logoURI
       default:
-        return <Image src="" priority alt="" fill />
+        return ""
     }
-  }
-
-  if (!name) return null
+  }, [name, logoURI])
 
   return (
-    <span className={className} style={style}>
-      {getImage(name)}
-    </span>
+    <div
+      className={clsxm("relative rounded-full bg-white", className)}
+      style={style}
+    >
+      {isError ? (
+        <BiErrorCircle className="h-full w-full fill-dark/50" />
+      ) : (
+        <Image
+          src={imageSrc}
+          alt=""
+          className={clsxm({ "h-full w-full object-contain p-1": isStatic })}
+          onError={() => setIsError(true)}
+          fill
+          priority
+        />
+      )}
+    </div>
   )
 }

@@ -83,12 +83,12 @@ const MultiLayerTokenLogo: FC<MultiLayerTokenLogoProps> = ({
   const positions = getSubLogosPositions(tokens?.length, size / 4, size / 4)
 
   return (
-    <span id="mull" className="relative h-8 w-8" style={{ fontSize: 12 }}>
+    <span className="relative h-8 w-8" style={{ fontSize: 12 }}>
       <BaseLogo
         vaultType={vaultType}
         isLpToken={isLpToken}
         className={className}
-      ></BaseLogo>
+      />
       {tokens &&
         tokens.map((token, index) => {
           const top: string = size / 1.5 - 1 + positions[index].x + "px"
