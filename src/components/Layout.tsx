@@ -84,7 +84,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               </nav>
             </div>
 
-            <div className="flex items-stretch gap-2">
+            <div className="flex items-stretch gap-2 md:gap-4">
               {/* Network selector for desktop */}
               <div className="max-md:hidden">
                 <NetworkSelector />
