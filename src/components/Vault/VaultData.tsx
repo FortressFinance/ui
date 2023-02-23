@@ -48,5 +48,7 @@ export const VaultTvl: FC<VaultProps> = (props) => {
 
 export const VaultDepositedLpTokens: FC<VaultProps> = (props) => {
   const vault = useVault(props)
-  return <AssetBalance address={props.asset} isLoading={vault.isLoading} />
+  return (
+    <AssetBalance address={props.vaultAddress} isLoading={vault.isLoading} />
+  )
 }
