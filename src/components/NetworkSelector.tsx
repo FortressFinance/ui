@@ -4,6 +4,7 @@ import { useNetwork, useSwitchNetwork } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 import useActiveChainId from "@/hooks/useActiveChainId"
+import { useClientReady } from "@/hooks/util"
 
 import { enabledNetworks, mainnetFork } from "@/components/AppProviders"
 
@@ -18,6 +19,7 @@ type NetworkSelectorProps = {
 }
 
 const NetworkSelector: FC<NetworkSelectorProps> = () => {
+  const isReady = useClientReady()
   const { chain: connectedChain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
   const setActiveChainId = useActiveChain((state) => state.setChainId)
@@ -25,8 +27,10 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
   const disconnectedChain = enabledNetworks.chains.find(
     (c) => c.id === disconnectedChainId
   )
-  const chain = connectedChain || { ...disconnectedChain, unsupported: false }
-  const chainId = connectedChain?.id ?? disconnectedChainId
+
+  const chain = isReady
+    ? connectedChain ?? { ...disconnectedChain, unsupported: false }
+    : { ...enabledNetworks.chains[0], unsupported: false }
 
   const onClickChain = (chainId: number) => {
     if (connectedChain && switchNetwork) {
@@ -54,7 +58,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
               "Unsupported Network"
             ) : (
               <>
-                {chainId === mainnetFork.id ? (
+                {chain.id === mainnetFork.id ? (
                   <EthereumLogo
                     className="h-5 w-5"
                     aria-hidden="true"

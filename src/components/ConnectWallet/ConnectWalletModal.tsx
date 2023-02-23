@@ -190,7 +190,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
           </div>
         </div>
 
-        <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap py-2 pt-5 text-2xl font-medium">
+        <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap py-2 pt-4 text-xl font-medium max-sm:text-center sm:text-2xl">
           <Address>{address}</Address>
         </div>
         <div className="flex items-center justify-between pt-5 text-sm">
