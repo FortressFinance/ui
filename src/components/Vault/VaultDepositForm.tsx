@@ -16,8 +16,8 @@ import { toFixed } from "@/lib/api/util/format"
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
-import { useVaultPoolId, useVaultTokens } from "@/hooks/data"
 import { usePreviewDeposit } from "@/hooks/data/preview/usePreviewDeposit"
+import { useVault, useVaultPoolId } from "@/hooks/data/vaults"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
@@ -31,15 +31,12 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
-  const { data: vaultTokens } = useVaultTokens(props)
+  const vault = useVault(props)
 
+  const underlyingAssets = vault.data?.underlyingAssets
   const lpTokenOrAsset = isToken
-    ? vaultTokens.underlyingAssetAddresses?.[
-        vaultTokens.underlyingAssetAddresses?.length - 1
-      ]
+    ? underlyingAssets?.[underlyingAssets?.length - 1]
     : props.asset
-  const vaultAddress = vaultTokens.ybTokenAddress ?? "0x"
-  const underlyingAssets = vaultTokens.underlyingAssetAddresses
 
   // Configure form
   const form = useForm<TokenFormValues>({
@@ -47,7 +44,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
       amountIn: "",
       amountOut: "",
       inputToken: lpTokenOrAsset,
-      outputToken: vaultTokens.ybTokenAddress,
+      outputToken: props.vaultAddress,
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -70,8 +67,8 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     abi: erc20ABI,
     address: inputTokenAddress,
     functionName: "allowance",
-    args: [userAddress ?? "0x", vaultAddress],
-    enabled: !!userAddress && !inputIsEth,
+    args: [userAddress ?? "0x", props.vaultAddress ?? "0x"],
+    enabled: !!userAddress && !inputIsEth && !!props.vaultAddress,
     watch: true,
   })
   const requiresApproval = inputIsEth ? false : allowance?.lt(value)
@@ -87,8 +84,8 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     abi: erc20ABI,
     address: inputTokenAddress,
     functionName: "approve",
-    args: [vaultAddress, ethers.constants.MaxUint256],
-    enabled: requiresApproval,
+    args: [props.vaultAddress ?? "0x", ethers.constants.MaxUint256],
+    enabled: requiresApproval && !!props.vaultAddress,
   })
   const approve = useContractWrite(prepareApprove.config)
   const waitApprove = useWaitForTransaction({
@@ -113,7 +110,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const prepareDepositUnderlying = usePrepareContractWrite({
     chainId,
     abi: vaultCompounderAbi,
-    address: vaultAddress,
+    address: props.vaultAddress,
     functionName: "depositSingleUnderlying",
     enabled: value.gt(0) && !requiresApproval && !inputIsLp && !isToken,
     args: [value, inputTokenAddress, userAddress ?? "0x", BigNumber.from(0)],
@@ -128,7 +125,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const prepareTokenDepositUnderlying = usePrepareContractWrite({
     chainId,
     abi: vaultTokenAbi,
-    address: vaultAddress,
+    address: props.vaultAddress,
     functionName: "depositUnderlying",
     enabled: value.gt(0) && !requiresApproval && !inputIsLp && isToken,
     args: [value, userAddress ?? "0x", BigNumber.from(0)],
@@ -145,7 +142,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const prepareDepositLp = usePrepareContractWrite({
     chainId,
     abi: vaultCompounderAbi,
-    address: vaultAddress,
+    address: props.vaultAddress,
     functionName: "deposit",
     enabled: value.gt(0) && !requiresApproval && inputIsLp && !isToken,
     args: [value, userAddress ?? "0x"],
@@ -159,7 +156,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const prepareTokenDepositLp = usePrepareContractWrite({
     chainId,
     abi: vaultCompounderAbi,
-    address: vaultAddress,
+    address: props.vaultAddress,
     functionName: "deposit",
     enabled: value.gt(0) && !requiresApproval && inputIsLp && isToken,
     args: [value, userAddress ?? "0x"],

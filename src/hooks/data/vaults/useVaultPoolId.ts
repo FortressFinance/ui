@@ -1,31 +1,35 @@
+import {
+  findApiCompounderVaultForAsset,
+  findApiTokenVaultForAsset,
+} from "@/lib/findApiVaultForAsset"
 import { VaultProps } from "@/lib/types"
 import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
-import { useVaultTokens } from "@/hooks/data"
 import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
-export default function useVaultPoolId({ asset, type }: VaultProps) {
+// TODO: Support Concentrator vaults
+
+export function useVaultPoolId({ asset, type }: VaultProps) {
   const isToken = useIsTokenCompounder(type)
-  const { data: vaultTokens } = useVaultTokens({
-    asset,
-    type,
-  })
+
   // Preferred: API request
   const apiCompounderQuery = useApiCompounderVaults({ type })
   const apiTokenQuery = useApiTokenVaults({ type })
 
   if (!isToken) {
+    const matchedVault = findApiCompounderVaultForAsset(
+      apiCompounderQuery.data,
+      asset
+    )
     return {
       ...apiCompounderQuery,
-      data: apiCompounderQuery.data?.find(
-        (p) => p.token.ybToken.address === vaultTokens.ybTokenAddress
-      )?.id,
+      data: matchedVault?.id,
     }
   }
 
+  const matchedVault = findApiTokenVaultForAsset(apiTokenQuery.data, asset)
+
   return {
     ...apiTokenQuery,
-    data: apiTokenQuery.data?.find(
-      (p) => p.token.ybToken.address === vaultTokens.ybTokenAddress
-    )?.id,
+    data: matchedVault?.id,
   }
 }

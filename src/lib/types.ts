@@ -5,15 +5,14 @@ import { CompounderVaultStaticData } from "@/lib/api/vaults"
 export type VaultType = "balancer" | "curve" | "token"
 
 export type VaultProps = {
-  asset: Address | undefined
+  asset?: Address
   type: VaultType
+  vaultAddress?: Address
 }
 
 export type VaultDynamicProps = VaultProps & {
   poolId: CompounderVaultStaticData["id"] | undefined
 }
-
-export type ConcentratorTargetAsset = "auraBAL" | "ETH" | "cvxCRV"
 
 export type FilterCategory =
   | "featured"
@@ -21,3 +20,5 @@ export type FilterCategory =
   | "stable"
   | "balancer"
   | "curve"
+
+export type TargetAsset = "auraBAL" | "cvxCRV" | "ETH"

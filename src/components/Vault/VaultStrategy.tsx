@@ -1,18 +1,14 @@
 import { Dialog } from "@headlessui/react"
 import Link from "next/link"
 import { FC, Fragment, MouseEventHandler, useState } from "react"
-import { Address, useAccount } from "wagmi"
+import { useAccount } from "wagmi"
 
-import { VaultProps, VaultType } from "@/lib/types"
-import {
-  useVaultPlatformFee,
-  useVaultTokens,
-  useVaultWithdrawFee,
-} from "@/hooks/data"
-import { UseVaultTokensResult } from "@/hooks/data/useVaultTokens"
+import { VaultProps } from "@/lib/types"
+import { useVault, useVaultFees } from "@/hooks/data/vaults"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
+import { AssetSymbol } from "@/components/Asset"
 import Button from "@/components/Button"
 import { ModalBaseProps } from "@/components/Modal/ModalBase"
 import PurpleModal, {
@@ -20,7 +16,7 @@ import PurpleModal, {
   PurpleModalHeader,
 } from "@/components/Modal/PurpleModal"
 import Percentage from "@/components/Percentage"
-import TokenSymbol from "@/components/TokenSymbol"
+import Skeleton from "@/components/Skeleton"
 import Tooltip from "@/components/Tooltip"
 import { CurveBalancerApr } from "@/components/Vault/APR/CurveBalancerApr"
 import { TokenApr } from "@/components/Vault/APR/TokenApr"
@@ -31,17 +27,6 @@ import ExternalLink from "~/svg/icons/external-link.svg"
 
 const VaultStrategyButton: FC<VaultProps> = (props) => {
   const [isStrategyOpen, setIsStrategyOpen] = useState(false)
-
-  const { data: vaultTokens, ...vaultTokensQuery } = useVaultTokens(props)
-  const { data: platformFeePercentage, ...platformFeeQuery } =
-    useVaultPlatformFee(props)
-  const { data: withdrawFeePercentage, ...withdrawFeeQuery } =
-    useVaultWithdrawFee(props)
-  const depositFeePercentage = 0 // HARDCODED IT TO ZERO FOR NOW
-
-  const isLoading = [platformFeeQuery, withdrawFeeQuery, vaultTokensQuery].some(
-    (q) => q.isLoading
-  )
 
   const toggleStrategyOpen: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
@@ -54,7 +39,6 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
       <Button
         className="pointer-events-auto hidden transition-all duration-150 active:translate-y-0 enabled:hover:-translate-y-1 enabled:hover:shadow-button-glow enabled:hover:contrast-150 md:inline-grid"
         size="small"
-        isLoading={isLoading}
         onClick={toggleStrategyOpen}
       >
         Strategy
@@ -62,10 +46,6 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
       <VaultStrategyModal
         isOpen={isStrategyOpen}
         onClose={() => setIsStrategyOpen(false)}
-        underlyingAssets={vaultTokens.underlyingAssetAddresses}
-        platformFeePercentage={platformFeePercentage}
-        withdrawFeePercentage={withdrawFeePercentage}
-        depositFeePercentage={depositFeePercentage}
         {...props}
       />
     </>
@@ -74,31 +54,20 @@ const VaultStrategyButton: FC<VaultProps> = (props) => {
 
 export default VaultStrategyButton
 
-type VaultStrategyModalProps = VaultProps &
-  ModalBaseProps & {
-    underlyingAssets: UseVaultTokensResult["data"]["underlyingAssetAddresses"]
-    platformFeePercentage: string | number | undefined
-    withdrawFeePercentage: string | number | undefined
-    depositFeePercentage: string | number | undefined
-  }
+type VaultStrategyModalProps = VaultProps & ModalBaseProps
 
 const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
-  asset,
-  type,
-  underlyingAssets,
-  platformFeePercentage,
-  withdrawFeePercentage,
-  depositFeePercentage,
-  ...modalProps
+  isOpen,
+  onClose,
+  ...vaultProps
 }) => {
   const { connector } = useAccount()
-
-  const { data: vaultTokens } = useVaultTokens({ type, asset })
+  const fees = useVaultFees(vaultProps)
 
   const { data: ybToken } = useTokenOrNative({
-    address: vaultTokens.ybTokenAddress,
+    address: vaultProps.vaultAddress,
   })
-  const isToken = useIsTokenCompounder(type)
+  const isToken = useIsTokenCompounder(vaultProps.type)
 
   const addTokenToWallet: MouseEventHandler<HTMLButtonElement> = () => {
     if (ybToken && ybToken.address && connector && connector.watchAsset) {
@@ -108,7 +77,11 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
   const label = `Add ${ybToken?.symbol} to wallet`
 
   return (
-    <PurpleModal className="max-xl:max-w-4xl xl:max-w-5xl" {...modalProps}>
+    <PurpleModal
+      className="max-xl:max-w-4xl xl:max-w-5xl"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
       <PurpleModalHeader className="flex justify-between space-x-4">
         <div className="flex space-x-4">
           {!!connector && !!connector.watchAsset && (
@@ -119,12 +92,15 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
             </Tooltip>
           )}
           <Tooltip label="View contract">
-            <Link href={`https://arbiscan.io/address/${asset}`} target="_blank">
+            <Link
+              href={`https://arbiscan.io/address/${vaultProps.asset}`}
+              target="_blank"
+            >
               <ExternalLink className="h-6 w-6" aria-label="View contract" />
             </Link>
           </Tooltip>
         </div>
-        <button className="h-6 w-6" onClick={modalProps.onClose}>
+        <button className="h-6 w-6" onClick={onClose}>
           <Close className="h-6 w-6" aria-label="Close" />
         </button>
       </PurpleModalHeader>
@@ -135,19 +111,15 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
             <Dialog.Title as="h1" className="mb-4 font-bold">
               Vault description
             </Dialog.Title>
-            <VaultStrategyText
-              type={type}
-              underlyingAssets={underlyingAssets}
-              asset={asset}
-            />
+            <VaultStrategyText {...vaultProps} />
           </div>
           <div>
             <h1 className="mb-4 font-bold max-md:mt-4">APR</h1>
             <dl className="gap-x06 grid grid-cols-4 gap-y-3 gap-x-6">
               {isToken ? (
-                <TokenApr asset={asset} type={type} />
+                <TokenApr {...vaultProps} />
               ) : (
-                <CurveBalancerApr asset={asset} type={type} />
+                <CurveBalancerApr {...vaultProps} />
               )}
             </dl>
           </div>
@@ -162,14 +134,20 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
               fee
             </dt>
             <dd className="col-start-1 row-start-2 text-4xl font-semibold">
-              <Percentage truncate>{depositFeePercentage ?? 0}</Percentage>
+              <Skeleton isLoading={fees.isLoading}>
+                <Percentage truncate>{fees.data?.depositFee ?? "0"}</Percentage>
+              </Skeleton>
             </dd>
             <dt className="text-sm">
               Withdrawal <br />
               fee
             </dt>
             <dd className="col-start-2 row-start-2 text-4xl font-semibold">
-              <Percentage truncate>{withdrawFeePercentage ?? 0}</Percentage>
+              <Skeleton isLoading={fees.isLoading}>
+                <Percentage truncate>
+                  {fees.data?.withdrawFee ?? "0"}
+                </Percentage>
+              </Skeleton>
             </dd>
             <dt className="text-sm">
               Management
@@ -177,7 +155,11 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
               fee
             </dt>
             <dd className="col-start-3 row-start-2 text-4xl font-semibold">
-              <Percentage truncate>{platformFeePercentage ?? 0}</Percentage>
+              <Skeleton isLoading={fees.isLoading}>
+                <Percentage truncate>
+                  {fees.data?.platformFee ?? "0"}
+                </Percentage>
+              </Skeleton>
             </dd>
             <dt className="text-sm">
               Performance
@@ -185,7 +167,11 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
               fee
             </dt>
             <dd className="col-start-4 row-start-2 text-4xl font-semibold">
-              <Percentage truncate>0</Percentage>
+              <Skeleton isLoading={fees.isLoading}>
+                <Percentage truncate>
+                  {fees.data?.performanceFee ?? "0"}
+                </Percentage>
+              </Skeleton>
             </dd>
           </dl>
         </div>
@@ -194,74 +180,54 @@ const VaultStrategyModal: FC<VaultStrategyModalProps> = ({
   )
 }
 
-type VaultStrategyTextProps = {
-  type: VaultType
-  underlyingAssets: UseVaultTokensResult["data"]["underlyingAssetAddresses"]
-  asset: Address | undefined
-}
-
-const VaultStrategyText: FC<VaultStrategyTextProps> = ({
-  type,
-  underlyingAssets,
-  asset,
-}) => {
+const VaultStrategyText: FC<VaultProps> = ({ asset, type, vaultAddress }) => {
   const isToken = useIsTokenCompounder(type)
-  const { data: token } = useTokenOrNative({ address: asset })
-  const { data: vaultTokens } = useVaultTokens({
-    asset,
-    type,
-  })
-  const { data: ybToken } = useTokenOrNative({
-    address: vaultTokens.ybTokenAddress,
-  })
+  const vault = useVault({ asset, type, vaultAddress })
+  const underlyingAssets = vault.data?.underlyingAssets
   return (
     <>
       {isToken ? (
         // THE TEXT HERE WAS WRITTEN FOR THE GLP COUMPOUNDER
-        <div className="masked-overflow max-h-[120px] overflow-y-auto">
+        <div className="masked-overflow max-h-32 overflow-y-auto">
           <p className="text-justify leading-loose">
             This vault accepts deposits in form of its primary asset{" "}
-            {token?.symbol} and any of its underlying assets mentioned below,
-            all of which will be converted to staked {token?.symbol}{" "}
-            automatically.{" "}
+            <AssetSymbol address={asset} /> and any of its underlying assets
+            mentioned below, all of which will be converted to staked{" "}
+            <AssetSymbol address={asset} /> automatically.
           </p>
           <p className="text-justify leading-loose">
             Deposited assets are used to provide liquidity for GMX traders,
             earning trading fees plus GMX emissions on its staked{" "}
-            {token?.symbol}.{" "}
+            <AssetSymbol address={asset} />
           </p>
           <p className="text-justify leading-loose">
             The vault auto-compounds the accumulated rewards periodically into
-            more staked {token?.symbol}.{" "}
+            more staked <AssetSymbol address={asset} />
           </p>
           <p className="text-justify leading-loose">
             Investors receive vault shares as ERC20 tokens called{" "}
-            {ybToken?.symbol}, representing their pro-rata share of the
-            compounding funds.{" "}
+            <AssetSymbol address={vaultAddress} />, representing their pro-rata
+            share of the compounding funds.{" "}
           </p>
           <p className="text-justify leading-loose">
-            Investors can use {ybToken?.symbol} in other Fortress products or
-            integrated protocols.{" "}
+            Investors can use <AssetSymbol address={vaultAddress} /> in other
+            Fortress products or integrated protocols.{" "}
           </p>
           <p className="text-justify leading-loose">
-            The staked {token?.symbol} contains the following basket of assets:{" "}
-            {underlyingAssets?.map(
-              (address: Address | undefined, index: number) => (
-                <Fragment key={`underlying-asset-${index}`}>
-                  {underlyingAssets.length > 2 &&
-                  index > 0 &&
-                  index !== underlyingAssets.length - 1
-                    ? ", "
-                    : index > 0
-                    ? " and "
-                    : null}
-                  <TokenSymbol
-                    key={`token-symbol-${index}`}
-                    address={(address ?? "0x") as `0x${string}`}
-                  />
-                </Fragment>
-              )
-            )}
+            The staked <AssetSymbol address={asset} /> contains the following
+            basket of assets:{" "}
+            {underlyingAssets?.map((address, index) => (
+              <Fragment key={`underlying-asset-${index}`}>
+                {underlyingAssets.length > 2 &&
+                index > 0 &&
+                index !== underlyingAssets.length - 1
+                  ? ", "
+                  : index > 0
+                  ? " and "
+                  : null}
+                <AssetSymbol key={`token-symbol-${index}`} address={address} />
+              </Fragment>
+            ))}
             .
           </p>
         </div>
@@ -271,23 +237,18 @@ const VaultStrategyText: FC<VaultStrategyTextProps> = ({
           liquidity pool. Holders earn fees from users trading in the pool, and
           can also deposit the LP to Curve's gauges to earn CRV emissions. This
           Curve v2 crypto pool contains{" "}
-          {underlyingAssets?.map(
-            (address: Address | undefined, index: number) => (
-              <Fragment key={`underlying-asset-${index}`}>
-                {underlyingAssets.length > 2 &&
-                index > 0 &&
-                index !== underlyingAssets.length - 1
-                  ? ", "
-                  : index > 0
-                  ? " and "
-                  : null}
-                <TokenSymbol
-                  key={`token-symbol-${index}`}
-                  address={(address ?? "0x") as `0x${string}`}
-                />
-              </Fragment>
-            )
-          )}
+          {underlyingAssets?.map((address, index) => (
+            <Fragment key={`underlying-asset-${index}`}>
+              {underlyingAssets.length > 2 &&
+              index > 0 &&
+              index !== underlyingAssets.length - 1
+                ? ", "
+                : index > 0
+                ? " and "
+                : null}
+              <AssetSymbol key={`token-symbol-${index}`} address={address} />
+            </Fragment>
+          ))}
           .
         </p>
       )}

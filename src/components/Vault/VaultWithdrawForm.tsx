@@ -13,8 +13,8 @@ import {
 import { toFixed } from "@/lib/api/util/format"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
-import { useVaultPoolId, useVaultTokens } from "@/hooks/data"
 import { usePreviewRedeem } from "@/hooks/data/preview/usePreviewRedeem"
+import { useVault, useVaultPoolId } from "@/hooks/data/vaults"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
@@ -28,22 +28,19 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const chainId = useActiveChainId()
   const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
-  const { data: vaultTokens } = useVaultTokens(props)
+  const vault = useVault(props)
 
+  const underlyingAssets = vault.data?.underlyingAssets
   const lpTokenOrAsset = isToken
-    ? vaultTokens.underlyingAssetAddresses?.[
-        vaultTokens.underlyingAssetAddresses?.length - 1
-      ]
+    ? underlyingAssets?.[underlyingAssets?.length - 1]
     : props.asset
-  const vaultAddress = vaultTokens.ybTokenAddress ?? "0x"
-  const underlyingAssets = vaultTokens.underlyingAssetAddresses
 
   // Configure form
   const form = useForm<TokenFormValues>({
     defaultValues: {
       amountIn: "",
       amountOut: "",
-      inputToken: vaultAddress,
+      inputToken: props.vaultAddress,
       outputToken: lpTokenOrAsset ?? "0x",
     },
     mode: "all",
@@ -55,7 +52,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const outputTokenAddress = form.watch("outputToken")
   // Calculate + fetch information on selected tokens
   const outputIsLp = outputTokenAddress === lpTokenOrAsset
-  const { data: ybToken } = useTokenOrNative({ address: vaultAddress })
+  const { data: ybToken } = useTokenOrNative({ address: props.vaultAddress })
   const value = parseUnits(amountIn || "0", ybToken?.decimals || 18)
 
   const onWithdrawSuccess = () => {
@@ -81,7 +78,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   // Configure redeemUnderlying method
   const prepareWithdrawUnderlying = usePrepareContractWrite({
     chainId,
-    address: vaultAddress,
+    address: props.vaultAddress,
     abi: vaultCompounderAbi,
     functionName: "redeemSingleUnderlying",
     enabled: value.gt(0) && !outputIsLp && !isToken,
@@ -101,7 +98,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
 
   const prepareTokenWithdrawUnderlying = usePrepareContractWrite({
     chainId,
-    address: vaultAddress,
+    address: props.vaultAddress,
     abi: vaultTokenAbi,
     functionName: "redeemUnderlying",
     enabled: value.gt(0) && !outputIsLp && isToken,
@@ -118,7 +115,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   // Configure redeemLp method
   const prepareWithdrawLp = usePrepareContractWrite({
     chainId,
-    address: vaultAddress,
+    address: props.vaultAddress,
     abi: vaultCompounderAbi,
     functionName: "redeem",
     enabled: value.gt(0) && outputIsLp && !isToken,
@@ -132,7 +129,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
 
   const prepareTokenWithdrawLp = usePrepareContractWrite({
     chainId,
-    address: vaultAddress,
+    address: props.vaultAddress,
     abi: vaultCompounderAbi,
     functionName: "redeem",
     enabled: value.gt(0) && outputIsLp && isToken,

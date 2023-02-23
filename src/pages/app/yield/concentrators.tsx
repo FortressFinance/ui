@@ -3,7 +3,7 @@ import { NextPage } from "next"
 import { FC, useState } from "react"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
-import { ConcentratorTargetAsset, FilterCategory } from "@/lib/types"
+import { FilterCategory, TargetAsset } from "@/lib/types"
 
 import {
   ConcentratorMenu,
@@ -46,7 +46,7 @@ const filterCategories: FilterCategory[] = [
 
 const ConcentratorVaults: FC = () => {
   const [concentratorTargetAsset, setConcentratorTargetAsset] =
-    useState<ConcentratorTargetAsset>("auraBAL")
+    useState<TargetAsset>("auraBAL")
   const [filterIndex, setFilterIndex] = useState(0)
 
   return (
@@ -58,12 +58,12 @@ const ConcentratorVaults: FC = () => {
       >
         <div className="max-lg:row-start-2 lg:col-span-8 xl:col-span-9">
           <Tab.List as={TabList}>
-            <TabListGroup className="max-md:max-w-[70%]">
+            <TabListGroup className="max-md:max-w-2/3">
               {filterCategories.map((filterCategory, index) => (
                 <Tab
                   as={TabButton}
                   key={`tab-${index}`}
-                  className="max-md:max-w-[33%] max-md:basis-0"
+                  className="max-md:max-w-1/3 max-md:basis-0"
                 >
                   {capitalizeFirstLetter(filterCategory)}
                 </Tab>

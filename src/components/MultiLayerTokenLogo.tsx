@@ -4,7 +4,7 @@ import { Address } from "wagmi"
 
 import { VaultType } from "@/lib/types"
 
-import AssetLogo from "@/components/AssetLogo"
+import { AssetLogo } from "@/components/Asset"
 
 import BalancerLogo from "~/images/assets/balancer.png"
 import FortressBalancerLogo from "~/images/assets/balancer.png"
@@ -83,12 +83,12 @@ const MultiLayerTokenLogo: FC<MultiLayerTokenLogoProps> = ({
   const positions = getSubLogosPositions(tokens?.length, size / 4, size / 4)
 
   return (
-    <span id="mull" className="relative h-8 w-8" style={{ fontSize: 12 }}>
+    <span className="relative h-8 w-8 text-xs">
       <BaseLogo
         vaultType={vaultType}
         isLpToken={isLpToken}
         className={className}
-      ></BaseLogo>
+      />
       {tokens &&
         tokens.map((token, index) => {
           const top: string = size / 1.5 - 1 + positions[index].x + "px"

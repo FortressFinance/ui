@@ -1,3 +1,4 @@
 export * from "./useConcentratorRewards"
 export * from "./useConcentratorTargetAssets"
-export * from "./useConcentratorVaults"
+export * from "./useConcentratorVault"
+export * from "./useListConcentrators"

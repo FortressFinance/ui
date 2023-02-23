@@ -1,11 +1,11 @@
-import { ConcentratorTargetAsset } from "@/lib/types"
+import { TargetAsset } from "@/lib/types"
 
 // ! Mocked hook for use with new registry interface
 
 export function useConcentratorTargetAssets(options: {
-  onSuccess?: (data: ConcentratorTargetAsset[]) => void
+  onSuccess?: (data: TargetAsset[]) => void
 }) {
-  const data: ConcentratorTargetAsset[] = ["auraBAL", "ETH", "cvxCRV"]
+  const data: TargetAsset[] = ["auraBAL", "ETH", "cvxCRV"]
   options?.onSuccess?.(data)
   return {
     data,

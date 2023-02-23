@@ -1,15 +1,26 @@
+import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
 
-import { ConcentratorTargetAsset, FilterCategory } from "@/lib/types"
+import { FilterCategory, TargetAsset } from "@/lib/types"
 import {
-  useConcentratorAddress,
-  useFilteredConcentratorVaults,
+  useConcentratorClaim,
+  useConcentratorPendingReward,
+  useConcentratorVault,
+  useListConcentrators,
 } from "@/hooks/data/concentrators"
+import useTokenOrNative from "@/hooks/useTokenOrNative"
+import { useClientReady, useFirstConcentrator } from "@/hooks/util"
 
 import Button from "@/components/Button"
+import {
+  ConcentratorTargetAssetBalance,
+  ConcentratorTargetAssetLogo,
+  ConcentratorTargetAssetSymbol,
+} from "@/components/Concentrator/ConcentratorTargetAsset"
+import Skeleton from "@/components/Skeleton"
 
 type ConcentratorRewardsProps = {
-  concentratorTargetAsset: ConcentratorTargetAsset
+  concentratorTargetAsset: TargetAsset
   filterCategory: FilterCategory
 }
 
@@ -17,35 +28,21 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
   concentratorTargetAsset,
   filterCategory,
 }) => {
-  // this is pretty convoluted...
-  // get the vaults relevant to this concentrator
-  const vaultsForThisConcentrator = useFilteredConcentratorVaults({
-    concentratorTargetAsset,
-    filterCategory,
-  })
-  // take the first one, because they all have the same vaultAssetAddress
-  const firstVaultForThisConcentrator = vaultsForThisConcentrator.data?.[0]
-  // use the vaultAssetAddress to get the concentrator address
-  // TODO: use concentratorAddress to interact with concentrator contract
-  const _concentratorAddress = useConcentratorAddress({
-    concentratorTargetAsset,
-    vaultAssetAddress: firstVaultForThisConcentrator?.vaultAssetAddress,
-    vaultType: firstVaultForThisConcentrator?.vaultType,
-  })
-
   return (
     <div className="divide-y divide-pink/30 rounded-md bg-pink-900/80 px-4 backdrop-blur-md">
       <div className="grid grid-cols-[auto,1fr,auto] items-center gap-2 py-4">
         <div className="relative h-9 w-9 rounded-full bg-white">
-          {/* TODO: Need logos for target assets */}
-          {/* Should we have those hardcoded? Should we get them by address? How to get address? */}
-          {/* <AssetLogo name={concentratorTargetAsset} className="h-6 w-6" /> */}
+          <ConcentratorTargetAssetLogo
+            concentratorTargetAsset={concentratorTargetAsset}
+          />
         </div>
         <div>
           <h1 className="text-sm">Concentrator</h1>
           <h2 className="font-semibold">
             <span className="bg-gradient-to-r from-orange to-pink bg-clip-text text-transparent">
-              {concentratorTargetAsset}
+              <ConcentratorTargetAssetSymbol
+                concentratorTargetAsset={concentratorTargetAsset}
+              />
             </span>
           </h2>
         </div>
@@ -68,7 +65,12 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
           </dd>
           <dt className="text-xs font-medium text-white/80">Balance</dt>
           <dd className="text-right text-xs font-medium text-white/80">
-            132 {concentratorTargetAsset}
+            <ConcentratorTargetAssetBalance
+              concentratorTargetAsset={concentratorTargetAsset}
+            />{" "}
+            <ConcentratorTargetAssetSymbol
+              concentratorTargetAsset={concentratorTargetAsset}
+            />
           </dd>
           <dt className="text-sm font-semibold leading-relaxed">
             <span className="bg-gradient-to-r from-orange to-pink bg-clip-text text-transparent">
@@ -76,12 +78,102 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
             </span>
           </dt>
           <dd className="text-right text-sm font-bold leading-relaxed">
-            121 {concentratorTargetAsset}
+            <ConcentratorRewardsBalance
+              concentratorTargetAsset={concentratorTargetAsset}
+              filterCategory={filterCategory}
+            />{" "}
+            <ConcentratorTargetAssetSymbol
+              concentratorTargetAsset={concentratorTargetAsset}
+            />
           </dd>
         </dl>
 
-        <Button className="mt-4 w-full py-2">Claim</Button>
+        <ConcentratorClaimButton
+          concentratorTargetAsset={concentratorTargetAsset}
+          filterCategory={filterCategory}
+        />
       </div>
     </div>
+  )
+}
+
+const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
+  concentratorTargetAsset,
+  filterCategory,
+}) => {
+  const isReady = useClientReady()
+  const concentratorsList = useListConcentrators()
+  const firstConcentrator = useFirstConcentrator({
+    concentratorsList,
+    concentratorTargetAsset,
+    filterCategory,
+  })
+  const concentrator = useConcentratorVault({
+    concentratorTargetAsset,
+    vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
+    vaultType: firstConcentrator?.vaultType,
+  })
+  const rewardsBalance = useConcentratorPendingReward({
+    concentratorAddress: concentrator.data?.ybTokenAddress,
+  })
+  const rewardToken = useTokenOrNative({
+    address: concentrator.data?.rewardTokenAddress,
+  })
+  const formatted = ethers.utils.formatUnits(
+    rewardsBalance.data ?? BigNumber.from(0),
+    rewardToken.data?.decimals ?? 18
+  )
+  return (
+    <Skeleton
+      isLoading={
+        concentratorsList.isLoading ||
+        concentrator.isLoading ||
+        rewardsBalance.isLoading ||
+        rewardToken.isLoading ||
+        !isReady
+      }
+    >
+      {formatted}
+    </Skeleton>
+  )
+}
+
+const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
+  concentratorTargetAsset,
+  filterCategory,
+}) => {
+  const isReady = useClientReady()
+  const concentratorsList = useListConcentrators()
+  const firstConcentrator = useFirstConcentrator({
+    concentratorsList,
+    concentratorTargetAsset,
+    filterCategory,
+  })
+  const concentrator = useConcentratorVault({
+    concentratorTargetAsset,
+    vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
+    vaultType: firstConcentrator?.vaultType,
+  })
+  const rewardsBalance = useConcentratorPendingReward({
+    concentratorAddress: concentrator.data?.ybTokenAddress,
+  })
+  const claim = useConcentratorClaim({
+    concentratorAddress: concentrator.data?.rewardTokenAddress,
+  })
+  return (
+    <Button
+      className="mt-4 w-full py-2"
+      disabled={rewardsBalance.data?.eq(0) || !isReady}
+      isLoading={
+        concentratorsList.isLoading ||
+        concentrator.isLoading ||
+        rewardsBalance.isLoading ||
+        claim.isLoading ||
+        !isReady
+      }
+      onClick={() => claim.write?.()}
+    >
+      Claim
+    </Button>
   )
 }

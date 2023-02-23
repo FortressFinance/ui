@@ -3,12 +3,12 @@ import { FC, Fragment, MouseEventHandler, useState } from "react"
 
 import clsxm from "@/lib/clsxm"
 import { VaultProps } from "@/lib/types"
-import { useVaultTokens } from "@/hooks/data"
+import { useVault } from "@/hooks/data/vaults"
 
-import AssetLogo from "@/components/AssetLogo"
+import { AssetLogo } from "@/components/Asset"
 import { TableCell, TableRow } from "@/components/Table"
 import {
-  VaultApr,
+  VaultApy,
   VaultDepositedLpTokens,
   VaultName,
   VaultTvl,
@@ -22,7 +22,7 @@ import ChevronDownCircle from "~/svg/icons/chevron-down-circle.svg"
 const VaultRow: FC<VaultProps> = (props) => {
   const [isVaultOpen, setIsVaultOpen] = useState(false)
 
-  const { isLoading } = useVaultTokens(props)
+  const { isLoading } = useVault(props)
 
   const toggleVaultOpen: MouseEventHandler<
     HTMLButtonElement | HTMLDivElement
@@ -42,18 +42,16 @@ const VaultRow: FC<VaultProps> = (props) => {
         >
           {/* Row of vault info */}
           <TableCell className="pointer-events-none sm:grid sm:grid-cols-[max-content,auto,max-content] sm:items-center sm:space-x-3">
-            <div className="relative hidden h-10 w-10 items-center justify-center rounded-full bg-white sm:flex">
-              <AssetLogo
-                className="h-6 w-6"
-                name={props.type}
-                tokenAddress={props.asset}
-              />
-            </div>
+            <AssetLogo
+              name={props.type}
+              className="hidden h-10 w-10 sm:flex"
+              tokenAddress={props.asset}
+            />
             <VaultName {...props} />
             <VaultStrategyButton {...props} />
           </TableCell>
           <TableCell className="pointer-events-none text-center">
-            <VaultApr {...props} />
+            <VaultApy {...props} />
           </TableCell>
           <TableCell className="pointer-events-none text-center">
             <VaultTvl {...props} />

@@ -1,19 +1,19 @@
 import { Menu } from "@headlessui/react"
 import { Dispatch, FC, SetStateAction } from "react"
 
-import { ConcentratorTargetAsset } from "@/lib/types"
+import { TargetAsset } from "@/lib/types"
 import { useConcentratorTargetAssets } from "@/hooks/data/concentrators/useConcentratorTargetAssets"
-import { useClientReady } from "@/hooks/util/useClientReady"
+import { useClientReady } from "@/hooks/util"
 
+import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"
 import { DropdownMenu } from "@/components/DropdownMenu"
-import Skeleton from "@/components/Skeleton"
 import { TabButton } from "@/components/Tabs"
 
 import ChevronDown from "~/svg/icons/chevron-down.svg"
 
 type ConcentratorMenuProps = {
-  concentratorTargetAsset: ConcentratorTargetAsset | undefined
-  setConcentratorTargetAsset: Dispatch<SetStateAction<ConcentratorTargetAsset>>
+  concentratorTargetAsset: TargetAsset | undefined
+  setConcentratorTargetAsset: Dispatch<SetStateAction<TargetAsset>>
 }
 
 export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
@@ -42,11 +42,9 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
         disabled={isLoading}
       >
         <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-left">
-          <Skeleton isLoading={isLoading}>
-            {clientReady && concentratorTargetAsset
-              ? `${concentratorTargetAsset}`
-              : "Loading concentrator..."}
-          </Skeleton>
+          <ConcentratorTargetAssetSymbol
+            concentratorTargetAsset={concentratorTargetAsset}
+          />
         </div>
         <ChevronDown className="w-3 shrink-0 stroke-white group-focus-visible:stroke-pink-900 ui-open:rotate-180 ui-not-open:group-hover:stroke-pink-900" />
       </Menu.Button>
@@ -59,7 +57,9 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
               className="block w-full overflow-hidden text-ellipsis whitespace-nowrap px-4 py-3 text-left ui-active:bg-white ui-active:text-pink-900"
               onClick={() => setConcentratorTargetAsset(targetAsset)}
             >
-              {targetAsset}
+              <ConcentratorTargetAssetSymbol
+                concentratorTargetAsset={targetAsset}
+              />
             </Menu.Item>
           ))}
       </Menu.Items>

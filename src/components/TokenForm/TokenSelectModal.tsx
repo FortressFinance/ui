@@ -7,7 +7,7 @@ import clsxm from "@/lib/clsxm"
 import { VaultType } from "@/lib/types"
 import useTokensOrNative from "@/hooks/useTokensOrNative"
 
-import AssetLogo from "@/components/AssetLogo"
+import { AssetLogo } from "@/components/Asset"
 import { ModalBaseProps } from "@/components/Modal/ModalBase"
 import PurpleModal, { PurpleModalContent } from "@/components/Modal/PurpleModal"
 import MultiLayerTokenLogo from "@/components/MultiLayerTokenLogo"
@@ -74,10 +74,10 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
                   onClick={clickHandler}
                   onKeyDown={keyHandler}
                 >
-                  <div className="relative row-span-2 row-start-1 h-7 w-7">
+                  <div className="row-span-2 row-start-1">
                     {token.isLpToken ? (
                       <MultiLayerTokenLogo
-                        className="relative col-start-1 row-span-2 row-start-1 h-7 w-7"
+                        className="h-7 w-7"
                         vaultType={vaultType}
                         tokens={tokenAddresses}
                         isLpToken={token.isLpToken}
@@ -85,7 +85,7 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
                       />
                     ) : (
                       <AssetLogo
-                        className="col-start-1 row-span-2 row-start-1 h-7 w-7"
+                        className="h-7 w-7"
                         name="token"
                         tokenAddress={token.address}
                       />
