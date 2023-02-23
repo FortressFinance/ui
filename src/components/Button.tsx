@@ -62,7 +62,10 @@ const Button: FC<ButtonProps> = ({
       {...props}
     >
       <span
-        className={clsx("col-start-1 row-start-1", { "opacity-25": isLoading })}
+        className={clsx(
+          "col-start-1 row-start-1 overflow-hidden text-ellipsis whitespace-nowrap",
+          { "opacity-25": isLoading }
+        )}
       >
         {children}
       </span>
