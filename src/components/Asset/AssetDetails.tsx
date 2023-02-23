@@ -5,6 +5,7 @@ import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 import { useClientReady } from "@/hooks/util"
 
+import Currency from "@/components/Currency"
 import Skeleton from "@/components/Skeleton"
 
 export type AssetDetailsProps = {
@@ -29,7 +30,9 @@ export const AssetBalance: FC<AssetDetailsProps> = ({ address }) => {
   const { data: balance, isLoading } = useTokenOrNativeBalance({ address })
   return (
     <Skeleton isLoading={!address || isLoading || !isReady}>
-      {isReady && balance?.formatted ? balance.formatted : "0.0"}
+      <Currency abbreviate>
+        {isReady && balance?.formatted ? balance.formatted : "0.0"}
+      </Currency>
     </Skeleton>
   )
 }
