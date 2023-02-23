@@ -19,3 +19,4 @@ const default_from_env = Number(process.env.NEXT_PUBLIC_DEFAULT_SLIPPAGE)
 export const DEFAULT_SLIPPAGE = !isNaN(default_from_env)
   ? default_from_env
   : 0.05
+export const DISABLE_CONCENTRATORS = process.env.NEXT_PUBLIC_DISABLE_CONCENTRATOR ?? false
