@@ -19,7 +19,6 @@ import Address from "@/components/Address"
 import Button from "@/components/Button"
 import ConnectorLogo from "@/components/ConnectWallet/ConnectorLogo"
 import ModalBase, { ModalBaseProps } from "@/components/Modal/ModalBase"
-import OrangeModal from "@/components/Modal/OrangeModal"
 
 export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
   const chainId = useActiveChainId()
@@ -31,16 +30,16 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
     })
 
   return (
-    <OrangeModal isOpen={isOpen} onClose={onClose}>
-      <div className="grid grid-cols-5 grid-rows-1 gap-4">
+    <ConnectWalletModalBase isOpen={isOpen} onClose={onClose}>
+      <div className="grid grid-cols-[1fr,max-content] grid-rows-1 items-center">
         <Dialog.Title
           as="h1"
-          className="col-span-3 col-start-2 text-center font-display text-4xl"
+          className="col-span-2 col-start-1 row-start-1 text-center font-display text-3xl sm:text-4xl"
         >
           Connect Wallet
         </Dialog.Title>
-        <button onClick={onClose} className="self-start justify-self-end py-2">
-          <BiXCircle className="h-8 w-8" />
+        <button onClick={onClose} className="col-start-2 row-start-1 mr-2">
+          <BiXCircle className="h-8 w-8 sm:h-9 sm:w-9" />
         </button>
       </div>
       <div className="mt-6 space-y-3">
@@ -53,7 +52,7 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
           return (
             <Button
               key={connector.id}
-              className="w-full"
+              className="w-full max-sm:py-2 max-sm:text-base"
               disabled={!connector.ready}
               isLoading={isLoading && pendingConnector?.id === connector.id}
               onClick={() => connect({ connector })}
@@ -73,7 +72,7 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
 
       {error && <div className="mt-6 text-center">{error.message}</div>}
 
-      <div className="mt-6 text-justify font-mono text-xs">
+      <div className="mx-auto mt-6 max-w-[20rem] text-center text-xs text-white/90">
         By connecting your wallet to Fortress finance, you acknowledge that you
         have read and understand the{" "}
         <Link
@@ -92,7 +91,7 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
           risks.
         </Link>
       </div>
-    </OrangeModal>
+    </ConnectWalletModalBase>
   )
 }
 
@@ -153,54 +152,63 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
 
   return (
     <ConnectWalletModalBase isOpen={isOpen} onClose={onClose}>
-      <div className="grid grid-cols-5 grid-rows-1 gap-4">
+      <div className="grid grid-cols-[1fr,max-content] grid-rows-1 items-center">
         <Dialog.Title
           as="h1"
-          className="col-span-3 col-start-2 text-center font-display text-4xl"
+          className="col-span-2 col-start-1 row-start-1 text-center font-display text-3xl sm:text-4xl"
         >
           Account
         </Dialog.Title>
-        <button onClick={onClose} className="self-start justify-self-end py-2">
-          <BiXCircle className="h-8 w-8" />
+        <button onClick={onClose} className="col-start-2 row-start-1 mr-2">
+          <BiXCircle className="h-8 w-8 sm:h-9 sm:w-9" />
         </button>
       </div>
 
-      <div className="mt-30 space-y flex flex-col divide-y">
-        <div className="flex items-center justify-between py-5">
-          <div>
-            <div>Connected with {activeConnector?.name}</div>
+      <div className="space-y-3 divide-y divide-orange-600">
+        <div className="py-5 sm:flex sm:items-center sm:justify-between">
+          <div className="font-medium max-sm:mb-3 max-sm:text-center">
+            <span className="sm:block">Connected with</span>
+            <span className="sm:hidden">&nbsp;</span>
+            <span className="sm:block">{activeConnector?.name ?? "..."}</span>
           </div>
 
-          <Button
-            onClick={changeHandler}
-            variant="plain"
-            size="small"
-            className="mr-5"
-          >
-            Change
-          </Button>
-          <Button
-            onClick={disconnectHandler}
-            variant="plain-negative"
-            size="small"
-            className="mr-0"
-          >
-            Disconnect
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              className="max-sm:w-1/2"
+              onClick={changeHandler}
+              variant="plain"
+            >
+              Change
+            </Button>
+            <Button
+              className="max-sm:w-1/2"
+              onClick={disconnectHandler}
+              variant="plain-negative"
+            >
+              Disconnect
+            </Button>
+          </div>
         </div>
-        <div className="text-md flex items-center py-5 font-mono">
+
+        <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap py-2 pt-5 text-2xl font-medium">
           <Address>{address}</Address>
         </div>
-        <div className="flex items-center justify-between py-5">
+        <div className="flex items-center justify-between pt-5 text-sm">
           <div
-            className={clsxm({ "text-pink-800": isCopied === true })}
+            className={clsxm(
+              "flex cursor-pointer items-center transition-colors duration-100",
+              {
+                "text-white/50": isCopied === true,
+              }
+            )}
             onClick={() => staticCopy(address as string)}
           >
             <BiCopy className="mr-2 inline h-5 w-5" />
-            <span className="cursor-pointer">Copy address</span>
+            <span>Copy address</span>
           </div>
           <Link
             href={blockExplorerUrl + "/address/" + address}
+            className="flex items-center"
             onClick={(e) => validateExplorerLink(e, blockExplorerUrl)}
             target="_blank"
           >
@@ -208,25 +216,6 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
             <span>View on Explorer</span>
           </Link>
         </div>
-      </div>
-      <div className="mt-6 text-justify font-mono text-xs">
-        By connecting your wallet to Fortress finance, you acknowledge that you
-        have read and understand the{" "}
-        <Link
-          href="https://docs.fortress.finance/protocol"
-          className="font-bold underline"
-          target="_blank"
-        >
-          Fortress Protocol documentation
-        </Link>{" "}
-        and acknowledge smart contract security{" "}
-        <Link
-          href="https://docs.fortress.finance/protocol/risks"
-          className="font-bold underline"
-          target="_blank"
-        >
-          risks.
-        </Link>
       </div>
     </ConnectWalletModalBase>
   )
@@ -238,7 +227,7 @@ const ConnectWalletModalBase: FC<PropsWithChildren<ModalBaseProps>> = ({
 }) => {
   return (
     <ModalBase {...modalProps}>
-      <Dialog.Panel className="relative mx-auto grid min-h-screen w-full grid-cols-1 grid-rows-[1fr,minmax(max-content,auto),1fr] border border-pink-400 bg-gradient-to-br from-orange-600 to-pink-600 p-4 sm:min-h-0 sm:max-w-md sm:grid-rows-1 sm:rounded-lg sm:p-7 sm:pb-10">
+      <Dialog.Panel className="relative mx-auto w-full max-w-md rounded border border-orange/50 bg-gradient-to-tr from-pink-600 to-orange-600 p-3 py-6 sm:p-6">
         {children}
       </Dialog.Panel>
     </ModalBase>

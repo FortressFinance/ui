@@ -9,7 +9,7 @@
 
   body,
   .p {
-    @apply font-sans text-sm text-white md:text-base;
+    @apply font-sans text-white;
   }
 
   input[type="number"]::-webkit-inner-spin-button,

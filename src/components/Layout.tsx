@@ -135,7 +135,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <Dialog.Panel className="relative h-full w-full max-w-xs overflow-y-auto border-l border-pink/10 bg-gradient-to-tr from-pink/20 to-orange/20 shadow-xl backdrop-blur focus:outline-none">
+                <Dialog.Panel className="relative h-full w-full max-w-xs overflow-y-auto border-l border-pink/10 bg-gradient-to-tr from-pink-600/40 to-orange-600/40 shadow-xl backdrop-blur-xl focus:outline-none">
                   <div className="grid h-full grid-cols-1 grid-rows-[1fr,auto] gap-16 p-3">
                     <div>
                       <div className="grid grid-cols-[1fr,auto] gap-2">
