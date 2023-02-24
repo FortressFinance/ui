@@ -10,7 +10,6 @@ import {
   ConcentratorRewards,
   ConcentratorVaultTable,
 } from "@/components/Concentrator"
-import { Consent } from "@/components/Disclaimer/Consent"
 import HoldingsTable from "@/components/Holdings/HoldingsTable"
 import Layout from "@/components/Layout"
 import { PageHeading } from "@/components/PageHeading"
@@ -27,7 +26,6 @@ const Concentrators: NextPage = () => {
 
       <main>
         <PageHeading>Concentrators</PageHeading>
-        <Consent />
 
         {/* Child component because we need queryClient to retrieve vaults */}
         <ConcentratorVaults />

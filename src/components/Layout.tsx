@@ -11,6 +11,7 @@ import AppProviders from "@/components/AppProviders"
 import ConnectWalletModal, {
   DisconnectWalletModal,
 } from "@/components/ConnectWallet/ConnectWalletModal"
+import { Consent } from "@/components/Disclaimer/Consent"
 import {
   DropdownMenu,
   DropdownMenuButton,
@@ -41,6 +42,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <AppProviders>
+      <Consent />
       <div className="relative z-[1] grid min-h-screen grid-cols-1 grid-rows-[auto,1fr,auto]">
         <header className="sticky top-0 z-10 border-b border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
