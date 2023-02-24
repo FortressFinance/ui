@@ -1,5 +1,5 @@
-import { create } from 'zustand'
-import { createJSONStorage,persist } from 'zustand/middleware'
+import { create } from "zustand"
+import { createJSONStorage, persist } from "zustand/middleware"
 
 interface ConsentState {
   consent: boolean
@@ -13,8 +13,8 @@ const useConsentStorage = create<ConsentState>()(
       understandDisclaimer: () => set(() => ({ consent: true })),
     }),
     {
-      name: 'consent-storage', 
-      storage: createJSONStorage(() => localStorage), 
+      name: "consent-storage",
+      storage: createJSONStorage(() => localStorage),
     }
   )
 )
