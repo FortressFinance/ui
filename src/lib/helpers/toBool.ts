@@ -4,4 +4,4 @@ const toBool = (val: string | boolean | number | undefined | null): boolean => {
     return true;
   return false; 
 }
-export { toBool };
+export { toBool }
