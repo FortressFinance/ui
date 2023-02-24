@@ -18,6 +18,7 @@ import {
   ConcentratorTargetAssetSymbol,
 } from "@/components/Concentrator/ConcentratorTargetAsset"
 import Skeleton from "@/components/Skeleton"
+import { GradientText } from "@/components/Typography"
 
 type ConcentratorRewardsProps = {
   concentratorTargetAsset: TargetAsset
@@ -29,7 +30,7 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
   filterCategory,
 }) => {
   return (
-    <div className="divide-y divide-pink/30 rounded-md bg-pink-900/80 px-4 backdrop-blur-md">
+    <div className="divide-y divide-pink/30 rounded-lg bg-pink-900/80 px-4 backdrop-blur-md">
       <div className="grid grid-cols-[auto,1fr,auto] items-center gap-2 py-4">
         <div className="relative h-9 w-9 rounded-full bg-white">
           <ConcentratorTargetAssetLogo
@@ -39,20 +40,18 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
         <div>
           <h1 className="text-sm">Concentrator</h1>
           <h2 className="font-semibold">
-            <span className="bg-gradient-to-r from-orange to-pink bg-clip-text text-transparent">
+            <GradientText>
               <ConcentratorTargetAssetSymbol
                 concentratorTargetAsset={concentratorTargetAsset}
               />
-            </span>
+            </GradientText>
           </h2>
         </div>
         <div>
           <dl className="text-right">
             <dt className="text-sm">APY</dt>
             <dd className="font-semibold">
-              <span className="bg-gradient-to-r from-orange to-pink bg-clip-text text-transparent">
-                23.35%
-              </span>
+              <GradientText>23.35%</GradientText>
             </dd>
           </dl>
         </div>
@@ -73,18 +72,18 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
             />
           </dd>
           <dt className="text-sm font-semibold leading-relaxed">
-            <span className="bg-gradient-to-r from-orange to-pink bg-clip-text text-transparent">
-              Rewards
-            </span>
+            <GradientText>Rewards</GradientText>
           </dt>
           <dd className="text-right text-sm font-bold leading-relaxed">
-            <ConcentratorRewardsBalance
-              concentratorTargetAsset={concentratorTargetAsset}
-              filterCategory={filterCategory}
-            />{" "}
-            <ConcentratorTargetAssetSymbol
-              concentratorTargetAsset={concentratorTargetAsset}
-            />
+            <GradientText>
+              <ConcentratorRewardsBalance
+                concentratorTargetAsset={concentratorTargetAsset}
+                filterCategory={filterCategory}
+              />{" "}
+              <ConcentratorTargetAssetSymbol
+                concentratorTargetAsset={concentratorTargetAsset}
+              />
+            </GradientText>
           </dd>
         </dl>
 

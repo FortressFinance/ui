@@ -187,7 +187,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   }
 
   return (
-    <div className="rounded-md bg-white/10 p-4">
+    <div className="rounded-lg bg-pink-100/10 p-4">
       <h2 className="mb-3 text-center font-medium">Deposit</h2>
       <FormProvider {...form}>
         <TokenForm

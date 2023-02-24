@@ -32,7 +32,7 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
 
   return (
     <Table>
-      <div className="relative z-[1]" role="rowgroup">
+      <div className="relative z-[1] max-md:hidden" role="rowgroup">
         <TableRow className="overflow-visible rounded-b-none border-b border-b-pink/30">
           <TableHeader>{label}</TableHeader>
           <TableHeader className="text-center">APY</TableHeader>
@@ -68,7 +68,7 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
                     <Popover.Panel
                       as="div"
                       ref={setTxSettingsPopover}
-                      className="z-20 w-72 rounded-md border border-black/60 bg-orange-400 p-4 shadow-lg"
+                      className="z-20 w-72 rounded-lg border border-black/60 bg-orange-400 p-4 shadow-lg"
                       style={styles.popper}
                       {...attributes.popper}
                       static

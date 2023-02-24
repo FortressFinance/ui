@@ -9,7 +9,8 @@ import {
   useEffect,
   useState,
 } from "react"
-import { BiCopy, BiLinkExternal, BiXCircle } from "react-icons/bi"
+import { BiCopy, BiLinkExternal } from "react-icons/bi"
+import { RxCrossCircled } from "react-icons/rx"
 import { useAccount, useConnect, useDisconnect, useNetwork } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
@@ -39,7 +40,7 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
           Connect Wallet
         </Dialog.Title>
         <button onClick={onClose} className="col-start-2 row-start-1 mr-2">
-          <BiXCircle className="h-8 w-8 sm:h-9 sm:w-9" />
+          <RxCrossCircled className="h-8 w-8" />
         </button>
       </div>
       <div className="mt-6 space-y-3">
@@ -160,7 +161,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
           Account
         </Dialog.Title>
         <button onClick={onClose} className="col-start-2 row-start-1 mr-2">
-          <BiXCircle className="h-8 w-8 sm:h-9 sm:w-9" />
+          <RxCrossCircled className="h-8 w-8" />
         </button>
       </div>
 

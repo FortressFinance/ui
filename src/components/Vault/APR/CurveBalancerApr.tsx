@@ -12,6 +12,7 @@ import {
 
 import Percentage from "@/components/Percentage"
 import Skeleton from "@/components/Skeleton"
+import { GradientText } from "@/components/Typography"
 
 export const CurveBalancerApr: FC<VaultProps> = (props) => {
   const { data: poolId, isLoading: isLoadingId } = useVaultPoolId(props)
@@ -46,18 +47,22 @@ export const CurveBalancerApr: FC<VaultProps> = (props) => {
     <>
       {totalApr !== undefined && (
         <>
-          <dt className="align-bottom text-base font-semibold">Total APR</dt>
-          <dd className="text-right align-bottom text-base font-semibold">
-            <Skeleton isLoading={isLoadingId || isLoadingTotalApr}>
-              <Percentage>{totalApr}</Percentage>
-            </Skeleton>
+          <dt className="text-base font-bold">
+            <GradientText>Total APR</GradientText>
+          </dt>
+          <dd className="text-right text-base font-bold">
+            <GradientText>
+              <Skeleton isLoading={isLoadingId || isLoadingTotalApr}>
+                <Percentage>{totalApr}</Percentage>
+              </Skeleton>
+            </GradientText>
           </dd>
         </>
       )}
       {baseApr !== undefined && (
         <>
-          <dt className="my-auto align-bottom">Base APR</dt>
-          <dd className="my-auto text-right align-bottom">
+          <dt>Base APR</dt>
+          <dd className="text-right">
             <Skeleton isLoading={isLoadingId || isLoadingBaseApr}>
               <Percentage>{baseApr}</Percentage>
             </Skeleton>
@@ -66,8 +71,8 @@ export const CurveBalancerApr: FC<VaultProps> = (props) => {
       )}
       {crvApr !== undefined && (
         <>
-          <dt className="my-auto align-bottom">CRV APR</dt>
-          <dd className="my-auto text-right align-bottom">
+          <dt>CRV APR</dt>
+          <dd className="text-right">
             <Skeleton isLoading={isLoadingId || isLoadingCrvApr}>
               <Percentage>{crvApr}</Percentage>
             </Skeleton>
@@ -76,8 +81,8 @@ export const CurveBalancerApr: FC<VaultProps> = (props) => {
       )}
       {cvxApr !== undefined && (
         <>
-          <dt className="my-auto align-bottom">CVX APR</dt>
-          <dd className="my-auto text-right align-bottom">
+          <dt>CVX APR</dt>
+          <dd className="text-right">
             <Skeleton isLoading={isLoadingId || isLoadingCvxApr}>
               <Percentage>{cvxApr}</Percentage>
             </Skeleton>
@@ -86,8 +91,8 @@ export const CurveBalancerApr: FC<VaultProps> = (props) => {
       )}
       {extraRewardsApr !== undefined && (
         <>
-          <dt className="my-auto align-bottom">Extra Rewards APR</dt>
-          <dd className="my-auto text-right align-bottom">
+          <dt>Extra Rewards APR</dt>
+          <dd className="text-right">
             <Skeleton isLoading={isLoadingId || isLoadingExtraRewardsApr}>
               <Percentage>{extraRewardsApr}</Percentage>
             </Skeleton>

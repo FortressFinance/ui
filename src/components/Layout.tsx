@@ -9,6 +9,7 @@ import clsxm from "@/lib/clsxm"
 import { appLink } from "@/lib/helpers"
 
 import AppProviders from "@/components/AppProviders"
+import Button from "@/components/Button"
 import ConnectWalletButton from "@/components/ConnectWallet/ConnectWalletButton"
 import ConnectWalletModal, {
   DisconnectWalletModal,
@@ -42,14 +43,14 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
       <div className="relative z-[1] grid min-h-[calc(100vh-5rem)] grid-cols-1 grid-rows-[auto,1fr] md:min-h-screen">
         <header className="sticky top-0 z-10 border-b border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
-            <div className="flex items-center space-x-10">
+            <div className="flex items-center space-x-10 max-sm:pl-1">
               <Link className="group" href={appLink("/yield")}>
                 <FortressLogo
-                  className="my-5 h-8 w-auto fill-white md:my-6 md:group-hover:hidden"
+                  className="my-5 h-7 w-auto fill-white md:my-6 md:group-hover:hidden"
                   aria-label="Fortress Finance"
                 />
                 <Image
-                  className="my-6 hidden h-8 w-auto md:group-hover:flex"
+                  className="my-5 hidden h-7 w-auto md:my-6 md:group-hover:flex"
                   priority
                   src={FortressLogoAnimated}
                   alt=""
@@ -84,21 +85,22 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               </nav>
             </div>
 
-            <div className="flex items-stretch gap-2 md:gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               {/* Network selector for desktop */}
               <div className="max-md:hidden">
                 <NetworkSelector />
               </div>
 
-              <ConnectWalletButton className="max-w-[12rem] px-5" />
+              <ConnectWalletButton className="max-w-[12rem]" />
 
               {/* Hamburger menu button for mobile */}
-              <button
-                className="rounded bg-gradient-to-r from-pink to-pink-600 p-2.5 md:hidden"
+              <Button
+                className="p-2.5 md:hidden"
+                variant="outline"
                 onClick={() => setSidebarOpen(true)}
               >
-                <BiMenu className="h-7 w-7 fill-white" />
-              </button>
+                <BiMenu className="h-7 w-7 fill-current" />
+              </Button>
             </div>
           </div>
         </header>
@@ -150,7 +152,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                         </button>
                       </div>
 
-                      <nav className="mt-6">
+                      <nav className="mt-3">
                         <h1 className="px-3 pt-3 text-xs font-medium uppercase tracking-wider text-orange-400">
                           Yield
                         </h1>
@@ -194,7 +196,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                     </div>
 
                     <ExternalLinks
-                      className="flex-col justify-center gap-4 px-3 pb-6 text-orange-400"
+                      className="flex-col justify-center gap-4 px-3 pb-6 text-sm text-orange-400"
                       showHelp
                       showLabels
                     />

@@ -1,6 +1,7 @@
 import { Dialog, RadioGroup } from "@headlessui/react"
 import { FC, Fragment, KeyboardEventHandler, MouseEventHandler } from "react"
 import { UseControllerReturn } from "react-hook-form"
+import { RxCrossCircled } from "react-icons/rx"
 import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
@@ -12,8 +13,6 @@ import { ModalBaseProps } from "@/components/Modal/ModalBase"
 import PurpleModal, { PurpleModalContent } from "@/components/Modal/PurpleModal"
 import MultiLayerTokenLogo from "@/components/MultiLayerTokenLogo"
 import { TokenFormValues } from "@/components/TokenForm/TokenForm"
-
-import Close from "~/svg/icons/close.svg"
 
 type TokenSelectModalProps = ModalBaseProps & {
   controller: UseControllerReturn<TokenFormValues, "inputToken" | "outputToken">
@@ -45,10 +44,12 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
   return (
     <PurpleModal className="max-w-md" isOpen={isOpen} onClose={onClose}>
       <PurpleModalContent>
-        <header className="flex items-center justify-between">
-          <Dialog.Title as="h1">Select a token</Dialog.Title>
-          <button className="h-6 w-6" onClick={onClose} tabIndex={-1}>
-            <Close className="h-6 w-6" aria-label="Close" />
+        <header className="mb-4 flex items-center justify-between">
+          <Dialog.Title as="h1" className="text-xl">
+            Select a token
+          </Dialog.Title>
+          <button onClick={onClose} tabIndex={-1}>
+            <RxCrossCircled className="h-7 w-7" aria-label="Close" />
           </button>
         </header>
 
@@ -63,7 +64,7 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
                 <div
                   ref={controller.field.ref}
                   className={clsxm(
-                    "grid grid-cols-[auto,1fr] grid-rows-[1fr,auto] items-center gap-x-2 rounded-md p-2",
+                    "grid grid-cols-[auto,1fr] grid-rows-[1fr,auto] items-center gap-x-2 rounded-lg p-2",
                     {
                       "bg-white/80 text-black": checked,
                       "bg-black text-white": !checked,

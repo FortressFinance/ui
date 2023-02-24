@@ -38,7 +38,7 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
     <Menu as={DropdownMenu}>
       <Menu.Button
         as={TabButton}
-        className="pink-900 group flex w-full items-center gap-3 rounded-md border border-pink/30 bg-pink-900/80 text-white backdrop-blur-md focus-visible:bg-white focus-visible:text-pink-900 ui-open:rounded-b-none ui-open:border-b-0 ui-open:bg-pink-900 ui-open:hover:bg-pink-900 ui-open:hover:text-white ui-not-open:hover:text-pink-900 md:px-4"
+        className="pink-900 group flex w-full items-center gap-3 rounded-lg border border-pink/30 bg-pink-900/80 text-white backdrop-blur-md focus-visible:bg-white focus-visible:text-pink-900 ui-open:rounded-b-none ui-open:border-b-0 ui-open:bg-pink-900 ui-open:hover:bg-pink-900 ui-open:hover:text-white ui-not-open:hover:text-pink-900 md:px-4"
         disabled={isLoading}
       >
         <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-left">

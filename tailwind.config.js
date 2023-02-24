@@ -8,7 +8,7 @@ module.exports = {
     extend: {
       boxShadow: {
         "button-glow":
-          "inset 0 0 0 1px theme(colors.pink.400), 0 0 16px 1px theme(colors.pink.300)",
+          "inset 0 0 0 1px theme(colors.orange.400), 0 0 16px 1px theme(colors.pink.400)",
       },
       fontFamily: {
         sans: ["var(--font-inter)", ...fontFamily.sans],
@@ -49,5 +49,8 @@ module.exports = {
       },
     },
   },
-  plugins: [require("@headlessui/tailwindcss")],
+  plugins: [
+    require("@headlessui/tailwindcss"),
+    require("@tailwindcss/line-clamp"),
+  ],
 }

@@ -3,7 +3,6 @@ import { Analytics } from "@vercel/analytics/react"
 import { AppProps } from "next/app"
 
 import "@/styles/globals.css"
-import "@/styles/masked.css"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const vt323 = VT323({

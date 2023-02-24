@@ -5,14 +5,10 @@ import { TableRow } from "@/components/Table"
 
 export const TableLoading: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <TableRow
-      className="flex h-[88px] items-center rounded-t-none"
-      aria-label={children}
-    >
-      <span className="col-span-full text-center" aria-hidden="true">
-        <Spinner className="h-10 w-10" />
-      </span>
-    </TableRow>
+    <div className="flex h-52 place-items-center rounded-lg bg-pink-900/80 p-3 backdrop-blur-md md:grid md:h-24 md:rounded-t-none">
+      <Spinner className="h-10 w-10" />
+      <span className="sr-only">{children}</span>
+    </div>
   )
 }
 
@@ -25,10 +21,10 @@ export const TableEmpty: FC<PropsWithChildren<TableEmptyProps>> = ({
   children,
 }) => {
   return (
-    <TableRow className="flex h-48 items-center rounded-t-none">
-      <div className="col-span-full">
-        <h2 className="mb-3 text-center text-2xl font-semibold">{heading}</h2>
-        <p className="mx-auto max-w-3xl text-center text-sm">{children}</p>
+    <TableRow className="flex h-52 items-center justify-center p-3 md:flex md:h-48 md:rounded-t-none lg:flex">
+      <div className="mx-auto max-w-2xl text-center text-sm md:text-base">
+        <h2 className="mb-3 text-lg font-semibold md:text-xl">{heading}</h2>
+        <p className="text-sm md:text-base">{children}</p>
       </div>
     </TableRow>
   )

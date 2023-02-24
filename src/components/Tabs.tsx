@@ -13,7 +13,7 @@ export const TabListGroup: FC<PropsWithChildren<{ className?: string }>> = ({
 }) => (
   <div
     className={clsxm(
-      "rounded-md border border-pink/30 bg-pink-900/80 backdrop-blur-md max-md:overflow-x-auto",
+      "rounded-lg border border-pink/30 bg-pink-900/80 backdrop-blur-md max-md:overflow-x-auto",
       className
     )}
   >

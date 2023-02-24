@@ -12,9 +12,9 @@ import clsxm from "@/lib/clsxm"
 import Spinner from "@/components/Spinner"
 
 type ButtonSize = "base" | "large" | "small"
-type ButtonVariant = "base" | "plain" | "plain-negative"
+type ButtonVariant = "base" | "plain" | "plain-negative" | "outline"
 
-interface ButtonProps
+export interface ButtonProps
   extends DetailedHTMLProps<
     ButtonHTMLAttributes<HTMLButtonElement>,
     HTMLButtonElement
@@ -34,8 +34,10 @@ const buttonClasses = (
     "inline-grid grid-cols-1 grid-rows-1 font-medium items-center justify-center rounded px-5 py-3 disabled:opacity-75",
     {
       "text-lg lg:text-xl": size === "large",
-      "text-xs lg:text-xs": size === "small",
+      "text-sm p-3": size === "small",
       "bg-gradient-to-r from-orange to-pink": variant === "base",
+      "ring ring-1 ring-pink text-white bg-pink bg-opacity-10 ring-inset":
+        variant === "outline",
       "bg-white shadow-[0_0_0_2px_#000] text-black": variant === "plain",
       "bg-black shadow-[0_0_0_2px_#000] text-white":
         variant === "plain-negative",

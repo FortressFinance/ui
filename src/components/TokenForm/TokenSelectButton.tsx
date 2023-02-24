@@ -19,14 +19,14 @@ const TokenSelectButton: FC<TokenSelectButtonProps> = ({
   return canChange ? (
     <button
       type="button"
-      className="flex items-center space-x-2 justify-self-end rounded-md bg-white py-2 px-3 text-xs font-medium text-black"
+      className="flex items-center space-x-2 justify-self-end rounded bg-white p-2 text-xs font-medium text-black"
       onClick={onClick}
     >
       <AssetSymbol address={tokenAddress} />
       <ChevronDown className="h-2 w-2 stroke-black" />
     </button>
   ) : (
-    <div className="flex items-center space-x-2 justify-self-end rounded-md bg-white py-2 px-3 text-xs font-medium text-black">
+    <div className="flex items-center space-x-2 justify-self-end rounded bg-white p-2 text-xs font-medium text-black">
       <AssetSymbol address={tokenAddress} />
     </div>
   )

@@ -28,7 +28,7 @@ const ModalBase: FC<PropsWithChildren<ModalBaseProps>> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 z-10 bg-pink-900/90" />
+          <div className="fixed inset-0 z-10 bg-pink-900 bg-opacity-60" />
         </Transition.Child>
 
         {/* Scrollable container for modal dialog */}

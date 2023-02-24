@@ -68,7 +68,7 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
 
       <Transition
         as="div"
-        className="fixed"
+        className="fixed max-md:hidden"
         show={isOpen}
         enter="transition-opacity duration-200"
         enterFrom="opacity-0"
@@ -79,7 +79,7 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
       >
         <div
           ref={setPopperElement}
-          className="z-20 rounded-md bg-blue py-2 px-4 text-sm"
+          className="z-20 rounded-lg bg-blue py-2 px-4 text-sm"
           style={styles.popper}
           {...attributes.popper}
         >

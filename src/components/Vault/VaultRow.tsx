@@ -6,7 +6,9 @@ import { VaultProps } from "@/lib/types"
 import { useVault } from "@/hooks/data/vaults"
 
 import { AssetLogo } from "@/components/Asset"
+import Button from "@/components/Button"
 import { TableCell, TableRow } from "@/components/Table"
+import { GradientText } from "@/components/Typography"
 import {
   VaultApy,
   VaultDepositedLpTokens,
@@ -14,15 +16,22 @@ import {
   VaultTvl,
 } from "@/components/Vault/VaultData"
 import VaultDepositForm from "@/components/Vault/VaultDepositForm"
-import VaultStrategyButton from "@/components/Vault/VaultStrategy"
+import VaultStrategyModal from "@/components/Vault/VaultStrategy"
 import VaultWithdrawForm from "@/components/Vault/VaultWithdrawForm"
 
 import ChevronDownCircle from "~/svg/icons/chevron-down-circle.svg"
 
 const VaultRow: FC<VaultProps> = (props) => {
   const [isVaultOpen, setIsVaultOpen] = useState(false)
+  const [isStrategyOpen, setIsStrategyOpen] = useState(false)
 
   const { isLoading } = useVault(props)
+
+  const toggleStrategyOpen: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsStrategyOpen(true)
+  }
 
   const toggleVaultOpen: MouseEventHandler<
     HTMLButtonElement | HTMLDivElement
@@ -36,32 +45,74 @@ const VaultRow: FC<VaultProps> = (props) => {
     <>
       <Disclosure as={Fragment} key={props.asset}>
         <TableRow
-          className="first:rounded-t-none lg:py-6"
+          className="md:py-6 md:first:rounded-t-none"
           onClick={toggleVaultOpen}
           disabled={isLoading}
         >
           {/* Row of vault info */}
-          <TableCell className="pointer-events-none sm:grid sm:grid-cols-[max-content,auto,max-content] sm:items-center sm:space-x-3">
+          <TableCell className="relative grid grid-cols-[max-content,auto,max-content] items-center gap-x-3 max-md:mb-3 max-md:border-b max-md:border-b-pink/30 max-md:pb-3.5 md:pointer-events-none">
             <AssetLogo
               name={props.type}
-              className="hidden h-10 w-10 sm:flex"
+              className="flex h-12 w-12"
               tokenAddress={props.asset}
             />
-            <VaultName {...props} />
-            <VaultStrategyButton {...props} />
+
+            <span className="line-clamp-2">
+              <VaultName {...props} />
+            </span>
+
+            {/* Large: strategy button */}
+            <Button
+              className="pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 active:translate-y-0 enabled:hover:-translate-y-0.5 enabled:hover:contrast-150 enabled:hover:after:opacity-100 max-lg:hidden"
+              size="base"
+              variant="outline"
+              onClick={toggleStrategyOpen}
+            >
+              <GradientText>Strategy</GradientText>
+            </Button>
+
+            {/* Medium: strategy button */}
+            <Button
+              className="pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 active:translate-y-0 max-md:hidden md:enabled:hover:-translate-y-0.5 md:enabled:hover:contrast-150 md:enabled:hover:after:opacity-100 lg:hidden"
+              size="small"
+              variant="outline"
+              onClick={toggleStrategyOpen}
+            >
+              <GradientText>Strategy</GradientText>
+            </Button>
           </TableCell>
-          <TableCell className="pointer-events-none text-center">
+
+          {/* Desktop: APY, TVL, Balance */}
+          <TableCell className="pointer-events-none text-center max-md:hidden">
             <VaultApy {...props} />
           </TableCell>
-          <TableCell className="pointer-events-none text-center">
+          <TableCell className="pointer-events-none text-center max-md:hidden">
             <VaultTvl {...props} />
           </TableCell>
-          <TableCell className="pointer-events-none text-center">
+          <TableCell className="pointer-events-none text-center max-md:hidden">
             <VaultDepositedLpTokens {...props} />
           </TableCell>
 
-          {/* Action buttons */}
-          <TableCell className="relative flex items-center">
+          {/* Mobile: APY, TVL, Balance */}
+          <TableCell className="md:hidden">
+            <dl className="grid grid-cols-3 gap-x-3 text-center">
+              <dt className="row-start-2 text-xs text-pink-100/60">APY</dt>
+              <dd className="text-sm font-medium text-orange-100">
+                <VaultApy {...props} />
+              </dd>
+              <dt className="row-start-2 text-xs text-pink-100/60">TVL</dt>
+              <dd className="text-sm font-medium text-orange-100">
+                <VaultTvl {...props} />
+              </dd>
+              <dt className="row-start-2 text-xs text-pink-100/60">Balance</dt>
+              <dd className="text-sm font-medium text-orange-100">
+                <VaultDepositedLpTokens {...props} />
+              </dd>
+            </dl>
+          </TableCell>
+
+          {/* Desktop: Action buttons */}
+          <TableCell className="relative flex items-center max-md:hidden">
             <button
               className="group absolute inset-0 flex items-center justify-end focus:outline-none"
               disabled={isLoading}
@@ -84,6 +135,21 @@ const VaultRow: FC<VaultProps> = (props) => {
             </button>
           </TableCell>
 
+          {/* Mobile: Action buttons */}
+          <TableCell className="mt-3 mb-0.5 flex gap-3 border-t border-t-pink/30 pt-3.5 md:hidden">
+            <Button className="w-2/3" size="small">
+              Deposits
+            </Button>
+            <Button
+              className="pointer-events-auto w-1/3 md:hidden"
+              variant="outline"
+              size="small"
+              onClick={toggleStrategyOpen}
+            >
+              Strategy
+            </Button>
+          </TableCell>
+
           {/* Collapsible forms */}
           <Transition
             show={isVaultOpen}
@@ -104,6 +170,12 @@ const VaultRow: FC<VaultProps> = (props) => {
           </Transition>
         </TableRow>
       </Disclosure>
+
+      <VaultStrategyModal
+        isOpen={isStrategyOpen}
+        onClose={() => setIsStrategyOpen(false)}
+        {...props}
+      />
     </>
   )
 }
