@@ -54,7 +54,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
       href={appLink("#")}
       disabled>
       <span className="opacity-50">Concentrators</span>
-      <span className="ml-1 grow-0 rounded bg-pink-200/20 py-0.5 px-1 text-[9px] uppercase leading-tight text-pink-100/80">
+      <span className="whitespace-nowrap ml-1 grow-0 rounded bg-pink-200/20 py-0.5 px-1 text-[9px] uppercase leading-tight text-pink-100/80">
         Coming soon
       </span>
     </Menu.Item>)
