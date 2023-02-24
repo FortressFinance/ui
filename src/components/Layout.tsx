@@ -22,6 +22,8 @@ import ExternalLinks from "@/components/ExternalLinks"
 
 import { useConnectWallet } from "@/store/connectWallet"
 
+import { DISABLE_CONCENTRATORS } from "@/constant/env"
+
 import FortressLogoAnimated from "~/images/fortress-animated-logo.gif"
 import FortressBackground from "~/images/fortress-background.gif"
 import FortressLogo from "~/svg/fortress-logo.svg"
@@ -71,12 +73,26 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                     >
                       Compounders
                     </Menu.Item>
-                    <Menu.Item
-                      as={DropdownMenuItemLink}
-                      href={appLink("/yield/concentrators")}
-                    >
-                      Concentrators
-                    </Menu.Item>
+                    {DISABLE_CONCENTRATORS ? (
+                      <Menu.Item
+                        as={DropdownMenuItemLink}
+                        href="#"
+                        className="flex items-center"
+                        disabled
+                      >
+                        <span className="opacity-50">Concentrators</span>
+                        <span className="ml-1 grow-0 whitespace-nowrap rounded bg-pink-200/20 py-0.5 px-1 text-[9px] uppercase leading-tight text-pink-100/80">
+                          Coming soon
+                        </span>
+                      </Menu.Item>
+                    ) : (
+                      <Menu.Item
+                        as={DropdownMenuItemLink}
+                        href={appLink("/yield/concentrators")}
+                      >
+                        Concentrators
+                      </Menu.Item>
+                    )}
                   </Menu.Items>
                 </Menu>
                 <span className="flex cursor-not-allowed items-center">
