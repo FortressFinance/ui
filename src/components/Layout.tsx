@@ -44,13 +44,16 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         <header className="sticky top-0 z-10 border-b border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
             <div className="flex items-center space-x-10 max-sm:pl-1">
-              <Link className="group" href={appLink("/yield")}>
+              <Link
+                className="group my-3 h-11 px-1 py-2 md:my-4"
+                href={appLink("/yield")}
+              >
                 <FortressLogo
-                  className="my-5 h-7 w-auto fill-white md:my-6 md:group-hover:hidden"
+                  className="h-full w-auto fill-white md:group-hover:hidden"
                   aria-label="Fortress Finance"
                 />
                 <Image
-                  className="my-5 hidden h-7 w-auto md:my-6 md:group-hover:flex"
+                  className="hidden h-full w-auto md:group-hover:flex"
                   priority
                   src={FortressLogoAnimated}
                   alt=""

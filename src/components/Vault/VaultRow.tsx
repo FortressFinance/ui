@@ -63,7 +63,7 @@ const VaultRow: FC<VaultProps> = (props) => {
 
             {/* Large: strategy button */}
             <Button
-              className="pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 active:translate-y-0 enabled:hover:-translate-y-0.5 enabled:hover:contrast-150 enabled:hover:after:opacity-100 max-lg:hidden"
+              className="focus-visible-outline-1 pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 focus:outline-none focus-visible:-translate-y-0.5 focus-visible:outline focus-visible:outline-orange focus-visible:contrast-150 focus-visible:after:opacity-100 active:translate-y-0 enabled:hover:-translate-y-0.5 enabled:hover:contrast-150 enabled:hover:after:opacity-100 max-lg:hidden"
               size="base"
               variant="outline"
               onClick={toggleStrategyOpen}
@@ -73,7 +73,7 @@ const VaultRow: FC<VaultProps> = (props) => {
 
             {/* Medium: strategy button */}
             <Button
-              className="pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 active:translate-y-0 max-md:hidden md:enabled:hover:-translate-y-0.5 md:enabled:hover:contrast-150 md:enabled:hover:after:opacity-100 lg:hidden"
+              className="focus-visible-outline-1 pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 focus:outline-none focus-visible:-translate-y-0.5 focus-visible:outline focus-visible:outline-orange focus-visible:contrast-150 focus-visible:after:opacity-100 active:translate-y-0 max-md:hidden md:enabled:hover:-translate-y-0.5 md:enabled:hover:contrast-150 md:enabled:hover:after:opacity-100 lg:hidden"
               size="small"
               variant="outline"
               onClick={toggleStrategyOpen}

@@ -89,8 +89,9 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
           className="font-bold underline"
           target="_blank"
         >
-          risks.
+          risks
         </Link>
+        .
       </div>
     </ConnectWalletModalBase>
   )
