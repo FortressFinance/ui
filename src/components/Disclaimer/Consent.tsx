@@ -1,10 +1,10 @@
 import { Dialog } from "@headlessui/react"
-import { FC, Fragment, useEffect, useState } from "react"
-
-import useConsentStorage from "@/hooks/util/useConsentStorage"
+import { FC, useEffect, useState } from "react"
 
 import Button from "@/components/Button"
 import PurpleModal from "@/components/Modal/PurpleModal"
+
+import useConsentStorage from "@/store/useConsentStorage"
 
 export const Consent: FC = () => {
   const consent = useConsentStorage(state => state.consent)
