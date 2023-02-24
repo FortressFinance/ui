@@ -72,7 +72,6 @@ export const Consent: FC = () => {
             I understand
           </Button>
         </div>
-
         <div className="mt-2 text-center ">
           <a href="about:blank" className="text-sm text-pink-100/50 underline">
             Leave site
