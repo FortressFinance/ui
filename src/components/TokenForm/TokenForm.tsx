@@ -91,7 +91,7 @@ const TokenForm: FC<TokenFormProps> = ({
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
-      <div className="grid-row-[1fr,auto,auto,max-content] grid w-full grid-cols-[auto,auto] rounded-lg">
+      <div className="grid-row-[1fr,auto,auto,max-content] grid w-full grid-cols-[auto,auto]">
         {/* inputToken input */}
         <Controller
           control={form.control}
@@ -200,7 +200,7 @@ const TokenForm: FC<TokenFormProps> = ({
 
         {/* Focus styles */}
         <div
-          className="col-span-full col-start-1 row-span-3 row-start-1 rounded bg-pink-100/10 peer-focus:ring-2 peer-focus:ring-inset peer-focus:ring-pink-100/30"
+          className="col-span-full col-start-1 row-span-3 row-start-1 rounded bg-pink-100/10 ring-1 ring-inset ring-transparent peer-hover:ring-pink-100/10 peer-focus:ring-pink-100/30"
           aria-hidden="true"
         />
 
