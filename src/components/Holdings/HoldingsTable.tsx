@@ -1,12 +1,12 @@
 import { FC } from "react"
 
-import { TableHeader, TableRow } from "@/components/Table"
+import { TableEmpty, TableHeader, TableRow } from "@/components/Table"
 
 const HoldingsTable: FC = () => {
   return (
     <div className="" role="table">
       {/* Table headings */}
-      <div className="" role="rowgroup">
+      <div className="max-md:hidden" role="rowgroup">
         <TableRow className="rounded-b-none border-b border-b-pink/30">
           <TableHeader>Holdings</TableHeader>
           <TableHeader className="text-center">APY</TableHeader>
@@ -19,17 +19,10 @@ const HoldingsTable: FC = () => {
       </div>
 
       {/* Table body */}
-      <TableRow className="flex h-48 items-center rounded-t-none">
-        <div className="col-span-full">
-          <h2 className="mb-3 text-center text-2xl font-semibold">
-            Well this is awkward...
-          </h2>
-          <p className="mx-auto max-w-3xl text-center text-sm">
-            You don't appear to have any deposits in our Vaults. There's an easy
-            way to change that.
-          </p>
-        </div>
-      </TableRow>
+      <TableEmpty heading="Well, this is awkward...">
+        You don't appear to have any deposits in our Vaults. There's an easy way
+        to change that.
+      </TableEmpty>
     </div>
   )
 }
