@@ -1,24 +1,29 @@
 import { FC } from "react"
 
-import CoinbaseWalletLogo from "~/svg/connectors/coinbase-wallet.svg"
-import MetaMaskLogo from "~/svg/connectors/metamask.svg"
-import WalletConnectLogo from "~/svg/connectors/wallet-connect.svg"
+import {
+  ConnIconCoinbaseWallet,
+  ConnIconFrame,
+  ConnIconMetaMask,
+  ConnIconWalletConnect,
+} from "@/icons"
 
 type ConnectorLogoProps = {
   id: string
+  name: string
+  className?: string
 }
 
-const ConnectorLogo: FC<ConnectorLogoProps> = ({ id }) => {
-  switch (id) {
-    case "metaMask":
-      return <MetaMaskLogo className="h-10 w-10" />
-    case "walletConnect":
-      return <WalletConnectLogo className="h-10 w-10" />
-    case "coinbaseWallet":
-      return <CoinbaseWalletLogo className="h-10 w-10" />
-    default:
-      return null
+const ConnectorLogo: FC<ConnectorLogoProps> = ({ className, id, name }) => {
+  if (id === "metaMask") {
+    return <ConnIconMetaMask className={className} />
+  } else if (id === "walletConnect") {
+    return <ConnIconWalletConnect className={className} />
+  } else if (id === "coinbaseWallet") {
+    return <ConnIconCoinbaseWallet className={className} />
+  } else if (name === "Frame") {
+    return <ConnIconFrame className={className} />
   }
+  return null
 }
 
 export default ConnectorLogo

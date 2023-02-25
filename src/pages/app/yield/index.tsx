@@ -15,10 +15,9 @@ import { useClientReady } from "@/hooks/util"
 import { enabledNetworks } from "@/components/AppProviders"
 import HoldingsTable from "@/components/Holdings/HoldingsTable"
 import Layout from "@/components/Layout"
-import { PageHeading } from "@/components/PageHeading"
 import Seo from "@/components/Seo"
 import { TableEmpty, TableLoading } from "@/components/Table"
-import { TabButton, TabList, TabListGroup, TabPanels } from "@/components/Tabs"
+import { TabButton, TabListGroup, TabPanels } from "@/components/Tabs"
 import VaultRow from "@/components/Vault/VaultRow"
 import { VaultTable } from "@/components/Vault/VaultTable"
 
@@ -31,32 +30,27 @@ const Yield: NextPage = () => {
       />
 
       <main>
-        <PageHeading>Compounders</PageHeading>
-
         <Tab.Group>
-          <Tab.List as={TabList}>
-            <TabListGroup className="max-w-2/3">
-              <Tab as={TabButton} className="max-w-1/3 basis-0">
-                Featured
-              </Tab>
-              <Tab as={TabButton} className="max-w-1/3 basis-0">
-                Crypto
-              </Tab>
-              <Tab as={TabButton} className="max-w-1/3 basis-0">
-                Stable
-              </Tab>
-              <Tab as={TabButton} className="max-w-1/3 basis-0">
-                Curve
-              </Tab>
-              <Tab as={TabButton} className="max-w-1/3 basis-0">
-                Balancer
-              </Tab>
-            </TabListGroup>
-            <TabListGroup className="max-h-[38px] md:max-h-[56px]">
-              <Tab as={TabButton} className="basis-0">
-                Holdings
-              </Tab>
-            </TabListGroup>
+          <Tab.List as="div" className="mb-4 lg:mb-6">
+            <div className="grid grid-rows-[auto,auto] items-center gap-4 md:grid-cols-[min-content,auto] xl:gap-6">
+              <h1 className="font-display text-4xl md:col-span-full">
+                Compounders
+              </h1>
+
+              <TabListGroup className="max-md:col-span-2 max-md:col-start-1 max-md:row-start-2">
+                <Tab as={TabButton}>Featured</Tab>
+                <Tab as={TabButton}>Crypto</Tab>
+                <Tab as={TabButton}>Stable</Tab>
+                <Tab as={TabButton}>Curve</Tab>
+                <Tab as={TabButton}>Balancer</Tab>
+              </TabListGroup>
+
+              <div className="flex items-center max-md:col-start-2 max-md:row-start-1 max-md:justify-end">
+                <TabListGroup className="inline-block">
+                  <Tab as={TabButton}>Holdings</Tab>
+                </TabListGroup>
+              </div>
+            </div>
           </Tab.List>
 
           <Tab.Panels as={TabPanels}>

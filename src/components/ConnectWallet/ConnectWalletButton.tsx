@@ -1,16 +1,22 @@
 import { FC, MouseEventHandler } from "react"
 import { useAccount } from "wagmi"
 
+import { useClientReady } from "@/hooks/util"
+
 import Address from "@/components/Address"
-import Button from "@/components/Button"
+import Button, { ButtonProps } from "@/components/Button"
 
 import { useConnectWallet } from "@/store/connectWallet"
 
-type ConnectWalletButtonProps = {
+type ConnectWalletButtonProps = Pick<ButtonProps, "size"> & {
   className?: string
 }
 
-const ConnectWalletButton: FC<ConnectWalletButtonProps> = ({ className }) => {
+const ConnectWalletButton: FC<ConnectWalletButtonProps> = ({
+  className,
+  ...buttonProps
+}) => {
+  const isReady = useClientReady()
   const { address, isConnected } = useAccount()
   const setConnectModal = useConnectWallet((state) => state.setConnectModal)
 
@@ -19,8 +25,12 @@ const ConnectWalletButton: FC<ConnectWalletButtonProps> = ({ className }) => {
   }
 
   return (
-    <Button className={className} onClick={clickHandler}>
-      {isConnected ? <Address>{address}</Address> : <>Connect Wallet</>}
+    <Button className={className} onClick={clickHandler} {...buttonProps}>
+      {isReady && isConnected ? (
+        <Address>{address}</Address>
+      ) : (
+        <>Connect Wallet</>
+      )}
     </Button>
   )
 }

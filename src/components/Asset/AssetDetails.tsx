@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { Address } from "wagmi"
+import { Address, useAccount } from "wagmi"
 
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
@@ -27,12 +27,15 @@ export const AssetSymbol: FC<AssetDetailsProps> = ({ address, isLoading }) => {
 
 export const AssetBalance: FC<AssetDetailsProps> = ({ address }) => {
   const isReady = useClientReady()
+  const { isConnected } = useAccount()
   const { data: balance, isLoading } = useTokenOrNativeBalance({ address })
   return (
     <Skeleton isLoading={!address || isLoading || !isReady}>
-      <Currency abbreviate>
-        {isReady && balance?.formatted ? balance.formatted : "0.0"}
-      </Currency>
+      {!isReady || !isConnected ? (
+        <>N/A</>
+      ) : (
+        <Currency abbreviate>{balance?.formatted ?? "0.0"}</Currency>
+      )}
     </Skeleton>
   )
 }

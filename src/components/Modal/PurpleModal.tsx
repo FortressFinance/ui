@@ -17,7 +17,7 @@ const PurpleModal: FC<PropsWithChildren<PurpleModalProps>> = ({
   <ModalBase {...modalProps}>
     <Dialog.Panel
       className={clsxm(
-        "w-full rounded-md border border-pink-700 bg-pink-900",
+        "w-full rounded-lg border border-pink-700 bg-pink-900",
         className
       )}
     >
@@ -35,7 +35,7 @@ type PurpleModalBlockProps = {
 export const PurpleModalHeader: FC<
   PropsWithChildren<PurpleModalBlockProps>
 > = ({ children, className }) => (
-  <header className={clsxm("border-b border-b-pink-800 px-6 py-5", className)}>
+  <header className={clsxm("border-b border-b-pink-800 p-3 md:p-5", className)}>
     {children}
   </header>
 )
@@ -43,5 +43,5 @@ export const PurpleModalHeader: FC<
 export const PurpleModalContent: FC<
   PropsWithChildren<PurpleModalBlockProps>
 > = ({ children, className }) => (
-  <div className={clsxm("px-6 py-6", className)}>{children}</div>
+  <div className={clsxm("p-3 md:p-5", className)}>{children}</div>
 )

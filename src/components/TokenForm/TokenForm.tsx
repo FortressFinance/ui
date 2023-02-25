@@ -91,7 +91,7 @@ const TokenForm: FC<TokenFormProps> = ({
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
-      <div className="grid-row-[1fr,auto,auto,max-content] grid w-full grid-cols-[auto,auto] rounded-md">
+      <div className="grid-row-[1fr,auto,auto,max-content] grid w-full grid-cols-[auto,auto]">
         {/* inputToken input */}
         <Controller
           control={form.control}
@@ -112,7 +112,7 @@ const TokenForm: FC<TokenFormProps> = ({
           }}
           render={({ field: { onChange, onBlur, value, name, ref } }) => (
             <input
-              className="peer relative z-[2] col-start-1 row-start-1 block w-full text-ellipsis bg-transparent px-4 pt-4 pb-2 text-2xl placeholder-white/50 focus:outline-none md:text-4xl"
+              className="peer relative z-[2] col-start-1 row-start-1 block w-full text-ellipsis bg-transparent px-4 pt-4 pb-2 text-2xl placeholder-pink-100/50 focus:outline-none md:text-4xl"
               step="any"
               // universal input options
               inputMode="decimal"
@@ -157,7 +157,7 @@ const TokenForm: FC<TokenFormProps> = ({
         {/* outputToken input */}
         <input
           className={clsxm(
-            "peer relative z-[2] col-start-1 row-start-2 block w-full text-ellipsis bg-transparent px-4 pb-4 pt-1 text-xl text-white/60 placeholder-white/50 focus:outline-none",
+            "peer relative z-[2] col-start-1 row-start-2 block w-full text-ellipsis bg-transparent px-4 pb-4 pt-1 text-xl text-pink-100/60 placeholder-pink-100/60 focus:outline-none",
             { "animate-pulse": isLoadingPreview }
           )}
           step="any"
@@ -182,14 +182,14 @@ const TokenForm: FC<TokenFormProps> = ({
         </div>
 
         <div className="relative z-[1] col-span-full col-start-1 row-start-3 h-[38px] px-4 pb-3 text-left align-bottom text-xs">
-          <span>
+          <span className="text-pink-100">
             {!isWithdraw ? "Balance: " : "Share: "}
             <Skeleton isLoading={isLoadingInputTokenBalanceOrShare}>
               {toFixed(inputTokenBalanceOrShare?.formatted ?? "0.0", 6)}
             </Skeleton>
           </span>
           <button
-            className="ml-1.5 rounded-md border border-[#F0707B] px-2 py-1 font-bold text-white hover:bg-[#1E0E1C80]"
+            className="ml-1.5 cursor-pointer rounded border border-orange-400 px-2 py-1 font-semibold text-pink-100"
             onClick={onClickMax}
             disabled={!showMaxBtn}
             type="button"
@@ -200,7 +200,7 @@ const TokenForm: FC<TokenFormProps> = ({
 
         {/* Focus styles */}
         <div
-          className="col-span-full col-start-1 row-span-3 row-start-1 rounded-md bg-white/10 peer-focus:outline peer-focus:outline-white/30"
+          className="col-span-full col-start-1 row-span-3 row-start-1 rounded bg-pink-100/10 ring-1 ring-inset ring-transparent peer-hover:ring-pink-100/10 peer-focus:ring-pink-100/30"
           aria-hidden="true"
         />
 

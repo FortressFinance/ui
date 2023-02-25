@@ -15,6 +15,7 @@ import {
 
 import Percentage from "@/components/Percentage"
 import Skeleton from "@/components/Skeleton"
+import { GradientText } from "@/components/Typography"
 
 export const TokenApr: FC<VaultProps> = (props) => {
   const { data: poolId, isLoading: isLoadingId } = useVaultPoolId(props)
@@ -66,18 +67,22 @@ export const TokenApr: FC<VaultProps> = (props) => {
     <>
       {totalApr !== undefined && (
         <>
-          <dt className="text-base font-semibold">Total APR</dt>
-          <dd className="text-right text-base font-semibold">
-            <Skeleton isLoading={isLoadingId || isLoadingTotalApr}>
-              <Percentage>{totalApr}</Percentage>
-            </Skeleton>
+          <dt className="text-base font-bold">
+            <GradientText>Total APR</GradientText>
+          </dt>
+          <dd className="text-right text-base font-bold">
+            <GradientText>
+              <Skeleton isLoading={isLoadingId || isLoadingTotalApr}>
+                <Percentage>{totalApr}</Percentage>
+              </Skeleton>
+            </GradientText>
           </dd>
         </>
       )}
       {balApr !== undefined && (
         <>
-          <dt className="my-auto align-bottom">BAL APR</dt>
-          <dd className="my-auto text-right align-bottom">
+          <dt>BAL APR</dt>
+          <dd className="text-right">
             <Skeleton isLoading={isLoadingId || isLoadingBalApr}>
               <Percentage>{balApr}</Percentage>
             </Skeleton>
@@ -86,8 +91,8 @@ export const TokenApr: FC<VaultProps> = (props) => {
       )}
       {AuraApr !== undefined && (
         <>
-          <dt className="my-auto align-bottom">AURA APR</dt>
-          <dd className="my-auto text-right align-bottom">
+          <dt>AURA APR</dt>
+          <dd className="text-right">
             <Skeleton isLoading={isLoadingId || isLoadingAuraApr}>
               <Percentage>{AuraApr}</Percentage>
             </Skeleton>
@@ -96,8 +101,8 @@ export const TokenApr: FC<VaultProps> = (props) => {
       )}
       {crvApr !== undefined && (
         <>
-          <dt className="my-auto align-bottom">CRV APR</dt>
-          <dd className="my-auto text-right align-bottom">
+          <dt>CRV APR</dt>
+          <dd className="text-right">
             <Skeleton isLoading={isLoadingId || isLoadingCrvApr}>
               <Percentage>{crvApr}</Percentage>
             </Skeleton>
@@ -106,8 +111,8 @@ export const TokenApr: FC<VaultProps> = (props) => {
       )}
       {cvxApr !== undefined && (
         <>
-          <dt className="my-auto align-bottom">CVX APR</dt>
-          <dd className="my-auto text-right align-bottom">
+          <dt>CVX APR</dt>
+          <dd className="text-right">
             <Skeleton isLoading={isLoadingId || isLoadingCvxApr}>
               <Percentage>{cvxApr}</Percentage>
             </Skeleton>
@@ -116,8 +121,8 @@ export const TokenApr: FC<VaultProps> = (props) => {
       )}
       {gmxApr !== undefined && (
         <>
-          <dt className="my-auto align-bottom">GMX APR</dt>
-          <dd className="my-auto text-right align-bottom">
+          <dt>GMX APR</dt>
+          <dd className="text-right">
             <Skeleton isLoading={isLoadingId || isLoadingGmxApr}>
               <Percentage>{gmxApr}</Percentage>
             </Skeleton>
@@ -126,8 +131,8 @@ export const TokenApr: FC<VaultProps> = (props) => {
       )}
       {ethApr !== undefined && (
         <>
-          <dt className="my-auto align-bottom">ETH APR</dt>
-          <dd className="my-auto text-right align-bottom">
+          <dt>ETH APR</dt>
+          <dd className="text-right">
             <Skeleton isLoading={isLoadingId || isLoadingEthApr}>
               <Percentage>{ethApr}</Percentage>
             </Skeleton>
@@ -136,8 +141,8 @@ export const TokenApr: FC<VaultProps> = (props) => {
       )}
       {extraRewardsApr !== undefined && (
         <>
-          <dt className="my-auto align-bottom">Extra Rewards APR</dt>
-          <dd className="my-auto text-right align-bottom">
+          <dt>Extra Rewards APR</dt>
+          <dd className="text-right">
             <Skeleton isLoading={isLoadingId || isLoadingExtraRewardsApr}>
               <Percentage>{extraRewardsApr}</Percentage>
             </Skeleton>

@@ -4,7 +4,7 @@ import { forwardRef, Fragment, PropsWithChildren } from "react"
 
 import clsxm from "@/lib/clsxm"
 
-import ChevronDown from "~/svg/icons/chevron-down.svg"
+import { FortIconChevronDown } from "@/icons"
 
 type DropdownMenuProps = PropsWithChildren<{ className?: string }>
 
@@ -32,7 +32,7 @@ export const DropdownMenuButton = forwardRef<
       {...props}
     >
       <span>{children}</span>
-      <ChevronDown className="w-3 stroke-inherit" />
+      <FortIconChevronDown className="w-3.5 stroke-inherit" />
     </button>
   )
 })

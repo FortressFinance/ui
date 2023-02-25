@@ -29,7 +29,7 @@ export const TableRow: FC<PropsWithChildren<TableRowProps>> = ({
   return (
     <div
       className={clsx(
-        "relative grid grid-cols-[4fr,1fr,1fr,1fr,3.5rem] items-center gap-x-2 overflow-hidden rounded-md bg-pink-900/80 p-3 text-xs backdrop-blur-md sm:text-sm md:gap-x-3 lg:px-6 lg:text-base",
+        "relative items-center gap-x-2 overflow-hidden rounded-lg bg-pink-900/80 p-3 backdrop-blur-md md:grid md:grid-cols-[4fr,1fr,1fr,1fr,3.5rem] md:px-6",
         className
       )}
       role="row"
@@ -39,7 +39,7 @@ export const TableRow: FC<PropsWithChildren<TableRowProps>> = ({
       {/* Make entire row clickable but without breaking accessibility */}
       {!!onClick && (
         <div
-          className={clsxm("absolute inset-0 -z-[1] block", {
+          className={clsxm("absolute inset-0 -z-[1] block max-md:hidden", {
             "cursor-pointer": !disabled,
             "cursor-wait": disabled,
           })}
@@ -59,7 +59,10 @@ export const TableHeaderRow: FC<PropsWithChildren<TableRowProps>> = ({
   return (
     <div role="rowgroup">
       <TableRow
-        className={clsxm("rounded-b-none border-b border-b-pink/30", className)}
+        className={clsxm(
+          "rounded-b-none border-b border-b-pink/30 py-3",
+          className
+        )}
         {...props}
       >
         {children}
@@ -91,7 +94,7 @@ export const TableCell: FC<PropsWithChildren<TableChildProps>> = ({
   children,
   className,
 }) => (
-  <span className={clsx("", className)} role="cell">
+  <div className={className} role="cell">
     {children}
-  </span>
+  </div>
 )

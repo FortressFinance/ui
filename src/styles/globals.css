@@ -9,7 +9,7 @@
 
   body,
   .p {
-    @apply font-sans text-sm text-white md:text-base;
+    @apply font-sans text-white;
   }
 
   input[type="number"]::-webkit-inner-spin-button,
@@ -21,6 +21,16 @@
   .layout {
     /* 1184px */
     max-width: 74rem;
-    @apply mx-auto w-11/12;
+    @apply max-md:px-3 md:mx-auto md:w-11/12;
+  }
+
+  .h-screen-small {
+    @apply h-screen;
+    height: 100svh;
+  }
+
+  .min-h-screen-small {
+    @apply min-h-screen;
+    min-height: 100svh;
   }
 }

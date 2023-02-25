@@ -13,11 +13,12 @@ export const TabListGroup: FC<PropsWithChildren<{ className?: string }>> = ({
 }) => (
   <div
     className={clsxm(
-      "flex rounded-md border border-pink/30 bg-pink-900/80 backdrop-blur-md max-md:grow max-md:flex-wrap",
+      "rounded-lg border border-pink/30 bg-pink-900/80 backdrop-blur-md max-md:snap-x max-md:overflow-x-auto",
       className
     )}
-    {...props}
-  />
+  >
+    <div className="flex overflow-visible" {...props} />
+  </div>
 )
 
 export const TabButton = forwardRef<
@@ -27,7 +28,7 @@ export const TabButton = forwardRef<
   return (
     <button
       className={clsxm(
-        "transition-color py-2 px-4 duration-200 first:rounded-l-md last:rounded-r-md hover:bg-white hover:text-pink-900 ui-selected:bg-white ui-selected:text-pink-900 max-md:grow md:py-3 md:px-6",
+        "transition-color py-3 px-6 duration-200 first:rounded-l-md last:rounded-r-md ui-selected:bg-white ui-selected:text-pink-900 max-md:snap-start md:hover:bg-white md:hover:text-pink-900",
         className
       )}
       ref={ref}
@@ -39,5 +40,5 @@ export const TabButton = forwardRef<
 })
 
 export const TabPanels = forwardRef<HTMLDivElement>((props, ref) => (
-  <div className="mt-4" ref={ref} {...props} />
+  <div ref={ref} {...props} />
 ))

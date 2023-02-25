@@ -85,5 +85,5 @@ export function useFallbackReads<
   return useContractReads<TAbi, TFunctionName, TContracts, TSelectData>({
     ...contractReadsConfig,
     enabled: enabled && fallbackEnabled,
-  })
+  }) as UseWagmiQueryResult<TSelectData, Error>
 }

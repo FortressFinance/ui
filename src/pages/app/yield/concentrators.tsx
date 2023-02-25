@@ -12,9 +12,8 @@ import {
 } from "@/components/Concentrator"
 import HoldingsTable from "@/components/Holdings/HoldingsTable"
 import Layout from "@/components/Layout"
-import { PageHeading } from "@/components/PageHeading"
 import Seo from "@/components/Seo"
-import { TabButton, TabList, TabListGroup, TabPanels } from "@/components/Tabs"
+import { TabButton, TabListGroup, TabPanels } from "@/components/Tabs"
 
 const Concentrators: NextPage = () => {
   return (
@@ -25,8 +24,6 @@ const Concentrators: NextPage = () => {
       />
 
       <main>
-        <PageHeading>Concentrators</PageHeading>
-
         {/* Child component because we need queryClient to retrieve vaults */}
         <ConcentratorVaults />
       </main>
@@ -39,9 +36,9 @@ export default Concentrators
 const filterCategories: FilterCategory[] = [
   "featured",
   "crypto",
+  "stable",
   "curve",
   "balancer",
-  "stable",
 ]
 
 const ConcentratorVaults: FC = () => {
@@ -50,33 +47,44 @@ const ConcentratorVaults: FC = () => {
   const [filterIndex, setFilterIndex] = useState(0)
 
   return (
-    <div className="grid grid-cols-1 max-lg:gap-y-4 lg:grid-cols-12 lg:gap-x-4">
-      <Tab.Group
-        // Not a huge fan of this but it is what it is
-        // Maybe can be removed with better registry functions
-        onChange={(index) => setFilterIndex(index)}
-      >
-        <div className="max-lg:row-start-2 lg:col-span-8 xl:col-span-9">
-          <Tab.List as={TabList}>
-            <TabListGroup className="max-md:max-w-2/3">
-              {filterCategories.map((filterCategory, index) => (
-                <Tab
-                  as={TabButton}
-                  key={`tab-${index}`}
-                  className="max-md:max-w-1/3 max-md:basis-0"
-                >
-                  {capitalizeFirstLetter(filterCategory)}
-                </Tab>
-              ))}
-            </TabListGroup>
+    <Tab.Group
+      // Not a huge fan of this but it is what it is
+      // Maybe can be removed with better registry functions
+      onChange={(index) => setFilterIndex(index)}
+    >
+      <div className="grid grid-cols-[auto,auto,auto] grid-rows-[auto,auto,auto,auto] items-start gap-4 lg:grid-cols-[min-content,auto,min-content] lg:grid-rows-[min-content,min-content,1fr] xl:gap-6">
+        <h1 className="font-display text-4xl max-lg:row-start-2 lg:col-span-full lg:row-start-1">
+          Concentrators
+        </h1>
 
-            <TabListGroup className="max-md:max-h-[38px]">
-              <Tab as={TabButton} className="basis-0">
-                Holdings
-              </Tab>
-            </TabListGroup>
-          </Tab.List>
+        <TabListGroup className="h-12 max-lg:col-span-full max-lg:col-start-1 max-lg:row-start-3 lg:row-start-2">
+          {filterCategories.map((filterCategory, index) => (
+            <Tab as={TabButton} key={`tab-${index}`}>
+              {capitalizeFirstLetter(filterCategory)}
+            </Tab>
+          ))}
+        </TabListGroup>
 
+        <div className="row-start-2 flex items-center max-lg:col-span-2 max-lg:col-start-2 max-lg:justify-end lg:col-start-2">
+          <TabListGroup className="inline-block">
+            <Tab as={TabButton}>Holdings</Tab>
+          </TabListGroup>
+        </div>
+
+        <div className="max-lg:col-span-full max-lg:col-start-1 max-md:row-start-1 lg:col-start-3 lg:row-span-full lg:row-start-2 lg:self-start">
+          <div className="space-y-4 lg:w-72 xl:space-y-6">
+            <ConcentratorMenu
+              concentratorTargetAsset={concentratorTargetAsset}
+              setConcentratorTargetAsset={setConcentratorTargetAsset}
+            />
+            <ConcentratorRewards
+              concentratorTargetAsset={concentratorTargetAsset}
+              filterCategory={filterCategories[filterIndex]}
+            />
+          </div>
+        </div>
+
+        <div className="col-span-full lg:col-span-2 lg:row-start-3">
           <Tab.Panels as={TabPanels}>
             {filterCategories.map((filterCategory, index) => (
               <Tab.Panel key={`tab-panel-${index}`}>
@@ -92,18 +100,7 @@ const ConcentratorVaults: FC = () => {
             </Tab.Panel>
           </Tab.Panels>
         </div>
-      </Tab.Group>
-
-      <div className="space-y-4 max-lg:row-start-1 lg:col-span-4 xl:col-span-3">
-        <ConcentratorMenu
-          concentratorTargetAsset={concentratorTargetAsset}
-          setConcentratorTargetAsset={setConcentratorTargetAsset}
-        />
-        <ConcentratorRewards
-          concentratorTargetAsset={concentratorTargetAsset}
-          filterCategory={filterCategories[filterIndex]}
-        />
       </div>
-    </div>
+    </Tab.Group>
   )
 }

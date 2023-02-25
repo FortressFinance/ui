@@ -4,20 +4,20 @@ import { useNetwork, useSwitchNetwork } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 import useActiveChainId from "@/hooks/useActiveChainId"
+import { useClientReady } from "@/hooks/util"
 
 import { enabledNetworks, mainnetFork } from "@/components/AppProviders"
 
-import { useActiveChain } from "@/store/activeChain"
+import { FortIconChevronDown, NetIconArbitrum, NetIconEthereum } from "@/icons"
 
-import ArbitrumLogo from "~/svg/arbitrum_logo.svg"
-import EthereumLogo from "~/svg/ethereum-logo.svg"
-import ChevronDown from "~/svg/icons/chevron-down.svg"
+import { useActiveChain } from "@/store/activeChain"
 
 type NetworkSelectorProps = {
   className?: string
 }
 
 const NetworkSelector: FC<NetworkSelectorProps> = () => {
+  const isReady = useClientReady()
   const { chain: connectedChain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
   const setActiveChainId = useActiveChain((state) => state.setChainId)
@@ -25,8 +25,10 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
   const disconnectedChain = enabledNetworks.chains.find(
     (c) => c.id === disconnectedChainId
   )
-  const chain = connectedChain || { ...disconnectedChain, unsupported: false }
-  const chainId = connectedChain?.id ?? disconnectedChainId
+
+  const chain = isReady
+    ? connectedChain ?? { ...disconnectedChain, unsupported: false }
+    : { ...enabledNetworks.chains[0], unsupported: false }
 
   const onClickChain = (chainId: number) => {
     if (connectedChain && switchNetwork) {
@@ -38,107 +40,91 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
   }
 
   return (
-    <div className="min-w-30 mr-2 text-right md:mr-3">
-      <Menu as="div" className="relative inline-block text-left">
-        <div>
-          <Menu.Button
-            className={clsxm(
-              "text-medium inline-flex w-full items-center justify-center space-x-2 rounded-md border bg-black/20 py-1 px-2 text-sm font-medium text-white hover:bg-black/30 md:py-3 md:px-4 md:text-base",
-              {
-                "border-orange-400 text-orange-400": chain.unsupported,
-                "border-transparent": !chain.unsupported,
-              }
-            )}
-          >
+    <>
+      <Menu as="div" className="flex h-full md:relative">
+        <Menu.Button
+          className={clsxm(
+            "flex w-full items-center justify-between gap-2 rounded bg-pink-900/40 px-2 font-semibold text-white md:px-4 md:py-3 md:font-medium md:hover:bg-black/30",
+            {
+              "text-orange-400 ring-1 ring-inset ring-orange-400":
+                chain.unsupported,
+            }
+          )}
+        >
+          <div className="flex items-center gap-3 md:gap-2">
             {chain.unsupported ? (
               "Unsupported Network"
             ) : (
               <>
-                {chainId === mainnetFork.id ? (
-                  <EthereumLogo
-                    className="md-mr-2 mr-1 h-5 w-5"
+                {chain.id === mainnetFork.id ? (
+                  <NetIconEthereum
+                    className="h-6 w-6"
                     aria-hidden="true"
                     aria-label="Ethereum"
                   />
                 ) : (
-                  <ArbitrumLogo
-                    className="mr-1 h-5 w-5 md:mr-2"
+                  <NetIconArbitrum
+                    className="h-6 w-6"
                     aria-hidden="true"
                     aria-label="Arbitrum one"
                   />
                 )}
-                {chain.name}
+                <span className="max-md:text-sm">{chain.name}</span>
               </>
             )}
+          </div>
 
-            <ChevronDown
-              className={clsxm("ml-2 w-3", {
-                "stroke-orange-400": chain.unsupported,
-                "stroke-white": !chain.unsupported,
-              })}
-              aria-label="Switch network"
-            />
-          </Menu.Button>
-        </div>
+          <FortIconChevronDown
+            className={clsxm("mr-2 w-4 md:w-3.5", {
+              "stroke-orange-400": chain.unsupported,
+              "stroke-white": !chain.unsupported,
+            })}
+            aria-label="Switch network"
+          />
+        </Menu.Button>
+
         <Transition
           as={Fragment}
-          enter="transition ease-out duration-100"
+          enter="transition ease-linear duration-100"
           enterFrom="transform opacity-0 scale-95"
           enterTo="transform opacity-100 scale-100"
           leave="transition ease-in duration-75"
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md border border-black/60 bg-orange-400 text-white shadow-lg focus:outline-none">
-            <div className="px-1 py-1 ">
+          <Menu.Items className="absolute bottom-0 left-1/2 w-56 min-w-full -translate-x-1/2 translate-y-[calc(100%+0.5rem)] rounded border border-black/60 bg-orange-400 text-white shadow-lg focus:outline-none md:rounded-md">
+            <div className="space-y-1 px-1 py-1">
               {enabledNetworks.chains.map((curChain, index) => (
-                <Menu.Item
-                  key={index}
-                  as={Fragment}
-                  disabled={chain.id === curChain.id}
-                >
-                  {({ active }) => (
-                    <button
-                      onClick={() => onClickChain(curChain.id)}
-                      className={clsxm(
-                        "text-medium group flex w-full items-center justify-between rounded-md px-2 py-2",
-                        {
-                          "bg-black/10": active,
-                        }
-                      )}
-                    >
-                      <div>
-                        {curChain?.id === mainnetFork.id ? (
-                          <EthereumLogo
-                            className="float-left mr-2 h-5 w-5"
-                            aria-hidden="true"
-                            aria-label="Ethereum"
-                          />
-                        ) : (
-                          <ArbitrumLogo
-                            className="float-left mr-2 h-5 w-5"
-                            aria-hidden="true"
-                            aria-label="Arbitrum one"
-                          />
-                        )}
-                        <span>{curChain.name}</span>
-                      </div>
-                      <div>
-                        {chain.id === curChain.id && (
-                          <div className="flex h-5 w-5 justify-center py-1 align-middle">
-                            <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                          </div>
-                        )}
-                      </div>
-                    </button>
-                  )}
+                <Menu.Item key={index} as={Fragment}>
+                  <button
+                    onClick={() => onClickChain(curChain.id)}
+                    data-connected={chain.id === curChain.id}
+                    className={clsxm(
+                      "group flex w-full items-center gap-2 rounded-sm p-3 font-medium disabled:bg-black/10 data-[connected=true]:bg-black/10 ui-active:bg-black/30 md:rounded md:py-2"
+                    )}
+                  >
+                    {curChain?.id === mainnetFork.id ? (
+                      <NetIconEthereum
+                        className="h-5 w-5 stroke-white"
+                        aria-hidden="true"
+                        aria-label="Ethereum"
+                      />
+                    ) : (
+                      <NetIconArbitrum
+                        className="h-5 w-5"
+                        aria-hidden="true"
+                        aria-label="Arbitrum one"
+                      />
+                    )}
+                    <span>{curChain.name}</span>
+                  </button>
                 </Menu.Item>
               ))}
             </div>
           </Menu.Items>
         </Transition>
       </Menu>
-    </div>
+    </>
   )
 }
 

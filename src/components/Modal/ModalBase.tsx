@@ -23,12 +23,12 @@ const ModalBase: FC<PropsWithChildren<ModalBaseProps>> = ({
           as={Fragment}
           enter="transition-all duration-200"
           enterFrom="opacity-0"
-          enterTo="opacity-60"
+          enterTo="opacity-100"
           leave="transition-all duration-200"
-          leaveFrom="opacity-60"
+          leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 z-10 bg-black" />
+          <div className="fixed inset-0 z-10 bg-pink-900 bg-opacity-60" />
         </Transition.Child>
 
         {/* Scrollable container for modal dialog */}
@@ -43,7 +43,7 @@ const ModalBase: FC<PropsWithChildren<ModalBaseProps>> = ({
         >
           <div className="fixed inset-0 z-10 overflow-y-auto backdrop-blur">
             {/* Inner scrollarea */}
-            <div className="flex min-h-full items-center justify-center sm:p-4">
+            <div className="flex min-h-full items-center justify-center p-3 sm:p-4">
               {children}
             </div>
           </div>

@@ -156,8 +156,10 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   }
 
   return (
-    <div className="rounded-md bg-white/10 p-4">
-      <h2 className="mb-3 text-center font-medium">Withdraw</h2>
+    <div className="p-3 md:rounded-md md:bg-pink-100/10 lg:p-4">
+      <h2 className="mb-3 text-center font-medium text-pink-100 max-md:hidden">
+        Withdraw
+      </h2>
       <FormProvider {...form}>
         <TokenForm
           isWithdraw
