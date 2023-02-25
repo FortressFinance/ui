@@ -34,9 +34,7 @@ export const AssetBalance: FC<AssetDetailsProps> = ({ address }) => {
       {!isReady || !isConnected ? (
         <>N/A</>
       ) : (
-        <Currency abbreviate>
-          {balance?.formatted ? balance.formatted : "0.0"}
-        </Currency>
+        <Currency abbreviate>{balance?.formatted ?? "0.0"}</Currency>
       )}
     </Skeleton>
   )

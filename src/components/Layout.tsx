@@ -193,19 +193,28 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                           >
                             Compounders
                           </a>
-                          <a
-                            href={appLink("/yield/concentrators")}
-                            className={clsxm(
-                              "block rounded px-3 py-2.5 text-lg font-medium text-white/80",
-                              {
-                                "bg-gradient-to-r from-orange-400/20 to-orange-400/5 text-white ring-1 ring-inset ring-orange-400/20":
-                                  router.pathname ===
-                                  "/app/yield/concentrators",
-                              }
-                            )}
-                          >
-                            Concentrators
-                          </a>
+                          {DISABLE_CONCENTRATORS ? (
+                            <span className="flex items-center gap-1 rounded px-3 py-2.5 text-lg font-medium text-white/20">
+                              <span>Concentrators</span>
+                              <span className="ml-1 grow-0 whitespace-nowrap rounded bg-pink-200/20 py-0.5 px-1 text-[9px] uppercase leading-tight text-pink-100/60">
+                                Coming soon
+                              </span>
+                            </span>
+                          ) : (
+                            <a
+                              href={appLink("/yield/concentrators")}
+                              className={clsxm(
+                                "block rounded px-3 py-2.5 text-lg font-medium text-white/80",
+                                {
+                                  "bg-gradient-to-r from-orange-400/20 to-orange-400/5 text-white ring-1 ring-inset ring-orange-400/20":
+                                    router.pathname ===
+                                    "/app/yield/concentrators",
+                                }
+                              )}
+                            >
+                              Concentrators
+                            </a>
+                          )}
                         </div>
 
                         <h1 className="mt-3 px-3 pt-3 text-xs font-medium uppercase tracking-wider text-orange-400/20">
