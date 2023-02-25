@@ -1,11 +1,13 @@
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from "next"
 import Image from "next/image"
+import { forwardRef, HTMLAttributes, useEffect, useState } from "react"
+
+import { useClientReady } from "@/hooks/util"
 
 import { ButtonLink } from "@/components/Button"
 import ExternalLinks from "@/components/ExternalLinks"
 import Seo from "@/components/Seo"
 
-import FortressLogoAnimated from "~/images/fortress-animated-logo.gif"
 import SwordImage from "~/images/sword.gif"
 import FortressLogo from "~/svg/fortress-logo.svg"
 
@@ -28,39 +30,29 @@ const HomePage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ appUrl }) => {
   return (
-    <div className="h-screen w-screen bg-gradient-to-br from-pink to-orange p-2 lg:p-4">
+    <FillScreen className="overflow-hidden bg-gradient-to-br from-pink to-orange p-2 lg:p-4">
       <Seo />
 
-      <div className="grid h-full w-full grid-cols-1 grid-rows-[auto,1fr,auto] bg-dark">
-        <header className="layout group flex items-center justify-between py-10">
+      <div className="grid h-full w-full grid-cols-1 grid-rows-[auto,1fr,auto] overflow-auto bg-dark">
+        <header className="md:layout py-10 max-md:px-8">
           <FortressLogo
-            className="h-auto w-7 fill-white group-hover:hidden"
+            className="h-auto w-7 fill-white"
             aria-label="Fortress Finance"
-          />
-          <Image
-            className="hidden h-auto w-7 group-hover:flex"
-            priority
-            src={FortressLogoAnimated}
-            alt=""
           />
         </header>
 
-        <main className="grid h-full w-full items-center justify-center">
-          <div className="layout lg:space-between lg:flex lg:w-full lg:max-w-4xl">
-            {/* Mobile sword image */}
-            <div className="mb-6 w-28 -scale-x-100 lg:hidden">
-              <Image src={SwordImage} priority alt="" />
-            </div>
+        <main className="grid h-full w-full items-center md:justify-center">
+          <div className="md:layout lg:space-between max-md:px-8 lg:grid lg:w-full lg:max-w-4xl lg:grid-cols-[auto,1fr]">
             <div>
               <h1 className="font-display text-4xl uppercase lg:max-w-2xl lg:text-7xl">
                 Fortress Finance
               </h1>
-              <p className="mt-4 text-xl lg:mt-6 lg:text-3xl">
+              <p className="mt-4 max-w-xl lg:mt-6 lg:text-2xl">
                 Fortress provides composable financial products for passive DeFi
                 investors.
               </p>
               <ButtonLink
-                className="mt-6 px-8"
+                className="mt-6 px-8 lg:mt-8"
                 href={`${appUrl}/yield`}
                 size="large"
                 external
@@ -70,8 +62,13 @@ const HomePage: NextPage<
             </div>
 
             {/* Desktop sword image */}
-            <div className="hidden w-64 lg:block">
-              <Image src={SwordImage} priority alt="" />
+            <div className="w-52 max-lg:hidden">
+              <Image
+                src={SwordImage}
+                className="h-auto w-28 md:w-52"
+                priority
+                alt=""
+              />
             </div>
           </div>
         </main>
@@ -80,8 +77,45 @@ const HomePage: NextPage<
           <ExternalLinks showHelp className="justify-center md:justify-end" />
         </footer>
       </div>
-    </div>
+    </FillScreen>
   )
 }
 
 export default HomePage
+
+const FillScreen = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ style, ...other }, ref) => {
+    const height = use100vh()
+
+    const styleWithRealHeight = {
+      ...style,
+      height: height ? `${height}px` : "100vh",
+    }
+
+    return <div ref={ref} style={styleWithRealHeight} {...other} />
+  }
+)
+
+export function use100vh(): number | null {
+  const [height, setHeight] = useState<number | null>(measureHeight)
+  const isClientReady = useClientReady()
+
+  useEffect(() => {
+    if (!isClientReady) return
+
+    function setMeasuredHeight() {
+      const measuredHeight = measureHeight()
+      setHeight(measuredHeight)
+    }
+
+    window.addEventListener("resize", setMeasuredHeight)
+    return () => window.removeEventListener("resize", setMeasuredHeight)
+  }, [isClientReady])
+
+  return isClientReady ? height : null
+}
+
+export function measureHeight(): number | null {
+  if (typeof window === "undefined") return null
+  return window.innerHeight
+}
