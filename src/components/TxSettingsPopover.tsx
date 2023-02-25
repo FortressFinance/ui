@@ -95,9 +95,9 @@ const TxSettingsForm: FC = () => {
           {/* Auto switch */}
           <Switch
             as={Button}
-            className="shrink-0 bg-transparent text-base text-black/20 text-white ring-transparent checked:ring-black/20 ui-checked:bg-white ui-checked:text-black ui-checked:ring-black"
+            className="shrink-0 text-base ui-not-checked:opacity-20"
             size="small"
-            variant="plain"
+            variant="plain-negative"
             checked={txSettings.isSlippageAuto}
             onChange={onClickAuto}
           >
