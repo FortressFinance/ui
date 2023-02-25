@@ -5,7 +5,7 @@ import { TableRow } from "@/components/Table"
 
 export const TableLoading: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <div className="flex h-52 place-items-center rounded-lg bg-pink-900/80 p-3 backdrop-blur-md md:grid md:h-24 md:rounded-t-none">
+    <div className="flex h-52 items-center justify-center rounded-lg bg-pink-900/80 p-3 backdrop-blur-md md:grid md:h-24 md:rounded-t-none">
       <Spinner className="h-10 w-10" />
       <span className="sr-only">{children}</span>
     </div>

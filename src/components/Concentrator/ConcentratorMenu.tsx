@@ -9,7 +9,7 @@ import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/Concent
 import { DropdownMenu } from "@/components/DropdownMenu"
 import { TabButton } from "@/components/Tabs"
 
-import ChevronDown from "~/svg/icons/chevron-down.svg"
+import { FortIconChevronDown } from "@/icons"
 
 type ConcentratorMenuProps = {
   concentratorTargetAsset: TargetAsset | undefined
@@ -46,7 +46,7 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
             concentratorTargetAsset={concentratorTargetAsset}
           />
         </div>
-        <ChevronDown className="w-3 shrink-0 stroke-white group-focus-visible:stroke-pink-900 ui-open:rotate-180 ui-not-open:group-hover:stroke-pink-900" />
+        <FortIconChevronDown className="w-3 shrink-0 stroke-white group-focus-visible:stroke-pink-900 ui-open:rotate-180 ui-not-open:group-hover:stroke-pink-900" />
       </Menu.Button>
       <Menu.Items className="divide-y divide-pink/30 overflow-hidden rounded-b-md border-l border-r border-b border-pink/30 bg-pink-900/80 backdrop-blur-md focus-visible:outline-none">
         {clientReady &&

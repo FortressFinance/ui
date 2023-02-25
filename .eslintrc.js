@@ -53,7 +53,9 @@ module.exports = {
           // static data
           ["^@/data"],
           // components
-          ["^@/components", "^@/container"],
+          ["^@/components"],
+          // icons
+          ["^@/icons"],
           // zustand store
           ["^@/store"],
           // Other imports

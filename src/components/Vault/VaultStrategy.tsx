@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { FC, Fragment, MouseEventHandler } from "react"
-import { RxCross1, RxExternalLink } from "react-icons/rx"
 import { useAccount } from "wagmi"
 
 import { VaultProps } from "@/lib/types"
@@ -20,7 +19,11 @@ import Tooltip from "@/components/Tooltip"
 import { CurveBalancerApr } from "@/components/Vault/APR/CurveBalancerApr"
 import { TokenApr } from "@/components/Vault/APR/TokenApr"
 
-import AddToWallet from "~/svg/icons/add-to-wallet.svg"
+import {
+  FortIconAddToWallet,
+  FortIconClose,
+  FortIconExternalLink,
+} from "@/icons"
 
 const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
   isOpen,
@@ -53,21 +56,27 @@ const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
           {!!connector && !!connector.watchAsset && (
             <Tooltip label={label}>
               <button onClick={addTokenToWallet}>
-                <AddToWallet className="h-5 w-auto" aria-label={label} />
+                <FortIconAddToWallet
+                  className="h-6 w-6 fill-white"
+                  aria-label={label}
+                />
               </button>
             </Tooltip>
           )}
           <Tooltip label="View contract">
             <Link
+              className="h-6 w-6 p-[1px]"
               href={`https://arbiscan.io/address/${vaultProps.asset}`}
               target="_blank"
             >
-              <RxExternalLink className="h-7 w-7" aria-label="View contract" />
+              <FortIconExternalLink className="h-full w-full" />
+              <span className="sr-only">View contract</span>
             </Link>
           </Tooltip>
         </div>
-        <button onClick={onClose}>
-          <RxCross1 className="h-7 w-7" aria-label="Close" />
+        <button className="h-6 w-6 p-[1px]" onClick={onClose}>
+          <FortIconClose className="h-full w-full fill-white" />
+          <span className="sr-only">Close</span>
         </button>
       </PurpleModalHeader>
 

@@ -9,8 +9,6 @@ import {
   useEffect,
   useState,
 } from "react"
-import { BiCopy, BiLinkExternal } from "react-icons/bi"
-import { RxCrossCircled } from "react-icons/rx"
 import { useAccount, useConnect, useDisconnect, useNetwork } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
@@ -20,6 +18,12 @@ import Address from "@/components/Address"
 import Button from "@/components/Button"
 import ConnectorLogo from "@/components/ConnectWallet/ConnectorLogo"
 import ModalBase, { ModalBaseProps } from "@/components/Modal/ModalBase"
+
+import {
+  FortIconCloseCircle,
+  FortIconCopy,
+  FortIconExternalLinkAlt,
+} from "@/icons"
 
 export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
   const chainId = useActiveChainId()
@@ -39,8 +43,8 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
         >
           Connect Wallet
         </Dialog.Title>
-        <button onClick={onClose} className="col-start-2 row-start-1 mr-2">
-          <RxCrossCircled className="h-8 w-8" />
+        <button onClick={onClose} className="col-start-2 row-start-1">
+          <FortIconCloseCircle className="h-8 w-8" />
         </button>
       </div>
       <div className="mt-6 space-y-3">
@@ -62,8 +66,12 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
             >
               <div className="flex w-full items-center justify-between">
                 <span>{connector.name}</span>
-                <div className="h-10 w-10">
-                  <ConnectorLogo id={connector.id} />
+                <div className="flex h-10 w-10 items-center justify-center">
+                  <ConnectorLogo
+                    className="h-full max-h-full w-full max-w-full"
+                    id={connector.id}
+                    name={connector.name}
+                  />
                 </div>
               </div>
             </Button>
@@ -161,8 +169,8 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
         >
           Account
         </Dialog.Title>
-        <button onClick={onClose} className="col-start-2 row-start-1 mr-2">
-          <RxCrossCircled className="h-8 w-8" />
+        <button onClick={onClose} className="col-start-2 row-start-1">
+          <FortIconCloseCircle className="h-8 w-8" />
         </button>
       </div>
 
@@ -205,7 +213,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
             )}
             onClick={() => staticCopy(address as string)}
           >
-            <BiCopy className="mr-2 inline h-5 w-5" />
+            <FortIconCopy className="mr-2 inline h-5 w-5 stroke-current" />
             <span>Copy address</span>
           </div>
           <Link
@@ -214,7 +222,7 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
             onClick={(e) => validateExplorerLink(e, blockExplorerUrl)}
             target="_blank"
           >
-            <BiLinkExternal className="mr-2 inline h-5 w-5" />
+            <FortIconExternalLinkAlt className="mr-2 inline h-4 w-4" />
             <span>View on Explorer</span>
           </Link>
         </div>

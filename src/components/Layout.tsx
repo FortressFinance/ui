@@ -3,7 +3,6 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { FC, Fragment, PropsWithChildren, useState } from "react"
-import { BiMenu, BiX } from "react-icons/bi"
 
 import clsxm from "@/lib/clsxm"
 import { appLink } from "@/lib/helpers"
@@ -22,6 +21,8 @@ import {
 } from "@/components/DropdownMenu"
 import ExternalLinks from "@/components/ExternalLinks"
 import NetworkSelector from "@/components/NetworkSelector"
+
+import { FortIconClose, FortIconHamburger } from "@/icons"
 
 import { useConnectWallet } from "@/store/connectWallet"
 
@@ -98,11 +99,11 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
               {/* Hamburger menu button for mobile */}
               <Button
-                className="p-2.5 md:hidden"
+                className="h-12 w-12 rounded p-3 md:hidden"
                 variant="outline"
                 onClick={() => setSidebarOpen(true)}
               >
-                <BiMenu className="h-7 w-7 fill-current" />
+                <FortIconHamburger className="h-full w-full fill-current" />
               </Button>
             </div>
           </div>
@@ -147,11 +148,11 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                         <NetworkSelector />
 
                         <button
-                          className="rounded bg-pink-900/40 p-2.5"
+                          className="h-10 w-10 rounded bg-pink-900/40 p-3"
                           onClick={() => setSidebarOpen(false)}
                           type="button"
                         >
-                          <BiX className="h-7 w-7 fill-white" />
+                          <FortIconClose className="h-full w-full fill-white" />
                         </button>
                       </div>
 

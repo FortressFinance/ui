@@ -11,7 +11,7 @@ import {
 } from "react"
 import { usePopper } from "react-popper"
 
-import Triangle from "~/svg/icons/triangle.svg"
+import Triangle from "~/svg/triangle.svg"
 
 type TooltipProps = {
   label: string

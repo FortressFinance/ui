@@ -7,7 +7,7 @@ import clsxm from "@/lib/clsxm"
 import { Table, TableBody, TableHeader, TableRow } from "@/components/Table"
 import TxSettingsForm from "@/components/TxSettingsForm"
 
-import Cog from "~/svg/icons/cog.svg"
+import { FortIconCog } from "@/icons"
 
 type VaultTableProps = {
   label: string
@@ -52,7 +52,7 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
                         }
                       )}
                     >
-                      <Cog className="h-5 w-5" />
+                      <FortIconCog className="h-5 w-5 fill-white" />
                     </button>
                   </Popover.Button>
 

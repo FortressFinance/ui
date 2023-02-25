@@ -3,7 +3,7 @@ import { Address } from "wagmi"
 
 import { AssetSymbol } from "@/components/Asset"
 
-import ChevronDown from "~/svg/icons/chevron-down.svg"
+import { FortIconChevronDown } from "@/icons"
 
 type TokenSelectButtonProps = {
   canChange?: boolean
@@ -19,11 +19,11 @@ const TokenSelectButton: FC<TokenSelectButtonProps> = ({
   return canChange ? (
     <button
       type="button"
-      className="flex items-center space-x-2 justify-self-end rounded bg-white p-2 text-xs font-medium text-black"
+      className="flex items-center space-x-1 justify-self-end rounded bg-white p-2 text-xs font-medium text-black"
       onClick={onClick}
     >
       <AssetSymbol address={tokenAddress} />
-      <ChevronDown className="h-2 w-2 stroke-black" />
+      <FortIconChevronDown className="h-2.5 w-2.5 stroke-black" />
     </button>
   ) : (
     <div className="flex items-center space-x-2 justify-self-end rounded bg-white p-2 text-xs font-medium text-black">

@@ -1,7 +1,6 @@
 import { Dialog, RadioGroup } from "@headlessui/react"
 import { FC, Fragment, KeyboardEventHandler, MouseEventHandler } from "react"
 import { UseControllerReturn } from "react-hook-form"
-import { RxCrossCircled } from "react-icons/rx"
 import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
@@ -13,6 +12,8 @@ import { ModalBaseProps } from "@/components/Modal/ModalBase"
 import PurpleModal, { PurpleModalContent } from "@/components/Modal/PurpleModal"
 import MultiLayerTokenLogo from "@/components/MultiLayerTokenLogo"
 import { TokenFormValues } from "@/components/TokenForm/TokenForm"
+
+import { FortIconCloseCircle } from "@/icons"
 
 type TokenSelectModalProps = ModalBaseProps & {
   controller: UseControllerReturn<TokenFormValues, "inputToken" | "outputToken">
@@ -49,7 +50,8 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
             Select a token
           </Dialog.Title>
           <button onClick={onClose} tabIndex={-1}>
-            <RxCrossCircled className="h-7 w-7" aria-label="Close" />
+            <FortIconCloseCircle className="h-7 w-7" />
+            <span className="sr-only">Close</span>
           </button>
         </header>
 

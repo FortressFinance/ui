@@ -8,11 +8,9 @@ import { useClientReady } from "@/hooks/util"
 
 import { enabledNetworks, mainnetFork } from "@/components/AppProviders"
 
-import { useActiveChain } from "@/store/activeChain"
+import { FortIconChevronDown, NetIconArbitrum, NetIconEthereum } from "@/icons"
 
-import ArbitrumLogo from "~/svg/arbitrum_logo.svg"
-import EthereumLogo from "~/svg/ethereum-logo.svg"
-import ChevronDown from "~/svg/icons/chevron-down.svg"
+import { useActiveChain } from "@/store/activeChain"
 
 type NetworkSelectorProps = {
   className?: string
@@ -59,13 +57,13 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
             ) : (
               <>
                 {chain.id === mainnetFork.id ? (
-                  <EthereumLogo
+                  <NetIconEthereum
                     className="h-5 w-5"
                     aria-hidden="true"
                     aria-label="Ethereum"
                   />
                 ) : (
-                  <ArbitrumLogo
+                  <NetIconArbitrum
                     className="h-5 w-5"
                     aria-hidden="true"
                     aria-label="Arbitrum one"
@@ -76,7 +74,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
             )}
           </div>
 
-          <ChevronDown
+          <FortIconChevronDown
             className={clsxm("w-4 md:w-3", {
               "stroke-orange-400": chain.unsupported,
               "stroke-white": !chain.unsupported,
@@ -107,13 +105,13 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
                   >
                     <div className="flex gap-3 md:gap-2">
                       {curChain?.id === mainnetFork.id ? (
-                        <EthereumLogo
+                        <NetIconEthereum
                           className="h-5 w-5"
                           aria-hidden="true"
                           aria-label="Ethereum"
                         />
                       ) : (
-                        <ArbitrumLogo
+                        <NetIconArbitrum
                           className="h-5 w-5"
                           aria-hidden="true"
                           aria-label="Arbitrum one"
