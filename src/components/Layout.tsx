@@ -21,6 +21,7 @@ import {
 } from "@/components/DropdownMenu"
 import ExternalLinks from "@/components/ExternalLinks"
 import NetworkSelector from "@/components/NetworkSelector"
+import { TxSettingsPopover } from "@/components/TxSettingsPopover"
 
 import { FortIconClose, FortIconHamburger } from "@/icons"
 
@@ -131,7 +132,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               />
             </Transition.Child>
 
-            <div className="fixed inset-0 z-40 flex justify-end">
+            <div className="fixed inset-0 flex justify-end">
               <Transition.Child
                 as={Fragment}
                 enter="transition ease-in-out duration-200 transform"
@@ -144,11 +145,13 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 <Dialog.Panel className="relative h-full w-full max-w-xs overflow-y-auto border-l border-pink/10 bg-gradient-to-tr from-pink-600/40 to-orange-600/40 shadow-xl backdrop-blur-xl focus:outline-none">
                   <div className="grid h-full grid-cols-1 grid-rows-[1fr,auto] gap-16 p-3">
                     <div>
-                      <div className="grid grid-cols-[1fr,auto] gap-2">
+                      <div className="relative grid grid-cols-[auto,min-content,min-content] grid-rows-1 gap-x-2">
                         <NetworkSelector />
 
+                        <TxSettingsPopover />
+
                         <button
-                          className="h-10 w-10 rounded bg-pink-900/40 p-3"
+                          className="h-12 w-12 shrink-0 rounded bg-pink-900/40 p-3.5"
                           onClick={() => setSidebarOpen(false)}
                           type="button"
                         >

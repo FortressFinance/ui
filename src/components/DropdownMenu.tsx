@@ -32,7 +32,7 @@ export const DropdownMenuButton = forwardRef<
       {...props}
     >
       <span>{children}</span>
-      <FortIconChevronDown className="w-3 stroke-inherit" />
+      <FortIconChevronDown className="w-3.5 stroke-inherit" />
     </button>
   )
 })

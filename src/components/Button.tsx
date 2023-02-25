@@ -38,8 +38,9 @@ const buttonClasses = (
       "bg-gradient-to-r from-orange to-pink": variant === "base",
       "ring ring-1 ring-pink text-white bg-pink bg-opacity-10 ring-inset":
         variant === "outline",
-      "bg-white shadow-[0_0_0_2px_#000] text-black": variant === "plain",
-      "bg-black shadow-[0_0_0_2px_#000] text-white":
+      "bg-white ring ring-1 ring-black ring-inset text-black":
+        variant === "plain",
+      "bg-black ring ring-1 ring-black ring-inset text-white":
         variant === "plain-negative",
       "cursor-wait": isLoading,
       "disabled:cursor-not-allowed": !isLoading,

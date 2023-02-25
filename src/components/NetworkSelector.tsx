@@ -41,10 +41,10 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
 
   return (
     <>
-      <Menu as="div" className="relative flex h-full">
+      <Menu as="div" className="flex h-full md:relative">
         <Menu.Button
           className={clsxm(
-            "flex w-full items-center justify-between gap-2 rounded bg-pink-900/40 px-4 font-semibold text-white md:py-3 md:font-medium md:hover:bg-black/30",
+            "flex w-full items-center justify-between gap-2 rounded bg-pink-900/40 px-2 font-semibold text-white md:px-4 md:py-3 md:font-medium md:hover:bg-black/30",
             {
               "text-orange-400 ring-1 ring-inset ring-orange-400":
                 chain.unsupported,
@@ -58,24 +58,24 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
               <>
                 {chain.id === mainnetFork.id ? (
                   <NetIconEthereum
-                    className="h-5 w-5"
+                    className="h-6 w-6"
                     aria-hidden="true"
                     aria-label="Ethereum"
                   />
                 ) : (
                   <NetIconArbitrum
-                    className="h-5 w-5"
+                    className="h-6 w-6"
                     aria-hidden="true"
                     aria-label="Arbitrum one"
                   />
                 )}
-                <span>{chain.name}</span>
+                <span className="max-md:text-sm">{chain.name}</span>
               </>
             )}
           </div>
 
           <FortIconChevronDown
-            className={clsxm("w-4 md:w-3", {
+            className={clsxm("mr-2 w-4 md:w-3.5", {
               "stroke-orange-400": chain.unsupported,
               "stroke-white": !chain.unsupported,
             })}
@@ -92,7 +92,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute bottom-0 left-1/2 w-56 min-w-full -translate-x-1/2 translate-y-[calc(100%+0.5rem)] divide-y divide-gray-100 rounded-md border border-black/60 bg-orange-400 text-white shadow-lg focus:outline-none">
+          <Menu.Items className="absolute bottom-0 left-1/2 w-56 min-w-full -translate-x-1/2 translate-y-[calc(100%+0.5rem)] rounded border border-black/60 bg-orange-400 text-white shadow-lg focus:outline-none md:rounded-md">
             <div className="space-y-1 px-1 py-1">
               {enabledNetworks.chains.map((curChain, index) => (
                 <Menu.Item key={index} as={Fragment}>
@@ -100,25 +100,23 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
                     onClick={() => onClickChain(curChain.id)}
                     data-connected={chain.id === curChain.id}
                     className={clsxm(
-                      "group flex w-full items-center justify-between gap-2 rounded p-3 font-medium disabled:bg-black/10 data-[connected=true]:bg-black/10 ui-active:bg-black/30 md:py-2"
+                      "group flex w-full items-center gap-2 rounded-sm p-3 font-medium disabled:bg-black/10 data-[connected=true]:bg-black/10 ui-active:bg-black/30 md:rounded md:py-2"
                     )}
                   >
-                    <div className="flex gap-3 md:gap-2">
-                      {curChain?.id === mainnetFork.id ? (
-                        <NetIconEthereum
-                          className="h-5 w-5"
-                          aria-hidden="true"
-                          aria-label="Ethereum"
-                        />
-                      ) : (
-                        <NetIconArbitrum
-                          className="h-5 w-5"
-                          aria-hidden="true"
-                          aria-label="Arbitrum one"
-                        />
-                      )}
-                      <span>{curChain.name}</span>
-                    </div>
+                    {curChain?.id === mainnetFork.id ? (
+                      <NetIconEthereum
+                        className="h-5 w-5 stroke-white"
+                        aria-hidden="true"
+                        aria-label="Ethereum"
+                      />
+                    ) : (
+                      <NetIconArbitrum
+                        className="h-5 w-5"
+                        aria-hidden="true"
+                        aria-label="Arbitrum one"
+                      />
+                    )}
+                    <span>{curChain.name}</span>
                   </button>
                 </Menu.Item>
               ))}
