@@ -187,8 +187,10 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   }
 
   return (
-    <div className="rounded-md bg-pink-100/10 p-4">
-      <h2 className="mb-3 text-center font-medium">Deposit</h2>
+    <div className="p-3 md:rounded-md md:bg-pink-100/10 lg:p-4">
+      <h2 className="mb-3 text-center font-medium text-pink-100 max-md:hidden">
+        Deposit
+      </h2>
       <FormProvider {...form}>
         <TokenForm
           isLoadingPreview={isLoadingPreview}
