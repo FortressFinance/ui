@@ -66,7 +66,7 @@ const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
           <Tooltip label="View contract">
             <Link
               className="h-6 w-6 p-[1px]"
-              href={`https://arbiscan.io/address/${vaultProps.asset}`}
+              href={`https://arbiscan.io/address/${vaultProps.vaultAddress}`}
               target="_blank"
             >
               <FortIconExternalLink className="h-full w-full" />
