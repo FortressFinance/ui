@@ -1,3 +1,5 @@
+import { toBool } from "@/lib/helpers/toBool"
+
 export const isProd = process.env.NODE_ENV === "production"
 export const isLocal = process.env.NODE_ENV === "development"
 export const showLogger = isLocal
@@ -15,7 +17,14 @@ export const AURA_ADDRESS = process.env.NEXT_PUBLIC_AURA_ADDRESS ?? "0x"
 export const AURA_BAL_ADDRESS = process.env.NEXT_PUBLIC_AURA_BAL_ADDRESS ?? "0x"
 export const GLP_REWARDS_DISTRIBUTOR_ADDRESS =
   process.env.NEXT_PUBLIC_GLP_REWARDS_DISTRIBUTOR_ADDRESS ?? "0x"
-const default_from_env = Number(process.env.NEXT_PUBLIC_DEFAULT_SLIPPAGE)
-export const DEFAULT_SLIPPAGE = !isNaN(default_from_env)
-  ? default_from_env
+const default_slippage_from_env = Number(
+  process.env.NEXT_PUBLIC_DEFAULT_SLIPPAGE
+)
+export const DEFAULT_SLIPPAGE = !isNaN(default_slippage_from_env)
+  ? default_slippage_from_env
   : 0.05
+
+const default_disable_concentrator = toBool(
+  process.env.NEXT_PUBLIC_DISABLE_CONCENTRATOR
+)
+export const DISABLE_CONCENTRATORS = default_disable_concentrator
