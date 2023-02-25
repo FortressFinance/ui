@@ -78,9 +78,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                     </Menu.Item>
                     {DISABLE_CONCENTRATORS ? (
                       <Menu.Item
-                        as={DropdownMenuItemLink}
-                        href="#"
-                        className="flex items-center"
+                        as="span"
+                        className="block cursor-not-allowed px-3 py-2.5 ui-active:bg-white ui-active:text-pink-900"
                         disabled
                       >
                         <span className="opacity-50">Concentrators</span>
