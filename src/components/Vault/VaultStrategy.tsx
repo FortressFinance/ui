@@ -110,7 +110,7 @@ const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
           {/* Fees */}
           <div>
             <h1 className="border-b border-pink-800 p-3 text-xs font-semibold uppercase text-pink-300 max-md:text-center max-sm:border-t md:border-t md:px-5">
-              Yearn fees
+              Fortress fees
             </h1>
             <dl className="grid grid-cols-[max-content,auto] gap-2 p-4 pb-5 text-sm text-pink-50 md:px-5">
               <dt>Deposit</dt>
