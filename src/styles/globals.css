@@ -23,4 +23,9 @@
     max-width: 74rem;
     @apply max-md:px-3 md:mx-auto md:w-11/12;
   }
+
+  .h-screen-small {
+    @apply h-screen;
+    height: 100svh;
+  }
 }

@@ -1,8 +1,5 @@
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from "next"
 import Image from "next/image"
-import { forwardRef, HTMLAttributes, useEffect, useState } from "react"
-
-import { useClientReady } from "@/hooks/util"
 
 import { ButtonLink } from "@/components/Button"
 import ExternalLinks from "@/components/ExternalLinks"
@@ -30,7 +27,7 @@ const HomePage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ appUrl }) => {
   return (
-    <FillScreen className="overflow-hidden bg-gradient-to-br from-pink to-orange p-2 lg:p-4">
+    <div className="h-screen-small overflow-hidden bg-gradient-to-br from-pink to-orange p-2 lg:p-4">
       <Seo />
 
       <div className="grid h-full w-full grid-cols-1 grid-rows-[auto,1fr,auto] overflow-auto bg-dark">
@@ -77,45 +74,8 @@ const HomePage: NextPage<
           <ExternalLinks showHelp className="justify-center md:justify-end" />
         </footer>
       </div>
-    </FillScreen>
+    </div>
   )
 }
 
 export default HomePage
-
-const FillScreen = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
-  ({ style, ...other }, ref) => {
-    const height = use100vh()
-
-    const styleWithRealHeight = {
-      ...style,
-      height: height ? `${height}px` : "100vh",
-    }
-
-    return <div ref={ref} style={styleWithRealHeight} {...other} />
-  }
-)
-
-export function use100vh(): number | null {
-  const [height, setHeight] = useState<number | null>(measureHeight)
-  const isClientReady = useClientReady()
-
-  useEffect(() => {
-    if (!isClientReady) return
-
-    function setMeasuredHeight() {
-      const measuredHeight = measureHeight()
-      setHeight(measuredHeight)
-    }
-
-    window.addEventListener("resize", setMeasuredHeight)
-    return () => window.removeEventListener("resize", setMeasuredHeight)
-  }, [isClientReady])
-
-  return isClientReady ? height : null
-}
-
-export function measureHeight(): number | null {
-  if (typeof window === "undefined") return null
-  return window.innerHeight
-}
