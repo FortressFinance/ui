@@ -45,7 +45,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <AppProviders>
-      <div className="relative z-[1] grid min-h-[calc(100vh-5rem)] grid-cols-1 grid-rows-[auto,1fr] md:min-h-screen">
+      <div className="min-h-screen-small relative z-[1] grid grid-cols-1 grid-rows-[auto,1fr]">
         <header className="sticky top-0 z-10 border-b border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
             <div className="flex items-center space-x-10 max-sm:pl-1">
