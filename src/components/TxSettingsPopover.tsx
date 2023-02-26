@@ -84,7 +84,6 @@ const TxSettingsForm: FC = () => {
     // in this case, user would be allowing 32% slippage and wouldn't realize it
 
     return () => {
-      console.log(form.formState.isDirty, form.formState.isValid)
       if (form.formState.isDirty && form.formState.isValid) {
         txSettings.setSlippageToleranceString(
           form.getValues("slippageToleranceString")
