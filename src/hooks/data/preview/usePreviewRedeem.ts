@@ -5,11 +5,12 @@ import { VaultType } from "@/lib/types"
 import { useBalancerPreviewRedeem } from "@/hooks/data/preview/useBalancerPreviewRedeem"
 import { useCurvePreviewRedeem } from "@/hooks/data/preview/useCurvePreviewRedeem"
 import { useTokenPreviewRedeem } from "@/hooks/data/preview/useTokenPreviewRedeem"
-import { useSlippageSetting } from "@/hooks/useSlippageSetting"
 import {
   useIsCurveCompounder,
   useIsTokenCompounder,
 } from "@/hooks/useVaultTypes"
+
+import { useSlippageTolerance } from "@/store/txSettings"
 
 export function usePreviewRedeem({
   chainId,
@@ -31,7 +32,7 @@ export function usePreviewRedeem({
   const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
 
-  const slippage = useSlippageSetting()
+  const slippage = useSlippageTolerance()
 
   const enableCurveAssetToYbToken = !isToken && isCurve
   const curvePreviewQuery = useCurvePreviewRedeem({

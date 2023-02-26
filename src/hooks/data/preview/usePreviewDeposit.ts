@@ -5,11 +5,12 @@ import { VaultType } from "@/lib/types"
 import { useBalancerPreviewDeposit } from "@/hooks/data/preview/useBalancerPreviewDeposit"
 import { useCurvePreviewDeposit } from "@/hooks/data/preview/useCurvePreviewDeposit"
 import { useTokenPreviewDeposit } from "@/hooks/data/preview/useTokenPreviewDeposit"
-import { useSlippageSetting } from "@/hooks/useSlippageSetting"
 import {
   useIsCurveCompounder,
   useIsTokenCompounder,
 } from "@/hooks/useVaultTypes"
+
+import { useSlippageTolerance } from "@/store/txSettings"
 
 export function usePreviewDeposit({
   chainId,
@@ -31,7 +32,7 @@ export function usePreviewDeposit({
   const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
 
-  const slippage = useSlippageSetting()
+  const slippage = useSlippageTolerance()
 
   const enableCurveAssetToYbToken = !isToken && isCurve
   const curvePreviewQuery = useCurvePreviewDeposit({
