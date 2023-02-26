@@ -1,10 +1,12 @@
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from "next"
 import Image from "next/image"
+import Link from "next/link"
 
 import { ButtonLink } from "@/components/Button"
 import ExternalLinks from "@/components/ExternalLinks"
 import Seo from "@/components/Seo"
 
+import FortressLogoAnimated from "~/images/fortress-animated-logo.gif"
 import SwordImage from "~/images/sword.gif"
 import FortressLogo from "~/svg/fortress-logo.svg"
 
@@ -32,10 +34,18 @@ const HomePage: NextPage<
 
       <div className="grid h-full w-full grid-cols-1 grid-rows-[auto,1fr,auto] overflow-auto bg-dark">
         <header className="md:layout py-10 max-md:px-8">
-          <FortressLogo
-            className="h-auto w-7 fill-white"
-            aria-label="Fortress Finance"
-          />
+          <Link className="group my-3 block h-11 px-1 py-2 md:my-4" href="/">
+            <FortressLogo
+              className="h-full w-auto fill-white md:group-hover:hidden"
+              aria-label="Fortress Finance"
+            />
+            <Image
+              className="hidden h-full w-auto md:group-hover:flex"
+              priority
+              src={FortressLogoAnimated}
+              alt=""
+            />
+          </Link>
         </header>
 
         <main className="grid h-full w-full items-center md:justify-center">
