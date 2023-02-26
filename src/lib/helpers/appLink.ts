@@ -4,7 +4,7 @@ export function appLink(path: string) {
     window.location.pathname.includes("/app")
   ) {
     const newPath = path === "/" ? "/yield" : path
-    return `/app/${newPath}`
+    return `/app${newPath}`
   }
   return path
 }
