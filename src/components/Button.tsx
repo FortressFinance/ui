@@ -4,6 +4,7 @@ import {
   ButtonHTMLAttributes,
   DetailedHTMLProps,
   FC,
+  forwardRef,
   PropsWithChildren,
 } from "react"
 
@@ -48,44 +49,41 @@ const buttonClasses = (
     className
   )
 
-const Button: FC<ButtonProps> = ({
-  children,
-  className,
-  disabled,
-  isLoading,
-  size,
-  variant,
-  ...props
-}) => {
-  return (
-    <button
-      aria-disabled={disabled || isLoading}
-      className={buttonClasses(className, isLoading, size, variant)}
-      disabled={disabled || isLoading}
-      {...props}
-    >
-      <span
-        className={clsx(
-          "col-start-1 row-start-1 overflow-hidden text-ellipsis whitespace-nowrap",
-          { "opacity-25": isLoading }
-        )}
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    { children, className, disabled, isLoading, size, variant, ...props },
+    ref
+  ) => {
+    return (
+      <button
+        aria-disabled={disabled || isLoading}
+        className={buttonClasses(className, isLoading, size, variant)}
+        disabled={disabled || isLoading}
+        {...props}
       >
-        {children}
-      </span>
-      {isLoading && (
-        <Spinner
-          className={clsxm(
-            "col-start-1 row-start-1 mx-auto h-full w-auto animate-spin",
-            {
-              "fill-white": variant === "base",
-              "fill-black": variant === "plain",
-            }
+        <span
+          className={clsx(
+            "col-start-1 row-start-1 overflow-hidden text-ellipsis whitespace-nowrap",
+            { "opacity-25": isLoading }
           )}
-        />
-      )}
-    </button>
-  )
-}
+        >
+          {children}
+        </span>
+        {isLoading && (
+          <Spinner
+            className={clsxm(
+              "col-start-1 row-start-1 mx-auto h-full w-auto animate-spin",
+              {
+                "fill-white": variant === "base",
+                "fill-black": variant === "plain",
+              }
+            )}
+          />
+        )}
+      </button>
+    )
+  }
+)
 
 export default Button
 

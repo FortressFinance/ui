@@ -1,5 +1,5 @@
 import { Popover, Switch, Transition } from "@headlessui/react"
-import { FC, Fragment } from "react"
+import { FC, Fragment, useEffect } from "react"
 import { useForm } from "react-hook-form"
 
 import clsxm from "@/lib/clsxm"
@@ -62,7 +62,7 @@ export const TxSettingsPopover: FC<TxSettingsPopoverProps> = ({
 
 type TxSettingsFormValues = Pick<
   TxSettingsStore,
-  "slippageTolerance" | "txDeadlineMinutes"
+  "slippageToleranceString" | "txDeadlineMinutes"
 >
 
 const TxSettingsForm: FC = () => {
@@ -70,19 +70,29 @@ const TxSettingsForm: FC = () => {
 
   const form = useForm<TxSettingsFormValues>({
     values: {
-      slippageTolerance: txSettings.slippageTolerance,
+      slippageToleranceString: txSettings.slippageToleranceString,
       txDeadlineMinutes: txSettings.txDeadlineMinutes,
     },
     mode: "all",
     reValidateMode: "onChange",
   })
+  const slippageError = form.formState.errors.slippageToleranceString
 
-  const onClickAuto = () => {
-    if (!txSettings.isSlippageAuto) {
-      txSettings.setSlippageTolerance(DEFAULT_SLIPPAGE)
-      txSettings.toggleSlippageAuto()
+  useEffect(() => {
+    // save form state to store on unmount to prevent edge-case user errors
+    // e.g. user enters "32f", an error is shown, but "32" was already saved to store
+    // in this case, user would be allowing 32% slippage and wouldn't realize it
+
+    return () => {
+      console.log(form.formState.isDirty, form.formState.isValid)
+      if (form.formState.isDirty && form.formState.isValid) {
+        txSettings.setSlippageToleranceString(
+          form.getValues("slippageToleranceString")
+        )
+      }
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <form>
@@ -96,10 +106,17 @@ const TxSettingsForm: FC = () => {
           <Switch
             as={Button}
             className="shrink-0 text-base ui-not-checked:opacity-20"
-            size="small"
             variant="plain-negative"
-            checked={txSettings.isSlippageAuto}
-            onChange={onClickAuto}
+            checked={form.watch("slippageToleranceString") === DEFAULT_SLIPPAGE}
+            onChange={(checked: boolean) => {
+              if (checked) {
+                form.setValue("slippageToleranceString", DEFAULT_SLIPPAGE, {
+                  shouldDirty: true,
+                  shouldTouch: true,
+                  shouldValidate: true,
+                })
+              }
+            }}
           >
             Auto
           </Switch>
@@ -108,15 +125,12 @@ const TxSettingsForm: FC = () => {
           <div className="grid h-full grid-cols-[auto,1fr] grid-rows-1">
             <input
               className="relative z-[1] col-start-1 row-start-1 w-full bg-transparent pl-3 pr-1 text-right text-xl text-black focus:outline-none"
-              type="number"
+              type="text"
               id="slippageTolerance"
-              {...form.register("slippageTolerance", {
-                valueAsNumber: true,
-                onChange: (e) => {
-                  if (txSettings.isSlippageAuto) {
-                    txSettings.toggleSlippageAuto()
-                  }
-                  txSettings.setSlippageTolerance(e.target.value)
+              {...form.register("slippageToleranceString", {
+                validate: (value) => {
+                  if (isNaN(Number(value))) return "Invalid slippage percentage"
+                  return undefined
                 },
               })}
             />
@@ -129,6 +143,13 @@ const TxSettingsForm: FC = () => {
               &nbsp;
             </div>
           </div>
+
+          {/* Error messaging */}
+          {slippageError && (
+            <div className="col-span-2 text-center text-sm font-semibold">
+              {slippageError.message}
+            </div>
+          )}
         </div>
       </div>
     </form>
