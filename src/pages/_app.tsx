@@ -1,6 +1,6 @@
-import { Inter, VT323 } from "@next/font/google"
 import { Analytics } from "@vercel/analytics/react"
 import { AppProps } from "next/app"
+import { Inter, VT323 } from "next/font/google"
 
 import "@/styles/globals.css"
 
