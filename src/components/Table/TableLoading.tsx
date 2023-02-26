@@ -1,7 +1,6 @@
 import { FC, PropsWithChildren } from "react"
 
 import Spinner from "@/components/Spinner"
-import { TableRow } from "@/components/Table"
 
 export const TableLoading: FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -21,11 +20,11 @@ export const TableEmpty: FC<PropsWithChildren<TableEmptyProps>> = ({
   children,
 }) => {
   return (
-    <TableRow className="flex h-52 items-center justify-center p-3 md:flex md:h-48 md:rounded-t-none lg:flex">
-      <div className="mx-auto max-w-2xl text-center text-sm md:text-base">
+    <div className="flex h-52 items-center justify-center rounded-lg bg-pink-900/80 p-3 backdrop-blur-md md:grid md:h-48 md:rounded-t-none">
+      <div className="mx-auto max-w-2xl text-center">
         <h2 className="mb-3 text-lg font-semibold md:text-xl">{heading}</h2>
         <p className="text-sm md:text-base">{children}</p>
       </div>
-    </TableRow>
+    </div>
   )
 }
