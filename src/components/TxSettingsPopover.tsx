@@ -84,7 +84,7 @@ const TxSettingsForm: FC = () => {
     // in this case, user would be allowing 32% slippage and wouldn't realize it
 
     return () => {
-      if (form.formState.isDirty && form.formState.isValid) {
+      if (form.formState.isValid) {
         txSettings.setSlippageToleranceString(
           form.getValues("slippageToleranceString")
         )
@@ -94,7 +94,7 @@ const TxSettingsForm: FC = () => {
   }, [])
 
   return (
-    <form>
+    <form onSubmit={(e) => e.preventDefault()}>
       <h1 className="mb-2 md:text-lg">Transaction settings</h1>
       <div>
         <label className="mb-3 block font-medium" htmlFor="slippageTolerance">
