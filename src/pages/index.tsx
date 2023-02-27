@@ -34,7 +34,10 @@ const HomePage: NextPage<
 
       <div className="grid h-full w-full grid-cols-1 grid-rows-[auto,1fr,auto] overflow-auto bg-dark">
         <header className="md:layout py-10 max-md:px-8">
-          <Link className="group my-3 block h-11 px-1 py-2 md:my-4" href="/">
+          <Link
+            className="group my-3 inline-block h-11 px-1 py-2 md:my-4"
+            href="/"
+          >
             <FortressLogo
               className="h-full w-auto fill-white md:group-hover:hidden"
               aria-label="Fortress Finance"
