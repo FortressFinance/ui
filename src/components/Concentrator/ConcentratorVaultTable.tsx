@@ -2,8 +2,9 @@ import { FC } from "react"
 import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
-import { FilterCategory, TargetAsset, VaultType } from "@/lib/types"
+import { FilterCategory, VaultType } from "@/lib/types"
 import {
+  useConcentratorTargetAssets,
   useConcentratorVault,
   useListConcentrators,
 } from "@/hooks/data/concentrators"
@@ -11,12 +12,13 @@ import useActiveChainId from "@/hooks/useActiveChainId"
 import { useClientReady, useFilteredConcentrators } from "@/hooks/util"
 
 import { enabledNetworks } from "@/components/AppProviders"
+import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"
 import { TableEmpty, TableLoading } from "@/components/Table"
 import VaultRow from "@/components/Vault/VaultRow"
 import { VaultTable } from "@/components/Vault/VaultTable"
 
 type ConcentratorVaultTableProps = {
-  concentratorTargetAsset: TargetAsset
+  concentratorTargetAsset: Address
   filterCategory: FilterCategory
 }
 
@@ -25,7 +27,8 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
   filterCategory,
 }) => {
   const clientReady = useClientReady()
-  const concentratorsList = useListConcentrators()
+  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const filteredConcentratorVaults = useFilteredConcentrators({
     concentratorsList,
     concentratorTargetAsset,
@@ -34,7 +37,10 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
 
   // TODO: should handle failure
   const showLoadingState =
-    !clientReady || concentratorsList.isLoading || !concentratorTargetAsset
+    !clientReady ||
+    concentratorTargetAssets.isLoading ||
+    concentratorsList.isLoading ||
+    !concentratorTargetAsset
   const label = capitalizeFirstLetter(filterCategory)
 
   const chainId = useActiveChainId()
@@ -51,8 +57,11 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
         </TableEmpty>
       ) : !filteredConcentratorVaults?.length ? (
         <TableEmpty heading="Where Concentrator Vaults ser?">
-          It seems we don't have {concentratorTargetAsset} Concentrator Vaults
-          for {capitalizeFirstLetter(filterCategory)} (yet).
+          It seems we don't have{" "}
+          <ConcentratorTargetAssetSymbol
+            concentratorTargetAsset={concentratorTargetAsset}
+          />{" "}
+          Concentrator Vaults for {capitalizeFirstLetter(filterCategory)} (yet).
         </TableEmpty>
       ) : (
         filteredConcentratorVaults?.map(
@@ -71,7 +80,7 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
 }
 
 type ConcentratorVaultRowProps = {
-  concentratorTargetAsset: TargetAsset
+  concentratorTargetAsset?: Address
   vaultAssetAddress: Address
   vaultType: VaultType
 }

@@ -1,4 +1,6 @@
-import { FilterCategory, TargetAsset } from "@/lib/types"
+import { Address } from "wagmi"
+
+import { FilterCategory } from "@/lib/types"
 import { useListConcentrators } from "@/hooks/data/concentrators"
 
 export function useFilteredConcentrators({
@@ -7,7 +9,7 @@ export function useFilteredConcentrators({
   filterCategory,
 }: {
   concentratorsList: ReturnType<typeof useListConcentrators>
-  concentratorTargetAsset?: TargetAsset
+  concentratorTargetAsset?: Address
   filterCategory?: FilterCategory
 }) {
   return concentratorsList.data?.filter(
@@ -23,7 +25,7 @@ export function useFirstConcentrator({
   filterCategory,
 }: {
   concentratorsList: ReturnType<typeof useListConcentrators>
-  concentratorTargetAsset?: TargetAsset
+  concentratorTargetAsset?: Address
   filterCategory?: FilterCategory
 }) {
   // this is pretty convoluted...

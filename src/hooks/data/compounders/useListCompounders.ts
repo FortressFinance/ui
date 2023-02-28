@@ -1,5 +1,5 @@
 import { VaultType } from "@/lib/types"
-import { useYieldCompoundersRegistryContract } from "@/hooks/contracts/useYieldCompoundersRegistry"
+import { useRegistryContract } from "@/hooks/contracts"
 import { useCategoriesByPrimaryAsset, useFallbackReads } from "@/hooks/util"
 
 const vaultTypeByIndex: VaultType[] = ["curve", "balancer", "token"]
@@ -11,22 +11,22 @@ export function useListCompounders() {
 
   // Fallback: contract requests
   const filterCategoriesByPrimaryAsset = useCategoriesByPrimaryAsset()
-  const yieldCompoundersRegistryContract = useYieldCompoundersRegistryContract()
+  const registryContract = useRegistryContract()
   const primaryAssets = useFallbackReads(
     {
       contracts: [
         {
-          ...yieldCompoundersRegistryContract,
+          ...registryContract,
           functionName: "getAmmCompoundersPrimaryAssets",
           args: [true],
         },
         {
-          ...yieldCompoundersRegistryContract,
+          ...registryContract,
           functionName: "getAmmCompoundersPrimaryAssets",
           args: [false],
         },
         {
-          ...yieldCompoundersRegistryContract,
+          ...registryContract,
           functionName: "getTokenCompoundersPrimaryAssets",
         },
       ],

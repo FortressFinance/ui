@@ -3,15 +3,15 @@ import { Address } from "wagmi"
 
 import useActiveChainId from "@/hooks/useActiveChainId"
 
-import registryAbi from "@/constant/abi/registryAbi"
+import { yieldCompoundersRegistry } from "@/constant/abi"
 
 const REGISTRY_ADDRESS: Record<number, Address> = {
   // arbitrum
-  42161: "0x5d21d171b265e5212b3e673759c971537b6a0d01",
+  42161: "0x03605C3A3dAf860774448df807742c0d0e49460C",
   // mainnet fork
-  31337: "0xa7918d253764e42d60c3ce2010a34d5a1e7c1398",
+  31337: "0x03605C3A3dAf860774448df807742c0d0e49460C",
   // arbitrum fork
-  313371: "0x5d21d171b265e5212b3e673759c971537b6a0d01",
+  313371: "0x03605C3A3dAf860774448df807742c0d0e49460C",
 }
 
 export function useRegistryContract() {
@@ -19,7 +19,7 @@ export function useRegistryContract() {
   return useMemo(
     () => ({
       chainId,
-      abi: registryAbi,
+      abi: yieldCompoundersRegistry,
       address: REGISTRY_ADDRESS[chainId],
     }),
     [chainId]

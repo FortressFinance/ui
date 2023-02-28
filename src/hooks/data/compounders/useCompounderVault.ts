@@ -1,7 +1,7 @@
 import { Address } from "wagmi"
 
 import { VaultType } from "@/lib/types"
-import { useYieldCompoundersRegistryContract } from "@/hooks/contracts/useYieldCompoundersRegistry"
+import { useRegistryContract } from "@/hooks/contracts"
 import { useFallbackRead } from "@/hooks/util"
 
 export function useCompounderVault({
@@ -15,7 +15,7 @@ export function useCompounderVault({
   // Fallback: contract requests
   const fallbackRequest = useFallbackRead(
     {
-      ...useYieldCompoundersRegistryContract(),
+      ...useRegistryContract(),
       functionName:
         vaultType === "token"
           ? "getTokenCompounderVault"

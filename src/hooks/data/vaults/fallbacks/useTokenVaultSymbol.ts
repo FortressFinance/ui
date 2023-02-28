@@ -1,7 +1,7 @@
 import { useContractRead } from "wagmi"
 
 import { VaultDynamicProps } from "@/lib/types"
-import { useYieldCompoundersRegistryContract } from "@/hooks/contracts/useYieldCompoundersRegistry"
+import { useRegistryContract } from "@/hooks/contracts"
 
 export default function useTokenVaultSymbol({
   asset,
@@ -11,7 +11,7 @@ export default function useTokenVaultSymbol({
   enabled: boolean
 }) {
   const registryQuery = useContractRead({
-    ...useYieldCompoundersRegistryContract(),
+    ...useRegistryContract(),
     functionName: "getTokenCompounderSymbol",
     args: [asset ?? "0x"],
     enabled: enabled,
