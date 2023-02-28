@@ -1,7 +1,7 @@
 import { Address } from "wagmi"
 
 import { TargetAsset, VaultType } from "@/lib/types"
-import useRegistryContract from "@/hooks/useRegistryContract"
+import { useRegistryContract } from "@/hooks/contracts"
 import { useFallbackReads } from "@/hooks/util"
 
 export function useConcentratorVault({

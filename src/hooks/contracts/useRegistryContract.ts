@@ -14,7 +14,7 @@ const REGISTRY_ADDRESS: Record<number, Address> = {
   313371: "0x5d21d171b265e5212b3e673759c971537b6a0d01",
 }
 
-export default function useRegistryContract() {
+export function useRegistryContract() {
   const chainId = useActiveChainId()
   return useMemo(
     () => ({

@@ -1,7 +1,7 @@
 import { useContractReads } from "wagmi"
 
 import { FilterCategory, TargetAsset, VaultType } from "@/lib/types"
-import useRegistryContract from "@/hooks/useRegistryContract"
+import { useRegistryContract } from "@/hooks/contracts"
 
 // This hardcoding will need to be replaced either with improved contracts
 // or with chain-aware values for production
@@ -38,13 +38,14 @@ export function useListConcentrators() {
     ],
     select: (data) =>
       data
-        .map((vaultAssetAddresses, index) =>
-          vaultAssetAddresses?.map((vaultAssetAddress) => ({
-            concentratorTargetAsset: targetAssetByIndex[index],
-            filterCategories: filterCategoryByIndex[index],
-            vaultAssetAddress: vaultAssetAddress,
-            vaultType: vaultTypeByIndex[index],
-          }))
+        .map(
+          (vaultAssetAddresses, index) =>
+            vaultAssetAddresses?.map((vaultAssetAddress) => ({
+              concentratorTargetAsset: targetAssetByIndex[index],
+              filterCategories: filterCategoryByIndex[index],
+              vaultAssetAddress: vaultAssetAddress,
+              vaultType: vaultTypeByIndex[index],
+            })) ?? []
         )
         .flat(),
   })

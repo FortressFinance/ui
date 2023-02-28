@@ -1,63 +1,35 @@
-import {
-  findApiCompounderVaultForAsset,
-  findApiTokenVaultForAsset,
-} from "@/lib/findApiVaultForAsset"
-import { VaultProps } from "@/lib/types"
-import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
-import useRegistryContract from "@/hooks/useRegistryContract"
-import {
-  useIsCurveCompounder,
-  useIsTokenCompounder,
-} from "@/hooks/useVaultTypes"
+import { Address } from "wagmi"
+
+import { VaultType } from "@/lib/types"
+import { useYieldCompoundersRegistryContract } from "@/hooks/contracts/useYieldCompoundersRegistry"
 import { useFallbackRead } from "@/hooks/util"
 
-export function useCompounderVault({ asset, type }: VaultProps) {
-  const isCurve = useIsCurveCompounder(type)
-  const isToken = useIsTokenCompounder(type)
-
-  // Preferred: API request
-  const apiCompounder = useApiCompounderVaultAddress({ asset, type })
-  const apiTokenCompounder = useApiTokenCompounderVaultAddress({ asset, type })
-
+export function useCompounderVault({
+  vaultAssetAddress,
+  vaultType,
+}: {
+  vaultAssetAddress: Address
+  vaultType: VaultType
+}) {
+  // TODO: Preferred: API request
   // Fallback: contract requests
   const fallbackRequest = useFallbackRead(
     {
-      ...useRegistryContract(),
-      functionName: isToken
-        ? "getTokenCompounder"
-        : isCurve
-        ? "getCurveCompounder"
-        : "getBalancerCompounder",
-      args: [asset ?? "0x"],
-      enabled: !!asset,
+      ...useYieldCompoundersRegistryContract(),
+      functionName:
+        vaultType === "token"
+          ? "getTokenCompounderVault"
+          : "getAmmCompounderVault",
+      args:
+        vaultType === "token"
+          ? [vaultAssetAddress]
+          : [vaultType === "curve", vaultAssetAddress],
+      select: (data) => ({
+        ybTokenAddress: data,
+      }),
     },
-    [apiCompounder, apiTokenCompounder]
+    []
   )
 
-  return apiCompounder.isEnabled && !apiCompounder.isError
-    ? apiCompounder
-    : apiTokenCompounder.isEnabled && !apiTokenCompounder.isError
-    ? apiTokenCompounder
-    : fallbackRequest
-}
-
-function useApiCompounderVaultAddress({ asset, type }: VaultProps) {
-  const compounderVaults = useApiCompounderVaults({ type })
-  const matchedVault = findApiCompounderVaultForAsset(
-    compounderVaults.data,
-    asset
-  )
-  return {
-    ...compounderVaults,
-    data: matchedVault?.token.ybToken.address,
-  }
-}
-
-function useApiTokenCompounderVaultAddress({ asset, type }: VaultProps) {
-  const tokenVaults = useApiTokenVaults({ type })
-  const matchedVault = findApiTokenVaultForAsset(tokenVaults.data, asset)
-  return {
-    ...tokenVaults,
-    data: matchedVault?.token.ybToken.address,
-  }
+  return fallbackRequest
 }

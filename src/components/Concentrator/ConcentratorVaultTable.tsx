@@ -3,7 +3,6 @@ import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
 import { FilterCategory, TargetAsset, VaultType } from "@/lib/types"
-import { useCompounderAsset } from "@/hooks/data/compounders"
 import {
   useConcentratorVault,
   useListConcentrators,
@@ -79,8 +78,7 @@ type ConcentratorVaultRowProps = {
 
 const ConcentratorVaultRow: FC<ConcentratorVaultRowProps> = (props) => {
   const concentrator = useConcentratorVault(props)
-  const asset = useCompounderAsset({ asset: concentrator.data?.ybTokenAddress })
-  if (!concentrator.data || !asset.data)
+  if (!concentrator.data)
     return <TableLoading>Loading concentrators...</TableLoading>
   return (
     <VaultRow
