@@ -38,7 +38,6 @@ const Yield: NextPage = () => {
               </div>
             </div>
           </Tab.List>
-
           <Tab.Panels as={TabPanels}>
             <Tab.Panel>
               <CompounderVaultTable filterCategory="featured" />

@@ -10,7 +10,7 @@ import {
   useIsTokenCompounder,
 } from "@/hooks/useVaultTypes"
 
-import { useSlippageTolerance } from "@/store/txSettings"
+import { useTxSettings } from "@/store/txSettings"
 
 export function usePreviewDeposit({
   chainId,
@@ -32,7 +32,7 @@ export function usePreviewDeposit({
   const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
 
-  const slippage = useSlippageTolerance()
+  const slippage = useTxSettings((store) => store.slippageTolerance)
 
   const enableCurveAssetToYbToken = !isToken && isCurve
   const curvePreviewQuery = useCurvePreviewDeposit({
