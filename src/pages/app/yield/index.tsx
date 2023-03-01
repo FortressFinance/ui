@@ -140,9 +140,9 @@ const YieldVaultTable: FC<YieldVaultTableProps> = ({ filter, type }) => {
   )
 }
 
-type YieldVaultRowProps = Pick<VaultProps, "asset" | "type">
+export type YieldVaultRowProps = Pick<VaultProps, "asset" | "type">
 
-const YieldVaultRow: FC<YieldVaultRowProps> = (props) => {
+export const YieldVaultRow: FC<YieldVaultRowProps> = (props) => {
   const vaultAddress = useCompounderVault(props)
   return <VaultRow {...props} vaultAddress={vaultAddress.data} />
 }

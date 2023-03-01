@@ -1,29 +1,59 @@
-import { FC } from "react"
+import { Children, FC } from "react"
+import { Address } from "wagmi"
 
-import { TableEmpty, TableHeader, TableRow } from "@/components/Table"
+import { VaultType } from "@/lib/types"
+import { useListCompounders } from "@/hooks/data/compounders"
+import { useClientReady } from "@/hooks/util"
+
+import { HoldingsRow } from "@/components/Holdings/HoldingsRow"
+import { TableEmpty, TableLoading } from "@/components/Table"
+import { VaultTable } from "@/components/Vault/VaultTable"
 
 const HoldingsTable: FC = () => {
-  return (
-    <div className="" role="table">
-      {/* Table headings */}
-      <div className="max-md:hidden" role="rowgroup">
-        <TableRow className="rounded-b-none border-b border-b-pink/30">
-          <TableHeader>Holdings</TableHeader>
-          <TableHeader className="text-center">APY</TableHeader>
-          <TableHeader className="text-center">TVL</TableHeader>
-          <TableHeader className="text-center">Balance</TableHeader>
-          <TableHeader>
-            <span className="sr-only">Vault actions</span>
-          </TableHeader>
-        </TableRow>
-      </div>
+  // handle hydration mismatch
+  const ready = useClientReady()
+  
+  const curveVaultType = "curve"
+  const balancerVaultType = "balancer"
+  const tokenVaultType = "token"
+  const { data: curveCompoundersList, isLoading: curveIsLoading } = useListCompounders({ type: curveVaultType })
+  const { data: balancerCompoundersList, isLoading: balancerIsLoading } = useListCompounders({ type: balancerVaultType })
+  const { data: tokenCompoundersList, isLoading: tokenIsLoading } = useListCompounders({ type: tokenVaultType })
 
+  const compoundersList: { [key: string]: Address[] | readonly Address[] } = {}
+  if(curveCompoundersList){
+    compoundersList[curveVaultType] = curveCompoundersList
+  }
+  if(balancerCompoundersList){    
+    compoundersList[balancerVaultType] = balancerCompoundersList
+  }
+  if(tokenCompoundersList){    
+    compoundersList[tokenVaultType] = tokenCompoundersList
+  }
+
+  const showLoadingState = curveIsLoading || balancerIsLoading || tokenIsLoading || !ready
+  const vaultsWithDeposits = Object.entries(compoundersList).map(([key, value]) => (
+    value?.map((address, i) => (
+      <HoldingsRow key={`pool-${key}-${i}`} asset={address} type={key as VaultType} />
+    ))
+  ))
+  const flat = vaultsWithDeposits.flat()
+  flat.map(x => Children.map(x, child => console.log(">>>>>>", Children.toArray(x))))
+
+  return (
+    <VaultTable label="Holdings">
       {/* Table body */}
-      <TableEmpty heading="Well, this is awkward...">
-        You don't appear to have any deposits in our Vaults. There's an easy way
-        to change that.
-      </TableEmpty>
-    </div>
+      {showLoadingState ? (
+        <TableLoading>Loading holdings...</TableLoading>
+      ) : !Object.entries(compoundersList)?.length ? (
+        <TableEmpty heading="Well, this is awkward...">
+          You don't appear to have any deposits in our Vaults. There's an easy way
+          to change that.
+        </TableEmpty>
+      ) : (
+        flat.filter(x => Children.count(x) !== 0).length == 0? <div>test</div> : <div>dfdfs</div>
+      )}
+    </VaultTable>
   )
 }
 
