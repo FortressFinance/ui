@@ -19,8 +19,12 @@ export const AssetSymbol: FC<AssetDetailsProps> = ({ address, isLoading }) => {
     address,
   })
   return (
-    <Skeleton isLoading={!address || isLoading || isLoadingToken || !isReady}>
-      {isReady && token?.symbol ? token.symbol : "Loading..."}
+    <Skeleton isLoading={isLoading || isLoadingToken || !isReady}>
+      {isReady
+        ? address
+          ? token?.symbol ?? "Loading..."
+          : "???"
+        : "Loading..."}
     </Skeleton>
   )
 }
@@ -30,8 +34,8 @@ export const AssetBalance: FC<AssetDetailsProps> = ({ address }) => {
   const { isConnected } = useAccount()
   const { data: balance, isLoading } = useTokenOrNativeBalance({ address })
   return (
-    <Skeleton isLoading={!address || isLoading || !isReady}>
-      {!isReady || !isConnected ? (
+    <Skeleton isLoading={isLoading || !isReady}>
+      {!isReady || !isConnected || !address ? (
         <>N/A</>
       ) : (
         <Currency abbreviate>{balance?.formatted ?? "0.0"}</Currency>

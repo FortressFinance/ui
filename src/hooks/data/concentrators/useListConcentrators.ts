@@ -1,51 +1,86 @@
-import { useContractReads } from "wagmi"
+import { VaultType } from "@/lib/types"
+import { useRegistryContract } from "@/hooks/contracts"
+import { useConcentratorTargetAssets } from "@/hooks/data/concentrators/useConcentratorTargetAssets"
+import { useCategoriesByPrimaryAsset, useFallbackReads } from "@/hooks/util"
 
-import { FilterCategory, TargetAsset, VaultType } from "@/lib/types"
-import useRegistryContract from "@/hooks/useRegistryContract"
-
-// This hardcoding will need to be replaced either with improved contracts
-// or with chain-aware values for production
-
-const filterCategoryByIndex: FilterCategory[][] = [
-  ["balancer", "crypto", "featured", "stable"],
-  ["curve", "crypto", "featured"],
-  ["balancer"],
-  ["curve"],
+const vaultTypeByIndex: VaultType[] = [
+  "curve",
+  "balancer",
+  "curve",
+  "balancer",
+  "curve",
+  "balancer",
+  "curve",
+  "balancer",
 ]
-const targetAssetByIndex: TargetAsset[] = ["auraBAL", "cvxCRV", "ETH", "ETH"]
-const vaultTypeByIndex: VaultType[] = ["token", "token", "balancer", "curve"]
 
-export function useListConcentrators() {
+export function useListConcentrators({
+  concentratorTargetAssets,
+}: {
+  concentratorTargetAssets: ReturnType<typeof useConcentratorTargetAssets>
+}) {
+  const filterCategoriesByPrimaryAsset = useCategoriesByPrimaryAsset()
   const registryContract = useRegistryContract()
-  return useContractReads({
-    contracts: [
-      {
-        ...registryContract,
-        functionName: "getBalancerAuraBalConcentratorsList",
-      },
-      {
-        ...registryContract,
-        functionName: "getCurveCvxCrvConcentratorsList",
-      },
-      {
-        ...registryContract,
-        functionName: "getBalancerEthConcentratorsList",
-      },
-      {
-        ...registryContract,
-        functionName: "getCurveEthConcentratorsList",
-      },
-    ],
-    select: (data) =>
-      data
-        .map((vaultAssetAddresses, index) =>
-          vaultAssetAddresses?.map((vaultAssetAddress) => ({
-            concentratorTargetAsset: targetAssetByIndex[index],
-            filterCategories: filterCategoryByIndex[index],
-            vaultAssetAddress: vaultAssetAddress,
-            vaultType: vaultTypeByIndex[index],
-          }))
-        )
-        .flat(),
-  })
+  const concentrators = useFallbackReads(
+    {
+      contracts: [
+        {
+          ...registryContract,
+          functionName: "getConcentratorPrimaryAssets",
+          args: [true, concentratorTargetAssets.data?.[0] ?? "0x"],
+        },
+        {
+          ...registryContract,
+          functionName: "getConcentratorPrimaryAssets",
+          args: [false, concentratorTargetAssets.data?.[0] ?? "0x"],
+        },
+        {
+          ...registryContract,
+          functionName: "getConcentratorPrimaryAssets",
+          args: [true, concentratorTargetAssets.data?.[1] ?? "0x"],
+        },
+        {
+          ...registryContract,
+          functionName: "getConcentratorPrimaryAssets",
+          args: [false, concentratorTargetAssets.data?.[1] ?? "0x"],
+        },
+        {
+          ...registryContract,
+          functionName: "getConcentratorPrimaryAssets",
+          args: [true, concentratorTargetAssets.data?.[2] ?? "0x"],
+        },
+        {
+          ...registryContract,
+          functionName: "getConcentratorPrimaryAssets",
+          args: [false, concentratorTargetAssets.data?.[2] ?? "0x"],
+        },
+        {
+          ...registryContract,
+          functionName: "getConcentratorPrimaryAssets",
+          args: [true, concentratorTargetAssets.data?.[3] ?? "0x"],
+        },
+        {
+          ...registryContract,
+          functionName: "getConcentratorPrimaryAssets",
+          args: [false, concentratorTargetAssets.data?.[3] ?? "0x"],
+        },
+      ],
+      enabled: concentratorTargetAssets.isSuccess,
+      select: (data) =>
+        data
+          .map(
+            (vaultAssetAddresses, index) =>
+              vaultAssetAddresses?.map((vaultAssetAddress) => ({
+                concentratorTargetAsset: concentratorTargetAssets.data?.[index],
+                filterCategories:
+                  filterCategoriesByPrimaryAsset[vaultAssetAddress] ?? [],
+                vaultAssetAddress: vaultAssetAddress,
+                vaultType: vaultTypeByIndex[index],
+              })) ?? []
+          )
+          .flat(),
+    },
+    []
+  )
+  return concentrators
 }

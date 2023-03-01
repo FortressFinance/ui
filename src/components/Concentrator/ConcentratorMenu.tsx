@@ -1,7 +1,7 @@
 import { Menu } from "@headlessui/react"
 import { Dispatch, FC, SetStateAction } from "react"
+import { Address } from "wagmi"
 
-import { TargetAsset } from "@/lib/types"
 import { useConcentratorTargetAssets } from "@/hooks/data/concentrators/useConcentratorTargetAssets"
 import { useClientReady } from "@/hooks/util"
 
@@ -12,8 +12,8 @@ import { TabButton } from "@/components/Tabs"
 import { FortIconChevronDown } from "@/icons"
 
 type ConcentratorMenuProps = {
-  concentratorTargetAsset: TargetAsset | undefined
-  setConcentratorTargetAsset: Dispatch<SetStateAction<TargetAsset>>
+  concentratorTargetAsset: Address | undefined
+  setConcentratorTargetAsset: Dispatch<SetStateAction<Address>>
 }
 
 export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
@@ -23,7 +23,7 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
   const clientReady = useClientReady()
   const concentratorTargetAssets = useConcentratorTargetAssets({
     onSuccess: (data) => {
-      if (!concentratorTargetAsset && data?.length)
+      if (concentratorTargetAsset === "0x" && data?.length)
         setConcentratorTargetAsset(data[0])
     },
   })

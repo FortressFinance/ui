@@ -1,10 +1,12 @@
 import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
+import { Address } from "wagmi"
 
-import { FilterCategory, TargetAsset } from "@/lib/types"
+import { FilterCategory } from "@/lib/types"
 import {
   useConcentratorClaim,
   useConcentratorPendingReward,
+  useConcentratorTargetAssets,
   useConcentratorVault,
   useListConcentrators,
 } from "@/hooks/data/concentrators"
@@ -21,7 +23,7 @@ import Skeleton from "@/components/Skeleton"
 import { GradientText } from "@/components/Typography"
 
 type ConcentratorRewardsProps = {
-  concentratorTargetAsset: TargetAsset
+  concentratorTargetAsset: Address
   filterCategory: FilterCategory
 }
 
@@ -101,7 +103,8 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
   filterCategory,
 }) => {
   const isReady = useClientReady()
-  const concentratorsList = useListConcentrators()
+  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
     concentratorTargetAsset,
@@ -125,6 +128,7 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
   return (
     <Skeleton
       isLoading={
+        concentratorTargetAssets.isLoading ||
         concentratorsList.isLoading ||
         concentrator.isLoading ||
         rewardsBalance.isLoading ||
@@ -142,7 +146,8 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
   filterCategory,
 }) => {
   const isReady = useClientReady()
-  const concentratorsList = useListConcentrators()
+  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
     concentratorTargetAsset,
@@ -164,6 +169,7 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
       className="mt-4 w-full py-2"
       disabled={rewardsBalance.data?.eq(0) || !isReady}
       isLoading={
+        concentratorTargetAssets.isLoading ||
         concentratorsList.isLoading ||
         concentrator.isLoading ||
         rewardsBalance.isLoading ||

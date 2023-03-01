@@ -42,7 +42,7 @@ export function useVault({ asset, type, vaultAddress }: VaultProps) {
           : (data[3] as Address[]),
       }),
     },
-    [apiCompoundersRequest, apiTokenVault]
+    [apiCompoundersRequest, apiCompounderVault, apiTokenVault]
   )
 
   return apiCompounderVault.isEnabled && !apiCompounderVault.isError
@@ -62,7 +62,8 @@ function useApiCompounderVault({ asset, type }: VaultProps) {
   )
   return {
     ...compounderVaults,
-    isError: compounderVaults.isError || !matchedVault,
+    isError:
+      compounderVaults.isError || (compounderVaults.isSuccess && !matchedVault),
     data: {
       name: matchedVault?.name ?? "",
       symbol: matchedVault?.token.primaryAsset.symbol ?? "",
@@ -78,7 +79,7 @@ function useApiTokenVault({ asset, type }: VaultProps) {
   const matchedVault = findApiTokenVaultForAsset(tokenVaults.data, asset)
   return {
     ...tokenVaults,
-    isError: tokenVaults.isError || !matchedVault,
+    isError: tokenVaults.isError || (tokenVaults.isSuccess && !matchedVault),
     data: {
       name: matchedVault?.name ?? "",
       symbol: matchedVault?.token.primaryAsset.symbol ?? "",
