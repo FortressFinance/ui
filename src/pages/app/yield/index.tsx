@@ -52,7 +52,6 @@ const Yield: NextPage = () => {
               </div>
             </div>
           </Tab.List>
-
           <Tab.Panels as={TabPanels}>
             <Tab.Panel>
               <YieldVaultTable filter="featured" type="token" />
