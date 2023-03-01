@@ -7,7 +7,7 @@ import PurpleModal, {
   PurpleModalHeader,
 } from "@/components/Modal/PurpleModal"
 
-import useConsentStorage from "@/store/useConsentStorage"
+import useConsentStorage from "@/store/consent"
 
 export const Consent: FC = () => {
   const consent = useConsentStorage((state) => state.consent)
