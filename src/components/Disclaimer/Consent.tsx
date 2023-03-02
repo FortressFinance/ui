@@ -14,9 +14,6 @@ export const Consent: FC = () => {
   const understandDisclaimer = useConsentStorage(
     (state) => state.understandDisclaimer
   )
-  const resetConsent = useConsentStorage(
-    (state) => state.resetConsent
-  )
   const [isOpen, setIsOpen] = useState(false)
 
   function closeModal() {
@@ -25,7 +22,6 @@ export const Consent: FC = () => {
   }
 
   useEffect(() => {
-    //resetConsent()
     if (!consent) {
       setIsOpen(true)
     }
