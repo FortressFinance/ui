@@ -60,6 +60,11 @@ const TokenForm: FC<TokenFormProps> = ({
     control: form.control,
   })
 
+  const onChangeToken = () => {
+    form.resetField("amountIn")
+    form.resetField("amountOut")
+  }
+
   const onClickMax = () => {
     form.setValue("amountIn", inputTokenBalanceOrShare?.formatted ?? "0.0", {
       shouldDirty: true,
@@ -232,6 +237,7 @@ const TokenForm: FC<TokenFormProps> = ({
           isOpen={tokenSelectMode !== null}
           tokenAddresses={tokenAddresses}
           onClose={() => setTokenSelectMode(null)}
+          onChangeToken={onChangeToken}
         />
       </div>
     </form>

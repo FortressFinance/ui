@@ -18,18 +18,27 @@ type TokenSelectModalProps = ModalBaseProps & {
   asset?: Address
   controller: UseControllerReturn<TokenFormValues, "inputToken" | "outputToken">
   tokenAddresses?: Address[] | readonly Address[]
+  onChangeToken: () => void
 }
 
 const TokenSelectModal: FC<TokenSelectModalProps> = ({
   asset,
-  controller,
+  controller: {
+    field: { onChange: controllerOnChange, ...controllerField },
+  },
   isOpen,
-  onClose,
   tokenAddresses,
+  onClose,
+  onChangeToken,
 }) => {
   const clickHandler: MouseEventHandler<HTMLDivElement> = () => onClose()
   const keyDownHandler: KeyboardEventHandler<HTMLDivElement> = (e) => {
     if (e.key === "Enter") onClose()
+  }
+
+  const changeHandler = (...event: unknown[]) => {
+    controllerOnChange(...event)
+    onChangeToken()
   }
 
   return (
@@ -45,7 +54,11 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
           </button>
         </header>
 
-        <RadioGroup className="mt-3 space-y-1" {...controller.field}>
+        <RadioGroup
+          className="mt-3 space-y-1"
+          onChange={changeHandler}
+          {...controllerField}
+        >
           {asset && (
             <TokenSelectOption
               tokenAddress={asset}
