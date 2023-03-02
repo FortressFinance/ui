@@ -69,6 +69,17 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   })
   const requiresApproval = inputIsEth ? false : allowance?.lt(value)
 
+  // Enable prepare hooks accordingly
+  const enablePrepareTx = form.formState.isValid && value.gt(0)
+  const enableDepositUnderlying =
+    enablePrepareTx && !requiresApproval && !inputIsLp && !isToken
+  const enableDepositTokenUnderlying =
+    enablePrepareTx && !requiresApproval && !inputIsLp && isToken
+  const enableDepositLp =
+    enablePrepareTx && !requiresApproval && inputIsLp && !isToken
+  const enableDepositTokenLp =
+    enablePrepareTx && !requiresApproval && inputIsLp && isToken
+
   const onDepositSuccess = () => {
     form.resetField("amountIn")
     form.resetField("amountOut")
@@ -88,12 +99,13 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     hash: approve.data?.hash,
   })
 
-  const { isLoading: isLoadingPreview } = usePreviewDeposit({
+  const { isFetching: isLoadingPreview } = usePreviewDeposit({
     chainId,
     id: poolId,
     token: inputTokenAddress,
     amount: value.toString(),
     type: props.type,
+    enabled: enablePrepareTx,
     onSuccess: (data) => {
       form.setValue("amountOut", toFixed(data.resultFormated ?? "0.0", 6))
     },
@@ -108,9 +120,9 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     abi: vaultCompounderAbi,
     address: props.vaultAddress,
     functionName: "depositSingleUnderlying",
-    enabled: value.gt(0) && !requiresApproval && !inputIsLp && !isToken,
+    enabled: enableDepositUnderlying,
     args: [value, inputTokenAddress, userAddress ?? "0x", BigNumber.from(0)],
-    overrides: { value },
+    overrides: inputIsEth ? { value } : {},
   })
   const depositUnderlying = useContractWrite(prepareDepositUnderlying.config)
   const waitDepositUnderlying = useWaitForTransaction({
@@ -123,8 +135,9 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     abi: vaultTokenAbi,
     address: props.vaultAddress,
     functionName: "depositUnderlying",
-    enabled: value.gt(0) && !requiresApproval && !inputIsLp && isToken,
-    args: [value, userAddress ?? "0x", BigNumber.from(0)],
+    enabled: enableDepositTokenUnderlying,
+    args: [inputTokenAddress, value, userAddress ?? "0x", BigNumber.from(0)],
+    overrides: inputIsEth ? { value } : {},
   })
   const tokenDepositUnderlying = useContractWrite(
     prepareTokenDepositUnderlying.config
@@ -140,7 +153,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     abi: vaultCompounderAbi,
     address: props.vaultAddress,
     functionName: "deposit",
-    enabled: value.gt(0) && !requiresApproval && inputIsLp && !isToken,
+    enabled: enableDepositLp,
     args: [value, userAddress ?? "0x"],
   })
   const depositLp = useContractWrite(prepareDepositLp.config)
@@ -154,7 +167,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     abi: vaultCompounderAbi,
     address: props.vaultAddress,
     functionName: "deposit",
-    enabled: value.gt(0) && !requiresApproval && inputIsLp && isToken,
+    enabled: enableDepositTokenLp,
     args: [value, userAddress ?? "0x"],
   })
   const tokenDepositLp = useContractWrite(prepareTokenDepositLp.config)
@@ -169,16 +182,22 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
       logger("Approving spend", inputTokenAddress)
       approve?.write?.()
     } else {
-      logger("Depositing", amountIn)
-      depositLp?.write
-        ? depositLp.write()
-        : depositUnderlying?.write
-        ? depositUnderlying.write()
-        : tokenDepositLp?.write
-        ? tokenDepositLp.write()
-        : tokenDepositUnderlying?.write
-        ? tokenDepositUnderlying.write()
-        : null
+      if (enableDepositLp) {
+        logger("Depositing LP", amountIn)
+        depositLp.write?.()
+      }
+      if (enableDepositUnderlying) {
+        logger("Depositing LP underlying", amountIn)
+        depositUnderlying.write?.()
+      }
+      if (enableDepositTokenLp) {
+        logger("Depositing token", amountIn)
+        tokenDepositLp.write?.()
+      }
+      if (enableDepositTokenUnderlying) {
+        logger("Depositing token underlying", amountIn)
+        tokenDepositUnderlying.write?.()
+      }
     }
   }
 
@@ -189,8 +208,15 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
       </h2>
       <FormProvider {...form}>
         <TokenForm
+          isError={
+            prepareTokenDepositLp.isError ||
+            prepareTokenDepositUnderlying.isError ||
+            prepareDepositLp.isError ||
+            prepareDepositUnderlying.isRefetching
+          }
           isLoadingPreview={isLoadingPreview}
           isLoadingTransaction={
+            isLoadingPreview ||
             isLoadingAllowance ||
             prepareApprove.isLoading ||
             prepareDepositLp.isLoading ||

@@ -1,7 +1,7 @@
 import { Address } from "wagmi"
 
+import { fortressApi } from "@/lib/api/util"
 import { handledResponse } from "@/lib/api/util/handledResponse"
-import fortressApi from "@/lib/fortressApi"
 
 export type PreviewData = {
   id: number
@@ -27,6 +27,24 @@ export async function getCompounderVaultsPreviewDeposit({
   const resp = await fortressApi.post<PreviewData>(
     "AMM_Compounder/previewDeposit",
     { isCurve, chainId, id, token, amount, slippage }
+  )
+  return handledResponse(resp?.data?.data)
+}
+
+export async function getTokenVaultsPreviewDeposit({
+  chainId,
+  id,
+  token = "0x",
+  amount,
+}: {
+  chainId: number
+  id: number | undefined
+  token: Address | undefined
+  amount: string
+}) {
+  const resp = await fortressApi.post<PreviewData>(
+    "Token_Compounder/previewDeposit",
+    { chainId, id, token, amount }
   )
   return handledResponse(resp?.data?.data)
 }

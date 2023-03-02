@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { Address } from "wagmi"
 
-import { PreviewData } from "@/lib/api/vaults/getCompounderVaultsPreviewDeposit"
-import { getTokenVaultsPreviewRedeem } from "@/lib/api/vaults/getTokenVaultsPreviewRedeem"
+import { getTokenVaultsPreviewRedeem, PreviewData } from "@/lib/api/vaults"
 import { queryKeys } from "@/lib/helpers"
 
 export function useTokenPreviewRedeem({
@@ -15,12 +14,12 @@ export function useTokenPreviewRedeem({
   onError,
 }: {
   chainId: number
-  id: number | undefined
-  token: Address | undefined
+  id?: number
+  token?: Address
   amount: string
   enabled: boolean
-  onSuccess: ((data: PreviewData) => void) | undefined
-  onError: ((err: unknown) => void) | undefined
+  onSuccess?: (data: PreviewData) => void
+  onError?: (err: unknown) => void
 }) {
   return useQuery({
     ...queryKeys.vaults.previewTokenRedeem({ chainId, id, token, amount }),

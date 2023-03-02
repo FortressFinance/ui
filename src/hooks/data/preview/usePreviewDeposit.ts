@@ -1,10 +1,12 @@
 import { Address } from "wagmi"
 
-import { PreviewData } from "@/lib/api/vaults/getCompounderVaultsPreviewDeposit"
+import { PreviewData } from "@/lib/api/vaults"
 import { VaultType } from "@/lib/types"
-import { useBalancerPreviewDeposit } from "@/hooks/data/preview/useBalancerPreviewDeposit"
-import { useCurvePreviewDeposit } from "@/hooks/data/preview/useCurvePreviewDeposit"
-import { useTokenPreviewDeposit } from "@/hooks/data/preview/useTokenPreviewDeposit"
+import {
+  useBalancerPreviewDeposit,
+  useCurvePreviewDeposit,
+  useTokenPreviewDeposit,
+} from "@/hooks/data/preview"
 import {
   useIsCurveCompounder,
   useIsTokenCompounder,
@@ -18,6 +20,7 @@ export function usePreviewDeposit({
   token = "0x",
   amount,
   type,
+  enabled,
   onSuccess,
   onError,
 }: {
@@ -26,6 +29,7 @@ export function usePreviewDeposit({
   token: Address | undefined
   amount: string
   type: VaultType
+  enabled: boolean
   onSuccess: ((data: PreviewData) => void) | undefined
   onError: ((err: unknown) => void) | undefined
 }) {
@@ -41,7 +45,7 @@ export function usePreviewDeposit({
     token,
     amount,
     slippage,
-    enabled: enableCurveAssetToYbToken,
+    enabled: enabled && enableCurveAssetToYbToken,
     onSuccess,
     onError,
   })
@@ -53,7 +57,7 @@ export function usePreviewDeposit({
     token,
     amount,
     slippage,
-    enabled: enableBalancerAssetToYbToken,
+    enabled: enabled && enableBalancerAssetToYbToken,
     onSuccess,
     onError,
   })
@@ -64,7 +68,7 @@ export function usePreviewDeposit({
     id,
     token,
     amount,
-    enabled: enableTokenAssetToYbToken,
+    enabled: enabled && enableTokenAssetToYbToken,
     onSuccess,
     onError,
   })

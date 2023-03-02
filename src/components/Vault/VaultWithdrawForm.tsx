@@ -50,6 +50,13 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const outputIsLp = outputTokenAddress === props.asset
   const { data: ybToken } = useTokenOrNative({ address: props.vaultAddress })
   const value = parseUnits(amountIn || "0", ybToken?.decimals || 18)
+  // Enable/disable prepare hooks based on form state
+  const enablePrepareTx = form.formState.isValid && value.gt(0)
+  const enableWithdrawUnderlying = enablePrepareTx && !outputIsLp && !isToken
+  const enableWithdrawTokenUnderlying =
+    enablePrepareTx && !outputIsLp && isToken
+  const enableWithdrawLp = enablePrepareTx && outputIsLp && !isToken
+  const enableWithdrawTokenLp = enablePrepareTx && outputIsLp && isToken
 
   const onWithdrawSuccess = () => {
     form.resetField("amountIn")
@@ -57,12 +64,13 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   }
 
   // Preview redeem method
-  const { isLoading: isLoadingPreview } = usePreviewRedeem({
+  const { isFetching: isLoadingPreview } = usePreviewRedeem({
     chainId,
     id: poolId,
     token: outputTokenAddress,
     amount: value.toString(),
     type: props.type,
+    enabled: enablePrepareTx,
     onSuccess: (data) => {
       form.setValue("amountOut", toFixed(data.resultFormated ?? "0.0", 6))
     },
@@ -77,7 +85,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     address: props.vaultAddress,
     abi: vaultCompounderAbi,
     functionName: "redeemSingleUnderlying",
-    enabled: value.gt(0) && !outputIsLp && !isToken,
+    enabled: enableWithdrawUnderlying,
     args: [
       value,
       outputTokenAddress,
@@ -97,8 +105,14 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     address: props.vaultAddress,
     abi: vaultTokenAbi,
     functionName: "redeemUnderlying",
-    enabled: value.gt(0) && !outputIsLp && isToken,
-    args: [value, userAddress ?? "0x", userAddress ?? "0x", BigNumber.from(0)],
+    enabled: enableWithdrawTokenUnderlying,
+    args: [
+      outputTokenAddress,
+      value,
+      userAddress ?? "0x",
+      userAddress ?? "0x",
+      BigNumber.from(0),
+    ],
   })
   const tokenWithdrawUnderlying = useContractWrite(
     prepareTokenWithdrawUnderlying.config
@@ -114,7 +128,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     address: props.vaultAddress,
     abi: vaultCompounderAbi,
     functionName: "redeem",
-    enabled: value.gt(0) && outputIsLp && !isToken,
+    enabled: enableWithdrawLp,
     args: [value, userAddress ?? "0x", userAddress ?? "0x"],
   })
   const withdrawLp = useContractWrite(prepareWithdrawLp.config)
@@ -128,7 +142,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     address: props.vaultAddress,
     abi: vaultCompounderAbi,
     functionName: "redeem",
-    enabled: value.gt(0) && outputIsLp && isToken,
+    enabled: enableWithdrawTokenLp,
     args: [value, userAddress ?? "0x", userAddress ?? "0x"],
   })
   const tokenWithdrawLp = useContractWrite(prepareTokenWithdrawLp.config)
@@ -139,16 +153,22 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
 
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
-    logger("Withdrawing", amountIn)
-    withdrawLp?.write
-      ? withdrawLp.write()
-      : withdrawUnderlying?.write
-      ? withdrawUnderlying.write()
-      : tokenWithdrawLp?.write
-      ? tokenWithdrawLp.write()
-      : tokenWithdrawUnderlying?.write
-      ? tokenWithdrawUnderlying.write()
-      : null
+    if (enableWithdrawLp) {
+      logger("Withdrawing LP", amountIn)
+      withdrawLp.write?.()
+    }
+    if (enableWithdrawUnderlying) {
+      logger("Withdrawing LP underlying", amountIn)
+      withdrawUnderlying.write?.()
+    }
+    if (enableWithdrawTokenLp) {
+      logger("Withdrawing token", amountIn)
+      tokenWithdrawLp.write?.()
+    }
+    if (enableWithdrawTokenUnderlying) {
+      logger("Withdrawing token underlying", amountIn)
+      tokenWithdrawUnderlying.write?.()
+    }
   }
 
   return (
@@ -159,6 +179,12 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
       <FormProvider {...form}>
         <TokenForm
           isWithdraw
+          isError={
+            prepareTokenWithdrawLp.isError ||
+            prepareTokenWithdrawUnderlying.isError ||
+            prepareWithdrawLp.isError ||
+            prepareWithdrawUnderlying.isRefetching
+          }
           isLoadingPreview={isLoadingPreview}
           isLoadingTransaction={
             isLoadingPreview ||

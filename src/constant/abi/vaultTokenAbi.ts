@@ -1,5 +1,36 @@
 export const vaultTokenAbi = [
   {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_description",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_platform",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_swap",
+        type: "address",
+      },
+      {
+        internalType: "address[]",
+        name: "_underlyingAssets",
+        type: "address[]",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
     inputs: [],
     name: "DepositPaused",
     type: "error",
@@ -37,6 +68,11 @@ export const vaultTokenAbi = [
   {
     inputs: [],
     name: "NoPendingRewards",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotUnderlyingAsset",
     type: "error",
   },
   {
@@ -205,32 +241,7 @@ export const vaultTokenAbi = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "_platform",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "_swap",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "_owner",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "_depositCap",
-        type: "uint256",
-      },
-    ],
+    inputs: [],
     name: "UpdateInternalUtils",
     type: "event",
   },
@@ -272,6 +283,37 @@ export const vaultTokenAbi = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_caller",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_receiver",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_assets",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_shares",
+        type: "uint256",
+      },
+    ],
+    name: "YbTokenTransfer",
+    type: "event",
+  },
+  {
     inputs: [],
     name: "DOMAIN_SEPARATOR",
     outputs: [
@@ -279,6 +321,19 @@ export const vaultTokenAbi = [
         internalType: "bytes32",
         name: "",
         type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "WETH",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -478,6 +533,174 @@ export const vaultTokenAbi = [
         type: "uint256",
       },
     ],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_underlyingAsset",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_underlyingAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_receiver",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_minAmount",
+        type: "uint256",
+      },
+    ],
+    name: "depositUnderlying",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "_shares",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "description",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "feelessRedeemerWhitelist",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getDescription",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getName",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getSymbol",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getUnderlyingAssets",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "glpHandler",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "glpManager",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_receiver",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_minBounty",
+        type: "uint256",
+      },
+    ],
+    name: "harvest",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "_rewards",
+        type: "uint256",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -486,6 +709,11 @@ export const vaultTokenAbi = [
       {
         internalType: "address",
         name: "_receiver",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_underlyingAsset",
         type: "address",
       },
       {
@@ -734,6 +962,19 @@ export const vaultTokenAbi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "pendingRewards",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -910,6 +1151,11 @@ export const vaultTokenAbi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_underlyingAsset",
+        type: "address",
+      },
+      {
         internalType: "uint256",
         name: "_shares",
         type: "uint256",
@@ -934,11 +1180,84 @@ export const vaultTokenAbi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "_assets",
+        name: "_underlyingAmount",
         type: "uint256",
       },
     ],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_shares",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_receiver",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_minAmount",
+        type: "uint256",
+      },
+    ],
+    name: "redeemUnderlying",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "_underlyingAssets",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "rewardHandler",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "rewardTracker",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "sGLP",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -1050,6 +1369,43 @@ export const vaultTokenAbi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "underlyingAssets",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_address",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "_whitelist",
+        type: "bool",
+      },
+    ],
+    name: "updateFeelessRedeemerWhitelist",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_withdrawFeePercentage",
         type: "uint256",
       },
@@ -1065,6 +1421,34 @@ export const vaultTokenAbi = [
       },
     ],
     name: "updateFees",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_rewardHandler",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_rewardsTracker",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_glpHandler",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_glpManager",
+        type: "address",
+      },
+    ],
+    name: "updateGlpContracts",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1090,6 +1474,11 @@ export const vaultTokenAbi = [
         internalType: "uint256",
         name: "_depositCap",
         type: "uint256",
+      },
+      {
+        internalType: "address[]",
+        name: "_underlyingAssets",
+        type: "address[]",
       },
     ],
     name: "updateInternalUtils",

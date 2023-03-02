@@ -1,10 +1,12 @@
 import { Address } from "wagmi"
 
-import { PreviewData } from "@/lib/api/vaults/getCompounderVaultsPreviewDeposit"
+import { PreviewData } from "@/lib/api/vaults"
 import { VaultType } from "@/lib/types"
-import { useBalancerPreviewRedeem } from "@/hooks/data/preview/useBalancerPreviewRedeem"
-import { useCurvePreviewRedeem } from "@/hooks/data/preview/useCurvePreviewRedeem"
-import { useTokenPreviewRedeem } from "@/hooks/data/preview/useTokenPreviewRedeem"
+import {
+  useBalancerPreviewRedeem,
+  useCurvePreviewRedeem,
+  useTokenPreviewRedeem,
+} from "@/hooks/data/preview"
 import {
   useIsCurveCompounder,
   useIsTokenCompounder,
@@ -18,23 +20,25 @@ export function usePreviewRedeem({
   token = "0x",
   amount,
   type,
+  enabled = true,
   onSuccess,
   onError,
 }: {
   chainId: number
-  id: number | undefined
-  token: Address | undefined
+  id?: number
+  token?: Address
   amount: string
   type: VaultType
-  onSuccess: ((data: PreviewData) => void) | undefined
-  onError: ((err: unknown) => void) | undefined
+  enabled?: boolean
+  onSuccess?: (data: PreviewData) => void
+  onError?: (err: unknown) => void
 }) {
   const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
 
   const slippage = useTxSettings((store) => store.slippageTolerance)
 
-  const enableCurveAssetToYbToken = !isToken && isCurve
+  const enableCurveAssetToYbToken = enabled && !isToken && isCurve
   const curvePreviewQuery = useCurvePreviewRedeem({
     chainId,
     id,
@@ -46,7 +50,7 @@ export function usePreviewRedeem({
     onError,
   })
 
-  const enableBalancerAssetToYbToken = !isToken && !isCurve
+  const enableBalancerAssetToYbToken = enabled && !isToken && !isCurve
   const balancerPreviewQuery = useBalancerPreviewRedeem({
     chainId,
     id,
@@ -58,7 +62,7 @@ export function usePreviewRedeem({
     onError,
   })
 
-  const enableTokenAssetToYbToken = isToken
+  const enableTokenAssetToYbToken = enabled && isToken
   const tokenPreviewQuery = useTokenPreviewRedeem({
     chainId,
     id,

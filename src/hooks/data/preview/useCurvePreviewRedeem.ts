@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { Address } from "wagmi"
 
-import { PreviewData } from "@/lib/api/vaults/getCompounderVaultsPreviewDeposit"
-import { getCompounderVaultsPreviewRedeem } from "@/lib/api/vaults/getCompounderVaultsPreviewRedeem"
+import { getCompounderVaultsPreviewRedeem, PreviewData } from "@/lib/api/vaults"
 import { queryKeys } from "@/lib/helpers"
 
 export function useCurvePreviewRedeem({

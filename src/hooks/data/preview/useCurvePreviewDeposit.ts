@@ -4,7 +4,7 @@ import { Address } from "wagmi"
 import {
   getCompounderVaultsPreviewDeposit,
   PreviewData,
-} from "@/lib/api/vaults/getCompounderVaultsPreviewDeposit"
+} from "@/lib/api/vaults"
 import { queryKeys } from "@/lib/helpers"
 
 export function useCurvePreviewDeposit({

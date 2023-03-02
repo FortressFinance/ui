@@ -24,6 +24,7 @@ type TokenFormProps = {
   asset: Address | undefined
   submitText: string
   tokenAddresses: Address[] | readonly Address[] | undefined
+  isError: boolean
   isLoadingPreview: boolean
   isLoadingTransaction: boolean
   isWithdraw?: boolean
@@ -43,6 +44,7 @@ const TokenForm: FC<TokenFormProps> = ({
   asset,
   submitText,
   tokenAddresses,
+  isError,
   isLoadingPreview,
   isLoadingTransaction,
   isWithdraw = false,
@@ -212,13 +214,16 @@ const TokenForm: FC<TokenFormProps> = ({
             className="col-span-full mt-3 grid"
             disabled={!form.formState.isValid}
             isLoading={
-              isLoadingInputToken ||
-              isLoadingInputTokenBalanceOrShare ||
-              isLoadingTransaction
+              !isError &&
+              (isLoadingInputToken ||
+                isLoadingInputTokenBalanceOrShare ||
+                isLoadingTransaction)
             }
             type="submit"
           >
-            {form.formState.isDirty
+            {isError
+              ? "Error preparing transaction"
+              : form.formState.isDirty
               ? form.formState.isValid
                 ? submitText
                 : form.formState.errors.amountIn === undefined
