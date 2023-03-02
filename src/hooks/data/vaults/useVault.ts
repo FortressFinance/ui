@@ -37,8 +37,6 @@ export function useVault({ asset, type, vaultAddress }: VaultProps) {
     [apiCompoundersRequest, apiCompounderVault, apiTokenVault]
   )
 
-  return fallbackRequest
-
   return apiCompounderVault.isEnabled && !apiCompounderVault.isError
     ? apiCompounderVault
     : apiTokenVault.isEnabled && !apiTokenVault.isError

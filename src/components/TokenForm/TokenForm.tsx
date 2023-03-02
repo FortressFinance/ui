@@ -62,6 +62,8 @@ const TokenForm: FC<TokenFormProps> = ({
     control: form.control,
   })
 
+  const revalidateAmountIn = () => form.trigger("amountIn")
+
   const onClickMax = () => {
     form.setValue("amountIn", inputTokenBalanceOrShare?.formatted ?? "0.0", {
       shouldDirty: true,
@@ -74,7 +76,10 @@ const TokenForm: FC<TokenFormProps> = ({
   const {
     data: inputTokenBalanceOrShare,
     isLoading: isLoadingInputTokenBalanceOrShare,
-  } = useTokenOrNativeBalance({ address: inputTokenAddress })
+  } = useTokenOrNativeBalance({
+    address: inputTokenAddress,
+    onSuccess: revalidateAmountIn,
+  })
   const { data: inputToken, isLoading: isLoadingInputToken } = useTokenOrNative(
     { address: inputTokenAddress }
   )
@@ -222,7 +227,7 @@ const TokenForm: FC<TokenFormProps> = ({
                 ? `Insufficient ${inputToken?.symbol ?? ""} ${
                     isWithdraw ? "share" : "balance"
                   }`
-                : "Unknown error"
+                : "Enter an amount"
               : "Enter an amount"}
           </Button>
         ) : (
@@ -236,6 +241,7 @@ const TokenForm: FC<TokenFormProps> = ({
           isOpen={tokenSelectMode !== null}
           tokenAddresses={tokenAddresses}
           onClose={() => setTokenSelectMode(null)}
+          onChangeToken={revalidateAmountIn}
         />
       </div>
     </form>
