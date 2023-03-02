@@ -21,6 +21,8 @@ import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
+import { useTxSettings } from "@/store/txSettings"
+
 import { vaultCompounderAbi, vaultTokenAbi } from "@/constant/abi"
 
 const VaultWithdrawForm: FC<VaultProps> = (props) => {
@@ -29,6 +31,8 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
   const vault = useVault(props)
+
+  const slippage = useTxSettings((store) => store.slippageTolerance)
 
   const underlyingAssets = vault.data?.underlyingAssets
   const lpTokenOrAsset = isToken
@@ -53,6 +57,13 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   // Calculate + fetch information on selected tokens
   const outputIsLp = outputTokenAddress === lpTokenOrAsset
   const { data: ybToken } = useTokenOrNative({ address: props.vaultAddress })
+
+  const amountInNumber = Number(amountIn)
+  let minAmountNumber = 0
+  if(!isNaN(amountInNumber)){
+    minAmountNumber = amountInNumber - ((amountInNumber*slippage)/100)
+  }
+  const minAmount = parseUnits(minAmountNumber.toString(), ybToken?.decimals || 18)
   const value = parseUnits(amountIn || "0", ybToken?.decimals || 18)
 
   const onWithdrawSuccess = () => {
@@ -87,7 +98,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
       outputTokenAddress,
       userAddress ?? "0x",
       userAddress ?? "0x",
-      BigNumber.from(0),
+      minAmount,
     ],
   })
   const withdrawUnderlying = useContractWrite(prepareWithdrawUnderlying.config)

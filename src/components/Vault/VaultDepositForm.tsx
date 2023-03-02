@@ -24,6 +24,8 @@ import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
+import { useTxSettings } from "@/store/txSettings"
+
 import { vaultCompounderAbi, vaultTokenAbi } from "@/constant/abi"
 
 const VaultDepositForm: FC<VaultProps> = (props) => {
@@ -32,6 +34,8 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
   const vault = useVault(props)
+
+  const slippage = useTxSettings((store) => store.slippageTolerance)
 
   const underlyingAssets = vault.data?.underlyingAssets
   const lpTokenOrAsset = isToken
@@ -59,6 +63,13 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const { data: inputToken } = useTokenOrNative({
     address: inputTokenAddress,
   })
+
+  const amountInNumber = Number(amountIn)
+  let minAmountNumber = 0
+  if(!isNaN(amountInNumber)){
+    minAmountNumber = amountInNumber - ((amountInNumber*slippage)/100)
+  }
+  const minAmount = parseUnits(minAmountNumber.toString(), inputToken?.decimals || 18)
   const value = parseUnits(amountIn || "0", inputToken?.decimals || 18)
 
   // Check token approval if necessary
@@ -113,7 +124,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     address: props.vaultAddress,
     functionName: "depositSingleUnderlying",
     enabled: value.gt(0) && !requiresApproval && !inputIsLp && !isToken,
-    args: [value, inputTokenAddress, userAddress ?? "0x", BigNumber.from(0)],
+    args: [value, inputTokenAddress, userAddress ?? "0x", minAmount],
     overrides: { value },
   })
   const depositUnderlying = useContractWrite(prepareDepositUnderlying.config)
