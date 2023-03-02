@@ -60,10 +60,13 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
 
   const amountInNumber = Number(amountIn)
   let minAmountNumber = 0
-  if(!isNaN(amountInNumber)){
-    minAmountNumber = amountInNumber - ((amountInNumber*slippage)/100)
+  if (!isNaN(amountInNumber)) {
+    minAmountNumber = amountInNumber - (amountInNumber * slippage) / 100
   }
-  const minAmount = parseUnits(minAmountNumber.toString(), ybToken?.decimals || 18)
+  const minAmount = parseUnits(
+    minAmountNumber.toString(),
+    ybToken?.decimals || 18
+  )
   const value = parseUnits(amountIn || "0", ybToken?.decimals || 18)
 
   const onWithdrawSuccess = () => {

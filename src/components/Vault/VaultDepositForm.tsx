@@ -66,10 +66,13 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
 
   const amountInNumber = Number(amountIn)
   let minAmountNumber = 0
-  if(!isNaN(amountInNumber)){
-    minAmountNumber = amountInNumber - ((amountInNumber*slippage)/100)
+  if (!isNaN(amountInNumber)) {
+    minAmountNumber = amountInNumber - (amountInNumber * slippage) / 100
   }
-  const minAmount = parseUnits(minAmountNumber.toString(), inputToken?.decimals || 18)
+  const minAmount = parseUnits(
+    minAmountNumber.toString(),
+    inputToken?.decimals || 18
+  )
   const value = parseUnits(amountIn || "0", inputToken?.decimals || 18)
 
   // Check token approval if necessary
