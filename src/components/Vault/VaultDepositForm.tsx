@@ -3,7 +3,6 @@ import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
-  Address,
   erc20ABI,
   useAccount,
   useContractRead,
@@ -34,16 +33,13 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const vault = useVault(props)
 
   const underlyingAssets = vault.data?.underlyingAssets
-  const lpTokenOrAsset = isToken
-    ? underlyingAssets?.[underlyingAssets?.length - 1]
-    : props.asset
 
   // Configure form
   const form = useForm<TokenFormValues>({
     defaultValues: {
       amountIn: "",
       amountOut: "",
-      inputToken: lpTokenOrAsset,
+      inputToken: props.asset,
       outputToken: props.vaultAddress,
     },
     mode: "all",
@@ -54,7 +50,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const amountIn = form.watch("amountIn")
   const inputTokenAddress = form.watch("inputToken")
   // Calculate + fetch information on selected tokens
-  const inputIsLp = inputTokenAddress === lpTokenOrAsset
+  const inputIsLp = inputTokenAddress === props.asset
   const inputIsEth = isEthTokenAddress(inputTokenAddress)
   const { data: inputToken } = useTokenOrNative({
     address: inputTokenAddress,
@@ -213,13 +209,8 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
           }
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
-          tokenAddresses={[
-            ...(underlyingAssets?.filter(
-              (a: Address | undefined) => a !== lpTokenOrAsset
-            ) || []),
-          ]}
-          lpToken={lpTokenOrAsset}
-          vaultType={props.type}
+          asset={props.asset}
+          tokenAddresses={underlyingAssets}
         />
       </FormProvider>
     </div>

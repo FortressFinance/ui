@@ -1,5 +1,3 @@
-import { Address } from "wagmi"
-
 import {
   findApiCompounderVaultForAsset,
   findApiTokenVaultForAsset,
@@ -14,7 +12,6 @@ import { vaultCompounderAbi } from "@/constant/abi"
 export function useVault({ asset, type, vaultAddress }: VaultProps) {
   const apiCompoundersRequest = useApiCompounderVaults({ type })
 
-  const isToken = type === "token"
   const chainId = useActiveChainId()
   const contract = { chainId, address: vaultAddress, abi: vaultCompounderAbi }
 
@@ -27,19 +24,14 @@ export function useVault({ asset, type, vaultAddress }: VaultProps) {
         { ...contract, functionName: "name" },
         { ...contract, functionName: "symbol" },
         { ...contract, functionName: "decimals" },
-        {
-          ...contract,
-          functionName: isToken ? "name" : "getUnderlyingAssets",
-        },
+        { ...contract, functionName: "getUnderlyingAssets" },
       ],
       enabled: !!asset && !!vaultAddress,
       select: (data) => ({
         name: data[0],
         symbol: data[1],
         decimals: data[2],
-        underlyingAssets: isToken
-          ? ([asset] as Address[])
-          : (data[3] as Address[]),
+        underlyingAssets: data[3],
       }),
     },
     [apiCompoundersRequest, apiCompounderVault, apiTokenVault]
@@ -84,10 +76,7 @@ function useApiTokenVault({ asset, type }: VaultProps) {
       name: matchedVault?.name ?? "",
       symbol: matchedVault?.token.primaryAsset.symbol ?? "",
       decimals: matchedVault?.token.primaryAsset.decimals ?? 18,
-      underlyingAssets: [
-        ...(matchedVault?.token.assets?.map((a) => a.address) ?? []),
-        asset,
-      ] as Address[],
+      underlyingAssets: matchedVault?.token.assets?.map((a) => a.address) ?? [],
     },
   }
 }

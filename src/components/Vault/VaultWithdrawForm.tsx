@@ -3,7 +3,6 @@ import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
-  Address,
   useAccount,
   useContractWrite,
   usePrepareContractWrite,
@@ -31,9 +30,6 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const vault = useVault(props)
 
   const underlyingAssets = vault.data?.underlyingAssets
-  const lpTokenOrAsset = isToken
-    ? underlyingAssets?.[underlyingAssets?.length - 1]
-    : props.asset
 
   // Configure form
   const form = useForm<TokenFormValues>({
@@ -41,7 +37,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
       amountIn: "",
       amountOut: "",
       inputToken: props.vaultAddress,
-      outputToken: lpTokenOrAsset ?? "0x",
+      outputToken: props.asset ?? "0x",
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -51,7 +47,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const amountIn = form.watch("amountIn")
   const outputTokenAddress = form.watch("outputToken")
   // Calculate + fetch information on selected tokens
-  const outputIsLp = outputTokenAddress === lpTokenOrAsset
+  const outputIsLp = outputTokenAddress === props.asset
   const { data: ybToken } = useTokenOrNative({ address: props.vaultAddress })
   const value = parseUnits(amountIn || "0", ybToken?.decimals || 18)
 
@@ -179,13 +175,8 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
           }
           onSubmit={onSubmitForm}
           submitText="Withdraw"
-          tokenAddresses={[
-            ...(underlyingAssets?.filter(
-              (a: Address | undefined) => a !== lpTokenOrAsset
-            ) || []),
-          ]}
-          lpToken={lpTokenOrAsset}
-          vaultType={props.type}
+          asset={props.asset}
+          tokenAddresses={underlyingAssets}
         />
       </FormProvider>
     </div>

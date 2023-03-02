@@ -11,7 +11,6 @@ import { Address, useAccount } from "wagmi"
 
 import { toFixed } from "@/lib/api/util/format"
 import clsxm from "@/lib/clsxm"
-import { VaultType } from "@/lib/types"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 
@@ -22,14 +21,13 @@ import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
 import TokenSelectModal from "@/components/TokenForm/TokenSelectModal"
 
 type TokenFormProps = {
+  asset: Address | undefined
+  submitText: string
+  tokenAddresses: Address[] | readonly Address[] | undefined
   isLoadingPreview: boolean
   isLoadingTransaction: boolean
   isWithdraw?: boolean
-  submitText: string
-  tokenAddresses: Address[] | readonly Address[] | undefined
-  lpToken: Address | undefined
   onSubmit: SubmitHandler<TokenFormValues>
-  vaultType: VaultType
 }
 
 type TokenSelectMode = "inputToken" | "outputToken" | null
@@ -42,14 +40,13 @@ export type TokenFormValues = {
 }
 
 const TokenForm: FC<TokenFormProps> = ({
+  asset,
+  submitText,
+  tokenAddresses,
   isLoadingPreview,
   isLoadingTransaction,
   isWithdraw = false,
-  submitText,
-  tokenAddresses,
-  lpToken,
   onSubmit,
-  vaultType,
 }) => {
   const [tokenSelectMode, setTokenSelectMode] = useState<TokenSelectMode>(null)
 
@@ -231,10 +228,10 @@ const TokenForm: FC<TokenFormProps> = ({
         {/* Token selection modal */}
         <TokenSelectModal
           controller={tokenSelectField}
+          asset={asset}
           isOpen={tokenSelectMode !== null}
-          onClose={() => setTokenSelectMode(null)}
           tokenAddresses={tokenAddresses}
-          lpToken={lpToken}
+          onClose={() => setTokenSelectMode(null)}
         />
       </div>
     </form>
