@@ -4,13 +4,11 @@ import { UseControllerReturn } from "react-hook-form"
 import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
-import { VaultType } from "@/lib/types"
 import useTokensOrNative from "@/hooks/useTokensOrNative"
 
-import { AssetLogo } from "@/components/Asset"
+import { AssetLogoWithUnderlyings } from "@/components/Asset"
 import { ModalBaseProps } from "@/components/Modal/ModalBase"
 import PurpleModal, { PurpleModalContent } from "@/components/Modal/PurpleModal"
-import MultiLayerTokenLogo from "@/components/MultiLayerTokenLogo"
 import { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
 import { FortIconCloseCircle } from "@/icons"
@@ -19,7 +17,6 @@ type TokenSelectModalProps = ModalBaseProps & {
   controller: UseControllerReturn<TokenFormValues, "inputToken" | "outputToken">
   tokenAddresses: Address[] | readonly Address[] | undefined
   lpToken: Address | undefined
-  vaultType: VaultType
 }
 
 const TokenSelectModal: FC<TokenSelectModalProps> = ({
@@ -28,7 +25,6 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
   onClose,
   tokenAddresses,
   lpToken,
-  vaultType,
 }) => {
   const { data: tokens } = useTokensOrNative({
     tokenAddresses: tokenAddresses,
@@ -66,7 +62,7 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
                 <div
                   ref={controller.field.ref}
                   className={clsxm(
-                    "grid grid-cols-[auto,1fr] grid-rows-[1fr,auto] items-center gap-x-2 rounded-lg p-2",
+                    "grid grid-cols-[auto,1fr] grid-rows-[1fr,auto] items-center gap-x-2 rounded-lg p-2 md:gap-x-3 md:p-3",
                     {
                       "bg-white/80 text-black": checked,
                       "bg-black text-white": !checked,
@@ -78,26 +74,18 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
                   onKeyDown={keyHandler}
                 >
                   <div className="row-span-2 row-start-1">
-                    {token.isLpToken ? (
-                      <MultiLayerTokenLogo
-                        className="h-7 w-7"
-                        vaultType={vaultType}
-                        tokens={tokenAddresses}
-                        isLpToken={token.isLpToken}
-                        size={24}
-                      />
-                    ) : (
-                      <AssetLogo
-                        className="h-7 w-7"
-                        name="token"
-                        tokenAddress={token.address}
-                      />
-                    )}
+                    <AssetLogoWithUnderlyings
+                      className="h-9 w-9 drop-shadow md:h-10 md:w-10"
+                      tokenAddress={token.address}
+                      underlyingAssets={
+                        token.isLpToken ? tokenAddresses : undefined
+                      }
+                    />
                   </div>
-                  <h2 className="col-start-2 row-start-1 text-sm">
+                  <h2 className="col-start-2 row-start-1 font-medium">
                     {token.symbol}
                   </h2>
-                  <h3 className="col-start-2 row-start-2 text-xs">
+                  <h3 className="col-start-2 row-start-2 text-sm">
                     {token.name}
                   </h3>
                 </div>

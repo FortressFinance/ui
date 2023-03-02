@@ -78,7 +78,7 @@ export default function useTokensOrNative({
         const totalSupply = data[adjustedIndex + 3] as BigNumber
         const value = data[adjustedIndex + 4] as BigNumber
         const isLpToken = address === lpToken
-        adjustedData.push({
+        adjustedData.unshift({
           address,
           decimals,
           name,

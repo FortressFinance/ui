@@ -235,7 +235,6 @@ const TokenForm: FC<TokenFormProps> = ({
           onClose={() => setTokenSelectMode(null)}
           tokenAddresses={tokenAddresses}
           lpToken={lpToken}
-          vaultType={vaultType}
         />
       </div>
     </form>

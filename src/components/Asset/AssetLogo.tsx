@@ -1,58 +1,43 @@
 import Image from "next/image"
-import { CSSProperties, FC, useMemo, useState } from "react"
+import { FC, useState } from "react"
 import { BiErrorCircle } from "react-icons/bi"
 import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
-import useCurrencyLogoURI from "@/hooks/useCurrencyLogoURIs"
+import useActiveChainId from "@/hooks/useActiveChainId"
 
-import BalancerLogo from "~/images/assets/balancer.png"
-import CurveLogo from "~/images/assets/curve.png"
+import { enabledNetworks } from "@/components/AppProviders"
 
-type AssetLogoProps = {
-  name?: string
+export type AssetLogoProps = {
   className?: string
-  style?: CSSProperties
   tokenAddress?: Address
 }
 
-export const AssetLogo: FC<AssetLogoProps> = ({
-  className,
-  name,
-  tokenAddress,
-  style,
-}) => {
+export const AssetLogo: FC<AssetLogoProps> = ({ className, tokenAddress }) => {
   const [isError, setIsError] = useState(false)
 
-  const { logoURI } = useCurrencyLogoURI(tokenAddress || "0x")
-  const isStatic = name === "curve" || name === "balancer"
-  const imageSrc = useMemo(() => {
-    switch (name) {
-      case "curve":
-        return CurveLogo
-      case "balancer":
-        return BalancerLogo
-      case "token":
-        return logoURI
-      default:
-        return ""
-    }
-  }, [name, logoURI])
+  const chainId = useActiveChainId()
+  const [supportedChain] = enabledNetworks.chains.filter(
+    (n) => n.id === chainId
+  )
 
   return (
     <div
-      className={clsxm("relative rounded-full bg-white", className)}
-      style={style}
+      className={clsxm(
+        "relative overflow-hidden rounded-full bg-white p-[2px] ring-0 ring-inset ring-white",
+        className
+      )}
     >
       {isError ? (
-        <BiErrorCircle className="h-full w-full fill-dark/50" />
+        <BiErrorCircle className="col-span-full row-span-full h-full w-full fill-dark/50" />
       ) : (
         <Image
-          src={imageSrc}
+          src={`/images/assets/${supportedChain.network}/${tokenAddress}.webp`}
           alt=""
-          className={clsxm({ "h-full w-full object-contain p-1": isStatic })}
+          className="h-full w-full"
           onError={() => setIsError(true)}
-          fill
+          width={256}
+          height={256}
           priority
         />
       )}

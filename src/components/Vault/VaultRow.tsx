@@ -45,9 +45,8 @@ const VaultRow: FC<VaultProps> = (props) => {
         {/* Row of vault info */}
         <TableCell className="relative grid grid-cols-[max-content,auto,max-content] items-center gap-x-3 max-md:-mx-3 max-md:border-b max-md:border-b-pink/30 max-md:px-3 max-md:pb-3.5 md:pointer-events-none">
           <AssetLogo
-            name={props.type}
             className="flex h-12 w-12"
-            tokenAddress={props.asset}
+            tokenAddress={props.vaultAddress}
           />
 
           <span className="line-clamp-2 max-md:mr-8">
