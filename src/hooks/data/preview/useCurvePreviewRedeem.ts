@@ -1,46 +1,18 @@
 import { useQuery } from "@tanstack/react-query"
-import { Address } from "wagmi"
 
-import { getCompounderVaultsPreviewRedeem, PreviewData } from "@/lib/api/vaults"
+import { getCompounderVaultsPreviewRedeem } from "@/lib/api/vaults"
 import { queryKeys } from "@/lib/helpers"
+import { PreviewVaultSpecificTransactionArgs } from "@/hooks/data/preview/types"
 
 export function useCurvePreviewRedeem({
-  chainId,
-  id,
-  token = "0x",
-  amount,
-  slippage,
   enabled,
-  onSuccess,
   onError,
-}: {
-  chainId: number
-  id: number | undefined
-  token: Address | undefined
-  amount: string
-  slippage: number
-  enabled: boolean
-  onSuccess: ((data: PreviewData) => void) | undefined
-  onError: ((err: unknown) => void) | undefined
-}) {
+  onSuccess,
+  ...args
+}: PreviewVaultSpecificTransactionArgs) {
   return useQuery({
-    ...queryKeys.vaults.previewRedeem({
-      chainId,
-      isCurve: true,
-      id,
-      token,
-      amount,
-      slippage,
-    }),
-    queryFn: () =>
-      getCompounderVaultsPreviewRedeem({
-        chainId,
-        isCurve: true,
-        id,
-        token,
-        amount,
-        slippage,
-      }),
+    ...queryKeys.vaults.previewRedeem(args),
+    queryFn: () => getCompounderVaultsPreviewRedeem({ ...args, isCurve: true }),
     retry: false,
     enabled,
     onSuccess,

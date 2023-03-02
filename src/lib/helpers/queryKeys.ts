@@ -1,6 +1,8 @@
 import { createQueryKeyStore } from "@lukemorales/query-key-factory"
 import { Address } from "wagmi"
 
+import { PreviewTransactionGetterArgs } from "@/hooks/data/preview"
+
 export const queryKeys = createQueryKeyStore({
   vaults: {
     list: ({ chainId, type }: { chainId: number; type: string }) => [
@@ -20,58 +22,10 @@ export const queryKeys = createQueryKeyStore({
     }) => [chainId, type, id, user ?? "0x"],
     apy: ({ asset }: { asset: Address | undefined }) => ["apy", asset ?? "0x"],
     apr: ({ asset }: { asset: Address | undefined }) => ["apr", asset ?? "0x"],
-    previewTokenDeposit: ({
-      chainId,
-      id,
-      token = "0x",
-      amount,
-    }: {
-      chainId: number
-      id: number | undefined
-      token: Address | undefined
-      amount: string
-    }) => [chainId, id, token, amount],
-    previewDeposit: ({
-      chainId,
-      isCurve,
-      id,
-      token = "0x",
-      amount,
-      slippage,
-    }: {
-      chainId: number
-      isCurve: boolean
-      id: number | undefined
-      token: Address | undefined
-      amount: string
-      slippage: number
-    }) => [chainId, id, token, isCurve, amount, slippage],
-    previewTokenRedeem: ({
-      chainId,
-      id,
-      token = "0x",
-      amount,
-    }: {
-      chainId: number
-      id: number | undefined
-      token: Address | undefined
-      amount: string
-    }) => [chainId, id, token, amount],
-    previewRedeem: ({
-      chainId,
-      isCurve,
-      id,
-      token = "0x",
-      amount,
-      slippage,
-    }: {
-      chainId: number
-      isCurve: boolean
-      id: number | undefined
-      token: Address | undefined
-      amount: string
-      slippage: number
-    }) => [chainId, id, token, isCurve, amount, slippage],
+    previewTokenDeposit: (args: PreviewTransactionGetterArgs) => [args],
+    previewDeposit: (args: PreviewTransactionGetterArgs) => [args],
+    previewTokenRedeem: (args: PreviewTransactionGetterArgs) => [args],
+    previewRedeem: (args: PreviewTransactionGetterArgs) => [args],
   },
   concentrators: {
     list: ({ chainId }: { chainId: number }) => [chainId],

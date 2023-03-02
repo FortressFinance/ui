@@ -1,44 +1,25 @@
-import { Address } from "wagmi"
-
 import { fortressApi, handledResponse } from "@/lib/api/util"
 import { PreviewData } from "@/lib/api/vaults/getPreviewDeposit"
+import { PreviewTransactionGetterArgs } from "@/hooks/data/preview"
 
 export async function getCompounderVaultsPreviewRedeem({
-  chainId,
-  isCurve,
-  id,
-  token = "0x",
-  amount,
-  slippage,
-}: {
-  chainId: number
-  isCurve: boolean
-  id: number | undefined
-  token: Address | undefined
-  amount: string
-  slippage: number
-}) {
+  amount: ybTokenAmount,
+  ...args
+}: PreviewTransactionGetterArgs) {
   const resp = await fortressApi.post<PreviewData>(
     "AMM_Compounder/previewRedeem",
-    { isCurve, chainId, id, token, ybTokenAmount: amount, slippage }
+    { ...args, ybTokenAmount }
   )
   return handledResponse(resp?.data?.data)
 }
 
 export async function getTokenVaultsPreviewRedeem({
-  chainId,
-  id,
-  token = "0x",
-  amount,
-}: {
-  chainId: number
-  id?: number
-  token?: Address
-  amount: string
-}) {
+  slippage: _slippage,
+  ...args
+}: PreviewTransactionGetterArgs) {
   const resp = await fortressApi.post<PreviewData>(
     "Token_Compounder/previewRedeem",
-    { chainId, id, token, amount }
+    args
   )
   return handledResponse(resp?.data?.data)
 }

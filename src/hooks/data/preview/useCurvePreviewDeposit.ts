@@ -1,49 +1,19 @@
 import { useQuery } from "@tanstack/react-query"
-import { Address } from "wagmi"
 
-import {
-  getCompounderVaultsPreviewDeposit,
-  PreviewData,
-} from "@/lib/api/vaults"
+import { getCompounderVaultsPreviewDeposit } from "@/lib/api/vaults"
 import { queryKeys } from "@/lib/helpers"
+import { PreviewVaultSpecificTransactionArgs } from "@/hooks/data/preview/types"
 
 export function useCurvePreviewDeposit({
-  chainId,
-  id,
-  token = "0x",
-  amount,
-  slippage,
   enabled,
-  onSuccess,
   onError,
-}: {
-  chainId: number
-  id: number | undefined
-  token: Address | undefined
-  amount: string
-  slippage: number
-  enabled: boolean
-  onSuccess: ((data: PreviewData) => void) | undefined
-  onError: ((err: unknown) => void) | undefined
-}) {
+  onSuccess,
+  ...args
+}: PreviewVaultSpecificTransactionArgs) {
   return useQuery({
-    ...queryKeys.vaults.previewDeposit({
-      chainId,
-      isCurve: true,
-      id,
-      token,
-      amount,
-      slippage,
-    }),
+    ...queryKeys.vaults.previewDeposit(args),
     queryFn: () =>
-      getCompounderVaultsPreviewDeposit({
-        chainId,
-        isCurve: true,
-        id,
-        token,
-        amount,
-        slippage,
-      }),
+      getCompounderVaultsPreviewDeposit({ ...args, isCurve: true }),
     retry: false,
     enabled,
     onSuccess,

@@ -1,8 +1,5 @@
-import { Address } from "wagmi"
-
-import { PreviewData } from "@/lib/api/vaults"
-import { VaultType } from "@/lib/types"
 import {
+  PreviewTransactionArgs,
   useBalancerPreviewDeposit,
   useCurvePreviewDeposit,
   useTokenPreviewDeposit,
@@ -15,24 +12,10 @@ import {
 import { useTxSettings } from "@/store/txSettings"
 
 export function usePreviewDeposit({
-  chainId,
-  id,
-  token = "0x",
-  amount,
+  enabled = true,
   type,
-  enabled,
-  onSuccess,
-  onError,
-}: {
-  chainId: number
-  id: number | undefined
-  token: Address | undefined
-  amount: string
-  type: VaultType
-  enabled: boolean
-  onSuccess: ((data: PreviewData) => void) | undefined
-  onError: ((err: unknown) => void) | undefined
-}) {
+  ...args
+}: PreviewTransactionArgs) {
   const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
 
@@ -40,37 +23,23 @@ export function usePreviewDeposit({
 
   const enableCurveAssetToYbToken = !isToken && isCurve
   const curvePreviewQuery = useCurvePreviewDeposit({
-    chainId,
-    id,
-    token,
-    amount,
+    ...args,
     slippage,
     enabled: enabled && enableCurveAssetToYbToken,
-    onSuccess,
-    onError,
   })
 
   const enableBalancerAssetToYbToken = !isToken && !isCurve
   const balancerPreviewQuery = useBalancerPreviewDeposit({
-    chainId,
-    id,
-    token,
-    amount,
+    ...args,
     slippage,
     enabled: enabled && enableBalancerAssetToYbToken,
-    onSuccess,
-    onError,
   })
 
   const enableTokenAssetToYbToken = isToken
   const tokenPreviewQuery = useTokenPreviewDeposit({
-    chainId,
-    id,
-    token,
-    amount,
+    ...args,
+    slippage,
     enabled: enabled && enableTokenAssetToYbToken,
-    onSuccess,
-    onError,
   })
 
   if (enableCurveAssetToYbToken) {

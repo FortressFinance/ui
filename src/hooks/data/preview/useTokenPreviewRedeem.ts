@@ -1,29 +1,18 @@
 import { useQuery } from "@tanstack/react-query"
-import { Address } from "wagmi"
 
-import { getTokenVaultsPreviewRedeem, PreviewData } from "@/lib/api/vaults"
+import { getTokenVaultsPreviewRedeem } from "@/lib/api/vaults"
 import { queryKeys } from "@/lib/helpers"
+import { PreviewVaultSpecificTransactionArgs } from "@/hooks/data/preview/types"
 
 export function useTokenPreviewRedeem({
-  chainId,
-  id,
-  token = "0x",
-  amount,
   enabled,
-  onSuccess,
   onError,
-}: {
-  chainId: number
-  id?: number
-  token?: Address
-  amount: string
-  enabled: boolean
-  onSuccess?: (data: PreviewData) => void
-  onError?: (err: unknown) => void
-}) {
+  onSuccess,
+  ...args
+}: PreviewVaultSpecificTransactionArgs) {
   return useQuery({
-    ...queryKeys.vaults.previewTokenRedeem({ chainId, id, token, amount }),
-    queryFn: () => getTokenVaultsPreviewRedeem({ chainId, id, token, amount }),
+    ...queryKeys.vaults.previewTokenRedeem(args),
+    queryFn: () => getTokenVaultsPreviewRedeem(args),
     retry: false,
     enabled,
     onSuccess,

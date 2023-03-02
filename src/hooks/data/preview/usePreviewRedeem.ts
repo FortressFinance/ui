@@ -1,8 +1,5 @@
-import { Address } from "wagmi"
-
-import { PreviewData } from "@/lib/api/vaults"
-import { VaultType } from "@/lib/types"
 import {
+  PreviewTransactionArgs,
   useBalancerPreviewRedeem,
   useCurvePreviewRedeem,
   useTokenPreviewRedeem,
@@ -15,24 +12,10 @@ import {
 import { useTxSettings } from "@/store/txSettings"
 
 export function usePreviewRedeem({
-  chainId,
-  id,
-  token = "0x",
-  amount,
-  type,
   enabled = true,
-  onSuccess,
-  onError,
-}: {
-  chainId: number
-  id?: number
-  token?: Address
-  amount: string
-  type: VaultType
-  enabled?: boolean
-  onSuccess?: (data: PreviewData) => void
-  onError?: (err: unknown) => void
-}) {
+  type,
+  ...args
+}: PreviewTransactionArgs) {
   const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
 
@@ -40,37 +23,23 @@ export function usePreviewRedeem({
 
   const enableCurveAssetToYbToken = enabled && !isToken && isCurve
   const curvePreviewQuery = useCurvePreviewRedeem({
-    chainId,
-    id,
-    token,
-    amount,
+    ...args,
     slippage,
     enabled: enableCurveAssetToYbToken,
-    onSuccess,
-    onError,
   })
 
   const enableBalancerAssetToYbToken = enabled && !isToken && !isCurve
   const balancerPreviewQuery = useBalancerPreviewRedeem({
-    chainId,
-    id,
-    token,
-    amount,
+    ...args,
     slippage,
     enabled: enableBalancerAssetToYbToken,
-    onSuccess,
-    onError,
   })
 
   const enableTokenAssetToYbToken = enabled && isToken
   const tokenPreviewQuery = useTokenPreviewRedeem({
-    chainId,
-    id,
-    token,
-    amount,
+    ...args,
+    slippage,
     enabled: enableTokenAssetToYbToken,
-    onSuccess,
-    onError,
   })
 
   if (enableCurveAssetToYbToken) {
