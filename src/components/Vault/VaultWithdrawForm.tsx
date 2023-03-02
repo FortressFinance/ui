@@ -51,7 +51,8 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const { data: ybToken } = useTokenOrNative({ address: props.vaultAddress })
   const value = parseUnits(amountIn || "0", ybToken?.decimals || 18)
   // Enable/disable prepare hooks based on form state
-  const enablePrepareTx = form.formState.isValid && value.gt(0)
+  const enablePrepareTx =
+    !form.formState.isValidating && form.formState.isValid && value.gt(0)
   const enableWithdrawUnderlying = enablePrepareTx && !outputIsLp && !isToken
   const enableWithdrawTokenUnderlying =
     enablePrepareTx && !outputIsLp && isToken
@@ -70,7 +71,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     token: outputTokenAddress,
     amount: value.toString(),
     type: props.type,
-    enabled: enablePrepareTx,
+    enabled: value.gt(0),
     onSuccess: (data) => {
       form.setValue("amountOut", toFixed(data.resultFormated ?? "0.0", 6))
     },
@@ -187,7 +188,6 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
           }
           isLoadingPreview={isLoadingPreview}
           isLoadingTransaction={
-            isLoadingPreview ||
             prepareWithdrawLp.isLoading ||
             prepareWithdrawUnderlying.isLoading ||
             withdrawLp.isLoading ||

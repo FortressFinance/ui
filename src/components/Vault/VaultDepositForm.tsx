@@ -70,7 +70,8 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const requiresApproval = inputIsEth ? false : allowance?.lt(value)
 
   // Enable prepare hooks accordingly
-  const enablePrepareTx = form.formState.isValid && value.gt(0)
+  const enablePrepareTx =
+    !form.formState.isValidating && form.formState.isValid && value.gt(0)
   const enableDepositUnderlying =
     enablePrepareTx && !requiresApproval && !inputIsLp && !isToken
   const enableDepositTokenUnderlying =
@@ -105,7 +106,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     token: inputTokenAddress,
     amount: value.toString(),
     type: props.type,
-    enabled: enablePrepareTx,
+    enabled: value.gt(0),
     onSuccess: (data) => {
       form.setValue("amountOut", toFixed(data.resultFormated ?? "0.0", 6))
     },
@@ -216,7 +217,6 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
           }
           isLoadingPreview={isLoadingPreview}
           isLoadingTransaction={
-            isLoadingPreview ||
             isLoadingAllowance ||
             prepareApprove.isLoading ||
             prepareDepositLp.isLoading ||
