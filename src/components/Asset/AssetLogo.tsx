@@ -9,7 +9,7 @@ import useCurrencyLogoURI from "@/hooks/useCurrencyLogoURIs"
 import BalancerLogo from "~/images/assets/balancer.png"
 import CurveLogo from "~/images/assets/curve.png"
 
-type AssetLogoProps = {
+export type AssetLogoProps = {
   name?: string
   className?: string
   style?: CSSProperties
@@ -41,11 +41,14 @@ export const AssetLogo: FC<AssetLogoProps> = ({
 
   return (
     <div
-      className={clsxm("relative rounded-full bg-white", className)}
+      className={clsxm(
+        "relative overflow-hidden rounded-full bg-white",
+        className
+      )}
       style={style}
     >
       {isError ? (
-        <BiErrorCircle className="h-full w-full fill-dark/50" />
+        <BiErrorCircle className="col-span-full row-span-full h-full w-full fill-dark/50" />
       ) : (
         <Image
           src={imageSrc}
