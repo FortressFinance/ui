@@ -53,7 +53,7 @@ export const AssetLogo: FC<AssetLogoProps> = ({
         <Image
           src={imageSrc}
           alt=""
-          className={clsxm({ "h-full w-full object-contain p-1": isStatic })}
+          className={clsxm({ "h-full w-full object-contain p-0.5": isStatic })}
           onError={() => setIsError(true)}
           fill
           priority
