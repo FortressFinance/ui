@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from "ethers"
+import { ethers } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
@@ -150,7 +150,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     address: props.vaultAddress,
     functionName: "depositUnderlying",
     enabled: enableDepositTokenUnderlying,
-    args: [inputTokenAddress, value, userAddress ?? "0x", BigNumber.from(0)],
+    args: [inputTokenAddress, value, userAddress ?? "0x", minAmount],
     overrides: inputIsEth ? { value } : {},
   })
   const tokenDepositUnderlying = useContractWrite(

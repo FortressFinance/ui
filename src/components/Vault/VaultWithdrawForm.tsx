@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
@@ -126,7 +125,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
       value,
       userAddress ?? "0x",
       userAddress ?? "0x",
-      BigNumber.from(0),
+      minAmount,
     ],
   })
   const tokenWithdrawUnderlying = useContractWrite(
