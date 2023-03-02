@@ -5,8 +5,10 @@ import useActiveChainId from "@/hooks/useActiveChainId"
 
 export default function useTokenOrNativeBalance({
   address,
+  onSuccess,
 }: {
   address: Address | undefined
+  onSuccess?: () => void
 }) {
   const isEth = isEthTokenAddress(address)
   const chainId = useActiveChainId()
@@ -17,5 +19,6 @@ export default function useTokenOrNativeBalance({
     token: isEth ? undefined : address,
     watch: true,
     enabled: address !== "0x",
+    onSuccess,
   })
 }

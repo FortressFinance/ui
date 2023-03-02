@@ -1,9 +1,7 @@
-import { BigNumber } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
-  Address,
   useAccount,
   useContractWrite,
   usePrepareContractWrite,
@@ -35,9 +33,6 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const slippage = useTxSettings((store) => store.slippageTolerance)
 
   const underlyingAssets = vault.data?.underlyingAssets
-  const lpTokenOrAsset = isToken
-    ? underlyingAssets?.[underlyingAssets?.length - 1]
-    : props.asset
 
   // Configure form
   const form = useForm<TokenFormValues>({
@@ -45,7 +40,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
       amountIn: "",
       amountOut: "",
       inputToken: props.vaultAddress,
-      outputToken: lpTokenOrAsset ?? "0x",
+      outputToken: props.asset ?? "0x",
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -55,19 +50,27 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const amountIn = form.watch("amountIn")
   const outputTokenAddress = form.watch("outputToken")
   // Calculate + fetch information on selected tokens
-  const outputIsLp = outputTokenAddress === lpTokenOrAsset
+  const outputIsLp = outputTokenAddress === props.asset
   const { data: ybToken } = useTokenOrNative({ address: props.vaultAddress })
 
   const amountInNumber = Number(amountIn)
-  let minAmountNumber = 0
-  if (!isNaN(amountInNumber)) {
-    minAmountNumber = amountInNumber - (amountInNumber * slippage) / 100
-  }
+  const minAmountNumber = isNaN(amountInNumber)
+    ? 0
+    : amountInNumber - (amountInNumber * slippage) / 100
   const minAmount = parseUnits(
     minAmountNumber.toString(),
     ybToken?.decimals || 18
   )
+
   const value = parseUnits(amountIn || "0", ybToken?.decimals || 18)
+  // Enable/disable prepare hooks based on form state
+  const enablePrepareTx =
+    !form.formState.isValidating && form.formState.isValid && value.gt(0)
+  const enableWithdrawUnderlying = enablePrepareTx && !outputIsLp && !isToken
+  const enableWithdrawTokenUnderlying =
+    enablePrepareTx && !outputIsLp && isToken
+  const enableWithdrawLp = enablePrepareTx && outputIsLp && !isToken
+  const enableWithdrawTokenLp = enablePrepareTx && outputIsLp && isToken
 
   const onWithdrawSuccess = () => {
     form.resetField("amountIn")
@@ -75,12 +78,13 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   }
 
   // Preview redeem method
-  const { isLoading: isLoadingPreview } = usePreviewRedeem({
+  const { isFetching: isLoadingPreview } = usePreviewRedeem({
     chainId,
     id: poolId,
     token: outputTokenAddress,
     amount: value.toString(),
     type: props.type,
+    enabled: value.gt(0),
     onSuccess: (data) => {
       form.setValue("amountOut", toFixed(data.resultFormated ?? "0.0", 6))
     },
@@ -95,7 +99,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     address: props.vaultAddress,
     abi: vaultCompounderAbi,
     functionName: "redeemSingleUnderlying",
-    enabled: value.gt(0) && !outputIsLp && !isToken,
+    enabled: enableWithdrawUnderlying,
     args: [
       value,
       outputTokenAddress,
@@ -115,8 +119,14 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     address: props.vaultAddress,
     abi: vaultTokenAbi,
     functionName: "redeemUnderlying",
-    enabled: value.gt(0) && !outputIsLp && isToken,
-    args: [value, userAddress ?? "0x", userAddress ?? "0x", BigNumber.from(0)],
+    enabled: enableWithdrawTokenUnderlying,
+    args: [
+      outputTokenAddress,
+      value,
+      userAddress ?? "0x",
+      userAddress ?? "0x",
+      minAmount,
+    ],
   })
   const tokenWithdrawUnderlying = useContractWrite(
     prepareTokenWithdrawUnderlying.config
@@ -132,7 +142,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     address: props.vaultAddress,
     abi: vaultCompounderAbi,
     functionName: "redeem",
-    enabled: value.gt(0) && outputIsLp && !isToken,
+    enabled: enableWithdrawLp,
     args: [value, userAddress ?? "0x", userAddress ?? "0x"],
   })
   const withdrawLp = useContractWrite(prepareWithdrawLp.config)
@@ -146,7 +156,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     address: props.vaultAddress,
     abi: vaultCompounderAbi,
     functionName: "redeem",
-    enabled: value.gt(0) && outputIsLp && isToken,
+    enabled: enableWithdrawTokenLp,
     args: [value, userAddress ?? "0x", userAddress ?? "0x"],
   })
   const tokenWithdrawLp = useContractWrite(prepareTokenWithdrawLp.config)
@@ -157,16 +167,22 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
 
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
-    logger("Withdrawing", amountIn)
-    withdrawLp?.write
-      ? withdrawLp.write()
-      : withdrawUnderlying?.write
-      ? withdrawUnderlying.write()
-      : tokenWithdrawLp?.write
-      ? tokenWithdrawLp.write()
-      : tokenWithdrawUnderlying?.write
-      ? tokenWithdrawUnderlying.write()
-      : null
+    if (enableWithdrawLp) {
+      logger("Withdrawing LP", amountIn)
+      withdrawLp.write?.()
+    }
+    if (enableWithdrawUnderlying) {
+      logger("Withdrawing LP underlying", amountIn)
+      withdrawUnderlying.write?.()
+    }
+    if (enableWithdrawTokenLp) {
+      logger("Withdrawing token", amountIn)
+      tokenWithdrawLp.write?.()
+    }
+    if (enableWithdrawTokenUnderlying) {
+      logger("Withdrawing token underlying", amountIn)
+      tokenWithdrawUnderlying.write?.()
+    }
   }
 
   return (
@@ -177,9 +193,14 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
       <FormProvider {...form}>
         <TokenForm
           isWithdraw
+          isError={
+            prepareTokenWithdrawLp.isError ||
+            prepareTokenWithdrawUnderlying.isError ||
+            prepareWithdrawLp.isError ||
+            prepareWithdrawUnderlying.isRefetching
+          }
           isLoadingPreview={isLoadingPreview}
           isLoadingTransaction={
-            isLoadingPreview ||
             prepareWithdrawLp.isLoading ||
             prepareWithdrawUnderlying.isLoading ||
             withdrawLp.isLoading ||
@@ -193,13 +214,8 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
           }
           onSubmit={onSubmitForm}
           submitText="Withdraw"
-          tokenAddresses={[
-            ...(underlyingAssets?.filter(
-              (a: Address | undefined) => a !== lpTokenOrAsset
-            ) || []),
-          ]}
-          lpToken={lpTokenOrAsset}
-          vaultType={props.type}
+          asset={props.asset}
+          tokenAddresses={underlyingAssets}
         />
       </FormProvider>
     </div>

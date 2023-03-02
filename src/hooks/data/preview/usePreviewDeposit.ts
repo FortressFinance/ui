@@ -1,10 +1,9 @@
-import { Address } from "wagmi"
-
-import { PreviewData } from "@/lib/api/vaults/getCompounderVaultsPreviewDeposit"
-import { VaultType } from "@/lib/types"
-import { useBalancerPreviewDeposit } from "@/hooks/data/preview/useBalancerPreviewDeposit"
-import { useCurvePreviewDeposit } from "@/hooks/data/preview/useCurvePreviewDeposit"
-import { useTokenPreviewDeposit } from "@/hooks/data/preview/useTokenPreviewDeposit"
+import {
+  PreviewTransactionArgs,
+  useBalancerPreviewDeposit,
+  useCurvePreviewDeposit,
+  useTokenPreviewDeposit,
+} from "@/hooks/data/preview"
 import {
   useIsCurveCompounder,
   useIsTokenCompounder,
@@ -13,22 +12,10 @@ import {
 import { useTxSettings } from "@/store/txSettings"
 
 export function usePreviewDeposit({
-  chainId,
-  id,
-  token = "0x",
-  amount,
+  enabled = true,
   type,
-  onSuccess,
-  onError,
-}: {
-  chainId: number
-  id: number | undefined
-  token: Address | undefined
-  amount: string
-  type: VaultType
-  onSuccess: ((data: PreviewData) => void) | undefined
-  onError: ((err: unknown) => void) | undefined
-}) {
+  ...args
+}: PreviewTransactionArgs) {
   const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
 
@@ -36,37 +23,23 @@ export function usePreviewDeposit({
 
   const enableCurveAssetToYbToken = !isToken && isCurve
   const curvePreviewQuery = useCurvePreviewDeposit({
-    chainId,
-    id,
-    token,
-    amount,
+    ...args,
     slippage,
-    enabled: enableCurveAssetToYbToken,
-    onSuccess,
-    onError,
+    enabled: enabled && enableCurveAssetToYbToken,
   })
 
   const enableBalancerAssetToYbToken = !isToken && !isCurve
   const balancerPreviewQuery = useBalancerPreviewDeposit({
-    chainId,
-    id,
-    token,
-    amount,
+    ...args,
     slippage,
-    enabled: enableBalancerAssetToYbToken,
-    onSuccess,
-    onError,
+    enabled: enabled && enableBalancerAssetToYbToken,
   })
 
   const enableTokenAssetToYbToken = isToken
   const tokenPreviewQuery = useTokenPreviewDeposit({
-    chainId,
-    id,
-    token,
-    amount,
-    enabled: enableTokenAssetToYbToken,
-    onSuccess,
-    onError,
+    ...args,
+    slippage,
+    enabled: enabled && enableTokenAssetToYbToken,
   })
 
   if (enableCurveAssetToYbToken) {

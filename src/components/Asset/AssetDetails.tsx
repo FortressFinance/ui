@@ -29,6 +29,22 @@ export const AssetSymbol: FC<AssetDetailsProps> = ({ address, isLoading }) => {
   )
 }
 
+export const AssetName: FC<AssetDetailsProps> = ({ address, isLoading }) => {
+  const isReady = useClientReady()
+  const { data: token, isLoading: isLoadingToken } = useTokenOrNative({
+    address,
+  })
+  return (
+    <Skeleton isLoading={isLoading || isLoadingToken || !isReady}>
+      {isReady
+        ? address
+          ? token?.name ?? "Loading..."
+          : "Unknown token"
+        : "Loading..."}
+    </Skeleton>
+  )
+}
+
 export const AssetBalance: FC<AssetDetailsProps> = ({ address }) => {
   const isReady = useClientReady()
   const { isConnected } = useAccount()

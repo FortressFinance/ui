@@ -42,7 +42,9 @@ export const Consent: FC = () => {
         <PurpleModalContent>
           <div className="w-full max-w-prose text-pink-100 max-md:text-xs md:leading-relaxed">
             <p className="mb-3">
-              Fortress Finance is a web-based user interface that enables you to interact with a decentralized, autonomous smart-contract system deployed on EVM-compatible blockchain networks.
+              Fortress Finance is a web-based user interface that enables you to
+              interact with a decentralized, autonomous smart-contract system
+              deployed on EVM-compatible blockchain networks.
             </p>
             <p className="mb-2">
               By interacting or attempting to interact (in both cases,
