@@ -277,7 +277,6 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
       <DisconnectWalletModal
         isOpen={connectModal === "connected"}
         onClose={() => setConnectModal(null)}
-        onChange={() => setConnectModal("disconnected")}
       />
 
       <Consent />
