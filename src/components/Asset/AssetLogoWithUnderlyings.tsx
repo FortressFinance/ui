@@ -10,7 +10,6 @@ type AssetLogoWithUnderlyingsProps = AssetLogoProps & {
 }
 
 export const AssetLogoWithUnderlyings: FC<AssetLogoWithUnderlyingsProps> = ({
-  name,
   className,
   tokenAddress,
   underlyingAssets,
@@ -24,7 +23,6 @@ export const AssetLogoWithUnderlyings: FC<AssetLogoWithUnderlyingsProps> = ({
     <div className={clsxm("relative grid grid-cols-3 grid-rows-3", className)}>
       <AssetLogo
         className="col-span-full col-start-1 row-span-full row-start-1 h-full w-full"
-        name={name}
         tokenAddress={tokenAddress}
       />
 
@@ -32,12 +30,11 @@ export const AssetLogoWithUnderlyings: FC<AssetLogoWithUnderlyingsProps> = ({
         <div className="relative z-10 col-start-3 row-span-full row-start-1 grid grid-cols-1 grid-rows-3 drop-shadow-md">
           {visibleUnderlyingAssets.map((underlyingAssetAddress) => (
             <div
-              className="relative h-full w-full rounded-full ring-1 ring-white"
+              className="relative h-full w-full rounded-full ring-white"
               key={`${tokenAddress}-${underlyingAssetAddress}`}
             >
               <AssetLogo
-                className="h-full w-full"
-                name="token"
+                className="h-full w-full p-[1px]"
                 tokenAddress={underlyingAssetAddress}
               />
             </div>

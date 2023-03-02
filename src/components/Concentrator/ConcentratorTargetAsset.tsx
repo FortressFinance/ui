@@ -81,10 +81,5 @@ export const ConcentratorTargetAssetLogo: FC<ConcentratorTargetAssetProps> = ({
     vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
     vaultType: firstConcentrator?.vaultType ?? "balancer",
   })
-  return (
-    <AssetLogo
-      tokenAddress={concentrator.data?.rewardTokenAddress}
-      name="token"
-    />
-  )
+  return <AssetLogo tokenAddress={concentrator.data?.rewardTokenAddress} />
 }

@@ -23,16 +23,6 @@ const nextConfig = {
 
     return config
   },
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "raw.githubusercontent.com",
-        port: "",
-        pathname: "/FortressFinance/assets/master/blockchains/**",
-      },
-    ],
-  },
   async rewrites() {
     return [
       { source: "/api/anvil-mainnet", destination: "http://18.196.63.80:8546" },

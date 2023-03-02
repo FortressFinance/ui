@@ -4,7 +4,6 @@ import { UseControllerReturn } from "react-hook-form"
 import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
-import { VaultType } from "@/lib/types"
 import useTokensOrNative from "@/hooks/useTokensOrNative"
 
 import { AssetLogoWithUnderlyings } from "@/components/Asset"
@@ -18,7 +17,6 @@ type TokenSelectModalProps = ModalBaseProps & {
   controller: UseControllerReturn<TokenFormValues, "inputToken" | "outputToken">
   tokenAddresses: Address[] | readonly Address[] | undefined
   lpToken: Address | undefined
-  vaultType: VaultType
 }
 
 const TokenSelectModal: FC<TokenSelectModalProps> = ({
@@ -27,7 +25,6 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
   onClose,
   tokenAddresses,
   lpToken,
-  vaultType,
 }) => {
   const { data: tokens } = useTokensOrNative({
     tokenAddresses: tokenAddresses,
@@ -79,7 +76,6 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
                   <div className="row-span-2 row-start-1">
                     <AssetLogoWithUnderlyings
                       className="h-9 w-9 drop-shadow md:h-10 md:w-10"
-                      name={vaultType}
                       tokenAddress={token.address}
                       underlyingAssets={
                         token.isLpToken ? tokenAddresses : undefined

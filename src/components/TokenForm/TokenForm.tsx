@@ -150,7 +150,6 @@ const TokenForm: FC<TokenFormProps> = ({
               tokenAddresses.length > 1
             }
             tokenAddress={inputTokenAddress}
-            vaultType={vaultType}
             onClick={() => setTokenSelectMode("inputToken")}
           />
         </div>
@@ -178,7 +177,6 @@ const TokenForm: FC<TokenFormProps> = ({
               tokenAddresses.length > 1
             }
             tokenAddress={outputTokenAddress}
-            vaultType={vaultType}
             onClick={() => setTokenSelectMode("outputToken")}
           />
         </div>
@@ -237,7 +235,6 @@ const TokenForm: FC<TokenFormProps> = ({
           onClose={() => setTokenSelectMode(null)}
           tokenAddresses={tokenAddresses}
           lpToken={lpToken}
-          vaultType={vaultType}
         />
       </div>
     </form>
