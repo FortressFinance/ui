@@ -4,6 +4,7 @@ import { persist } from "zustand/middleware"
 interface ConsentState {
   consent: boolean
   understandDisclaimer: () => void
+  resetConsent: () => void
 }
 
 const useConsentStorage = create<ConsentState>()(
@@ -11,6 +12,7 @@ const useConsentStorage = create<ConsentState>()(
     (set) => ({
       consent: false,
       understandDisclaimer: () => set(() => ({ consent: true })),
+      resetConsent: () => set(() => ({ consent: false })),
     }),
     { name: "consent-storage" }
   )
