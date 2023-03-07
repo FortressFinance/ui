@@ -41,8 +41,8 @@ export function useVaultApy({ asset, poolId, type }: VaultDynamicProps) {
   if (isCurveFallbackEnabled) {
     return {
       ...curveVaultTotalApr,
-      isLoading: curveVaultTotalApr?.isLoading?? true,
-      data: curveVaultTotalApr?.data
+      isLoading: curveVaultTotalApr?.isLoading ?? true,
+      data: curveVaultTotalApr?.data,
     }
   }
 

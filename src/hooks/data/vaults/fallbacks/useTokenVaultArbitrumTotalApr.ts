@@ -8,7 +8,7 @@ export default function useTokenVaultArbitrumTotalApr({
 }: {
   asset: VaultDynamicProps["asset"]
   enabled: boolean
-}) {  
+}) {
   const tokenVaultSymbol = useTokenVaultSymbol({ asset, enabled })
 
   const ybTokenSymbol = tokenVaultSymbol.data

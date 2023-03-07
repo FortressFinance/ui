@@ -24,12 +24,18 @@ export function useVaultPoolId({ asset, type }: VaultProps) {
       asset
     )
 
-    if(matchedVault === undefined 
-      && primaryAssets !== undefined 
-      && primaryAssets.data !== undefined 
-      && primaryAssets.data?.length > 0){
-      const relevantPrimaryAssets = primaryAssets.data.filter(pa => pa.vaultType === type)
-      const index = relevantPrimaryAssets?.findIndex((v) => v.vaultAssetAddress === asset)
+    if (
+      matchedVault === undefined &&
+      primaryAssets !== undefined &&
+      primaryAssets.data !== undefined &&
+      primaryAssets.data?.length > 0
+    ) {
+      const relevantPrimaryAssets = primaryAssets.data.filter(
+        (pa) => pa.vaultType === type
+      )
+      const index = relevantPrimaryAssets?.findIndex(
+        (v) => v.vaultAssetAddress === asset
+      )
       return {
         ...apiCompounderQuery,
         data: index,
@@ -44,12 +50,18 @@ export function useVaultPoolId({ asset, type }: VaultProps) {
 
   const matchedVault = findApiTokenVaultForAsset(apiTokenQuery.data, asset)
 
-  if(matchedVault === undefined 
-    && primaryAssets !== undefined 
-    && primaryAssets.data !== undefined 
-    && primaryAssets.data?.length > 0){
-    const relevantPrimaryAssets = primaryAssets.data.filter(pa => pa.vaultType === type)
-    const index = relevantPrimaryAssets?.findIndex((v) => v.vaultAssetAddress === asset)
+  if (
+    matchedVault === undefined &&
+    primaryAssets !== undefined &&
+    primaryAssets.data !== undefined &&
+    primaryAssets.data?.length > 0
+  ) {
+    const relevantPrimaryAssets = primaryAssets.data.filter(
+      (pa) => pa.vaultType === type
+    )
+    const index = relevantPrimaryAssets?.findIndex(
+      (v) => v.vaultAssetAddress === asset
+    )
     return {
       ...apiTokenQuery,
       data: index,

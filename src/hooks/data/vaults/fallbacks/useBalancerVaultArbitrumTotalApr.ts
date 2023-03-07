@@ -10,6 +10,6 @@ export default function useBalancerVaultArbitrumTotalApr({
   // HARDCODED AS WE DONT HAVE ANY BALANCER IN ARBI AT THE MOMENT
   return {
     isLoading: false,
-    data: 0
+    data: 0,
   }
 }

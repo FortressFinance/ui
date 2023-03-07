@@ -37,7 +37,7 @@ export const CompounderVaultTable: FC<CompounderVaultTableProps> = ({
     filterCategory,
     vaultType,
   })
-  
+
   const displayName = capitalizeFirstLetter(filterCategory ?? vaultType ?? "")
   const showLoadingState = compoundersList.isLoading || !clientReady
 
