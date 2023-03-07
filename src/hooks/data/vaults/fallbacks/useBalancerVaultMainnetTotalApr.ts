@@ -8,7 +8,7 @@ import {
 import { VaultDynamicProps } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
-export default function useBalancerVaultGraphTotalApr({
+export default function useBalancerVaultMainnetTotalApr({
   asset,
   enabled,
 }: {

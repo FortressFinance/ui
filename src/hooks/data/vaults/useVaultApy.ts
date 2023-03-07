@@ -1,11 +1,14 @@
 import { VaultDynamicProps } from "@/lib/types"
 import { useApiVaultDynamic } from "@/hooks/api"
-import useBalancerVaultGraphTotalApr from "@/hooks/data/vaults/fallbacks/useBalancerVaultGraphTotalApr"
-import useCurveVaultGraphTotalApr from "@/hooks/data/vaults/fallbacks/useCurveVaultGraphTotalApr"
+import useBalancerVaultMainnetTotalApr from "@/hooks/data/vaults/fallbacks/useBalancerVaultMainnetTotalApr"
+import useBalancerVaultTotalApr from "@/hooks/data/vaults/fallbacks/useBalancerVaultTotalApr"
+import useCurveVaultMainnetTotalApr from "@/hooks/data/vaults/fallbacks/useCurveVaultMainnetTotalApr"
+import useCurveVaultTotalApr from "@/hooks/data/vaults/fallbacks/useCurveVaultTotalApr"
 import useTokenAuraBalVault from "@/hooks/data/vaults/fallbacks/useTokenAuraBalVault"
 import useTokenGlpVault from "@/hooks/data/vaults/fallbacks/useTokenGlpVault"
-import useTokenVaultGraphTotalApr from "@/hooks/data/vaults/fallbacks/useTokenVaultGraphTotalApr"
+import useTokenVaultMainnetTotalApr from "@/hooks/data/vaults/fallbacks/useTokenVaultMainnetTotalApr"
 import useTokenVaultSymbol from "@/hooks/data/vaults/fallbacks/useTokenVaultSymbol"
+import useTokenVaultTotalApr from "@/hooks/data/vaults/fallbacks/useTokenVaultTotalApr"
 import { useVaultAprFallback } from "@/hooks/data/vaults/fallbacks/useVaultAprFallback"
 import {
   useIsCurveCompounder,
@@ -22,47 +25,33 @@ export function useVaultApy({ asset, poolId, type }: VaultDynamicProps) {
   const isBalancerFallbackEnabled = apiQuery.isError && !isCurve && !isToken
   const isTokenFallbackEnabled = apiQuery.isError && isToken
 
-  const curveVaultGraphTotalApr = useCurveVaultGraphTotalApr({
+  const curveVaultTotalApr = useCurveVaultTotalApr({
     asset,
     enabled: isCurveFallbackEnabled ?? false,
   })
-  const balancerVaultGraphTotalApr = useBalancerVaultGraphTotalApr({
+  const balancerVaultTotalApr = useBalancerVaultTotalApr({
     asset,
     enabled: isBalancerFallbackEnabled ?? false,
   })
-  const tokenVaultGraphTotalApr = useTokenVaultGraphTotalApr({
+  const tokenVaultTotalApr = useTokenVaultTotalApr({
     asset,
     enabled: isTokenFallbackEnabled ?? false,
   })
-  const compoundPeriod = 84_600 // 1 day
-  const yearInSecond = 31_556_926
-  const n = yearInSecond / compoundPeriod
 
   if (isCurveFallbackEnabled) {
-    const totalApr = curveVaultGraphTotalApr.data ?? 0
-    const apy = (1 + totalApr / n) ** n - 1
     return {
-      ...curveVaultGraphTotalApr,
-      data: apy,
+      ...curveVaultTotalApr,
+      isLoading: curveVaultTotalApr?.isLoading?? true,
+      data: curveVaultTotalApr?.data
     }
   }
 
   if (isBalancerFallbackEnabled) {
-    const totalApr = balancerVaultGraphTotalApr.data ?? 0
-    const apy = (1 + totalApr / n) ** n - 1
-    return {
-      ...balancerVaultGraphTotalApr,
-      data: apy,
-    }
+    return balancerVaultTotalApr
   }
 
   if (isTokenFallbackEnabled) {
-    const totalApr = tokenVaultGraphTotalApr.data ?? 0
-    const apy = (1 + totalApr / n) ** n - 1
-    return {
-      ...tokenVaultGraphTotalApr,
-      data: apy,
-    }
+    return tokenVaultTotalApr
   }
 
   return {
@@ -184,15 +173,15 @@ export function useVaultTotalApr({ asset, poolId, type }: VaultDynamicProps) {
   const isBalancerFallbackEnabled = apiQuery.isError && !isCurve && !isToken
   const isTokenFallbackEnabled = apiQuery.isError && isToken
 
-  const curveVaultGraphTotalApr = useCurveVaultGraphTotalApr({
+  const curveVaultGraphTotalApr = useCurveVaultMainnetTotalApr({
     asset,
     enabled: isCurveFallbackEnabled ?? false,
   })
-  const balancerVaultGraphTotalApr = useBalancerVaultGraphTotalApr({
+  const balancerVaultGraphTotalApr = useBalancerVaultMainnetTotalApr({
     asset,
     enabled: isBalancerFallbackEnabled ?? false,
   })
-  const tokenVaultGraphTotalApr = useTokenVaultGraphTotalApr({
+  const tokenVaultGraphTotalApr = useTokenVaultMainnetTotalApr({
     asset,
     enabled: isTokenFallbackEnabled ?? false,
   })
