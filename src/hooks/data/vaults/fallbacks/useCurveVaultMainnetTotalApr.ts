@@ -4,7 +4,7 @@ import { getVaultAprFallback } from "@/lib/api/vaults"
 import { VaultDynamicProps } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
-export default function useCurveVaultGraphTotalApr({
+export default function useCurveVaultMainnetTotalApr({
   asset,
   enabled,
 }: {

@@ -1,10 +1,9 @@
 import { VaultDynamicProps } from "@/lib/types"
 import useTokenAuraBalVault from "@/hooks/data/vaults/fallbacks/useTokenAuraBalVault"
 import useTokenCvxCrvVault from "@/hooks/data/vaults/fallbacks/useTokenCvxCrvVault"
-import useTokenGlpVault from "@/hooks/data/vaults/fallbacks/useTokenGlpVault"
 import useTokenVaultSymbol from "@/hooks/data/vaults/fallbacks/useTokenVaultSymbol"
 
-export default function useTokenVaultGraphTotalApr({
+export default function useTokenVaultMainnetTotalApr({
   asset,
   enabled,
 }: {
@@ -29,13 +28,6 @@ export default function useTokenVaultGraphTotalApr({
     enabled: isCvxCrvTokenFallbackEnabled ?? false,
   })
 
-  const isGlpTokenFallbackEnabled =
-    enabled && !!ybTokenSymbol && ybTokenSymbol === "fortGLP"
-  const tokenGlpVault = useTokenGlpVault({
-    asset,
-    enabled: isGlpTokenFallbackEnabled ?? false,
-  })
-
   if (!tokenAuraBalVault.isError && !!tokenAuraBalVault.data) {
     return {
       ...tokenAuraBalVault,
@@ -43,15 +35,8 @@ export default function useTokenVaultGraphTotalApr({
     }
   }
 
-  if (!tokenCvxCrvVault.isError && !!tokenCvxCrvVault.data) {
-    return {
-      ...tokenCvxCrvVault,
-      data: tokenCvxCrvVault.data.totalApr,
-    }
-  }
-
   return {
-    ...tokenGlpVault,
-    data: tokenGlpVault.data?.totalApr,
+    ...tokenCvxCrvVault,
+    data: tokenCvxCrvVault?.data?.totalApr,
   }
 }
