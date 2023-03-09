@@ -1,7 +1,10 @@
 import { VaultProps } from "@/lib/types"
 import { useApiVaultDynamic } from "@/hooks/api"
 import useCurveVaultTvl from "@/hooks/data/vaults/fallbacks/tvl/useCurveVaultTvl"
-import { useIsCurveCompounder, useIsTokenCompounder } from "@/hooks/useVaultTypes"
+import {
+  useIsCurveCompounder,
+  useIsTokenCompounder,
+} from "@/hooks/useVaultTypes"
 
 // TODO: Support Concentrator vaults
 
@@ -19,7 +22,7 @@ export function useVaultTvl({
   const isToken = useIsTokenCompounder(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
-  
+
   const isCurveFallbackEnabled = apiQuery.isError && isCurve && !isToken
   const isBalancerFallbackEnabled = apiQuery.isError && !isCurve && !isToken
   const isTokenFallbackEnabled = apiQuery.isError && isToken
@@ -30,7 +33,7 @@ export function useVaultTvl({
     enabled: isCurveFallbackEnabled ?? false,
   })
 
-  if(isCurveFallbackEnabled) {
+  if (isCurveFallbackEnabled) {
     return curveVaultTotalApr
   }
 

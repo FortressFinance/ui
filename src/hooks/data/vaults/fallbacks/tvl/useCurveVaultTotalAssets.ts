@@ -14,7 +14,7 @@ export default function useCurveVaultTotalAssets({
 }) {
   const chainId = useActiveChainId()
   const isArbitrumFamily = chainId === 313371 || chainId === 42161
-  
+
   const totalAssetsArbitrumQuery = useContractRead({
     chainId,
     abi: vaultCompounderArbitrumAbi,
@@ -31,5 +31,5 @@ export default function useCurveVaultTotalAssets({
     enabled: !isArbitrumFamily && enabled,
   })
 
-  return isArbitrumFamily? totalAssetsArbitrumQuery : totalAssetsQuery
+  return isArbitrumFamily ? totalAssetsArbitrumQuery : totalAssetsQuery
 }
