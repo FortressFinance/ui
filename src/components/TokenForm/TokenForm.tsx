@@ -1,4 +1,3 @@
-import { parseUnits } from "ethers/lib/utils.js"
 import { FC, useState } from "react"
 import React from "react"
 import {
@@ -11,6 +10,7 @@ import { Address, useAccount } from "wagmi"
 
 import { toFixed } from "@/lib/api/util/format"
 import clsxm from "@/lib/clsxm"
+import { parseTokenUnits } from "@/lib/helpers"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 
@@ -62,7 +62,9 @@ const TokenForm: FC<TokenFormProps> = ({
     control: form.control,
   })
 
-  const revalidateAmountIn = () => form.trigger("amountIn")
+  const revalidateAmountIn = () => {
+    if (amountIn !== "") form.trigger("amountIn")
+  }
 
   const onClickMax = () => {
     form.setValue("amountIn", inputTokenBalanceOrShare?.formatted ?? "0.0", {
@@ -106,7 +108,7 @@ const TokenForm: FC<TokenFormProps> = ({
             validate: {
               positive: (amount) => Number(amount) > 0 || "Enter an amount",
               lessThanBalance: (amount) =>
-                parseUnits(amount, inputToken?.decimals).lte(
+                parseTokenUnits(amount, inputToken?.decimals).lte(
                   inputTokenBalanceOrShare?.value ?? 0
                 ),
             },

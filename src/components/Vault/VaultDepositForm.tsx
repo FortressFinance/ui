@@ -1,5 +1,4 @@
 import { ethers } from "ethers"
-import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
@@ -12,6 +11,7 @@ import {
 } from "wagmi"
 
 import { toFixed } from "@/lib/api/util/format"
+import { parseTokenUnits } from "@/lib/helpers"
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
@@ -23,15 +23,11 @@ import useTokenOrNative from "@/hooks/useTokenOrNative"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
-import { useTxSettings } from "@/store/txSettings"
-
 const VaultDepositForm: FC<VaultProps> = (props) => {
   const { data: poolId } = useVaultPoolId(props)
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
   const vault = useVault(props)
-
-  const slippage = useTxSettings((store) => store.slippageTolerance)
 
   const underlyingAssets = vault.data?.underlyingAssets
 
@@ -49,6 +45,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
 
   // Watch form values
   const amountIn = form.watch("amountIn")
+  const amountOut = form.watch("amountOut")
   const inputTokenAddress = form.watch("inputToken")
   // Calculate + fetch information on selected tokens
   const inputIsLp = inputTokenAddress === props.asset
@@ -57,15 +54,10 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     address: inputTokenAddress,
   })
 
-  const amountInNumber = Number(amountIn)
-  const minAmountNumber = isNaN(amountInNumber)
-    ? 0
-    : amountInNumber - (amountInNumber * slippage) / 100
-  const minAmount = parseUnits(
-    minAmountNumber.toString(),
-    inputToken?.decimals || 18
-  )
-  const value = parseUnits(amountIn || "0", inputToken?.decimals || 18)
+  // preview redeem currently returns a value with slippage accounted for
+  // no math is required here
+  const minAmount = parseTokenUnits(amountOut, inputToken?.decimals)
+  const value = parseTokenUnits(amountIn, inputToken?.decimals)
 
   // Check token approval if necessary
   const { data: allowance, isLoading: isLoadingAllowance } = useContractRead({
@@ -105,7 +97,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     hash: approve.data?.hash,
   })
 
-  const { isFetching: isLoadingPreview } = usePreviewDeposit({
+  const previewDeposit = usePreviewDeposit({
     chainId,
     id: poolId,
     token: inputTokenAddress,
@@ -174,18 +166,19 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
       <FormProvider {...form}>
         <TokenForm
           isError={prepareDeposit.isError || prepareDepositUnderlying.isError}
-          isLoadingPreview={isLoadingPreview}
+          isLoadingPreview={previewDeposit.isFetching}
           isLoadingTransaction={
             isLoadingAllowance ||
             prepareApprove.isLoading ||
             prepareDeposit.isLoading ||
-            prepareDepositUnderlying.isLoading ||
+            prepareDepositUnderlying.isFetching ||
             approve.isLoading ||
             deposit.isLoading ||
             depositUnderlying.isLoading ||
             waitApprove.isLoading ||
             waitDeposit.isLoading ||
-            waitDepositUnderlying.isLoading
+            waitDepositUnderlying.isLoading ||
+            previewDeposit.isFetching
           }
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}

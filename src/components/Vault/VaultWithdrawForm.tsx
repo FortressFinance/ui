@@ -1,4 +1,3 @@
-import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
@@ -9,6 +8,7 @@ import {
 } from "wagmi"
 
 import { toFixed } from "@/lib/api/util/format"
+import { parseTokenUnits } from "@/lib/helpers"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
 import { useVaultContract } from "@/hooks/contracts/useVaultContract"
@@ -19,15 +19,11 @@ import useTokenOrNative from "@/hooks/useTokenOrNative"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
-import { useTxSettings } from "@/store/txSettings"
-
 const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const { data: poolId } = useVaultPoolId(props)
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
   const vault = useVault(props)
-
-  const slippage = useTxSettings((store) => store.slippageTolerance)
 
   const underlyingAssets = vault.data?.underlyingAssets
 
@@ -45,21 +41,20 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
 
   // Watch form values
   const amountIn = form.watch("amountIn")
+  const amountOut = form.watch("amountOut")
   const outputTokenAddress = form.watch("outputToken")
   // Calculate + fetch information on selected tokens
   const outputIsLp = outputTokenAddress === props.asset
   const { data: ybToken } = useTokenOrNative({ address: props.vaultAddress })
+  const { data: outputToken } = useTokenOrNative({
+    address: outputTokenAddress,
+  })
 
-  const amountInNumber = Number(amountIn)
-  const minAmountNumber = isNaN(amountInNumber)
-    ? 0
-    : amountInNumber - (amountInNumber * slippage) / 100
-  const minAmount = parseUnits(
-    minAmountNumber.toString(),
-    ybToken?.decimals || 18
-  )
+  // preview redeem currently returns a value with slippage accounted for
+  // no math is required here
+  const minAmount = parseTokenUnits(amountOut, outputToken?.decimals)
+  const value = parseTokenUnits(amountIn, ybToken?.decimals)
 
-  const value = parseUnits(amountIn || "0", ybToken?.decimals || 18)
   // Enable/disable prepare hooks based on form state
   const enablePrepareTx =
     !form.formState.isValidating && form.formState.isValid && value.gt(0)
@@ -72,7 +67,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   }
 
   // Preview redeem method
-  const { isFetching: isLoadingPreview } = usePreviewRedeem({
+  const previewRedeem = usePreviewRedeem({
     chainId,
     id: poolId,
     token: outputTokenAddress,
@@ -142,14 +137,15 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
         <TokenForm
           isWithdraw
           isError={prepareRedeem.isError || prepareRedeemUnderlying.isError}
-          isLoadingPreview={isLoadingPreview}
+          isLoadingPreview={previewRedeem.isFetching}
           isLoadingTransaction={
             prepareRedeem.isLoading ||
             prepareRedeemUnderlying.isLoading ||
             redeem.isLoading ||
             redeemUnderlying.isLoading ||
             waitRedeem.isLoading ||
-            waitRedeemUnderlying.isLoading
+            waitRedeemUnderlying.isLoading ||
+            previewRedeem.isFetching
           }
           onSubmit={onSubmitForm}
           submitText="Withdraw"
