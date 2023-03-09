@@ -2,9 +2,9 @@
 
 import { VaultDynamicProps } from "@/lib/types"
 import usePricer from "@/hooks/data/vaults/fallbacks/pricer/usePricer"
-import useCurveVaultTotalAssets from "@/hooks/data/vaults/fallbacks/tvl/useCurveVaultTotalAssets"
+import useVaultTotalAssets from "@/hooks/data/vaults/fallbacks/tvl/useVaultTotalAssets"
 
-export default function useCurveVaultTotalApr({
+export default function useVaultTotalAprFallback({
   asset,
   vaultAddress,
   enabled,
@@ -14,8 +14,7 @@ export default function useCurveVaultTotalApr({
   enabled: boolean
 }) {
   const { data: primaryAssetPriceUsd, isLoading: isLoadingPricer } = usePricer({primaryAsset: asset, enabled})
-  const { data: totalAssets, isLoading: isLoadingTotalAssets } = useCurveVaultTotalAssets({ vaultAddress, enabled})
-  console.log(">>>>>>>>", totalAssets?.toString(), vaultAddress, asset)
+  const { data: totalAssets, isLoading: isLoadingTotalAssets } = useVaultTotalAssets({ vaultAddress, enabled})
   return {
     isLoading: isLoadingPricer || isLoadingTotalAssets,
     data: Number(primaryAssetPriceUsd ?? 0) * (Number(totalAssets === undefined? "0" : totalAssets.toString()) / 1e18)
