@@ -5,6 +5,7 @@ import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 import useActiveChainId from "@/hooks/useActiveChainId"
+import useTokenOrNative from "@/hooks/useTokenOrNative"
 
 import { chains } from "@/components/AppProviders"
 import Spinner from "@/components/Spinner"
@@ -30,9 +31,18 @@ export const AssetLogo: FC<AssetLogoProps> = ({ className, tokenAddress }) => {
   const chainId = useActiveChainId()
   const [supportedChain] = chains.filter((n) => n.id === chainId)
   const logosNetworkName = LOGOS_NETWORK_NAME[supportedChain.network]
-  const logoUri = tokenAddress
-    ? `${TOKEN_LOGOS_API_URL}/${logosNetworkName}/assets/${tokenAddress}/logo.png`
-    : undefined
+
+  const { data: token } = useTokenOrNative({ address: tokenAddress })
+
+  const handleAssetLogoError = () => {
+    setIsError(true)
+    // eslint-disable-next-line no-console
+    console.error(
+      `Asset logo missing`,
+      token?.name ?? "Loading...",
+      tokenAddress
+    )
+  }
 
   return (
     <div
@@ -41,15 +51,15 @@ export const AssetLogo: FC<AssetLogoProps> = ({ className, tokenAddress }) => {
         className
       )}
     >
-      {logoUri ? (
+      {tokenAddress ? (
         isError ? (
           <BiErrorCircle className="col-span-full row-span-full h-full w-full fill-dark/50" />
         ) : (
           <Image
-            src={logoUri}
+            src={`${TOKEN_LOGOS_API_URL}/${logosNetworkName}/assets/${tokenAddress}/logo.png`}
             alt=""
             className="h-full w-full"
-            onError={() => setIsError(true)}
+            onError={handleAssetLogoError}
             width={256}
             height={256}
             priority
