@@ -16,7 +16,7 @@ export function useVaultTvl({
 }: UseVaultTvlParams) {
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
-  
+
   const isFallbackEnabled = apiQuery.isError
 
   const vaultTotalAprFallback = useVaultTotalAprFallback({
@@ -25,7 +25,7 @@ export function useVaultTvl({
     enabled: isFallbackEnabled ?? false,
   })
 
-  if(isFallbackEnabled) {
+  if (isFallbackEnabled) {
     return vaultTotalAprFallback
   }
 
