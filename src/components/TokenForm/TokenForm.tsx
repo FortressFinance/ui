@@ -107,10 +107,13 @@ const TokenForm: FC<TokenFormProps> = ({
             pattern: /^[0-9]*[.,]?[0-9]*$/i,
             validate: {
               positive: (amount) => Number(amount) > 0 || "Enter an amount",
-              lessThanBalance: (amount) =>
-                parseTokenUnits(amount, inputToken?.decimals).lte(
-                  inputTokenBalanceOrShare?.value ?? 0
-                ),
+              lessThanBalance: (amount) => {
+                const isValid = parseTokenUnits(
+                  amount,
+                  inputToken?.decimals
+                ).lte(inputTokenBalanceOrShare?.value ?? 0)
+                return isValid ? undefined : "Insufficient balance"
+              },
             },
           }}
           render={({ field: { onChange, onBlur, value, name, ref } }) => (
@@ -211,7 +214,7 @@ const TokenForm: FC<TokenFormProps> = ({
         {isConnected ? (
           <Button
             className="col-span-full mt-3 grid"
-            disabled={!form.formState.isValid}
+            disabled={!form.formState.isValid || isError}
             isLoading={
               !isError &&
               (isLoadingInputToken ||
