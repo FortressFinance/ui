@@ -132,7 +132,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     ...vaultContract,
     functionName: "depositUnderlying",
     enabled: enableDepositUnderlying,
-    args: [value, inputTokenAddress, userAddress ?? "0x", minAmount],
+    args: [inputTokenAddress, userAddress ?? "0x", value, minAmount],
     overrides: inputIsEth ? { value } : {},
   })
   const depositUnderlying = useContractWrite(prepareDepositUnderlying.config)

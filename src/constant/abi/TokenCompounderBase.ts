@@ -471,14 +471,14 @@ export const TokenCompounderBase = [
         type: "address",
       },
       {
-        internalType: "uint256",
-        name: "_underlyingAmount",
-        type: "uint256",
-      },
-      {
         internalType: "address",
         name: "_receiver",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_underlyingAmount",
+        type: "uint256",
       },
       {
         internalType: "uint256",
@@ -1015,11 +1015,6 @@ export const TokenCompounderBase = [
         type: "address",
       },
       {
-        internalType: "uint256",
-        name: "_shares",
-        type: "uint256",
-      },
-      {
         internalType: "address",
         name: "_receiver",
         type: "address",
@@ -1028,6 +1023,11 @@ export const TokenCompounderBase = [
         internalType: "address",
         name: "_owner",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_shares",
+        type: "uint256",
       },
       {
         internalType: "uint256",

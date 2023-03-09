@@ -103,10 +103,10 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     functionName: "redeemUnderlying",
     enabled: enableRedeemUnderlying,
     args: [
-      value,
       outputTokenAddress,
       userAddress ?? "0x",
       userAddress ?? "0x",
+      value,
       minAmount,
     ],
   })

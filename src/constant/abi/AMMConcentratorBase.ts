@@ -647,11 +647,6 @@ export const AMMConcentratorBase = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_underlyingAmount",
-        type: "uint256",
-      },
-      {
         internalType: "address",
         name: "_underlyingAsset",
         type: "address",
@@ -660,6 +655,11 @@ export const AMMConcentratorBase = [
         internalType: "address",
         name: "_receiver",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_underlyingAmount",
+        type: "uint256",
       },
       {
         internalType: "uint256",
@@ -1189,11 +1189,6 @@ export const AMMConcentratorBase = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_shares",
-        type: "uint256",
-      },
-      {
         internalType: "address",
         name: "_underlyingAsset",
         type: "address",
@@ -1207,6 +1202,11 @@ export const AMMConcentratorBase = [
         internalType: "address",
         name: "_owner",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_shares",
+        type: "uint256",
       },
       {
         internalType: "uint256",
@@ -1228,11 +1228,6 @@ export const AMMConcentratorBase = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_shares",
-        type: "uint256",
-      },
-      {
         internalType: "address",
         name: "_underlyingAsset",
         type: "address",
@@ -1241,6 +1236,11 @@ export const AMMConcentratorBase = [
         internalType: "address",
         name: "_receiver",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_shares",
+        type: "uint256",
       },
       {
         internalType: "uint256",
