@@ -10,7 +10,7 @@ import {
 import useActiveChainId from "@/hooks/useActiveChainId"
 import { useClientReady, useFilteredCompounders } from "@/hooks/util"
 
-import { enabledNetworks } from "@/components/AppProviders"
+import { chains } from "@/components/AppProviders"
 import { TableEmpty, TableLoading } from "@/components/Table"
 import VaultRow from "@/components/Vault/VaultRow"
 import { VaultTable } from "@/components/Vault/VaultTable"
@@ -27,7 +27,7 @@ export const CompounderVaultTable: FC<CompounderVaultTableProps> = ({
   // handle hydration mismatch
   const clientReady = useClientReady()
   const chainId = useActiveChainId()
-  const availableChains = enabledNetworks.chains.filter((n) => n.id === chainId)
+  const availableChains = chains.filter((n) => n.id === chainId)
   const supportedChain = availableChains?.[0]
   const network = supportedChain?.name
 

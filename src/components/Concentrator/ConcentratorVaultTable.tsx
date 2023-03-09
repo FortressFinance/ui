@@ -11,7 +11,7 @@ import {
 import useActiveChainId from "@/hooks/useActiveChainId"
 import { useClientReady, useFilteredConcentrators } from "@/hooks/util"
 
-import { enabledNetworks } from "@/components/AppProviders"
+import { chains } from "@/components/AppProviders"
 import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"
 import { TableEmpty, TableLoading } from "@/components/Table"
 import VaultRow from "@/components/Vault/VaultRow"
@@ -44,7 +44,7 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
   const label = capitalizeFirstLetter(filterCategory)
 
   const chainId = useActiveChainId()
-  const availableChains = enabledNetworks.chains.filter((n) => n.id === chainId)
+  const availableChains = chains.filter((n) => n.id === chainId)
   const supportedChain = availableChains?.[0]
 
   return (

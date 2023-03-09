@@ -5,23 +5,15 @@ const nextConfig = {
   },
   reactStrictMode: true,
   swcMinify: true,
-  // SVGR
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.svg$/i,
-      issuer: /\.[jt]sx?$/,
-      use: [
-        {
-          loader: "@svgr/webpack",
-          options: {
-            typescript: true,
-            icon: true,
-          },
-        },
-      ],
-    })
-
-    return config
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "raw.githubusercontent.com",
+        port: "",
+        pathname: "/FortressFinance/assets/master/blockchains/**",
+      },
+    ],
   },
   async rewrites() {
     return [
@@ -59,6 +51,23 @@ const nextConfig = {
         permanent: true,
       },
     ]
+  },
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.svg$/i,
+      issuer: /\.[jt]sx?$/,
+      use: [
+        {
+          loader: "@svgr/webpack",
+          options: {
+            typescript: true,
+            icon: true,
+          },
+        },
+      ],
+    })
+
+    return config
   },
 }
 
