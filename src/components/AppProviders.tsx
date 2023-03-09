@@ -144,7 +144,7 @@ type EnabledNetworks = {
 
 const enabledProviderIds: string[] = []
 
-export const enabledNetworks: EnabledNetworks = networks.reduce(
+const enabledNetworks: EnabledNetworks = networks.reduce(
   (enabledNetworks, network) => {
     if (network.enabled) {
       const networkProviders = []
@@ -212,3 +212,5 @@ const AppProviders: FC<PropsWithChildren> = ({ children }) => {
 }
 
 export default AppProviders
+
+export { chains }

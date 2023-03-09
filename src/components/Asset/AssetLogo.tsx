@@ -6,7 +6,7 @@ import { Address } from "wagmi"
 import clsxm from "@/lib/clsxm"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
-import { enabledNetworks } from "@/components/AppProviders"
+import { chains } from "@/components/AppProviders"
 
 export type AssetLogoProps = {
   className?: string
@@ -17,9 +17,7 @@ export const AssetLogo: FC<AssetLogoProps> = ({ className, tokenAddress }) => {
   const [isError, setIsError] = useState(false)
 
   const chainId = useActiveChainId()
-  const [supportedChain] = enabledNetworks.chains.filter(
-    (n) => n.id === chainId
-  )
+  const [supportedChain] = chains.filter((n) => n.id === chainId)
 
   return (
     <div
