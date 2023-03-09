@@ -3,6 +3,9 @@ import { BigNumber } from "ethers"
 import request, { gql } from "graphql-request"
 
 import { VaultProps } from "@/lib/types"
+import { getGmxPriceData } from "@/hooks/data/vaults/fallbacks/pricer/useGlpPricer"
+import { getLlamaApiPrice } from "@/hooks/data/vaults/fallbacks/pricer/useLlamaApiPricer"
+import { getLlamaEthPrice } from "@/hooks/data/vaults/fallbacks/pricer/useLlamaEthPricer"
 
 import {
   AURA_ADDRESS,
@@ -11,8 +14,6 @@ import {
   AURA_GRAPH_URL,
   CONVEX_STAKING_URL,
   CURVE_GRAPH_URL,
-  GXM_GRAPH_URL,
-  LLAMA_URL,
 } from "@/constant/env"
 
 // TODO: These should use types
@@ -62,41 +63,6 @@ export async function getFortGlpAprFallback(
   }
 }
 
-async function getLlamaEthPrice() {
-  const resp = await axios.get(`${LLAMA_URL}coingecko:ethereum`)
-  const coins = resp?.data?.coins
-  const ethToken = coins?.[`coingecko:ethereum`]
-  return ethToken?.price
-}
-
-async function getGmxPriceData() {
-  const graphqlQuery = gql`
-    {
-      glpStats(orderBy: id, orderDirection: desc) {
-        id
-        aumInUsdg
-        glpSupply
-      }
-      uniswapPrices(orderBy: id, orderDirection: desc) {
-        value
-      }
-    }
-  `
-  const data = await request(GXM_GRAPH_URL, graphqlQuery)
-  let aum = 0
-  let priceGmx = 0
-  if (data?.glpStats?.length !== 0) {
-    aum = Number(data?.glpStats[0].aumInUsdg) / 1e18
-  }
-  if (data?.uniswapPrices?.length !== 0) {
-    priceGmx = Number(data?.uniswapPrices[0].value) / 1e30
-  }
-  return {
-    aum,
-    priceGmx,
-  }
-}
-
 export async function getFortCvxCrvAprFallback() {
   const graphqlQuery = gql`
     query MyQuery {
@@ -134,7 +100,7 @@ export async function getFortCvxCrvAprFallback() {
 export async function getFortAuraBalAprFallback(auraMint: any) {
   const { rewardRates, addresses, totalStaked } = await getAuraBalRewardData()
   const tvl =
-    (await getTokenPriceUsd(AURA_BAL_ADDRESS)) * (Number(totalStaked) / 1e18)
+    (await getLlamaApiPrice(AURA_BAL_ADDRESS)) * (Number(totalStaked) / 1e18)
 
   let aprTokens = 0
   Object.entries(addresses).map(async ([key, val]) => {
@@ -145,7 +111,7 @@ export async function getFortAuraBalAprFallback(auraMint: any) {
   const BalYearlyRewards = (Number(rewardRates["BAL"]) / 1e18) * 86_400 * 365
   const AuraRewardYearly = calculateAuraMintAmount(auraMint, BalYearlyRewards)
   const AuraRewardAnnualUsd =
-    AuraRewardYearly * (await getTokenPriceUsd(AURA_ADDRESS))
+    AuraRewardYearly * (await getLlamaApiPrice(AURA_ADDRESS))
   const aprAura = AuraRewardAnnualUsd / tvl
 
   const aprTotal = aprTokens + aprAura
@@ -212,7 +178,7 @@ export async function getBalancerTotalAprFallback(
   const BalYearlyRewards = (Number(rewardRates["BAL"]) / 1e18) * 86_400 * 365
   const AuraRewardYearly = calculateAuraMintAmount(auraMint, BalYearlyRewards)
   const AuraRewardAnnualUsd =
-    AuraRewardYearly * (await getTokenPriceUsd(AURA_ADDRESS))
+    AuraRewardYearly * (await getLlamaApiPrice(AURA_ADDRESS))
   const aprAura = AuraRewardAnnualUsd / tvl
 
   const aprTotal =
@@ -255,17 +221,10 @@ function calculateAuraMintAmount(auraMint: any, BALYearlyRewards: number) {
 
 async function getTokenAPR(rewardRate: number, token: string, tvl: number) {
   const rewardYearly = rewardRate * 86_400 * 365
-  const tokenPriceUsd = await getTokenPriceUsd(token)
+  const tokenPriceUsd = await getLlamaApiPrice(token)
   const rewardAnnualUsd = rewardYearly * tokenPriceUsd
   const tokenApr = rewardAnnualUsd / tvl
   return tokenApr
-}
-
-async function getTokenPriceUsd(token: string) {
-  const resp = await axios.get(`${LLAMA_URL}ethereum:${token}`)
-  const coins = resp?.data?.coins
-  const ethToken = coins?.[`ethereum:${token}`]
-  return ethToken?.price
 }
 
 export async function fetchApiAuraFinance(asset: VaultProps["asset"]) {

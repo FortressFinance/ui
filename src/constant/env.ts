@@ -15,6 +15,11 @@ export const LLAMA_URL = process.env.NEXT_PUBLIC_LLAMA_URL ?? ""
 export const CONVEX_STAKING_URL =
   process.env.NEXT_PUBLIC_CONVEX_STAKING_URL ?? ""
 export const GXM_GRAPH_URL = process.env.NEXT_PUBLIC_GXM_GRAPH_URL ?? ""
+export const ALADDIN_URL = process.env.NEXT_PUBLIC_ALADDIN_URL ?? ""
+export const APY_VISION_URL = process.env.NEXT_PUBLIC_APY_VISION_URL ?? ""
+export const CURVE_FACTORY_URL = process.env.NEXT_PUBLIC_CURVE_FACTORY_URL ?? ""
+export const CURVE_FACTORY_CRYPTO_URL = process.env.NEXT_PUBLIC_CURVE_FACTORY_CRYPTO_URL ?? ""
+export const CURVE_MAIN_URL = process.env.NEXT_PUBLIC_CURVE_MAIN_URL ?? ""
 export const AURA_ADDRESS = process.env.NEXT_PUBLIC_AURA_ADDRESS ?? "0x"
 export const AURA_BAL_ADDRESS = process.env.NEXT_PUBLIC_AURA_BAL_ADDRESS ?? "0x"
 export const GLP_REWARDS_DISTRIBUTOR_ADDRESS =

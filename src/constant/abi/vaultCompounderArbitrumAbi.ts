@@ -1,4 +1,4 @@
-export const TokenCompounderBase = [
+export const vaultCompounderArbitrumAbi = [
   {
     "inputs": [
       {
@@ -134,6 +134,19 @@ export const TokenCompounderBase = [
     "inputs": [],
     "name": "ZeroAmount",
     "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "_accumulateCvxRewards",
+        "type": "bool"
+      }
+    ],
+    "name": "AccumulateCvxRewards",
+    "type": "event"
   },
   {
     "anonymous": false,
@@ -392,6 +405,19 @@ export const TokenCompounderBase = [
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "accumulateCvxRewards",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
