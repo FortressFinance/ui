@@ -1,12 +1,7 @@
-export const vaultCompounderAbi = [
+export const TokenCompounderBase = [
   {
     inputs: [],
     name: "DepositPaused",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "FailedToSendETH",
     type: "error",
   },
   {
@@ -37,11 +32,6 @@ export const vaultCompounderAbi = [
   {
     inputs: [],
     name: "InvalidAmount",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "InvalidAsset",
     type: "error",
   },
   {
@@ -140,21 +130,9 @@ export const vaultCompounderAbi = [
         type: "address",
       },
       {
-        indexed: true,
-        internalType: "address",
-        name: "_receiver",
-        type: "address",
-      },
-      {
         indexed: false,
         internalType: "uint256",
-        name: "_rewards",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "_platformFee",
+        name: "_amount",
         type: "uint256",
       },
     ],
@@ -210,37 +188,6 @@ export const vaultCompounderAbi = [
     inputs: [
       {
         indexed: false,
-        internalType: "address[]",
-        name: "_rewardAssets",
-        type: "address[]",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "_booster",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "_crvRewards",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "_boosterPoolId",
-        type: "uint256",
-      },
-    ],
-    name: "UpdateExternalUtils",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
         internalType: "uint256",
         name: "_withdrawFeePercentage",
         type: "uint256",
@@ -263,32 +210,7 @@ export const vaultCompounderAbi = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "_platform",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "_swap",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "_owner",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "_depositCap",
-        type: "uint256",
-      },
-    ],
+    inputs: [],
     name: "UpdateInternalUtils",
     type: "event",
   },
@@ -327,6 +249,37 @@ export const vaultCompounderAbi = [
       },
     ],
     name: "Withdraw",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_caller",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_receiver",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_assets",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_shares",
+        type: "uint256",
+      },
+    ],
+    name: "YbTokenTransfer",
     type: "event",
   },
   {
@@ -423,32 +376,6 @@ export const vaultCompounderAbi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "booster",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "boosterPoolId",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "uint256",
@@ -481,19 +408,6 @@ export const vaultCompounderAbi = [
         internalType: "uint256",
         name: "",
         type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "crvRewards",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
       },
     ],
     stateMutability: "view",
@@ -552,11 +466,6 @@ export const vaultCompounderAbi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_underlyingAmount",
-        type: "uint256",
-      },
-      {
         internalType: "address",
         name: "_underlyingAsset",
         type: "address",
@@ -568,11 +477,16 @@ export const vaultCompounderAbi = [
       },
       {
         internalType: "uint256",
+        name: "_underlyingAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
         name: "_minAmount",
         type: "uint256",
       },
     ],
-    name: "depositSingleUnderlying",
+    name: "depositUnderlying",
     outputs: [
       {
         internalType: "uint256",
@@ -581,6 +495,77 @@ export const vaultCompounderAbi = [
       },
     ],
     stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "description",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "feelessRedeemerWhitelist",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getDescription",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getName",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getSymbol",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -601,11 +586,6 @@ export const vaultCompounderAbi = [
       {
         internalType: "address",
         name: "_receiver",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_underlyingAsset",
         type: "address",
       },
       {
@@ -1030,11 +1010,6 @@ export const vaultCompounderAbi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_shares",
-        type: "uint256",
-      },
-      {
         internalType: "address",
         name: "_underlyingAsset",
         type: "address",
@@ -1051,38 +1026,24 @@ export const vaultCompounderAbi = [
       },
       {
         internalType: "uint256",
+        name: "_shares",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
         name: "_minAmount",
         type: "uint256",
       },
     ],
-    name: "redeemSingleUnderlying",
+    name: "redeemUnderlying",
     outputs: [
       {
         internalType: "uint256",
-        name: "_underlyingAmount",
+        name: "_underlyingAssets",
         type: "uint256",
       },
     ],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    name: "rewardAssets",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -1212,27 +1173,17 @@ export const vaultCompounderAbi = [
   {
     inputs: [
       {
-        internalType: "address[]",
-        name: "_rewardAssets",
-        type: "address[]",
-      },
-      {
         internalType: "address",
-        name: "_booster",
+        name: "_address",
         type: "address",
       },
       {
-        internalType: "address",
-        name: "_crvRewards",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "_boosterPoolId",
-        type: "uint256",
+        internalType: "bool",
+        name: "_whitelist",
+        type: "bool",
       },
     ],
-    name: "updateExternalUtils",
+    name: "updateFeelessRedeemerWhitelist",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1281,6 +1232,11 @@ export const vaultCompounderAbi = [
         internalType: "uint256",
         name: "_depositCap",
         type: "uint256",
+      },
+      {
+        internalType: "address[]",
+        name: "_underlyingAssets",
+        type: "address[]",
       },
     ],
     name: "updateInternalUtils",

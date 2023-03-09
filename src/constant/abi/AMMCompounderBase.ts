@@ -1,9 +1,4 @@
-export const concentratorAbi = [
-  {
-    inputs: [],
-    name: "ClaimPaused",
-    type: "error",
-  },
+export const AMMCompounderBase = [
   {
     inputs: [],
     name: "DepositPaused",
@@ -61,6 +56,11 @@ export const concentratorAbi = [
   },
   {
     inputs: [],
+    name: "NotWhitelisted",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "Unauthorized",
     type: "error",
   },
@@ -102,25 +102,6 @@ export const concentratorAbi = [
       },
     ],
     name: "Approval",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "_receiver",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "_rewards",
-        type: "uint256",
-      },
-    ],
-    name: "Claim",
     type: "event",
   },
   {
@@ -200,12 +181,6 @@ export const concentratorAbi = [
         name: "_pauseWithdraw",
         type: "bool",
       },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "_pauseClaim",
-        type: "bool",
-      },
     ],
     name: "PauseInteractions",
     type: "event",
@@ -240,12 +215,6 @@ export const concentratorAbi = [
     inputs: [
       {
         indexed: false,
-        internalType: "address[]",
-        name: "_rewardAssets",
-        type: "address[]",
-      },
-      {
-        indexed: false,
         internalType: "address",
         name: "_booster",
         type: "address",
@@ -256,8 +225,33 @@ export const concentratorAbi = [
         name: "_crvRewards",
         type: "address",
       },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_boosterPoolId",
+        type: "uint256",
+      },
     ],
-    name: "UpdateExternalUtils",
+    name: "UpdateBoosterData",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_address",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "_whitelist",
+        type: "bool",
+      },
+    ],
+    name: "UpdateFeelessRedeemerWhitelist",
     type: "event",
   },
   {
@@ -290,10 +284,17 @@ export const concentratorAbi = [
     inputs: [
       {
         indexed: false,
-        internalType: "address",
-        name: "compounder",
-        type: "address",
+        internalType: "address[]",
+        name: "_rewardAssets",
+        type: "address[]",
       },
+    ],
+    name: "UpdateRewardAssets",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
       {
         indexed: false,
         internalType: "address",
@@ -309,6 +310,12 @@ export const concentratorAbi = [
       {
         indexed: false,
         internalType: "address",
+        name: "_ammOperations",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
         name: "_owner",
         type: "address",
       },
@@ -318,8 +325,14 @@ export const concentratorAbi = [
         name: "_depositCap",
         type: "uint256",
       },
+      {
+        indexed: false,
+        internalType: "address[]",
+        name: "_underlyingAssets",
+        type: "address[]",
+      },
     ],
-    name: "UpdateInternalUtils",
+    name: "UpdateSettings",
     type: "event",
   },
   {
@@ -360,6 +373,37 @@ export const concentratorAbi = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_caller",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_receiver",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_assets",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_shares",
+        type: "uint256",
+      },
+    ],
+    name: "YbTokenTransfer",
+    type: "event",
+  },
+  {
     inputs: [],
     name: "DOMAIN_SEPARATOR",
     outputs: [
@@ -367,19 +411,6 @@ export const concentratorAbi = [
         internalType: "bytes32",
         name: "",
         type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "accRewardPerShare",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -467,56 +498,21 @@ export const concentratorAbi = [
   },
   {
     inputs: [],
-    name: "booster",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "boosterPoolId",
+    name: "boosterData",
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "boosterPoolId",
         type: "uint256",
       },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "address",
-        name: "_receiver",
+        name: "booster",
         type: "address",
       },
-    ],
-    name: "claim",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "_rewards",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "compounder",
-    outputs: [
       {
         internalType: "address",
-        name: "",
+        name: "crvRewards",
         type: "address",
       },
     ],
@@ -563,19 +559,6 @@ export const concentratorAbi = [
   },
   {
     inputs: [],
-    name: "crvRewards",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "decimals",
     outputs: [
       {
@@ -612,25 +595,7 @@ export const concentratorAbi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "depositCap",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "_underlyingAmount",
-        type: "uint256",
-      },
       {
         internalType: "address",
         name: "_underlyingAsset",
@@ -643,11 +608,16 @@ export const concentratorAbi = [
       },
       {
         internalType: "uint256",
+        name: "_underlyingAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
         name: "_minAmount",
         type: "uint256",
       },
     ],
-    name: "depositSingleUnderlying",
+    name: "depositUnderlying",
     outputs: [
       {
         internalType: "uint256",
@@ -662,7 +632,106 @@ export const concentratorAbi = [
     inputs: [
       {
         internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "feelessRedeemerWhitelist",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "fees",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "platformFeePercentage",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "harvestBountyPercentage",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "withdrawFeePercentage",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getDescription",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getName",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getSymbol",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getUnderlyingAssets",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "_receiver",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_underlyingAsset",
         type: "address",
       },
       {
@@ -680,19 +749,6 @@ export const concentratorAbi = [
       },
     ],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "harvestBountyPercentage",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -854,45 +910,6 @@ export const concentratorAbi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "pauseClaim",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "pauseDeposit",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "bool",
@@ -904,47 +921,10 @@ export const concentratorAbi = [
         name: "_pauseWithdraw",
         type: "bool",
       },
-      {
-        internalType: "bool",
-        name: "_pauseClaim",
-        type: "bool",
-      },
     ],
     name: "pauseInteractions",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "pauseWithdraw",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_account",
-        type: "address",
-      },
-    ],
-    name: "pendingReward",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -988,32 +968,6 @@ export const concentratorAbi = [
     name: "permit",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "platform",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "platformFeePercentage",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -1124,40 +1078,6 @@ export const concentratorAbi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_shares",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "_receiver",
-        type: "address",
-      },
-    ],
-    name: "redeemAndClaim",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "_assets",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_rewards",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_shares",
-        type: "uint256",
-      },
-      {
         internalType: "address",
         name: "_underlyingAsset",
         type: "address",
@@ -1174,54 +1094,20 @@ export const concentratorAbi = [
       },
       {
         internalType: "uint256",
-        name: "_minAmount",
-        type: "uint256",
-      },
-    ],
-    name: "redeemSingleUnderlying",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "_underlyingAmount",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
         name: "_shares",
         type: "uint256",
       },
       {
-        internalType: "address",
-        name: "_underlyingAsset",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_receiver",
-        type: "address",
-      },
-      {
         internalType: "uint256",
         name: "_minAmount",
         type: "uint256",
       },
     ],
-    name: "redeemUnderlyingAndClaim",
+    name: "redeemUnderlying",
     outputs: [
       {
         internalType: "uint256",
         name: "_underlyingAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_rewards",
         type: "uint256",
       },
     ],
@@ -1229,32 +1115,48 @@ export const concentratorAbi = [
     type: "function",
   },
   {
-    inputs: [
+    inputs: [],
+    name: "settings",
+    outputs: [
+      {
+        internalType: "string",
+        name: "description",
+        type: "string",
+      },
       {
         internalType: "uint256",
-        name: "",
+        name: "depositCap",
         type: "uint256",
       },
-    ],
-    name: "rewardAssets",
-    outputs: [
       {
         internalType: "address",
-        name: "",
+        name: "platform",
         type: "address",
       },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "swap",
-    outputs: [
       {
         internalType: "address",
-        name: "",
+        name: "swap",
         type: "address",
+      },
+      {
+        internalType: "address payable",
+        name: "ammOperations",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "pauseDeposit",
+        type: "bool",
+      },
+      {
+        internalType: "bool",
+        name: "pauseWithdraw",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -1268,19 +1170,6 @@ export const concentratorAbi = [
         internalType: "string",
         name: "",
         type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "totalAUM",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -1387,11 +1276,6 @@ export const concentratorAbi = [
   {
     inputs: [
       {
-        internalType: "address[]",
-        name: "_rewardAssets",
-        type: "address[]",
-      },
-      {
         internalType: "address",
         name: "_booster",
         type: "address",
@@ -1407,7 +1291,25 @@ export const concentratorAbi = [
         type: "uint256",
       },
     ],
-    name: "updateExternalUtils",
+    name: "updateBoosterData",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_address",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "_whitelist",
+        type: "bool",
+      },
+    ],
+    name: "updateFeelessRedeemerWhitelist",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1438,9 +1340,22 @@ export const concentratorAbi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_compounder",
-        type: "address",
+        internalType: "address[]",
+        name: "_rewardAssets",
+        type: "address[]",
+      },
+    ],
+    name: "updateRewardAssets",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_description",
+        type: "string",
       },
       {
         internalType: "address",
@@ -1454,6 +1369,11 @@ export const concentratorAbi = [
       },
       {
         internalType: "address",
+        name: "_ammOperations",
+        type: "address",
+      },
+      {
+        internalType: "address",
         name: "_owner",
         type: "address",
       },
@@ -1462,34 +1382,15 @@ export const concentratorAbi = [
         name: "_depositCap",
         type: "uint256",
       },
+      {
+        internalType: "address[]",
+        name: "_underlyingAssets",
+        type: "address[]",
+      },
     ],
-    name: "updateInternalUtils",
+    name: "updateSettings",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    name: "userInfo",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "rewards",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "rewardPerSharePaid",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -1519,19 +1420,6 @@ export const concentratorAbi = [
       },
     ],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "withdrawFeePercentage",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
 ] as const

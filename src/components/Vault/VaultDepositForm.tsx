@@ -1,5 +1,4 @@
 import { ethers } from "ethers"
-import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
@@ -12,29 +11,23 @@ import {
 } from "wagmi"
 
 import { toFixed } from "@/lib/api/util/format"
+import { parseTokenUnits } from "@/lib/helpers"
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
+import { useVaultContract } from "@/hooks/contracts/useVaultContract"
 import { usePreviewDeposit } from "@/hooks/data/preview/usePreviewDeposit"
 import { useVault, useVaultPoolId } from "@/hooks/data/vaults"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
-import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
-import { useTxSettings } from "@/store/txSettings"
-
-import { vaultCompounderAbi, vaultTokenAbi } from "@/constant/abi"
-
 const VaultDepositForm: FC<VaultProps> = (props) => {
   const { data: poolId } = useVaultPoolId(props)
-  const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
   const vault = useVault(props)
-
-  const slippage = useTxSettings((store) => store.slippageTolerance)
 
   const underlyingAssets = vault.data?.underlyingAssets
 
@@ -52,6 +45,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
 
   // Watch form values
   const amountIn = form.watch("amountIn")
+  const amountOut = form.watch("amountOut")
   const inputTokenAddress = form.watch("inputToken")
   // Calculate + fetch information on selected tokens
   const inputIsLp = inputTokenAddress === props.asset
@@ -60,15 +54,10 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     address: inputTokenAddress,
   })
 
-  const amountInNumber = Number(amountIn)
-  const minAmountNumber = isNaN(amountInNumber)
-    ? 0
-    : amountInNumber - (amountInNumber * slippage) / 100
-  const minAmount = parseUnits(
-    minAmountNumber.toString(),
-    inputToken?.decimals || 18
-  )
-  const value = parseUnits(amountIn || "0", inputToken?.decimals || 18)
+  // preview redeem currently returns a value with slippage accounted for
+  // no math is required here
+  const minAmount = parseTokenUnits(amountOut, inputToken?.decimals)
+  const value = parseTokenUnits(amountIn, inputToken?.decimals)
 
   // Check token approval if necessary
   const { data: allowance, isLoading: isLoadingAllowance } = useContractRead({
@@ -85,14 +74,9 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   // Enable prepare hooks accordingly
   const enablePrepareTx =
     !form.formState.isValidating && form.formState.isValid && value.gt(0)
+  const enableDeposit = enablePrepareTx && !requiresApproval && inputIsLp
   const enableDepositUnderlying =
-    enablePrepareTx && !requiresApproval && !inputIsLp && !isToken
-  const enableDepositTokenUnderlying =
-    enablePrepareTx && !requiresApproval && !inputIsLp && isToken
-  const enableDepositLp =
-    enablePrepareTx && !requiresApproval && inputIsLp && !isToken
-  const enableDepositTokenLp =
-    enablePrepareTx && !requiresApproval && inputIsLp && isToken
+    enablePrepareTx && !requiresApproval && !inputIsLp
 
   const onDepositSuccess = () => {
     form.resetField("amountIn")
@@ -113,7 +97,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     hash: approve.data?.hash,
   })
 
-  const { isFetching: isLoadingPreview } = usePreviewDeposit({
+  const previewDeposit = usePreviewDeposit({
     chainId,
     id: poolId,
     token: inputTokenAddress,
@@ -128,65 +112,32 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     },
   })
 
+  const vaultContract = useVaultContract(props.vaultAddress)
+
+  // Configure depositLp method
+  const prepareDeposit = usePrepareContractWrite({
+    ...vaultContract,
+    functionName: "deposit",
+    enabled: enableDeposit,
+    args: [value, userAddress ?? "0x"],
+  })
+  const deposit = useContractWrite(prepareDeposit.config)
+  const waitDeposit = useWaitForTransaction({
+    hash: deposit.data?.hash,
+    onSuccess: onDepositSuccess,
+  })
+
   // Configure depositUnderlying method
   const prepareDepositUnderlying = usePrepareContractWrite({
-    chainId,
-    abi: vaultCompounderAbi,
-    address: props.vaultAddress,
-    functionName: "depositSingleUnderlying",
+    ...vaultContract,
+    functionName: "depositUnderlying",
     enabled: enableDepositUnderlying,
-    args: [value, inputTokenAddress, userAddress ?? "0x", minAmount],
+    args: [inputTokenAddress, userAddress ?? "0x", value, minAmount],
     overrides: inputIsEth ? { value } : {},
   })
   const depositUnderlying = useContractWrite(prepareDepositUnderlying.config)
   const waitDepositUnderlying = useWaitForTransaction({
     hash: depositUnderlying.data?.hash,
-    onSuccess: onDepositSuccess,
-  })
-
-  const prepareTokenDepositUnderlying = usePrepareContractWrite({
-    chainId,
-    abi: vaultTokenAbi,
-    address: props.vaultAddress,
-    functionName: "depositUnderlying",
-    enabled: enableDepositTokenUnderlying,
-    args: [inputTokenAddress, value, userAddress ?? "0x", minAmount],
-    overrides: inputIsEth ? { value } : {},
-  })
-  const tokenDepositUnderlying = useContractWrite(
-    prepareTokenDepositUnderlying.config
-  )
-  const waitTokenDepositUnderlying = useWaitForTransaction({
-    hash: tokenDepositUnderlying.data?.hash,
-    onSuccess: onDepositSuccess,
-  })
-
-  // Configure depositLp method
-  const prepareDepositLp = usePrepareContractWrite({
-    chainId,
-    abi: vaultCompounderAbi,
-    address: props.vaultAddress,
-    functionName: "deposit",
-    enabled: enableDepositLp,
-    args: [value, userAddress ?? "0x"],
-  })
-  const depositLp = useContractWrite(prepareDepositLp.config)
-  const waitDepositLp = useWaitForTransaction({
-    hash: depositLp.data?.hash,
-    onSuccess: onDepositSuccess,
-  })
-
-  const prepareTokenDepositLp = usePrepareContractWrite({
-    chainId,
-    abi: vaultCompounderAbi,
-    address: props.vaultAddress,
-    functionName: "deposit",
-    enabled: enableDepositTokenLp,
-    args: [value, userAddress ?? "0x"],
-  })
-  const tokenDepositLp = useContractWrite(prepareTokenDepositLp.config)
-  const waitTokenDepositLp = useWaitForTransaction({
-    hash: tokenDepositLp.data?.hash,
     onSuccess: onDepositSuccess,
   })
 
@@ -196,21 +147,13 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
       logger("Approving spend", inputTokenAddress)
       approve?.write?.()
     } else {
-      if (enableDepositLp) {
-        logger("Depositing LP", amountIn)
-        depositLp.write?.()
+      if (enableDeposit) {
+        logger("Depositing", amountIn)
+        deposit.write?.()
       }
       if (enableDepositUnderlying) {
-        logger("Depositing LP underlying", amountIn)
+        logger("Depositing underlying tokens", amountIn)
         depositUnderlying.write?.()
-      }
-      if (enableDepositTokenLp) {
-        logger("Depositing token", amountIn)
-        tokenDepositLp.write?.()
-      }
-      if (enableDepositTokenUnderlying) {
-        logger("Depositing token underlying", amountIn)
-        tokenDepositUnderlying.write?.()
       }
     }
   }
@@ -222,29 +165,20 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
       </h2>
       <FormProvider {...form}>
         <TokenForm
-          isError={
-            prepareTokenDepositLp.isError ||
-            prepareTokenDepositUnderlying.isError ||
-            prepareDepositLp.isError ||
-            prepareDepositUnderlying.isRefetching
-          }
-          isLoadingPreview={isLoadingPreview}
+          isError={prepareDeposit.isError || prepareDepositUnderlying.isError}
+          isLoadingPreview={previewDeposit.isFetching}
           isLoadingTransaction={
             isLoadingAllowance ||
             prepareApprove.isLoading ||
-            prepareDepositLp.isLoading ||
-            prepareDepositUnderlying.isLoading ||
+            prepareDeposit.isLoading ||
+            prepareDepositUnderlying.isFetching ||
             approve.isLoading ||
-            depositLp.isLoading ||
+            deposit.isLoading ||
             depositUnderlying.isLoading ||
-            tokenDepositLp.isLoading ||
-            tokenDepositUnderlying.isLoading ||
             waitApprove.isLoading ||
-            waitDepositLp.isLoading ||
+            waitDeposit.isLoading ||
             waitDepositUnderlying.isLoading ||
-            waitTokenDepositLp.isLoading ||
-            waitDepositUnderlying.isLoading ||
-            waitTokenDepositUnderlying.isLoading
+            previewDeposit.isFetching
           }
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
