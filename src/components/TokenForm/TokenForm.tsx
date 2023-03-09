@@ -8,15 +8,14 @@ import {
 } from "react-hook-form"
 import { Address, useAccount } from "wagmi"
 
-import { toFixed } from "@/lib/api/util/format"
 import clsxm from "@/lib/clsxm"
 import { parseTokenUnits } from "@/lib/helpers"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 
+import { AssetBalance } from "@/components/Asset"
 import Button from "@/components/Button"
 import ConnectWalletButton from "@/components/ConnectWallet/ConnectWalletButton"
-import Skeleton from "@/components/Skeleton"
 import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
 import TokenSelectModal from "@/components/TokenForm/TokenSelectModal"
 
@@ -80,7 +79,7 @@ const TokenForm: FC<TokenFormProps> = ({
     isLoading: isLoadingInputTokenBalanceOrShare,
   } = useTokenOrNativeBalance({
     address: inputTokenAddress,
-    onSuccess: revalidateAmountIn,
+    onSuccess: () => revalidateAmountIn(),
   })
   const { data: inputToken, isLoading: isLoadingInputToken } = useTokenOrNative(
     { address: inputTokenAddress }
@@ -190,9 +189,7 @@ const TokenForm: FC<TokenFormProps> = ({
         <div className="relative z-[1] col-span-full col-start-1 row-start-3 h-[38px] px-4 pb-3 text-left align-bottom text-xs">
           <span className="text-pink-100">
             {!isWithdraw ? "Balance: " : "Share: "}
-            <Skeleton isLoading={isLoadingInputTokenBalanceOrShare}>
-              {toFixed(inputTokenBalanceOrShare?.formatted ?? "0.0", 6)}
-            </Skeleton>
+            <AssetBalance address={inputTokenAddress} />
           </span>
           <button
             className="ml-1.5 cursor-pointer rounded border border-orange-400 px-2 py-1 font-semibold text-pink-100"

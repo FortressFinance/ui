@@ -1,3 +1,4 @@
+import { BigNumber } from "ethers"
 import { FC } from "react"
 import { Address, useAccount } from "wagmi"
 
@@ -5,7 +6,7 @@ import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 import { useClientReady } from "@/hooks/util"
 
-import Currency from "@/components/Currency"
+import Currency, { CurrencyProps } from "@/components/Currency"
 import Skeleton from "@/components/Skeleton"
 
 export type AssetDetailsProps = {
@@ -45,7 +46,13 @@ export const AssetName: FC<AssetDetailsProps> = ({ address, isLoading }) => {
   )
 }
 
-export const AssetBalance: FC<AssetDetailsProps> = ({ address }) => {
+type AssetBalanceProps = AssetDetailsProps &
+  Partial<Pick<CurrencyProps, "abbreviate">>
+
+export const AssetBalance: FC<AssetBalanceProps> = ({
+  address,
+  abbreviate,
+}) => {
   const isReady = useClientReady()
   const { isConnected } = useAccount()
   const { data: balance, isLoading } = useTokenOrNativeBalance({ address })
@@ -54,7 +61,11 @@ export const AssetBalance: FC<AssetDetailsProps> = ({ address }) => {
       {!isReady || !isConnected || !address ? (
         <>N/A</>
       ) : (
-        <Currency abbreviate>{balance?.formatted ?? "0.0"}</Currency>
+        <Currency
+          amount={balance?.value ?? BigNumber.from(0)}
+          decimals={balance?.decimals ?? 18}
+          abbreviate={abbreviate}
+        />
       )}
     </Skeleton>
   )
