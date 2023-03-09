@@ -1,4 +1,4 @@
-export const glpRewardsDistributorAbi = [
+export const RewardDistributor = [
   {
     inputs: [
       { internalType: "address", name: "_rewardToken", type: "address" },

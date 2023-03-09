@@ -20,9 +20,9 @@ export default function useCurveVaultMainnetTotalApr({
   return {
     ...vaultAprFallback,
     data:
-      Number(vaultAprFallback.data?.[0].baseApr) +
-      Number(vaultAprFallback.data?.[0].crvApr) +
-      Number(vaultAprFallback.data?.[0].cvxApr) +
-      Number(vaultAprFallback.data?.[0].extraRewardsApr),
+      Number(vaultAprFallback.data?.[0]?.baseApr ?? 0) +
+      Number(vaultAprFallback.data?.[0]?.crvApr ?? 0) +
+      Number(vaultAprFallback.data?.[0]?.cvxApr ?? 0) +
+      Number(vaultAprFallback.data?.[0]?.extraRewardsApr ?? 0),
   }
 }

@@ -11,22 +11,19 @@ import {
 import { toFixed } from "@/lib/api/util/format"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
+import { useVaultContract } from "@/hooks/contracts/useVaultContract"
 import { usePreviewRedeem } from "@/hooks/data/preview/usePreviewRedeem"
 import { useVault, useVaultPoolId } from "@/hooks/data/vaults"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
-import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
 import { useTxSettings } from "@/store/txSettings"
 
-import { vaultCompounderAbi, vaultTokenAbi } from "@/constant/abi"
-
 const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const { data: poolId } = useVaultPoolId(props)
   const chainId = useActiveChainId()
-  const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
   const vault = useVault(props)
 
@@ -66,11 +63,8 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   // Enable/disable prepare hooks based on form state
   const enablePrepareTx =
     !form.formState.isValidating && form.formState.isValid && value.gt(0)
-  const enableWithdrawUnderlying = enablePrepareTx && !outputIsLp && !isToken
-  const enableWithdrawTokenUnderlying =
-    enablePrepareTx && !outputIsLp && isToken
-  const enableWithdrawLp = enablePrepareTx && outputIsLp && !isToken
-  const enableWithdrawTokenLp = enablePrepareTx && outputIsLp && isToken
+  const enableRedeem = enablePrepareTx && outputIsLp
+  const enableRedeemUnderlying = enablePrepareTx && !outputIsLp
 
   const onWithdrawSuccess = () => {
     form.resetField("amountIn")
@@ -93,95 +87,49 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     },
   })
 
+  const vaultContract = useVaultContract(props.vaultAddress)
+
+  // Configure redeem method
+  const prepareRedeem = usePrepareContractWrite({
+    ...vaultContract,
+    functionName: "redeem",
+    enabled: enableRedeem,
+    args: [value, userAddress ?? "0x", userAddress ?? "0x"],
+  })
+  const redeem = useContractWrite(prepareRedeem.config)
+  const waitRedeem = useWaitForTransaction({
+    hash: redeem.data?.hash,
+    onSuccess: onWithdrawSuccess,
+  })
+
   // Configure redeemUnderlying method
-  const prepareWithdrawUnderlying = usePrepareContractWrite({
-    chainId,
-    address: props.vaultAddress,
-    abi: vaultCompounderAbi,
-    functionName: "redeemSingleUnderlying",
-    enabled: enableWithdrawUnderlying,
-    args: [
-      value,
-      outputTokenAddress,
-      userAddress ?? "0x",
-      userAddress ?? "0x",
-      minAmount,
-    ],
-  })
-  const withdrawUnderlying = useContractWrite(prepareWithdrawUnderlying.config)
-  const waitWithdrawUnderlying = useWaitForTransaction({
-    hash: withdrawUnderlying.data?.hash,
-    onSuccess: onWithdrawSuccess,
-  })
-
-  const prepareTokenWithdrawUnderlying = usePrepareContractWrite({
-    chainId,
-    address: props.vaultAddress,
-    abi: vaultTokenAbi,
+  const prepareRedeemUnderlying = usePrepareContractWrite({
+    ...vaultContract,
     functionName: "redeemUnderlying",
-    enabled: enableWithdrawTokenUnderlying,
+    enabled: enableRedeemUnderlying,
     args: [
-      outputTokenAddress,
       value,
+      outputTokenAddress,
       userAddress ?? "0x",
       userAddress ?? "0x",
       minAmount,
     ],
   })
-  const tokenWithdrawUnderlying = useContractWrite(
-    prepareTokenWithdrawUnderlying.config
-  )
-  const waitTokenWithdrawUnderlying = useWaitForTransaction({
-    hash: tokenWithdrawUnderlying.data?.hash,
-    onSuccess: onWithdrawSuccess,
-  })
-
-  // Configure redeemLp method
-  const prepareWithdrawLp = usePrepareContractWrite({
-    chainId,
-    address: props.vaultAddress,
-    abi: vaultCompounderAbi,
-    functionName: "redeem",
-    enabled: enableWithdrawLp,
-    args: [value, userAddress ?? "0x", userAddress ?? "0x"],
-  })
-  const withdrawLp = useContractWrite(prepareWithdrawLp.config)
-  const waitWithdrawLp = useWaitForTransaction({
-    hash: withdrawLp.data?.hash,
-    onSuccess: onWithdrawSuccess,
-  })
-
-  const prepareTokenWithdrawLp = usePrepareContractWrite({
-    chainId,
-    address: props.vaultAddress,
-    abi: vaultCompounderAbi,
-    functionName: "redeem",
-    enabled: enableWithdrawTokenLp,
-    args: [value, userAddress ?? "0x", userAddress ?? "0x"],
-  })
-  const tokenWithdrawLp = useContractWrite(prepareTokenWithdrawLp.config)
-  const waitTokenWithdrawLp = useWaitForTransaction({
-    hash: tokenWithdrawLp.data?.hash,
+  const redeemUnderlying = useContractWrite(prepareRedeemUnderlying.config)
+  const waitRedeemUnderlying = useWaitForTransaction({
+    hash: redeemUnderlying.data?.hash,
     onSuccess: onWithdrawSuccess,
   })
 
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
-    if (enableWithdrawLp) {
-      logger("Withdrawing LP", amountIn)
-      withdrawLp.write?.()
+    if (enableRedeem) {
+      logger("Redeeming", amountIn)
+      redeem.write?.()
     }
-    if (enableWithdrawUnderlying) {
-      logger("Withdrawing LP underlying", amountIn)
-      withdrawUnderlying.write?.()
-    }
-    if (enableWithdrawTokenLp) {
-      logger("Withdrawing token", amountIn)
-      tokenWithdrawLp.write?.()
-    }
-    if (enableWithdrawTokenUnderlying) {
-      logger("Withdrawing token underlying", amountIn)
-      tokenWithdrawUnderlying.write?.()
+    if (enableRedeemUnderlying) {
+      logger("Redeeming underlying tokens", amountIn)
+      redeemUnderlying.write?.()
     }
   }
 
@@ -193,24 +141,15 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
       <FormProvider {...form}>
         <TokenForm
           isWithdraw
-          isError={
-            prepareTokenWithdrawLp.isError ||
-            prepareTokenWithdrawUnderlying.isError ||
-            prepareWithdrawLp.isError ||
-            prepareWithdrawUnderlying.isRefetching
-          }
+          isError={prepareRedeem.isError || prepareRedeemUnderlying.isError}
           isLoadingPreview={isLoadingPreview}
           isLoadingTransaction={
-            prepareWithdrawLp.isLoading ||
-            prepareWithdrawUnderlying.isLoading ||
-            withdrawLp.isLoading ||
-            withdrawUnderlying.isLoading ||
-            tokenWithdrawLp.isLoading ||
-            tokenWithdrawUnderlying.isLoading ||
-            waitWithdrawLp.isLoading ||
-            waitWithdrawUnderlying.isLoading ||
-            waitTokenWithdrawLp.isLoading ||
-            waitTokenWithdrawUnderlying.isLoading
+            prepareRedeem.isLoading ||
+            prepareRedeemUnderlying.isLoading ||
+            redeem.isLoading ||
+            redeemUnderlying.isLoading ||
+            waitRedeem.isLoading ||
+            waitRedeemUnderlying.isLoading
           }
           onSubmit={onSubmitForm}
           submitText="Withdraw"

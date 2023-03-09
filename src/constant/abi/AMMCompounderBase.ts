@@ -1,4 +1,4 @@
-export const vaultCompounderAbi = [
+export const AMMCompounderBase = [
   {
     inputs: [],
     name: "DepositPaused",
@@ -52,6 +52,11 @@ export const vaultCompounderAbi = [
   {
     inputs: [],
     name: "NotUnderlyingAsset",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotWhitelisted",
     type: "error",
   },
   {
@@ -210,12 +215,6 @@ export const vaultCompounderAbi = [
     inputs: [
       {
         indexed: false,
-        internalType: "address[]",
-        name: "_rewardAssets",
-        type: "address[]",
-      },
-      {
-        indexed: false,
         internalType: "address",
         name: "_booster",
         type: "address",
@@ -233,7 +232,26 @@ export const vaultCompounderAbi = [
         type: "uint256",
       },
     ],
-    name: "UpdateExternalUtils",
+    name: "UpdateBoosterData",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_address",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "_whitelist",
+        type: "bool",
+      },
+    ],
+    name: "UpdateFeelessRedeemerWhitelist",
     type: "event",
   },
   {
@@ -266,6 +284,19 @@ export const vaultCompounderAbi = [
     inputs: [
       {
         indexed: false,
+        internalType: "address[]",
+        name: "_rewardAssets",
+        type: "address[]",
+      },
+    ],
+    name: "UpdateRewardAssets",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "address",
         name: "_platform",
         type: "address",
@@ -274,6 +305,12 @@ export const vaultCompounderAbi = [
         indexed: false,
         internalType: "address",
         name: "_swap",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_ammOperations",
         type: "address",
       },
       {
@@ -288,8 +325,14 @@ export const vaultCompounderAbi = [
         name: "_depositCap",
         type: "uint256",
       },
+      {
+        indexed: false,
+        internalType: "address[]",
+        name: "_underlyingAssets",
+        type: "address[]",
+      },
     ],
-    name: "UpdateInternalUtils",
+    name: "UpdateSettings",
     type: "event",
   },
   {
@@ -327,6 +370,37 @@ export const vaultCompounderAbi = [
       },
     ],
     name: "Withdraw",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_caller",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_receiver",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_assets",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_shares",
+        type: "uint256",
+      },
+    ],
+    name: "YbTokenTransfer",
     type: "event",
   },
   {
@@ -424,25 +498,22 @@ export const vaultCompounderAbi = [
   },
   {
     inputs: [],
-    name: "booster",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "boosterPoolId",
+    name: "boosterData",
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "boosterPoolId",
         type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "booster",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "crvRewards",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -488,19 +559,6 @@ export const vaultCompounderAbi = [
   },
   {
     inputs: [],
-    name: "crvRewards",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "decimals",
     outputs: [
       {
@@ -537,19 +595,6 @@ export const vaultCompounderAbi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "depositCap",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "uint256",
@@ -572,7 +617,7 @@ export const vaultCompounderAbi = [
         type: "uint256",
       },
     ],
-    name: "depositSingleUnderlying",
+    name: "depositUnderlying",
     outputs: [
       {
         internalType: "uint256",
@@ -581,6 +626,87 @@ export const vaultCompounderAbi = [
       },
     ],
     stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "feelessRedeemerWhitelist",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "fees",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "platformFeePercentage",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "harvestBountyPercentage",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "withdrawFeePercentage",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getDescription",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getName",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getSymbol",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -623,19 +749,6 @@ export const vaultCompounderAbi = [
       },
     ],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "harvestBountyPercentage",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -797,32 +910,6 @@ export const vaultCompounderAbi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "pauseDeposit",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "bool",
@@ -838,19 +925,6 @@ export const vaultCompounderAbi = [
     name: "pauseInteractions",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "pauseWithdraw",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -894,32 +968,6 @@ export const vaultCompounderAbi = [
     name: "permit",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "platform",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "platformFeePercentage",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -1055,7 +1103,7 @@ export const vaultCompounderAbi = [
         type: "uint256",
       },
     ],
-    name: "redeemSingleUnderlying",
+    name: "redeemUnderlying",
     outputs: [
       {
         internalType: "uint256",
@@ -1067,32 +1115,48 @@ export const vaultCompounderAbi = [
     type: "function",
   },
   {
-    inputs: [
+    inputs: [],
+    name: "settings",
+    outputs: [
+      {
+        internalType: "string",
+        name: "description",
+        type: "string",
+      },
       {
         internalType: "uint256",
-        name: "",
+        name: "depositCap",
         type: "uint256",
       },
-    ],
-    name: "rewardAssets",
-    outputs: [
       {
         internalType: "address",
-        name: "",
+        name: "platform",
         type: "address",
       },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "swap",
-    outputs: [
       {
         internalType: "address",
-        name: "",
+        name: "swap",
         type: "address",
+      },
+      {
+        internalType: "address payable",
+        name: "ammOperations",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "pauseDeposit",
+        type: "bool",
+      },
+      {
+        internalType: "bool",
+        name: "pauseWithdraw",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -1212,11 +1276,6 @@ export const vaultCompounderAbi = [
   {
     inputs: [
       {
-        internalType: "address[]",
-        name: "_rewardAssets",
-        type: "address[]",
-      },
-      {
         internalType: "address",
         name: "_booster",
         type: "address",
@@ -1232,7 +1291,25 @@ export const vaultCompounderAbi = [
         type: "uint256",
       },
     ],
-    name: "updateExternalUtils",
+    name: "updateBoosterData",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_address",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "_whitelist",
+        type: "bool",
+      },
+    ],
+    name: "updateFeelessRedeemerWhitelist",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1263,6 +1340,24 @@ export const vaultCompounderAbi = [
   {
     inputs: [
       {
+        internalType: "address[]",
+        name: "_rewardAssets",
+        type: "address[]",
+      },
+    ],
+    name: "updateRewardAssets",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_description",
+        type: "string",
+      },
+      {
         internalType: "address",
         name: "_platform",
         type: "address",
@@ -1270,6 +1365,11 @@ export const vaultCompounderAbi = [
       {
         internalType: "address",
         name: "_swap",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_ammOperations",
         type: "address",
       },
       {
@@ -1282,8 +1382,13 @@ export const vaultCompounderAbi = [
         name: "_depositCap",
         type: "uint256",
       },
+      {
+        internalType: "address[]",
+        name: "_underlyingAssets",
+        type: "address[]",
+      },
     ],
-    name: "updateInternalUtils",
+    name: "updateSettings",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1315,19 +1420,6 @@ export const vaultCompounderAbi = [
       },
     ],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "withdrawFeePercentage",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
 ] as const

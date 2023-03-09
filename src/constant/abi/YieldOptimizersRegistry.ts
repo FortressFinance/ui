@@ -1,4 +1,4 @@
-export const yieldCompoundersRegistry = [
+export const YieldOptimizersRegistry = [
   {
     inputs: [
       {

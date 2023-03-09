@@ -4,7 +4,7 @@ import { getFortGlpAprFallback } from "@/lib/api/vaults"
 import { VaultDynamicProps } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
-import { glpRewardsDistributorAbi } from "@/constant/abi"
+import { RewardDistributor } from "@/constant/abi"
 import { GLP_REWARDS_DISTRIBUTOR_ADDRESS } from "@/constant/env"
 
 export default function useTokenGlpVault({
@@ -17,7 +17,7 @@ export default function useTokenGlpVault({
   const chainId = useActiveChainId()
   const glpQuery = useContractRead({
     chainId,
-    abi: glpRewardsDistributorAbi,
+    abi: RewardDistributor,
     address: GLP_REWARDS_DISTRIBUTOR_ADDRESS as `0x${string}`,
     functionName: "tokensPerInterval",
     enabled: enabled,

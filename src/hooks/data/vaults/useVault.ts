@@ -4,16 +4,13 @@ import {
 } from "@/lib/findApiVaultForAsset"
 import { VaultProps } from "@/lib/types"
 import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
-import useActiveChainId from "@/hooks/useActiveChainId"
+import { useVaultContract } from "@/hooks/contracts/useVaultContract"
 import { useFallbackReads } from "@/hooks/util"
-
-import { vaultCompounderAbi } from "@/constant/abi"
 
 export function useVault({ asset, type, vaultAddress }: VaultProps) {
   const apiCompoundersRequest = useApiCompounderVaults({ type })
 
-  const chainId = useActiveChainId()
-  const contract = { chainId, address: vaultAddress, abi: vaultCompounderAbi }
+  const vaultContract = useVaultContract(vaultAddress)
 
   const apiCompounderVault = useApiCompounderVault({ asset, type })
   const apiTokenVault = useApiTokenVault({ asset, type })
@@ -21,10 +18,10 @@ export function useVault({ asset, type, vaultAddress }: VaultProps) {
   const fallbackRequest = useFallbackReads(
     {
       contracts: [
-        { ...contract, functionName: "name" },
-        { ...contract, functionName: "symbol" },
-        { ...contract, functionName: "decimals" },
-        { ...contract, functionName: "getUnderlyingAssets" },
+        { ...vaultContract, functionName: "name" },
+        { ...vaultContract, functionName: "symbol" },
+        { ...vaultContract, functionName: "decimals" },
+        { ...vaultContract, functionName: "getUnderlyingAssets" },
       ],
       enabled: !!asset && !!vaultAddress,
       select: (data) => ({

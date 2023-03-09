@@ -6,43 +6,66 @@ import {
 } from "@/lib/findApiVaultForAsset"
 import { VaultProps } from "@/lib/types"
 import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
+import { useVaultContract } from "@/hooks/contracts/useVaultContract"
 import useActiveChainId from "@/hooks/useActiveChainId"
-import { useFallbackReads } from "@/hooks/util"
+import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
+import { useFallbackRead, useFallbackReads } from "@/hooks/util"
 
-import { vaultCompounderAbi } from "@/constant/abi"
+import { TokenCompounderBase } from "@/constant/abi/TokenCompounderBase"
 
 // TODO: Implement full fees support
 const HARDCODED_FEES = { depositFee: "0", performanceFee: "0" }
 
 export function useVaultFees({ asset, type, vaultAddress }: VaultProps) {
   const chainId = useActiveChainId()
+  const isToken = useIsTokenCompounder(type)
 
   // Preferred: API request
   const apiCompounderFees = useApiCompounderVaultFees({ asset, type })
   const apiTokenCompounderFees = useApiTokenCompounderVaultFees({ asset, type })
 
-  // Fallback: contract request
-  const fallbackRequest = useFallbackReads(
+  // Fallback: amm contract request
+  const vaultContract = useVaultContract(vaultAddress)
+  const ammFallbackRequest = useFallbackRead(
+    {
+      ...vaultContract,
+      enabled: !!asset && !isToken,
+      functionName: "fees",
+      select: ([
+        platformFeePercentage,
+        _harvestBountyPercentage,
+        withdrawFeePercentage,
+      ]) => ({
+        ...HARDCODED_FEES,
+        platformFee: formatUnits(platformFeePercentage, 9),
+        withdrawFee: formatUnits(withdrawFeePercentage, 9),
+      }),
+    },
+    [apiCompounderFees, apiTokenCompounderFees]
+  )
+  // Fallback: token contract request
+  const tokenVaultContract = {
+    chainId,
+    abi: TokenCompounderBase,
+    address: vaultAddress,
+  }
+  const tokenFallbackRequest = useFallbackReads(
     {
       contracts: [
         {
-          chainId,
-          abi: vaultCompounderAbi,
-          address: vaultAddress,
+          ...tokenVaultContract,
           functionName: "platformFeePercentage",
         },
         {
-          chainId,
-          abi: vaultCompounderAbi,
-          address: vaultAddress,
+          ...tokenVaultContract,
           functionName: "withdrawFeePercentage",
         },
       ],
-      enabled: !!asset,
-      select: (data) => ({
+      enabled: !!asset && isToken,
+      select: ([platformFeePercentage, withdrawFeePercentage]) => ({
         ...HARDCODED_FEES,
-        platformFee: formatUnits(data[0], 9),
-        withdrawFee: formatUnits(data[1], 9),
+        platformFee: formatUnits(platformFeePercentage, 9),
+        withdrawFee: formatUnits(withdrawFeePercentage, 9),
       }),
     },
     [apiCompounderFees, apiTokenCompounderFees]
@@ -52,7 +75,9 @@ export function useVaultFees({ asset, type, vaultAddress }: VaultProps) {
     ? apiCompounderFees
     : apiTokenCompounderFees.isEnabled && !apiTokenCompounderFees.isError
     ? apiTokenCompounderFees
-    : fallbackRequest
+    : isToken
+    ? tokenFallbackRequest
+    : ammFallbackRequest
 }
 
 function useApiCompounderVaultFees({ asset, type }: VaultProps) {
