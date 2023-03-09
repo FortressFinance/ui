@@ -11,6 +11,7 @@ import { Address, useAccount } from "wagmi"
 import { toFixed } from "@/lib/api/util/format"
 import clsxm from "@/lib/clsxm"
 import { parseTokenUnits } from "@/lib/helpers"
+import { usePreviewDeposit, usePreviewRedeem } from "@/hooks/data/preview"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 
@@ -28,6 +29,7 @@ type TokenFormProps = {
   isLoadingPreview: boolean
   isLoadingTransaction: boolean
   isWithdraw?: boolean
+  preview: ReturnType<typeof usePreviewDeposit | typeof usePreviewRedeem>
   onSubmit: SubmitHandler<TokenFormValues>
 }
 
@@ -35,7 +37,6 @@ type TokenSelectMode = "inputToken" | "outputToken" | null
 
 export type TokenFormValues = {
   amountIn: string
-  amountOut: string
   inputToken: Address
   outputToken: Address
 }
@@ -48,6 +49,7 @@ const TokenForm: FC<TokenFormProps> = ({
   isLoadingPreview,
   isLoadingTransaction,
   isWithdraw = false,
+  preview,
   onSubmit,
 }) => {
   const [tokenSelectMode, setTokenSelectMode] = useState<TokenSelectMode>(null)
@@ -161,18 +163,14 @@ const TokenForm: FC<TokenFormProps> = ({
         </div>
 
         {/* outputToken input */}
-        <input
+        <div
           className={clsxm(
             "peer relative z-[2] col-start-1 row-start-2 block w-full text-ellipsis bg-transparent px-4 pb-4 pt-1 text-xl text-pink-100/60 placeholder-pink-100/60 focus:outline-none",
             { "animate-pulse": isLoadingPreview }
           )}
-          step="any"
-          type="text"
-          lang="en"
-          placeholder="0.0"
-          disabled={true}
-          {...form.register("amountOut")}
-        />
+        >
+          {preview.data?.resultFormatted ?? "0.0"}
+        </div>
         {/* outputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-2 flex items-start space-x-1 justify-self-end pr-4 pb-4">
           <TokenSelectButton

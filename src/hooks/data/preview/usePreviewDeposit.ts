@@ -11,6 +11,11 @@ import {
 
 import { useTxSettings } from "@/store/txSettings"
 
+// !NOTE
+// !The result of this hook must be account for slippage
+// * this is consumed in the VaultDepositForm & VaultWithdrawForm components
+// * the result is used as a minAmount value when preparing transactions
+
 export function usePreviewDeposit({
   enabled = true,
   type,
