@@ -48,21 +48,19 @@ async function getGlpPrice() {
     aum = Number(data?.glpStats[0].aumInUsdg)
     supply = Number(data?.glpStats[0].glpSupply)
   }
-  return aum/supply
+  return aum / supply
 }
 
 export default function useGlpPricer({
   primaryAsset,
   enabled,
 }: {
-  primaryAsset: Address | undefined,
+  primaryAsset: Address | undefined
   enabled: boolean
 }) {
-  return useQuery(
-    ["glpPricer", primaryAsset?? "0x"], 
-    {
-      queryFn: () => getGlpPrice(),
-      retry: false,
-      enabled: enabled,
+  return useQuery(["glpPricer", primaryAsset ?? "0x"], {
+    queryFn: () => getGlpPrice(),
+    retry: false,
+    enabled: enabled,
   })
 }

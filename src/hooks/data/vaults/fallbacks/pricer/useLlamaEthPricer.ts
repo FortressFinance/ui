@@ -14,14 +14,12 @@ export default function useLlamaEthPricer({
   primaryAsset,
   enabled,
 }: {
-  primaryAsset: Address | undefined,
+  primaryAsset: Address | undefined
   enabled: boolean
 }) {
-  return useQuery(
-    ["llamaEthPricer", primaryAsset?? "0x"], 
-    {
-      queryFn: () => getLlamaEthPrice(),
-      retry: false,
-      enabled: enabled,
+  return useQuery(["llamaEthPricer", primaryAsset ?? "0x"], {
+    queryFn: () => getLlamaEthPrice(),
+    retry: false,
+    enabled: enabled,
   })
 }

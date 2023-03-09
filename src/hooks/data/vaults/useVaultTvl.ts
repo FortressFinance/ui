@@ -1,6 +1,6 @@
 import { VaultProps } from "@/lib/types"
 import { useApiVaultDynamic } from "@/hooks/api"
-import useCurveVaultTvl from "@/hooks/data/vaults/fallbacks/tvl/useVaultTvlFallback"
+import useVaultTotalAprFallback from "@/hooks/data/vaults/fallbacks/tvl/useVaultTvlFallback"
 
 // TODO: Support Concentrator vaults
 
@@ -19,7 +19,7 @@ export function useVaultTvl({
   
   const isFallbackEnabled = apiQuery.isError
 
-  const vaultTotalAprFallback = useCurveVaultTvl({
+  const vaultTotalAprFallback = useVaultTotalAprFallback({
     asset: _address,
     vaultAddress,
     enabled: isFallbackEnabled ?? false,

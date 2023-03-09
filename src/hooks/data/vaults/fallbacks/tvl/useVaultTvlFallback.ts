@@ -1,5 +1,3 @@
-
-
 import { VaultDynamicProps } from "@/lib/types"
 import usePricer from "@/hooks/data/vaults/fallbacks/pricer/usePricer"
 import useVaultTotalAssets from "@/hooks/data/vaults/fallbacks/tvl/useVaultTotalAssets"
@@ -17,6 +15,8 @@ export default function useVaultTotalAprFallback({
   const { data: totalAssets, isLoading: isLoadingTotalAssets } = useVaultTotalAssets({ vaultAddress, enabled})
   return {
     isLoading: isLoadingPricer || isLoadingTotalAssets,
-    data: Number(primaryAssetPriceUsd ?? 0) * (Number(totalAssets === undefined? "0" : totalAssets.toString()) / 1e18)
+    data:
+      Number(primaryAssetPriceUsd ?? 0) *
+      (Number(totalAssets === undefined ? "0" : totalAssets.toString()) / 1e18),
   }
 }

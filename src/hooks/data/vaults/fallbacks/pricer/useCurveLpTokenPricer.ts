@@ -5,9 +5,9 @@ import { CURVE_GRAPH_URL } from "@/constant/env"
 
 async function getCurveLpTokenPrice(token: string) {
   const graphqlQuery = gql`
-    query Pool($lpToken: String!){
-      pools(where: { lpToken: $lpToken}) {
-          lpTokenUSDPrice
+    query Pool($lpToken: String!) {
+      pools(where: { lpToken: $lpToken }) {
+        lpTokenUSDPrice
       }
     }
   `
@@ -27,14 +27,12 @@ export default function useCurveLpTokenPricer({
   primaryAsset,
   enabled,
 }: {
-  primaryAsset: Address | undefined,
+  primaryAsset: Address | undefined
   enabled: boolean
 }) {
-  return useQuery(
-    ["curveLpTokenPricer", primaryAsset?? "0x"], 
-    {
-      queryFn: () => getCurveLpTokenPrice(primaryAsset?? "0x"),
-      retry: false,
-      enabled: enabled,
+  return useQuery(["curveLpTokenPricer", primaryAsset ?? "0x"], {
+    queryFn: () => getCurveLpTokenPrice(primaryAsset ?? "0x"),
+    retry: false,
+    enabled: enabled,
   })
 }
