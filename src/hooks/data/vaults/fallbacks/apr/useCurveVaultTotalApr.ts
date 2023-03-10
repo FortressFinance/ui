@@ -1,6 +1,6 @@
 import { VaultDynamicProps } from "@/lib/types"
-import useCurveVaultArbitrumTotalApr from "@/hooks/data/vaults/fallbacks/useCurveVaultArbitrumTotalApr"
-import useCurveVaultMainnetTotalApr from "@/hooks/data/vaults/fallbacks/useCurveVaultMainnetTotalApr"
+import useCurveVaultArbitrumTotalApr from "@/hooks/data/vaults/fallbacks/apr/useCurveVaultArbitrumTotalApr"
+import useCurveVaultMainnetTotalApr from "@/hooks/data/vaults/fallbacks/apr/useCurveVaultMainnetTotalApr"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
 export default function useCurveVaultTotalApr({

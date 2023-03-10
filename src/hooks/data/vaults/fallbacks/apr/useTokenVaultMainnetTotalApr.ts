@@ -1,6 +1,6 @@
 import { VaultDynamicProps } from "@/lib/types"
-import useTokenAuraBalVault from "@/hooks/data/vaults/fallbacks/useTokenAuraBalVault"
-import useTokenCvxCrvVault from "@/hooks/data/vaults/fallbacks/useTokenCvxCrvVault"
+import useTokenAuraBalVault from "@/hooks/data/vaults/fallbacks/apr/useTokenAuraBalVault"
+import useTokenCvxCrvVault from "@/hooks/data/vaults/fallbacks/apr/useTokenCvxCrvVault"
 import useTokenVaultSymbol from "@/hooks/data/vaults/fallbacks/useTokenVaultSymbol"
 
 export default function useTokenVaultMainnetTotalApr({

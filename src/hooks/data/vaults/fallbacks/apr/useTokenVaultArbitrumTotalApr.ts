@@ -1,5 +1,5 @@
 import { VaultDynamicProps } from "@/lib/types"
-import useTokenGlpVault from "@/hooks/data/vaults/fallbacks/useTokenGlpVault"
+import useTokenGlpVault from "@/hooks/data/vaults/fallbacks/apr/useTokenGlpVault"
 import useTokenVaultSymbol from "@/hooks/data/vaults/fallbacks/useTokenVaultSymbol"
 
 export default function useTokenVaultArbitrumTotalApr({

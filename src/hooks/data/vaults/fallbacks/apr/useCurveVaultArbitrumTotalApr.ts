@@ -5,13 +5,7 @@ import { VaultDynamicProps } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
 import { CONVEX_SIDECHAINS_URL } from "@/constant/env"
-
-const ARBI_CURVE_ADDRESS: Record<Address, Address> = {
-  "0x8e0B8c8BB9db49a46697F3a5Bb8A308e744821D2":
-    "0x960ea3e3C7FB317332d990873d354E18d7645590",
-  "0x7f90122BF0700F9E7e1F688fe926940E8839F353":
-    "0x7f90122BF0700F9E7e1F688fe926940E8839F353",
-}
+import { ARBI_CURVE_ADDRESS } from "@/constant/mapping"
 
 export default function useCurveVaultArbitrumTotalApr({
   asset,
