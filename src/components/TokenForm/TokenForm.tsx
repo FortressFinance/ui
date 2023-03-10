@@ -1,3 +1,4 @@
+import { BigNumber } from "ethers"
 import { FC, useState } from "react"
 import React from "react"
 import {
@@ -17,6 +18,7 @@ import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 import { AssetBalance } from "@/components/Asset"
 import Button from "@/components/Button"
 import ConnectWalletButton from "@/components/ConnectWallet/ConnectWalletButton"
+import Currency from "@/components/Currency"
 import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
 import TokenSelectModal from "@/components/TokenForm/TokenSelectModal"
 
@@ -86,6 +88,9 @@ const TokenForm: FC<TokenFormProps> = ({
   const { data: inputToken, isLoading: isLoadingInputToken } = useTokenOrNative(
     { address: inputTokenAddress }
   )
+  const { data: outputToken } = useTokenOrNative({
+    address: outputTokenAddress,
+  })
 
   const showMaxBtn =
     inputTokenBalanceOrShare?.value?.gt(0) &&
@@ -168,7 +173,10 @@ const TokenForm: FC<TokenFormProps> = ({
             { "animate-pulse": isLoadingPreview }
           )}
         >
-          {preview.data?.resultFormatted ?? "0.0"}
+          <Currency
+            amount={BigNumber.from(preview.data?.resultWei ?? "0")}
+            decimals={outputToken?.decimals ?? 18}
+          />
         </div>
         {/* outputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-2 flex items-start space-x-1 justify-self-end pr-4 pb-4">

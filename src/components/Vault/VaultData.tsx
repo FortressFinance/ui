@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers"
 import { FC } from "react"
 
 import { VaultProps } from "@/lib/types"
@@ -40,13 +39,7 @@ export const VaultTvl: FC<VaultProps> = (props) => {
 
   return (
     <Skeleton isLoading={poolId.isLoading || tvl.isLoading}>
-      <Currency
-        amount={BigNumber.from(0)}
-        // amount={BigNumber.from(String(tvl.data ?? 0))}
-        decimals={2}
-        symbol="$"
-        abbreviate
-      />
+      <Currency amount={tvl.data ?? 0} decimals={2} symbol="$" abbreviate />
     </Skeleton>
   )
 }
