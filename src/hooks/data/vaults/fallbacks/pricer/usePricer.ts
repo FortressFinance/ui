@@ -25,19 +25,29 @@ export default function usePricer({
 
   const notSupportedSource = () => 0
 
-  return useQuery(
-    ['pricer', source, primaryAsset], {
-    queryFn: source === "LLAMA_API" ? () => getLlamaApiPrice(primaryAsset ?? "0x") 
-      : source === "LLAMA_ARBI_API" ? () => getLlamaArbiApiPrice(primaryAsset ?? "0x")
-      : source === "ALADDIN_API" ? () => getAladdinApiPrice(primaryAsset ?? "0x")
-      : source === "APY_VISION_API" ? () => getApyVisionApiPrice(primaryAsset ?? "0x")
-      : source === "CURVE_FACTORY" ? () => getCurveFactoryPrice(primaryAsset ?? "0x")
-      : source === "CURVE_FACTORY_CRYPTO" ? () => getCurveFactoryCryptoPrice(primaryAsset ?? "0x")
-      : source === "CURVE_MAIN" ? () => getCurveMainPrice(primaryAsset ?? "0x")
-      : source === "LLAMA_ETH" ? () => getLlamaEthPrice()
-      : source === "GLP" ? () => getGlpPrice()
-      : source === "CURVE_LPTOKEN" ? () => getCurveLpTokenPrice(primaryAsset ?? "0x")
-      : notSupportedSource,
-    enabled: enabled
+  return useQuery(["pricer", source, primaryAsset], {
+    queryFn:
+      source === "LLAMA_API"
+        ? () => getLlamaApiPrice(primaryAsset ?? "0x")
+        : source === "LLAMA_ARBI_API"
+        ? () => getLlamaArbiApiPrice(primaryAsset ?? "0x")
+        : source === "ALADDIN_API"
+        ? () => getAladdinApiPrice(primaryAsset ?? "0x")
+        : source === "APY_VISION_API"
+        ? () => getApyVisionApiPrice(primaryAsset ?? "0x")
+        : source === "CURVE_FACTORY"
+        ? () => getCurveFactoryPrice(primaryAsset ?? "0x")
+        : source === "CURVE_FACTORY_CRYPTO"
+        ? () => getCurveFactoryCryptoPrice(primaryAsset ?? "0x")
+        : source === "CURVE_MAIN"
+        ? () => getCurveMainPrice(primaryAsset ?? "0x")
+        : source === "LLAMA_ETH"
+        ? () => getLlamaEthPrice()
+        : source === "GLP"
+        ? () => getGlpPrice()
+        : source === "CURVE_LPTOKEN"
+        ? () => getCurveLpTokenPrice(primaryAsset ?? "0x")
+        : notSupportedSource,
+    enabled: enabled,
   })
 }
