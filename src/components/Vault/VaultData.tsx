@@ -41,7 +41,8 @@ export const VaultTvl: FC<VaultProps> = (props) => {
   return (
     <Skeleton isLoading={poolId.isLoading || tvl.isLoading}>
       <Currency
-        amount={BigNumber.from(tvl.data ?? 0)}
+        amount={BigNumber.from(0)}
+        // amount={BigNumber.from(tvl.data ?? 0)}
         decimals={2}
         symbol="$"
         abbreviate
