@@ -2,7 +2,7 @@ import { fortressApi } from "@/lib/api/util"
 import { handledResponse } from "@/lib/api/util/handledResponse"
 import { PreviewTransactionGetterArgs } from "@/hooks/data/preview"
 
-type PreviewDepositData = {
+export type PreviewData = {
   id: number
   resultWei: string
   resultFormatted?: string
@@ -11,7 +11,7 @@ type PreviewDepositData = {
 export async function getCompounderVaultsPreviewDeposit(
   args: PreviewTransactionGetterArgs
 ) {
-  const resp = await fortressApi.post<PreviewDepositData>(
+  const resp = await fortressApi.post<PreviewData>(
     "AMM_Compounder/previewDeposit",
     args
   )
@@ -21,7 +21,7 @@ export async function getCompounderVaultsPreviewDeposit(
 export async function getTokenVaultsPreviewDeposit(
   args: PreviewTransactionGetterArgs
 ) {
-  const resp = await fortressApi.post<PreviewDepositData>(
+  const resp = await fortressApi.post<PreviewData>(
     "Token_Compounder/previewDeposit",
     args
   )
