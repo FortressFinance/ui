@@ -8,14 +8,8 @@ import { useVaultContract } from "@/hooks/contracts/useVaultContract"
 import { useFallbackReads } from "@/hooks/util"
 
 export function useVault({ asset, type, vaultAddress }: VaultProps) {
-  const apiCompoundersRequest = useApiCompounderVaults({ type })
-
   const vaultContract = useVaultContract(vaultAddress)
-
-  const apiCompounderVault = useApiCompounderVault({ asset, type })
-  const apiTokenVault = useApiTokenVault({ asset, type })
-
-  const fallbackRequest = useFallbackReads(
+  return useFallbackReads(
     {
       contracts: [
         { ...vaultContract, functionName: "name" },
@@ -31,14 +25,40 @@ export function useVault({ asset, type, vaultAddress }: VaultProps) {
         underlyingAssets: data[3],
       }),
     },
-    [apiCompoundersRequest, apiCompounderVault, apiTokenVault]
+    []
   )
 
-  return apiCompounderVault.isEnabled && !apiCompounderVault.isError
-    ? apiCompounderVault
-    : apiTokenVault.isEnabled && !apiTokenVault.isError
-    ? apiTokenVault
-    : fallbackRequest
+  // const apiCompoundersRequest = useApiCompounderVaults({ type })
+
+  // const vaultContract = useVaultContract(vaultAddress)
+
+  // const apiCompounderVault = useApiCompounderVault({ asset, type })
+  // const apiTokenVault = useApiTokenVault({ asset, type })
+
+  // const fallbackRequest = useFallbackReads(
+  //   {
+  //     contracts: [
+  //       { ...vaultContract, functionName: "name" },
+  //       { ...vaultContract, functionName: "symbol" },
+  //       { ...vaultContract, functionName: "decimals" },
+  //       { ...vaultContract, functionName: "getUnderlyingAssets" },
+  //     ],
+  //     enabled: !!asset && !!vaultAddress,
+  //     select: (data) => ({
+  //       name: data[0],
+  //       symbol: data[1],
+  //       decimals: data[2],
+  //       underlyingAssets: data[3],
+  //     }),
+  //   },
+  //   [apiCompoundersRequest, apiCompounderVault, apiTokenVault]
+  // )
+
+  // return apiCompounderVault.isEnabled && !apiCompounderVault.isError
+  //   ? apiCompounderVault
+  //   : apiTokenVault.isEnabled && !apiTokenVault.isError
+  //   ? apiTokenVault
+  //   : fallbackRequest
 }
 
 export type UseVaultResult = ReturnType<typeof useVault>["data"]
