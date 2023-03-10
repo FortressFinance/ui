@@ -1,10 +1,9 @@
 import { useContractRead } from "wagmi"
 
 import { VaultDynamicProps } from "@/lib/types"
-import useActiveChainId from "@/hooks/useActiveChainId"
+import { useVaultContract } from "@/hooks/contracts/useVaultContract"
 
 // work also for the token compounder
-import { AMMCompounderBase } from "@/constant/abi"
 
 export default function useVaultTotalAssets({
   vaultAddress,
@@ -13,12 +12,10 @@ export default function useVaultTotalAssets({
   vaultAddress: VaultDynamicProps["vaultAddress"]
   enabled: boolean
 }) {
-  const chainId = useActiveChainId()
+  const vaultContract = useVaultContract(vaultAddress)
 
   const totalAssetsQuery = useContractRead({
-    chainId,
-    abi: AMMCompounderBase,
-    address: vaultAddress,
+    ...vaultContract,
     functionName: "totalAssets",
     enabled: enabled,
   })

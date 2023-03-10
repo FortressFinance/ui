@@ -1,9 +1,10 @@
+import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
-import { Address, useQuery } from "wagmi"
+import { Address } from "wagmi"
 
 import { ALADDIN_URL } from "@/constant/env"
 
-async function getAladdinApiPrice(token: string) {
+export async function getAladdinApiPrice(token: string) {
   const resp = await axios.get(`${ALADDIN_URL}`)
   const pools = resp?.data?.data
   const pool = pools?.[`${token}`]

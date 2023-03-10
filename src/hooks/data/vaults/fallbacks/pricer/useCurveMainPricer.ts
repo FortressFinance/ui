@@ -1,9 +1,10 @@
+import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
-import { Address, useQuery } from "wagmi"
+import { Address } from "wagmi"
 
 import { CURVE_MAIN_URL } from "@/constant/env"
 
-async function getCurveMainPrice(token: string) {
+export async function getCurveMainPrice(token: string) {
   const resp = await axios.get(`${CURVE_MAIN_URL}`)
   const data = resp?.data?.data
   const poolData = data?.[`poolData`]

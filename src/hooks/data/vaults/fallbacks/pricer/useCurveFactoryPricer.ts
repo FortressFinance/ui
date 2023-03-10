@@ -1,9 +1,10 @@
+import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
-import { Address, useQuery } from "wagmi"
+import { Address } from "wagmi"
 
 import { CURVE_FACTORY_URL } from "@/constant/env"
 
-async function getCurveFactoryPrice(token: string) {
+export async function getCurveFactoryPrice(token: string) {
   const resp = await axios.get(`${CURVE_FACTORY_URL}`)
   const data = resp?.data?.data
   const poolData = data?.[`poolData`]

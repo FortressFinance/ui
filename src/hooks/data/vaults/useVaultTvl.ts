@@ -9,7 +9,7 @@ type UseVaultTvlParams = VaultProps & {
 }
 
 export function useVaultTvl({
-  asset: _address,
+  asset,
   vaultAddress,
   poolId,
   type,
@@ -20,7 +20,7 @@ export function useVaultTvl({
   const isFallbackEnabled = apiQuery.isError
 
   const vaultTotalAprFallback = useVaultTotalAprFallback({
-    asset: _address,
+    asset,
     vaultAddress,
     enabled: isFallbackEnabled ?? false,
   })

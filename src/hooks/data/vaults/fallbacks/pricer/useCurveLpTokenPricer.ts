@@ -1,9 +1,10 @@
+import { useQuery } from "@tanstack/react-query"
 import request, { gql } from "graphql-request"
-import { Address, useQuery } from "wagmi"
+import { Address } from "wagmi"
 
 import { CURVE_GRAPH_URL } from "@/constant/env"
 
-async function getCurveLpTokenPrice(token: string) {
+export async function getCurveLpTokenPrice(token: string) {
   const graphqlQuery = gql`
     query Pool($lpToken: String!) {
       pools(where: { lpToken: $lpToken }) {

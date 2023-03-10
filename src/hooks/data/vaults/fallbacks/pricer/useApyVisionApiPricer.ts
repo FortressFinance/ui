@@ -1,9 +1,10 @@
+import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
-import { Address, useQuery } from "wagmi"
+import { Address } from "wagmi"
 
 import { APY_VISION_URL } from "@/constant/env"
 
-async function getApyVisionApiPrice(token: string) {
+export async function getApyVisionApiPrice(token: string) {
   const resp = await axios.get(
     `${APY_VISION_URL}/${token}/0?type=0&source=balancerv2_eth`
   )

@@ -1,5 +1,6 @@
+import { useQuery } from "@tanstack/react-query"
 import request, { gql } from "graphql-request"
-import { Address, useQuery } from "wagmi"
+import { Address } from "wagmi"
 
 import { GXM_GRAPH_URL } from "@/constant/env"
 
@@ -31,7 +32,7 @@ export async function getGmxPriceData() {
   }
 }
 
-async function getGlpPrice() {
+export async function getGlpPrice() {
   const graphqlQuery = gql`
     {
       glpStats(orderBy: id, orderDirection: desc) {

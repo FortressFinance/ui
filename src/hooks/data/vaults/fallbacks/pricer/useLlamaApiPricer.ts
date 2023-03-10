@@ -1,5 +1,6 @@
+import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
-import { Address, useQuery } from "wagmi"
+import { Address } from "wagmi"
 
 import { LLAMA_URL } from "@/constant/env"
 
