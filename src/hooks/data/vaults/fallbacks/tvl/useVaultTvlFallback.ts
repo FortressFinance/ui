@@ -11,8 +11,12 @@ export default function useVaultTotalAprFallback({
   vaultAddress: VaultDynamicProps["vaultAddress"]
   enabled: boolean
 }) {
-  const { data: primaryAssetPriceUsd, isLoading: isLoadingPricer } = usePricer({primaryAsset: asset, enabled})
-  const { data: totalAssets, isLoading: isLoadingTotalAssets } = useVaultTotalAssets({ vaultAddress, enabled})
+  const { data: primaryAssetPriceUsd, isLoading: isLoadingPricer } = usePricer({
+    primaryAsset: asset,
+    enabled,
+  })
+  const { data: totalAssets, isLoading: isLoadingTotalAssets } =
+    useVaultTotalAssets({ vaultAddress, enabled })
   return {
     isLoading: isLoadingPricer || isLoadingTotalAssets,
     data:
