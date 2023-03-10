@@ -13,10 +13,9 @@ export async function getCompounderVaultsPreviewRedeem({
   return handledResponse(resp?.data?.data)
 }
 
-export async function getTokenVaultsPreviewRedeem({
-  slippage: _slippage,
-  ...args
-}: PreviewTransactionGetterArgs) {
+export async function getTokenVaultsPreviewRedeem(
+  args: PreviewTransactionGetterArgs
+) {
   const resp = await fortressApi.post<PreviewData>(
     "Token_Compounder/previewRedeem",
     args

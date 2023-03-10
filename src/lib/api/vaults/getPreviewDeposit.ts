@@ -5,7 +5,7 @@ import { PreviewTransactionGetterArgs } from "@/hooks/data/preview"
 export type PreviewData = {
   id: number
   resultWei: number
-  resultFormated: string
+  resultFormatted: string
 }
 
 export async function getCompounderVaultsPreviewDeposit(
@@ -18,10 +18,9 @@ export async function getCompounderVaultsPreviewDeposit(
   return handledResponse(resp?.data?.data)
 }
 
-export async function getTokenVaultsPreviewDeposit({
-  slippage: _slippage,
-  ...args
-}: PreviewTransactionGetterArgs) {
+export async function getTokenVaultsPreviewDeposit(
+  args: PreviewTransactionGetterArgs
+) {
   const resp = await fortressApi.post<PreviewData>(
     "Token_Compounder/previewDeposit",
     args

@@ -1,3 +1,4 @@
+import { BigNumber } from "ethers"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
@@ -7,7 +8,6 @@ import {
   useWaitForTransaction,
 } from "wagmi"
 
-import { toFixed } from "@/lib/api/util/format"
 import { parseTokenUnits } from "@/lib/helpers"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
@@ -31,7 +31,6 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const form = useForm<TokenFormValues>({
     defaultValues: {
       amountIn: "",
-      amountOut: "",
       inputToken: props.vaultAddress,
       outputToken: props.asset ?? "0x",
     },
@@ -41,30 +40,16 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
 
   // Watch form values
   const amountIn = form.watch("amountIn")
-  const amountOut = form.watch("amountOut")
   const outputTokenAddress = form.watch("outputToken")
   // Calculate + fetch information on selected tokens
   const outputIsLp = outputTokenAddress === props.asset
-  const { data: ybToken } = useTokenOrNative({ address: props.vaultAddress })
-  const { data: outputToken } = useTokenOrNative({
-    address: outputTokenAddress,
-  })
+  const { data: inputToken } = useTokenOrNative({ address: props.vaultAddress })
 
   // preview redeem currently returns a value with slippage accounted for
   // no math is required here
-  const minAmount = parseTokenUnits(amountOut, outputToken?.decimals)
-  const value = parseTokenUnits(amountIn, ybToken?.decimals)
+  const value = parseTokenUnits(amountIn, inputToken?.decimals)
 
-  // Enable/disable prepare hooks based on form state
-  const enablePrepareTx =
-    !form.formState.isValidating && form.formState.isValid && value.gt(0)
-  const enableRedeem = enablePrepareTx && outputIsLp
-  const enableRedeemUnderlying = enablePrepareTx && !outputIsLp
-
-  const onWithdrawSuccess = () => {
-    form.resetField("amountIn")
-    form.resetField("amountOut")
-  }
+  const onWithdrawSuccess = () => form.resetField("amountIn")
 
   // Preview redeem method
   const previewRedeem = usePreviewRedeem({
@@ -74,15 +59,17 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     amount: value.toString(),
     type: props.type,
     enabled: value.gt(0),
-    onSuccess: (data) => {
-      form.setValue("amountOut", toFixed(data.resultFormated ?? "0.0", 6))
-    },
-    onError: () => {
-      form.resetField("amountOut")
-    },
   })
 
   const vaultContract = useVaultContract(props.vaultAddress)
+  // Enable/disable prepare hooks based on form state
+  const enablePrepareTx =
+    !form.formState.isValidating &&
+    form.formState.isValid &&
+    !previewRedeem.isFetching &&
+    value.gt(0)
+  const enableRedeem = enablePrepareTx && outputIsLp
+  const enableRedeemUnderlying = enablePrepareTx && !outputIsLp
 
   // Configure redeem method
   const prepareRedeem = usePrepareContractWrite({
@@ -107,7 +94,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
       userAddress ?? "0x",
       userAddress ?? "0x",
       value,
-      minAmount,
+      BigNumber.from(previewRedeem.data?.resultWei ?? 0),
     ],
   })
   const redeemUnderlying = useContractWrite(prepareRedeemUnderlying.config)
@@ -148,6 +135,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
             previewRedeem.isFetching
           }
           onSubmit={onSubmitForm}
+          preview={previewRedeem}
           submitText="Withdraw"
           asset={props.asset}
           tokenAddresses={underlyingAssets}
