@@ -28,11 +28,12 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
   const vault = useVault(props)
-  const [invalidateHoldingsVaults, setInvalidateHoldingsVaults] = useState(false)
+  const [invalidateHoldingsVaults, setInvalidateHoldingsVaults] =
+    useState(false)
 
   const underlyingAssets = vault.data?.underlyingAssets
 
-  useInvalidateHoldingsVaults({ enabled: invalidateHoldingsVaults})
+  useInvalidateHoldingsVaults({ enabled: invalidateHoldingsVaults })
 
   // Configure form
   const form = useForm<TokenFormValues>({

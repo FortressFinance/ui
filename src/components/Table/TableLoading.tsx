@@ -13,23 +13,25 @@ export const TableLoading: FC<PropsWithChildren> = ({ children }) => {
 }
 
 type TableEmptyOrDisconnectedProps = {
-  heading: string,
+  heading: string
   footing?: ReactNode
 }
 
-export const TableEmpty: FC<PropsWithChildren<TableEmptyOrDisconnectedProps>> = ({
-  heading,
-  children,
-}) => {
-  return (<TableTemplate heading={heading}>{children}</TableTemplate>)
+export const TableEmpty: FC<
+  PropsWithChildren<TableEmptyOrDisconnectedProps>
+> = ({ heading, children }) => {
+  return <TableTemplate heading={heading}>{children}</TableTemplate>
 }
 
-export const TableDisconnected: FC<PropsWithChildren<TableEmptyOrDisconnectedProps>> = ({
-  heading,
-  children,
-}) => {
+export const TableDisconnected: FC<
+  PropsWithChildren<TableEmptyOrDisconnectedProps>
+> = ({ heading, children }) => {
   const connectBtn = <ConnectWalletButton className="col-span-full mt-3 w-72" />
-  return (<TableTemplate heading={heading} footing={connectBtn}>{children}</TableTemplate>)
+  return (
+    <TableTemplate heading={heading} footing={connectBtn}>
+      {children}
+    </TableTemplate>
+  )
 }
 
 const TableTemplate: FC<PropsWithChildren<TableEmptyOrDisconnectedProps>> = ({

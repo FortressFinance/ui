@@ -13,9 +13,10 @@ const HoldingsTable: FC = () => {
   // handle hydration mismatch
   const ready = useClientReady()
   const { isConnected } = useAccount()
-  
+
   const { data: compoundersList, isLoading } = useListCompounders()
-  const { data: holdingsVaults, isLoading: isLoadingHoldingsVault } = useHoldingsVaults()
+  const { data: holdingsVaults, isLoading: isLoadingHoldingsVault } =
+    useHoldingsVaults()
 
   const showLoadingState = isLoading || isLoadingHoldingsVault || !ready
 
@@ -28,14 +29,21 @@ const HoldingsTable: FC = () => {
         </TableDisconnected>
       ) : showLoadingState ? (
         <TableLoading>Loading holdings...</TableLoading>
-      ) : compoundersList?.length === undefined || compoundersList?.length === 0 || holdingsVaults?.vaults?.length === undefined || holdingsVaults?.vaults?.length === 0 ? (
+      ) : compoundersList?.length === undefined ||
+        compoundersList?.length === 0 ||
+        holdingsVaults?.vaults?.length === undefined ||
+        holdingsVaults?.vaults?.length === 0 ? (
         <TableEmpty heading="Well, this is awkward...">
-          You don't appear to have any deposits in our Vaults. There's an easy way
-          to change that.
+          You don't appear to have any deposits in our Vaults. There's an easy
+          way to change that.
         </TableEmpty>
       ) : (
         compoundersList?.map((vault, index) => (
-          <HoldingsRow key={`pool-${vault.vaultType}-${index}`} asset={vault.vaultAssetAddress} type={vault.vaultType} />
+          <HoldingsRow
+            key={`pool-${vault.vaultType}-${index}`}
+            asset={vault.vaultAssetAddress}
+            type={vault.vaultType}
+          />
         ))
       )}
     </VaultTable>

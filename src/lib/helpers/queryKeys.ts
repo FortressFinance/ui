@@ -38,10 +38,12 @@ export const queryKeys = createQueryKeyStore({
     }) => [chainId, compounderType],
   },
   holdings: {
-    list: ({ chainId, user }: { chainId: number; user: Address | undefined }) => [
-      "holdings",
+    list: ({
       chainId,
-      user ?? "0x",
-    ]
-  }
+      user,
+    }: {
+      chainId: number
+      user: Address | undefined
+    }) => ["holdings", chainId, user ?? "0x"],
+  },
 })

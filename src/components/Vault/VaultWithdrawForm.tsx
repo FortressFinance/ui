@@ -25,11 +25,12 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
   const vault = useVault(props)
-  const [invalidateHoldingsVaults, setInvalidateHoldingsVaults] = useState(false)
+  const [invalidateHoldingsVaults, setInvalidateHoldingsVaults] =
+    useState(false)
 
   const underlyingAssets = vault.data?.underlyingAssets
 
-  useInvalidateHoldingsVaults({ enabled: invalidateHoldingsVaults})
+  useInvalidateHoldingsVaults({ enabled: invalidateHoldingsVaults })
 
   // Configure form
   const form = useForm<TokenFormValues>({
