@@ -1,6 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
 import request, { gql } from "graphql-request"
-import { Address } from "wagmi"
 
 import { CURVE_GRAPH_URL } from "@/constant/env"
 
@@ -22,18 +20,4 @@ export async function getCurveLpTokenPrice(token: string) {
     price = Number(data?.pools[0].lpTokenUSDPrice)
   }
   return price
-}
-
-export default function useCurveLpTokenPricer({
-  primaryAsset,
-  enabled,
-}: {
-  primaryAsset: Address | undefined
-  enabled: boolean
-}) {
-  return useQuery(["curveLpTokenPricer", primaryAsset ?? "0x"], {
-    queryFn: () => getCurveLpTokenPrice(primaryAsset ?? "0x"),
-    retry: false,
-    enabled: enabled,
-  })
 }

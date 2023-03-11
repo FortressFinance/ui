@@ -1,6 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
 import request, { gql } from "graphql-request"
-import { Address } from "wagmi"
 
 import { GXM_GRAPH_URL } from "@/constant/env"
 
@@ -50,18 +48,4 @@ export async function getGlpPrice() {
     supply = Number(data?.glpStats[0].glpSupply)
   }
   return aum / supply
-}
-
-export default function useGlpPricer({
-  primaryAsset,
-  enabled,
-}: {
-  primaryAsset: Address | undefined
-  enabled: boolean
-}) {
-  return useQuery(["glpPricer", primaryAsset ?? "0x"], {
-    queryFn: () => getGlpPrice(),
-    retry: false,
-    enabled: enabled,
-  })
 }
