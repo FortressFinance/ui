@@ -8,7 +8,7 @@ export function useGetDollarValue({
   asset,
   amount,
 }: {
-  asset: Address | undefined,
+  asset: Address | undefined
   amount: number | string
 }) {
   // Preferred: API request
@@ -21,12 +21,12 @@ export function useGetDollarValue({
     enabled: isFallbackEnabled,
   })
 
-  const balanceUsdFallback = Number(primaryAssetPriceUsd ?? 0) * (Number(amount))
+  const balanceUsdFallback = Number(primaryAssetPriceUsd ?? 0) * Number(amount)
 
   if (isFallbackEnabled) {
     return {
       isLoading: isLoadingPricer,
-      data: balanceUsdFallback
+      data: balanceUsdFallback,
     }
   }
 
@@ -40,7 +40,7 @@ function useRequestDollarValue({
   asset,
   amount,
 }: {
-  asset: Address | undefined,
+  asset: Address | undefined
   amount: number | string
 }) {
   return useQuery(["requestDollarValue", asset ?? "0x"], {
@@ -57,13 +57,13 @@ async function getDollarValue({
   asset,
   amount,
 }: {
-  asset: Address | undefined,
+  asset: Address | undefined
   amount: number | string
 }) {
   const _amount = Number(amount)
-  const resp = await fortressApi.post<usdData>(
-    "protocol/get_usd_value",
-    { amount: _amount, token: asset }
-  )
+  const resp = await fortressApi.post<usdData>("protocol/get_usd_value", {
+    amount: _amount,
+    token: asset,
+  })
   return handledResponse(resp?.data?.data)
 }
