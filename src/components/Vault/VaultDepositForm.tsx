@@ -1,9 +1,7 @@
 import { BigNumber, ethers } from "ethers"
-import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
-  Address,
   erc20ABI,
   useAccount,
   useContractRead,
@@ -12,38 +10,31 @@ import {
   useWaitForTransaction,
 } from "wagmi"
 
-import { toFixed } from "@/lib/api/util/format"
+import { parseTokenUnits } from "@/lib/helpers"
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
+import { useVaultContract } from "@/hooks/contracts/useVaultContract"
 import { usePreviewDeposit } from "@/hooks/data/preview/usePreviewDeposit"
 import { useVault, useVaultPoolId } from "@/hooks/data/vaults"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
-import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
-import { vaultCompounderAbi, vaultTokenAbi } from "@/constant/abi"
-
 const VaultDepositForm: FC<VaultProps> = (props) => {
   const { data: poolId } = useVaultPoolId(props)
-  const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
   const vault = useVault(props)
 
   const underlyingAssets = vault.data?.underlyingAssets
-  const lpTokenOrAsset = isToken
-    ? underlyingAssets?.[underlyingAssets?.length - 1]
-    : props.asset
 
   // Configure form
   const form = useForm<TokenFormValues>({
     defaultValues: {
       amountIn: "",
-      amountOut: "",
-      inputToken: lpTokenOrAsset,
+      inputToken: props.asset,
       outputToken: props.vaultAddress,
     },
     mode: "all",
@@ -54,12 +45,13 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const amountIn = form.watch("amountIn")
   const inputTokenAddress = form.watch("inputToken")
   // Calculate + fetch information on selected tokens
-  const inputIsLp = inputTokenAddress === lpTokenOrAsset
+  const inputIsLp = inputTokenAddress === props.asset
   const inputIsEth = isEthTokenAddress(inputTokenAddress)
-  const { data: inputToken } = useTokenOrNative({
-    address: inputTokenAddress,
-  })
-  const value = parseUnits(amountIn || "0", inputToken?.decimals || 18)
+  const { data: inputToken } = useTokenOrNative({ address: inputTokenAddress })
+
+  // preview redeem currently returns a value with slippage accounted for
+  // no math is required here
+  const value = parseTokenUnits(amountIn, inputToken?.decimals)
 
   // Check token approval if necessary
   const { data: allowance, isLoading: isLoadingAllowance } = useContractRead({
@@ -73,10 +65,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   })
   const requiresApproval = inputIsEth ? false : allowance?.lt(value)
 
-  const onDepositSuccess = () => {
-    form.resetField("amountIn")
-    form.resetField("amountOut")
-  }
+  const onDepositSuccess = () => form.resetField("amountIn")
 
   // Configure approve method
   const prepareApprove = usePrepareContractWrite({
@@ -92,78 +81,55 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     hash: approve.data?.hash,
   })
 
-  const { isLoading: isLoadingPreview } = usePreviewDeposit({
+  const previewDeposit = usePreviewDeposit({
     chainId,
     id: poolId,
     token: inputTokenAddress,
     amount: value.toString(),
     type: props.type,
-    onSuccess: (data) => {
-      form.setValue("amountOut", toFixed(data.resultFormated ?? "0.0", 6))
-    },
-    onError: () => {
-      form.resetField("amountOut")
-    },
+    enabled: value.gt(0),
+  })
+
+  const vaultContract = useVaultContract(props.vaultAddress)
+  // Enable prepare hooks accordingly
+  const enablePrepareTx =
+    !form.formState.isValidating &&
+    form.formState.isValid &&
+    !previewDeposit.isFetching &&
+    value.gt(0)
+  const enableDeposit = enablePrepareTx && !requiresApproval && inputIsLp
+  const enableDepositUnderlying =
+    enablePrepareTx && !requiresApproval && !inputIsLp
+
+  // Configure depositLp method
+  const prepareDeposit = usePrepareContractWrite({
+    ...vaultContract,
+    functionName: "deposit",
+    enabled: enableDeposit,
+    args: [value, userAddress ?? "0x"],
+  })
+  const deposit = useContractWrite(prepareDeposit.config)
+  const waitDeposit = useWaitForTransaction({
+    hash: deposit.data?.hash,
+    onSuccess: onDepositSuccess,
   })
 
   // Configure depositUnderlying method
   const prepareDepositUnderlying = usePrepareContractWrite({
-    chainId,
-    abi: vaultCompounderAbi,
-    address: props.vaultAddress,
-    functionName: "depositSingleUnderlying",
-    enabled: value.gt(0) && !requiresApproval && !inputIsLp && !isToken,
-    args: [value, inputTokenAddress, userAddress ?? "0x", BigNumber.from(0)],
-    overrides: { value },
+    ...vaultContract,
+    functionName: "depositUnderlying",
+    enabled: enableDepositUnderlying,
+    args: [
+      inputTokenAddress,
+      userAddress ?? "0x",
+      value,
+      BigNumber.from(previewDeposit.data?.resultWei ?? "0"),
+    ],
+    overrides: inputIsEth ? { value } : {},
   })
   const depositUnderlying = useContractWrite(prepareDepositUnderlying.config)
   const waitDepositUnderlying = useWaitForTransaction({
     hash: depositUnderlying.data?.hash,
-    onSuccess: onDepositSuccess,
-  })
-
-  const prepareTokenDepositUnderlying = usePrepareContractWrite({
-    chainId,
-    abi: vaultTokenAbi,
-    address: props.vaultAddress,
-    functionName: "depositUnderlying",
-    enabled: value.gt(0) && !requiresApproval && !inputIsLp && isToken,
-    args: [value, userAddress ?? "0x", BigNumber.from(0)],
-  })
-  const tokenDepositUnderlying = useContractWrite(
-    prepareTokenDepositUnderlying.config
-  )
-  const waitTokenDepositUnderlying = useWaitForTransaction({
-    hash: tokenDepositUnderlying.data?.hash,
-    onSuccess: onDepositSuccess,
-  })
-
-  // Configure depositLp method
-  const prepareDepositLp = usePrepareContractWrite({
-    chainId,
-    abi: vaultCompounderAbi,
-    address: props.vaultAddress,
-    functionName: "deposit",
-    enabled: value.gt(0) && !requiresApproval && inputIsLp && !isToken,
-    args: [value, userAddress ?? "0x"],
-  })
-  const depositLp = useContractWrite(prepareDepositLp.config)
-  const waitDepositLp = useWaitForTransaction({
-    hash: depositLp.data?.hash,
-    onSuccess: onDepositSuccess,
-  })
-
-  const prepareTokenDepositLp = usePrepareContractWrite({
-    chainId,
-    abi: vaultCompounderAbi,
-    address: props.vaultAddress,
-    functionName: "deposit",
-    enabled: value.gt(0) && !requiresApproval && inputIsLp && isToken,
-    args: [value, userAddress ?? "0x"],
-  })
-  const tokenDepositLp = useContractWrite(prepareTokenDepositLp.config)
-  const waitTokenDepositLp = useWaitForTransaction({
-    hash: tokenDepositLp.data?.hash,
     onSuccess: onDepositSuccess,
   })
 
@@ -173,16 +139,14 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
       logger("Approving spend", inputTokenAddress)
       approve?.write?.()
     } else {
-      logger("Depositing", amountIn)
-      depositLp?.write
-        ? depositLp.write()
-        : depositUnderlying?.write
-        ? depositUnderlying.write()
-        : tokenDepositLp?.write
-        ? tokenDepositLp.write()
-        : tokenDepositUnderlying?.write
-        ? tokenDepositUnderlying.write()
-        : null
+      if (enableDeposit) {
+        logger("Depositing", amountIn)
+        deposit.write?.()
+      }
+      if (enableDepositUnderlying) {
+        logger("Depositing underlying tokens", amountIn)
+        depositUnderlying.write?.()
+      }
     }
   }
 
@@ -193,33 +157,26 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
       </h2>
       <FormProvider {...form}>
         <TokenForm
-          isLoadingPreview={isLoadingPreview}
+          isError={prepareDeposit.isError || prepareDepositUnderlying.isError}
+          isLoadingPreview={previewDeposit.isFetching}
           isLoadingTransaction={
             isLoadingAllowance ||
             prepareApprove.isLoading ||
-            prepareDepositLp.isLoading ||
-            prepareDepositUnderlying.isLoading ||
+            prepareDeposit.isLoading ||
+            prepareDepositUnderlying.isFetching ||
             approve.isLoading ||
-            depositLp.isLoading ||
+            deposit.isLoading ||
             depositUnderlying.isLoading ||
-            tokenDepositLp.isLoading ||
-            tokenDepositUnderlying.isLoading ||
             waitApprove.isLoading ||
-            waitDepositLp.isLoading ||
+            waitDeposit.isLoading ||
             waitDepositUnderlying.isLoading ||
-            waitTokenDepositLp.isLoading ||
-            waitDepositUnderlying.isLoading ||
-            waitTokenDepositUnderlying.isLoading
+            previewDeposit.isFetching
           }
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
-          tokenAddresses={[
-            ...(underlyingAssets?.filter(
-              (a: Address | undefined) => a !== lpTokenOrAsset
-            ) || []),
-          ]}
-          lpToken={lpTokenOrAsset}
-          vaultType={props.type}
+          preview={previewDeposit}
+          asset={props.asset}
+          tokenAddresses={underlyingAssets}
         />
       </FormProvider>
     </div>

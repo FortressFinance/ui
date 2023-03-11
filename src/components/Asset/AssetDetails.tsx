@@ -1,3 +1,4 @@
+import { BigNumber } from "ethers"
 import { FC } from "react"
 import { Address, useAccount } from "wagmi"
 
@@ -5,7 +6,7 @@ import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 import { useClientReady } from "@/hooks/util"
 
-import Currency from "@/components/Currency"
+import Currency, { CurrencyProps } from "@/components/Currency"
 import Skeleton from "@/components/Skeleton"
 
 export type AssetDetailsProps = {
@@ -19,22 +20,52 @@ export const AssetSymbol: FC<AssetDetailsProps> = ({ address, isLoading }) => {
     address,
   })
   return (
-    <Skeleton isLoading={!address || isLoading || isLoadingToken || !isReady}>
-      {isReady && token?.symbol ? token.symbol : "Loading..."}
+    <Skeleton isLoading={isLoading || isLoadingToken || !isReady}>
+      {isReady
+        ? address
+          ? token?.symbol ?? "Loading..."
+          : "???"
+        : "Loading..."}
     </Skeleton>
   )
 }
 
-export const AssetBalance: FC<AssetDetailsProps> = ({ address }) => {
+export const AssetName: FC<AssetDetailsProps> = ({ address, isLoading }) => {
+  const isReady = useClientReady()
+  const { data: token, isLoading: isLoadingToken } = useTokenOrNative({
+    address,
+  })
+  return (
+    <Skeleton isLoading={isLoading || isLoadingToken || !isReady}>
+      {isReady
+        ? address
+          ? token?.name ?? "Loading..."
+          : "Unknown token"
+        : "Loading..."}
+    </Skeleton>
+  )
+}
+
+type AssetBalanceProps = AssetDetailsProps &
+  Partial<Pick<CurrencyProps, "abbreviate">>
+
+export const AssetBalance: FC<AssetBalanceProps> = ({
+  address,
+  abbreviate,
+}) => {
   const isReady = useClientReady()
   const { isConnected } = useAccount()
   const { data: balance, isLoading } = useTokenOrNativeBalance({ address })
   return (
-    <Skeleton isLoading={!address || isLoading || !isReady}>
-      {!isReady || !isConnected ? (
+    <Skeleton isLoading={isLoading || !isReady}>
+      {!isReady || !isConnected || !address ? (
         <>N/A</>
       ) : (
-        <Currency abbreviate>{balance?.formatted ?? "0.0"}</Currency>
+        <Currency
+          amount={balance?.value ?? BigNumber.from(0)}
+          decimals={balance?.decimals ?? 18}
+          abbreviate={abbreviate}
+        />
       )}
     </Skeleton>
   )

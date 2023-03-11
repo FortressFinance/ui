@@ -1,47 +1,38 @@
 import { BigNumber } from "ethers"
-import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
-  Address,
   useAccount,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi"
 
-import { toFixed } from "@/lib/api/util/format"
+import { parseTokenUnits } from "@/lib/helpers"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
+import { useVaultContract } from "@/hooks/contracts/useVaultContract"
 import { usePreviewRedeem } from "@/hooks/data/preview/usePreviewRedeem"
 import { useVault, useVaultPoolId } from "@/hooks/data/vaults"
 import useActiveChainId from "@/hooks/useActiveChainId"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
-import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
-
-import { vaultCompounderAbi, vaultTokenAbi } from "@/constant/abi"
 
 const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const { data: poolId } = useVaultPoolId(props)
   const chainId = useActiveChainId()
-  const isToken = useIsTokenCompounder(props.type)
   const { address: userAddress } = useAccount()
   const vault = useVault(props)
 
   const underlyingAssets = vault.data?.underlyingAssets
-  const lpTokenOrAsset = isToken
-    ? underlyingAssets?.[underlyingAssets?.length - 1]
-    : props.asset
 
   // Configure form
   const form = useForm<TokenFormValues>({
     defaultValues: {
       amountIn: "",
-      amountOut: "",
       inputToken: props.vaultAddress,
-      outputToken: lpTokenOrAsset ?? "0x",
+      outputToken: props.asset ?? "0x",
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -51,108 +42,77 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const amountIn = form.watch("amountIn")
   const outputTokenAddress = form.watch("outputToken")
   // Calculate + fetch information on selected tokens
-  const outputIsLp = outputTokenAddress === lpTokenOrAsset
-  const { data: ybToken } = useTokenOrNative({ address: props.vaultAddress })
-  const value = parseUnits(amountIn || "0", ybToken?.decimals || 18)
+  const outputIsLp = outputTokenAddress === props.asset
+  const { data: inputToken } = useTokenOrNative({ address: props.vaultAddress })
 
-  const onWithdrawSuccess = () => {
-    form.resetField("amountIn")
-    form.resetField("amountOut")
-  }
+  // preview redeem currently returns a value with slippage accounted for
+  // no math is required here
+  const value = parseTokenUnits(amountIn, inputToken?.decimals)
+
+  const onWithdrawSuccess = () => form.resetField("amountIn")
 
   // Preview redeem method
-  const { isLoading: isLoadingPreview } = usePreviewRedeem({
+  const previewRedeem = usePreviewRedeem({
     chainId,
     id: poolId,
     token: outputTokenAddress,
     amount: value.toString(),
     type: props.type,
-    onSuccess: (data) => {
-      form.setValue("amountOut", toFixed(data.resultFormated ?? "0.0", 6))
-    },
-    onError: () => {
-      form.resetField("amountOut")
-    },
+    enabled: value.gt(0),
+  })
+
+  const vaultContract = useVaultContract(props.vaultAddress)
+  // Enable/disable prepare hooks based on form state
+  const enablePrepareTx =
+    !form.formState.isValidating &&
+    form.formState.isValid &&
+    !previewRedeem.isFetching &&
+    value.gt(0)
+  const enableRedeem = enablePrepareTx && outputIsLp
+  const enableRedeemUnderlying = enablePrepareTx && !outputIsLp
+
+  // Configure redeem method
+  const prepareRedeem = usePrepareContractWrite({
+    ...vaultContract,
+    functionName: "redeem",
+    enabled: enableRedeem,
+    args: [value, userAddress ?? "0x", userAddress ?? "0x"],
+  })
+  const redeem = useContractWrite(prepareRedeem.config)
+  const waitRedeem = useWaitForTransaction({
+    hash: redeem.data?.hash,
+    onSuccess: onWithdrawSuccess,
   })
 
   // Configure redeemUnderlying method
-  const prepareWithdrawUnderlying = usePrepareContractWrite({
-    chainId,
-    address: props.vaultAddress,
-    abi: vaultCompounderAbi,
-    functionName: "redeemSingleUnderlying",
-    enabled: value.gt(0) && !outputIsLp && !isToken,
+  const prepareRedeemUnderlying = usePrepareContractWrite({
+    ...vaultContract,
+    functionName: "redeemUnderlying",
+    enabled: enableRedeemUnderlying,
     args: [
-      value,
       outputTokenAddress,
       userAddress ?? "0x",
       userAddress ?? "0x",
-      BigNumber.from(0),
+      value,
+      BigNumber.from(previewRedeem.data?.resultWei ?? 0),
     ],
   })
-  const withdrawUnderlying = useContractWrite(prepareWithdrawUnderlying.config)
-  const waitWithdrawUnderlying = useWaitForTransaction({
-    hash: withdrawUnderlying.data?.hash,
-    onSuccess: onWithdrawSuccess,
-  })
-
-  const prepareTokenWithdrawUnderlying = usePrepareContractWrite({
-    chainId,
-    address: props.vaultAddress,
-    abi: vaultTokenAbi,
-    functionName: "redeemUnderlying",
-    enabled: value.gt(0) && !outputIsLp && isToken,
-    args: [value, userAddress ?? "0x", userAddress ?? "0x", BigNumber.from(0)],
-  })
-  const tokenWithdrawUnderlying = useContractWrite(
-    prepareTokenWithdrawUnderlying.config
-  )
-  const waitTokenWithdrawUnderlying = useWaitForTransaction({
-    hash: tokenWithdrawUnderlying.data?.hash,
-    onSuccess: onWithdrawSuccess,
-  })
-
-  // Configure redeemLp method
-  const prepareWithdrawLp = usePrepareContractWrite({
-    chainId,
-    address: props.vaultAddress,
-    abi: vaultCompounderAbi,
-    functionName: "redeem",
-    enabled: value.gt(0) && outputIsLp && !isToken,
-    args: [value, userAddress ?? "0x", userAddress ?? "0x"],
-  })
-  const withdrawLp = useContractWrite(prepareWithdrawLp.config)
-  const waitWithdrawLp = useWaitForTransaction({
-    hash: withdrawLp.data?.hash,
-    onSuccess: onWithdrawSuccess,
-  })
-
-  const prepareTokenWithdrawLp = usePrepareContractWrite({
-    chainId,
-    address: props.vaultAddress,
-    abi: vaultCompounderAbi,
-    functionName: "redeem",
-    enabled: value.gt(0) && outputIsLp && isToken,
-    args: [value, userAddress ?? "0x", userAddress ?? "0x"],
-  })
-  const tokenWithdrawLp = useContractWrite(prepareTokenWithdrawLp.config)
-  const waitTokenWithdrawLp = useWaitForTransaction({
-    hash: tokenWithdrawLp.data?.hash,
+  const redeemUnderlying = useContractWrite(prepareRedeemUnderlying.config)
+  const waitRedeemUnderlying = useWaitForTransaction({
+    hash: redeemUnderlying.data?.hash,
     onSuccess: onWithdrawSuccess,
   })
 
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
-    logger("Withdrawing", amountIn)
-    withdrawLp?.write
-      ? withdrawLp.write()
-      : withdrawUnderlying?.write
-      ? withdrawUnderlying.write()
-      : tokenWithdrawLp?.write
-      ? tokenWithdrawLp.write()
-      : tokenWithdrawUnderlying?.write
-      ? tokenWithdrawUnderlying.write()
-      : null
+    if (enableRedeem) {
+      logger("Redeeming", amountIn)
+      redeem.write?.()
+    }
+    if (enableRedeemUnderlying) {
+      logger("Redeeming underlying tokens", amountIn)
+      redeemUnderlying.write?.()
+    }
   }
 
   return (
@@ -163,29 +123,22 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
       <FormProvider {...form}>
         <TokenForm
           isWithdraw
-          isLoadingPreview={isLoadingPreview}
+          isError={prepareRedeem.isError || prepareRedeemUnderlying.isError}
+          isLoadingPreview={previewRedeem.isFetching}
           isLoadingTransaction={
-            isLoadingPreview ||
-            prepareWithdrawLp.isLoading ||
-            prepareWithdrawUnderlying.isLoading ||
-            withdrawLp.isLoading ||
-            withdrawUnderlying.isLoading ||
-            tokenWithdrawLp.isLoading ||
-            tokenWithdrawUnderlying.isLoading ||
-            waitWithdrawLp.isLoading ||
-            waitWithdrawUnderlying.isLoading ||
-            waitTokenWithdrawLp.isLoading ||
-            waitTokenWithdrawUnderlying.isLoading
+            prepareRedeem.isLoading ||
+            prepareRedeemUnderlying.isLoading ||
+            redeem.isLoading ||
+            redeemUnderlying.isLoading ||
+            waitRedeem.isLoading ||
+            waitRedeemUnderlying.isLoading ||
+            previewRedeem.isFetching
           }
           onSubmit={onSubmitForm}
+          preview={previewRedeem}
           submitText="Withdraw"
-          tokenAddresses={[
-            ...(underlyingAssets?.filter(
-              (a: Address | undefined) => a !== lpTokenOrAsset
-            ) || []),
-          ]}
-          lpToken={lpTokenOrAsset}
-          vaultType={props.type}
+          asset={props.asset}
+          tokenAddresses={underlyingAssets}
         />
       </FormProvider>
     </div>

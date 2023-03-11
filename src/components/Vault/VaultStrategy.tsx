@@ -116,33 +116,25 @@ const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
               <dt>Deposit</dt>
               <dd className="text-right">
                 <Skeleton isLoading={fees.isLoading}>
-                  <Percentage truncate>
-                    {fees.data?.depositFee ?? "0"}
-                  </Percentage>
+                  <Percentage>{fees.data?.depositFee ?? "0"}</Percentage>
                 </Skeleton>
               </dd>
               <dt>Withdrawal</dt>
               <dd className="text-right">
                 <Skeleton isLoading={fees.isLoading}>
-                  <Percentage truncate>
-                    {fees.data?.withdrawFee ?? "0"}
-                  </Percentage>
+                  <Percentage>{fees.data?.withdrawFee ?? "0"}</Percentage>
                 </Skeleton>
               </dd>
               <dt>Management</dt>
               <dd className="text-right">
                 <Skeleton isLoading={fees.isLoading}>
-                  <Percentage truncate>
-                    {fees.data?.platformFee ?? "0"}
-                  </Percentage>
+                  <Percentage>{fees.data?.platformFee ?? "0"}</Percentage>
                 </Skeleton>
               </dd>
               <dt>Performance</dt>
               <dd className="text-right">
                 <Skeleton isLoading={fees.isLoading}>
-                  <Percentage truncate>
-                    {fees.data?.performanceFee ?? "0"}
-                  </Percentage>
+                  <Percentage>{fees.data?.performanceFee ?? "0"}</Percentage>
                 </Skeleton>
               </dd>
             </dl>

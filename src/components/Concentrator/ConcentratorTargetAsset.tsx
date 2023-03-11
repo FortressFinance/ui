@@ -1,7 +1,8 @@
 import { FC } from "react"
+import { Address } from "wagmi"
 
-import { TargetAsset } from "@/lib/types"
 import {
+  useConcentratorTargetAssets,
   useConcentratorVault,
   useListConcentrators,
 } from "@/hooks/data/concentrators"
@@ -10,13 +11,14 @@ import { useFirstConcentrator } from "@/hooks/util"
 import { AssetBalance, AssetLogo, AssetSymbol } from "@/components/Asset"
 
 type ConcentratorTargetAssetProps = {
-  concentratorTargetAsset?: TargetAsset
+  concentratorTargetAsset?: Address
 }
 
 export const ConcentratorTargetAssetSymbol: FC<
   ConcentratorTargetAssetProps
 > = ({ concentratorTargetAsset }) => {
-  const concentratorsList = useListConcentrators()
+  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
     concentratorTargetAsset,
@@ -26,10 +28,15 @@ export const ConcentratorTargetAssetSymbol: FC<
     vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
     vaultType: firstConcentrator?.vaultType ?? "balancer",
   })
+
   return (
     <AssetSymbol
       address={concentrator.data?.rewardTokenAddress}
-      isLoading={concentratorsList.isLoading || concentrator.isLoading}
+      isLoading={
+        concentratorTargetAssets.isLoading ||
+        concentratorsList.isLoading ||
+        concentrator.isLoading
+      }
     />
   )
 }
@@ -37,7 +44,8 @@ export const ConcentratorTargetAssetSymbol: FC<
 export const ConcentratorTargetAssetBalance: FC<
   ConcentratorTargetAssetProps
 > = ({ concentratorTargetAsset }) => {
-  const concentratorsList = useListConcentrators()
+  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
     concentratorTargetAsset,
@@ -50,7 +58,11 @@ export const ConcentratorTargetAssetBalance: FC<
   return (
     <AssetBalance
       address={concentrator.data?.rewardTokenAddress}
-      isLoading={concentratorsList.isLoading || concentrator.isLoading}
+      isLoading={
+        concentratorTargetAssets.isLoading ||
+        concentratorsList.isLoading ||
+        concentrator.isLoading
+      }
     />
   )
 }
@@ -58,7 +70,8 @@ export const ConcentratorTargetAssetBalance: FC<
 export const ConcentratorTargetAssetLogo: FC<ConcentratorTargetAssetProps> = ({
   concentratorTargetAsset,
 }) => {
-  const concentratorsList = useListConcentrators()
+  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
     concentratorTargetAsset,
@@ -68,10 +81,5 @@ export const ConcentratorTargetAssetLogo: FC<ConcentratorTargetAssetProps> = ({
     vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
     vaultType: firstConcentrator?.vaultType ?? "balancer",
   })
-  return (
-    <AssetLogo
-      tokenAddress={concentrator.data?.rewardTokenAddress}
-      name="token"
-    />
-  )
+  return <AssetLogo tokenAddress={concentrator.data?.rewardTokenAddress} />
 }

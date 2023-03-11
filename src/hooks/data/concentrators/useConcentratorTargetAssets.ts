@@ -1,15 +1,20 @@
-import { TargetAsset } from "@/lib/types"
+import { Address } from "wagmi"
 
-// ! Mocked hook for use with new registry interface
+import { useRegistryContract } from "@/hooks/contracts"
+import { useFallbackRead } from "@/hooks/util"
 
-export function useConcentratorTargetAssets(options: {
-  onSuccess?: (data: TargetAsset[]) => void
-}) {
-  const data: TargetAsset[] = ["auraBAL", "ETH", "cvxCRV"]
-  options?.onSuccess?.(data)
-  return {
-    data,
-    isLoading: false,
-    isFetching: false,
-  }
+export function useConcentratorTargetAssets(
+  options: {
+    onSuccess?: (data: Address[]) => void
+  } = {}
+) {
+  const targetAssets = useFallbackRead(
+    {
+      ...useRegistryContract(),
+      functionName: "concentratorTargetAssets",
+      onSuccess: options.onSuccess,
+    },
+    []
+  )
+  return targetAssets
 }

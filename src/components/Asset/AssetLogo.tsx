@@ -1,60 +1,72 @@
 import Image from "next/image"
-import { CSSProperties, FC, useMemo, useState } from "react"
+import { FC, useState } from "react"
 import { BiErrorCircle } from "react-icons/bi"
 import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
-import useCurrencyLogoURI from "@/hooks/useCurrencyLogoURIs"
+import useActiveChainId from "@/hooks/useActiveChainId"
+import useTokenOrNative from "@/hooks/useTokenOrNative"
 
-import BalancerLogo from "~/images/assets/balancer.png"
-import CurveLogo from "~/images/assets/curve.png"
+import { chains } from "@/components/AppProviders"
+import Spinner from "@/components/Spinner"
 
-type AssetLogoProps = {
-  name?: string
+export type AssetLogoProps = {
   className?: string
-  style?: CSSProperties
   tokenAddress?: Address
 }
 
-export const AssetLogo: FC<AssetLogoProps> = ({
-  className,
-  name,
-  tokenAddress,
-  style,
-}) => {
+const TOKEN_LOGOS_API_URL =
+  "https://raw.githubusercontent.com/FortressFinance/assets/master/blockchains"
+
+const LOGOS_NETWORK_NAME: Record<string, string> = {
+  arbitrum: "arbitrum",
+  arbitrumFork: "arbitrum",
+  mainnet: "ethereum",
+  mainnetFork: "ethereum",
+}
+
+export const AssetLogo: FC<AssetLogoProps> = ({ className, tokenAddress }) => {
   const [isError, setIsError] = useState(false)
 
-  const { logoURI } = useCurrencyLogoURI(tokenAddress || "0x")
-  const isStatic = name === "curve" || name === "balancer"
-  const imageSrc = useMemo(() => {
-    switch (name) {
-      case "curve":
-        return CurveLogo
-      case "balancer":
-        return BalancerLogo
-      case "token":
-        return logoURI
-      default:
-        return ""
-    }
-  }, [name, logoURI])
+  const chainId = useActiveChainId()
+  const [supportedChain] = chains.filter((n) => n.id === chainId)
+  const logosNetworkName = LOGOS_NETWORK_NAME[supportedChain.network]
+
+  const { data: token } = useTokenOrNative({ address: tokenAddress })
+
+  const handleAssetLogoError = () => {
+    setIsError(true)
+    // eslint-disable-next-line no-console
+    console.error(
+      `Asset logo missing`,
+      token?.name ?? "Loading...",
+      tokenAddress
+    )
+  }
 
   return (
     <div
-      className={clsxm("relative rounded-full bg-white", className)}
-      style={style}
+      className={clsxm(
+        "relative overflow-hidden rounded-full bg-white p-[2px] ring-0 ring-inset ring-white",
+        className
+      )}
     >
-      {isError ? (
-        <BiErrorCircle className="h-full w-full fill-dark/50" />
+      {tokenAddress ? (
+        isError ? (
+          <BiErrorCircle className="col-span-full row-span-full h-full w-full fill-dark/50" />
+        ) : (
+          <Image
+            src={`${TOKEN_LOGOS_API_URL}/${logosNetworkName}/assets/${tokenAddress}/logo.png`}
+            alt=""
+            className="h-full w-full"
+            onError={handleAssetLogoError}
+            width={256}
+            height={256}
+            priority
+          />
+        )
       ) : (
-        <Image
-          src={imageSrc}
-          alt=""
-          className={clsxm({ "h-full w-full object-contain p-1": isStatic })}
-          onError={() => setIsError(true)}
-          fill
-          priority
-        />
+        <Spinner className="col-span-full row-span-full h-full w-full fill-dark/50" />
       )}
     </div>
   )

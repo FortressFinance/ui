@@ -43,6 +43,10 @@ export type UseWagmiQueryResult<TData, TError> = Pick<
   >
 }
 
+interface PreferredRequest extends QueryObserverBaseResult {
+  isEnabled: boolean
+}
+
 export function useFallbackRead<
   TAbi extends Abi | readonly unknown[],
   TFunctionName extends string,
@@ -52,10 +56,10 @@ export function useFallbackRead<
     enabled = true,
     ...contractReadConfig
   }: UseContractReadConfig<TAbi, TFunctionName, TSelectData> = {} as any,
-  preferredRequests: QueryObserverBaseResult[]
+  preferredRequests: PreferredRequest[]
 ) {
   const fallbackEnabled = preferredRequests.length
-    ? preferredRequests.some((q) => q.isError)
+    ? preferredRequests.some((q) => q.isEnabled && q.isError)
     : true
   return useContractRead<TAbi, TFunctionName, TSelectData>({
     ...(contractReadConfig as any),
@@ -76,11 +80,11 @@ export function useFallbackReads<
     enabled = true,
     ...contractReadsConfig
   }: UseContractReadsConfig<TContracts, TSelectData> = {} as any,
-  preferredRequests: QueryObserverBaseResult[]
+  preferredRequests: PreferredRequest[]
   // Need explicit type annotation so TypeScript doesn't expand return type into recursive conditional
 ): UseWagmiQueryResult<TSelectData, Error> {
   const fallbackEnabled = preferredRequests.length
-    ? preferredRequests.some((q) => q.isError)
+    ? preferredRequests.some((q) => q.isEnabled && q.isError)
     : true
   return useContractReads<TAbi, TFunctionName, TContracts, TSelectData>({
     ...contractReadsConfig,

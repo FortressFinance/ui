@@ -25,7 +25,6 @@ export function useApiVaultDynamic({
   const isToken = useIsTokenCompounder(type)
   const { address: user } = useAccount()
   const chainId = useActiveChainId()
-
   return useQuery({
     ...queryKeys.vaults.detail({ id, chainId, user, type }),
     queryFn: () =>

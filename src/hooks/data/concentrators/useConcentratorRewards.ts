@@ -9,7 +9,7 @@ import {
 
 import useActiveChainId from "@/hooks/useActiveChainId"
 
-import { concentratorAbi } from "@/constant/abi"
+import { AMMConcentratorBase } from "@/constant/abi"
 
 type ConcentratorRewardArgs = {
   concentratorAddress: Address | undefined
@@ -23,7 +23,7 @@ export function useConcentratorPendingReward({
   return useContractRead({
     address,
     chainId,
-    abi: concentratorAbi,
+    abi: AMMConcentratorBase,
     functionName: "pendingReward",
     args: [userAddress ?? "0x"],
     enabled: !!userAddress,
@@ -38,10 +38,10 @@ export function useConcentratorClaim({
   const prepareWrite = usePrepareContractWrite({
     address,
     chainId,
-    abi: concentratorAbi,
+    abi: AMMConcentratorBase,
     functionName: "claim",
     enabled: !!userAddress,
-    args: [userAddress ?? "0x"],
+    args: [userAddress ?? "0x", userAddress ?? "0x"],
   })
   const write = useContractWrite(prepareWrite.config)
   const waitWrite = useWaitForTransaction({ hash: write.data?.hash })

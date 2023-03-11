@@ -107,12 +107,9 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
 
 export default ConnectWalletModal
 
-type DisconnectWalletModalProps = ModalBaseProps & { onChange: () => void }
-
-export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
+export const DisconnectWalletModal: FC<ModalBaseProps> = ({
   isOpen,
   onClose,
-  onChange,
 }) => {
   const { address, connector: activeConnector } = useAccount()
   const { disconnect } = useDisconnect()
@@ -146,11 +143,6 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
     onClose()
   }
 
-  const changeHandler = () => {
-    disconnect()
-    onChange()
-  }
-
   const validateExplorerLink = (
     e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>,
     blockExplorerUrl: string
@@ -182,22 +174,13 @@ export const DisconnectWalletModal: FC<DisconnectWalletModalProps> = ({
             <span className="sm:block">{activeConnector?.name ?? "..."}</span>
           </div>
 
-          <div className="flex gap-3">
-            <Button
-              className="max-sm:w-1/2"
-              onClick={changeHandler}
-              variant="plain"
-            >
-              Change
-            </Button>
-            <Button
-              className="max-sm:w-1/2"
-              onClick={disconnectHandler}
-              variant="plain-negative"
-            >
-              Disconnect
-            </Button>
-          </div>
+          <Button
+            className="max-sm:w-1/2"
+            onClick={disconnectHandler}
+            variant="plain-negative"
+          >
+            Disconnect
+          </Button>
         </div>
 
         <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap py-2 pt-4 text-xl font-medium max-sm:text-center sm:text-2xl">

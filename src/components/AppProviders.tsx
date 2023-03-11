@@ -144,7 +144,7 @@ type EnabledNetworks = {
 
 const enabledProviderIds: string[] = []
 
-export const enabledNetworks: EnabledNetworks = networks.reduce(
+const enabledNetworks: EnabledNetworks = networks.reduce(
   (enabledNetworks, network) => {
     if (network.enabled) {
       const networkProviders = []
@@ -174,6 +174,7 @@ const { chains, provider, webSocketProvider } = configureChains(
   enabledNetworks.chains,
   enabledNetworks.providers
 )
+
 const wagmiClient = createClient({
   autoConnect: true,
   provider,
@@ -211,3 +212,5 @@ const AppProviders: FC<PropsWithChildren> = ({ children }) => {
 }
 
 export default AppProviders
+
+export { chains }

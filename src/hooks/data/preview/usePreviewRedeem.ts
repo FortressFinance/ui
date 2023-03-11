@@ -1,72 +1,50 @@
-import { Address } from "wagmi"
-
-import { PreviewData } from "@/lib/api/vaults/getCompounderVaultsPreviewDeposit"
-import { VaultType } from "@/lib/types"
-import { useBalancerPreviewRedeem } from "@/hooks/data/preview/useBalancerPreviewRedeem"
-import { useCurvePreviewRedeem } from "@/hooks/data/preview/useCurvePreviewRedeem"
-import { useTokenPreviewRedeem } from "@/hooks/data/preview/useTokenPreviewRedeem"
+import {
+  PreviewTransactionArgs,
+  useBalancerPreviewRedeem,
+  useCurvePreviewRedeem,
+  useTokenPreviewRedeem,
+} from "@/hooks/data/preview"
 import {
   useIsCurveCompounder,
   useIsTokenCompounder,
 } from "@/hooks/useVaultTypes"
 
-import { useSlippageTolerance } from "@/store/txSettings"
+import { useTxSettings } from "@/store/txSettings"
+
+// !NOTE
+// !The result of this hook must be account for slippage
+// * this is consumed in the VaultDepositForm & VaultWithdrawForm components
+// * the result is used as a minAmount value when preparing transactions
 
 export function usePreviewRedeem({
-  chainId,
-  id,
-  token = "0x",
-  amount,
+  enabled = true,
   type,
-  onSuccess,
-  onError,
-}: {
-  chainId: number
-  id: number | undefined
-  token: Address | undefined
-  amount: string
-  type: VaultType
-  onSuccess: ((data: PreviewData) => void) | undefined
-  onError: ((err: unknown) => void) | undefined
-}) {
+  ...args
+}: PreviewTransactionArgs) {
   const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)
 
-  const slippage = useSlippageTolerance()
+  const slippage = useTxSettings((store) => store.slippageTolerance)
 
-  const enableCurveAssetToYbToken = !isToken && isCurve
+  const enableCurveAssetToYbToken = enabled && !isToken && isCurve
   const curvePreviewQuery = useCurvePreviewRedeem({
-    chainId,
-    id,
-    token,
-    amount,
+    ...args,
     slippage,
     enabled: enableCurveAssetToYbToken,
-    onSuccess,
-    onError,
   })
 
-  const enableBalancerAssetToYbToken = !isToken && !isCurve
+  const enableBalancerAssetToYbToken = enabled && !isToken && !isCurve
   const balancerPreviewQuery = useBalancerPreviewRedeem({
-    chainId,
-    id,
-    token,
-    amount,
+    ...args,
     slippage,
     enabled: enableBalancerAssetToYbToken,
-    onSuccess,
-    onError,
   })
 
-  const enableTokenAssetToYbToken = isToken
+  const enableTokenAssetToYbToken = enabled && isToken
   const tokenPreviewQuery = useTokenPreviewRedeem({
-    chainId,
-    id,
-    token,
-    amount,
+    ...args,
+    slippage,
     enabled: enableTokenAssetToYbToken,
-    onSuccess,
-    onError,
   })
 
   if (enableCurveAssetToYbToken) {

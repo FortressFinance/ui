@@ -1,4 +1,4 @@
-import { parseUnits } from "ethers/lib/utils.js"
+import { BigNumber } from "ethers"
 import { FC, useState } from "react"
 import React from "react"
 import {
@@ -9,47 +9,49 @@ import {
 } from "react-hook-form"
 import { Address, useAccount } from "wagmi"
 
-import { toFixed } from "@/lib/api/util/format"
 import clsxm from "@/lib/clsxm"
-import { VaultType } from "@/lib/types"
+import { parseTokenUnits } from "@/lib/helpers"
+import { usePreviewDeposit, usePreviewRedeem } from "@/hooks/data/preview"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 
+import { AssetBalance } from "@/components/Asset"
 import Button from "@/components/Button"
 import ConnectWalletButton from "@/components/ConnectWallet/ConnectWalletButton"
-import Skeleton from "@/components/Skeleton"
+import Currency from "@/components/Currency"
 import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
 import TokenSelectModal from "@/components/TokenForm/TokenSelectModal"
 
 type TokenFormProps = {
+  asset: Address | undefined
+  submitText: string
+  tokenAddresses: Address[] | readonly Address[] | undefined
+  isError: boolean
   isLoadingPreview: boolean
   isLoadingTransaction: boolean
   isWithdraw?: boolean
-  submitText: string
-  tokenAddresses: Address[] | readonly Address[] | undefined
-  lpToken: Address | undefined
+  preview: ReturnType<typeof usePreviewDeposit | typeof usePreviewRedeem>
   onSubmit: SubmitHandler<TokenFormValues>
-  vaultType: VaultType
 }
 
 type TokenSelectMode = "inputToken" | "outputToken" | null
 
 export type TokenFormValues = {
   amountIn: string
-  amountOut: string
   inputToken: Address
   outputToken: Address
 }
 
 const TokenForm: FC<TokenFormProps> = ({
+  asset,
+  submitText,
+  tokenAddresses,
+  isError,
   isLoadingPreview,
   isLoadingTransaction,
   isWithdraw = false,
-  submitText,
-  tokenAddresses,
-  lpToken,
+  preview,
   onSubmit,
-  vaultType,
 }) => {
   const [tokenSelectMode, setTokenSelectMode] = useState<TokenSelectMode>(null)
 
@@ -63,6 +65,10 @@ const TokenForm: FC<TokenFormProps> = ({
     control: form.control,
   })
 
+  const revalidateAmountIn = () => {
+    if (amountIn !== "") form.trigger("amountIn")
+  }
+
   const onClickMax = () => {
     form.setValue("amountIn", inputTokenBalanceOrShare?.formatted ?? "0.0", {
       shouldDirty: true,
@@ -75,10 +81,16 @@ const TokenForm: FC<TokenFormProps> = ({
   const {
     data: inputTokenBalanceOrShare,
     isLoading: isLoadingInputTokenBalanceOrShare,
-  } = useTokenOrNativeBalance({ address: inputTokenAddress })
+  } = useTokenOrNativeBalance({
+    address: inputTokenAddress,
+    onSuccess: () => revalidateAmountIn(),
+  })
   const { data: inputToken, isLoading: isLoadingInputToken } = useTokenOrNative(
     { address: inputTokenAddress }
   )
+  const { data: outputToken } = useTokenOrNative({
+    address: outputTokenAddress,
+  })
 
   const showMaxBtn =
     inputTokenBalanceOrShare?.value?.gt(0) &&
@@ -101,13 +113,13 @@ const TokenForm: FC<TokenFormProps> = ({
             pattern: /^[0-9]*[.,]?[0-9]*$/i,
             validate: {
               positive: (amount) => Number(amount) > 0 || "Enter an amount",
-              lessThanBalance: (amount) =>
-                parseUnits(amount, inputToken?.decimals).lte(
-                  inputTokenBalanceOrShare?.value ?? 0
-                ) ||
-                `Insufficient ${inputToken?.symbol ?? ""} ${
-                  isWithdraw ? "share" : "balance"
-                }`,
+              lessThanBalance: (amount) => {
+                const isValid = parseTokenUnits(
+                  amount,
+                  inputToken?.decimals
+                ).lte(inputTokenBalanceOrShare?.value ?? 0)
+                return isValid ? undefined : "Insufficient balance"
+              },
             },
           }}
           render={({ field: { onChange, onBlur, value, name, ref } }) => (
@@ -155,18 +167,17 @@ const TokenForm: FC<TokenFormProps> = ({
         </div>
 
         {/* outputToken input */}
-        <input
+        <div
           className={clsxm(
             "peer relative z-[2] col-start-1 row-start-2 block w-full text-ellipsis bg-transparent px-4 pb-4 pt-1 text-xl text-pink-100/60 placeholder-pink-100/60 focus:outline-none",
             { "animate-pulse": isLoadingPreview }
           )}
-          step="any"
-          type="text"
-          lang="en"
-          placeholder="0.0"
-          disabled={true}
-          {...form.register("amountOut")}
-        />
+        >
+          <Currency
+            amount={BigNumber.from(preview.data?.resultWei ?? "0")}
+            decimals={outputToken?.decimals ?? 18}
+          />
+        </div>
         {/* outputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-2 flex items-start space-x-1 justify-self-end pr-4 pb-4">
           <TokenSelectButton
@@ -184,9 +195,7 @@ const TokenForm: FC<TokenFormProps> = ({
         <div className="relative z-[1] col-span-full col-start-1 row-start-3 h-[38px] px-4 pb-3 text-left align-bottom text-xs">
           <span className="text-pink-100">
             {!isWithdraw ? "Balance: " : "Share: "}
-            <Skeleton isLoading={isLoadingInputTokenBalanceOrShare}>
-              {toFixed(inputTokenBalanceOrShare?.formatted ?? "0.0", 6)}
-            </Skeleton>
+            <AssetBalance address={inputTokenAddress} />
           </span>
           <button
             className="ml-1.5 cursor-pointer rounded border border-orange-400 px-2 py-1 font-semibold text-pink-100"
@@ -208,20 +217,25 @@ const TokenForm: FC<TokenFormProps> = ({
         {isConnected ? (
           <Button
             className="col-span-full mt-3 grid"
-            disabled={!form.formState.isValid}
+            disabled={!form.formState.isValid || isError}
             isLoading={
-              isLoadingInputToken ||
-              isLoadingInputTokenBalanceOrShare ||
-              isLoadingTransaction
+              !isError &&
+              (isLoadingInputToken ||
+                isLoadingInputTokenBalanceOrShare ||
+                isLoadingTransaction)
             }
             type="submit"
           >
-            {form.formState.isDirty
+            {isError
+              ? "Error preparing transaction"
+              : form.formState.isDirty
               ? form.formState.isValid
                 ? submitText
-                : form.formState.errors.amountIn === undefined
-                ? "Enter an amount"
-                : form.formState.errors.amountIn.message ?? "Unknown error"
+                : form.formState.errors.amountIn
+                ? `Insufficient ${inputToken?.symbol ?? ""} ${
+                    isWithdraw ? "share" : "balance"
+                  }`
+                : "Enter an amount"
               : "Enter an amount"}
           </Button>
         ) : (
@@ -231,11 +245,11 @@ const TokenForm: FC<TokenFormProps> = ({
         {/* Token selection modal */}
         <TokenSelectModal
           controller={tokenSelectField}
+          asset={asset}
           isOpen={tokenSelectMode !== null}
-          onClose={() => setTokenSelectMode(null)}
           tokenAddresses={tokenAddresses}
-          lpToken={lpToken}
-          vaultType={vaultType}
+          onClose={() => setTokenSelectMode(null)}
+          onChangeToken={revalidateAmountIn}
         />
       </div>
     </form>

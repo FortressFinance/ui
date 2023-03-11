@@ -1,4 +1,6 @@
 export * from "./getAprFallback"
 export * from "./getCompounderVaultsStaticData"
+export * from "./getPreviewDeposit"
+export * from "./getPreviewRedeem"
 export * from "./getTokenVaultsStaticData"
 export * from "./getVaultDynamicData"

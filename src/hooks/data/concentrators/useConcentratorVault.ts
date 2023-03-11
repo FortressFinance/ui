@@ -1,7 +1,7 @@
 import { Address } from "wagmi"
 
-import { TargetAsset, VaultType } from "@/lib/types"
-import useRegistryContract from "@/hooks/useRegistryContract"
+import { VaultType } from "@/lib/types"
+import { useRegistryContract } from "@/hooks/contracts"
 import { useFallbackReads } from "@/hooks/util"
 
 export function useConcentratorVault({
@@ -9,7 +9,7 @@ export function useConcentratorVault({
   vaultAssetAddress,
   vaultType,
 }: {
-  concentratorTargetAsset?: TargetAsset
+  concentratorTargetAsset?: Address
   vaultAssetAddress?: Address
   vaultType?: VaultType
 }) {
@@ -22,30 +22,24 @@ export function useConcentratorVault({
       contracts: [
         {
           ...registryContract,
-          functionName:
-            concentratorTargetAsset === "auraBAL"
-              ? "getBalancerAuraBalConcentrator"
-              : concentratorTargetAsset === "cvxCRV"
-              ? "getCurveCvxCrvConcentrator"
-              : vaultType === "balancer"
-              ? "getBalancerEthConcentrators"
-              : "getCurveEthConcentrators",
-          args: [vaultAssetAddress ?? "0x"],
+          functionName: "getConcentrator",
+          args: [
+            vaultType === "curve",
+            concentratorTargetAsset ?? "0x",
+            vaultAssetAddress ?? "0x",
+          ],
         },
         {
           ...registryContract,
-          functionName:
-            concentratorTargetAsset === "auraBAL"
-              ? "getBalancerAuraBalConcentratorCompounder"
-              : concentratorTargetAsset === "cvxCRV"
-              ? "getCurveCvxCrvConcentratorCompounder"
-              : vaultType === "balancer"
-              ? "getBalancerEthConcentratorCompounder"
-              : "getCurveEthConcentratorsCompounder",
-          args: [vaultAssetAddress ?? "0x"],
+          functionName: "getConcentratorTargetVault",
+          args: [
+            vaultType === "curve",
+            concentratorTargetAsset ?? "0x",
+            vaultAssetAddress ?? "0x",
+          ],
         },
       ],
-      enabled: !!vaultAssetAddress && !!vaultType,
+      enabled: !!vaultType && !!concentratorTargetAsset && !!vaultAssetAddress,
       select: (data) => ({
         ybTokenAddress: data[0],
         rewardTokenAddress: data[1],

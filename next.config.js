@@ -5,24 +5,6 @@ const nextConfig = {
   },
   reactStrictMode: true,
   swcMinify: true,
-  // SVGR
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.svg$/i,
-      issuer: /\.[jt]sx?$/,
-      use: [
-        {
-          loader: "@svgr/webpack",
-          options: {
-            typescript: true,
-            icon: true,
-          },
-        },
-      ],
-    })
-
-    return config
-  },
   images: {
     remotePatterns: [
       {
@@ -69,6 +51,23 @@ const nextConfig = {
         permanent: true,
       },
     ]
+  },
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.svg$/i,
+      issuer: /\.[jt]sx?$/,
+      use: [
+        {
+          loader: "@svgr/webpack",
+          options: {
+            typescript: true,
+            icon: true,
+          },
+        },
+      ],
+    })
+
+    return config
   },
 }
 

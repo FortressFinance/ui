@@ -7,7 +7,7 @@ import PurpleModal, {
   PurpleModalHeader,
 } from "@/components/Modal/PurpleModal"
 
-import useConsentStorage from "@/store/useConsentStorage"
+import useConsentStorage from "@/store/consent"
 
 export const Consent: FC = () => {
   const consent = useConsentStorage((state) => state.consent)
@@ -42,35 +42,42 @@ export const Consent: FC = () => {
         <PurpleModalContent>
           <div className="w-full max-w-prose text-pink-100 max-md:text-xs md:leading-relaxed">
             <p className="mb-3">
-              Fortress Finance is a set of smart contracts made available by
-              Fortress.Finance on a voluntary, “as-is” and “as available” basis.
+              Fortress Finance is a web-based user interface that enables you to
+              interact with a decentralized, autonomous smart-contract system
+              deployed on EVM-compatible blockchain networks.
+            </p>
+            <p className="mb-2">
               By interacting or attempting to interact (in both cases,
-              “interacting”) with Fortress Finance, you confirm that you
-              understand and agree to these terms:
+              “interacting”) with Fortress Finance, you confirm that you not a
+              person subject or target of any sanctions, including a person that
+              is:
             </p>
-            <p className="mb-3">
-              Nature of Fortress Finance: The protocol is completely
-              decentralized, Fortress.Finance is not involved in any
-              transactions, whether as an intermediary, counterparty, advisor or
-              otherwise.
-            </p>
-            <p className="mb-3">
-              You are not a US Person; you are not a resident, national, or
-              agent of Antigua and Barbuda, Algeria, Bangladesh, Bolivia,
-              Belarus, Burundi, Burma (Myanmar), Cote D’Ivoire (Ivory Coast),
-              Crimea and Sevastopol, Cuba, Democratic Republic of Congo,
-              Ecuador, Iran, Iraq, Liberia, Libya, Magnitsky, Mali, Morocco,
-              Nepal, North Korea, Somalia, Sudan, Syria, Venezuela, Yemen,
-              Zimbabwe or any other country to which the United States, the
-              United Kingdom or the European Union embargoes goods or imposes
-              similar sanctions; you are not a member of any sanctions list or
-              equivalent maintained by the United States government, the United
-              Kingdom government, the European Union, or the United Nations; you
-              do intend to transact with any Restricted Person or Sanctions List
-              Person; you do not, and will not, use VPN software or any other
-              privacy or anonymization tools or techniques to circumvent, or
-              attempt to circumvent, any restrictions.
-            </p>
+            <ul className="list-inside list-disc">
+              <li>
+                named in any sanctions-related list maintained by the U.S.
+                Department of State; the U.S. Department of Commerce, including
+                the Bureau of Industry and Security’s Entity List and Denied
+                Persons List; or the U.S. Department of the Treasury, including
+                the OFAC Specially Designated Nationals and Blocked Persons
+                List, the Sectoral Sanctions Identifications List, and the
+                Foreign Sanctions Evaders List; or any similar list maintained
+                by any other relevant governmental authority;
+              </li>
+              <li>
+                located, organized or resident in a country, territory or
+                geographical region which is itself the subject or target of any
+                territory-wide sanctions (a “Restricted Territory”) (currently,
+                but not limited to the Crimea region of Ukraine, Cuba, Iran,
+                North Korea, and Syria); or
+              </li>
+              <li>
+                citizen or resident of, or person subject to jurisdiction of the
+                United States of America (including its territories: American
+                Samoa, Guam, Puerto Rico, the Northern Mariana Islands and the
+                U.S. Virgin Islands), and any jurisdiction in which the use of
+                the Platform is prohibited by applicable laws or regulation.
+              </li>
+            </ul>
           </div>
           <div className="mt-4 md:mt-6">
             <Button

@@ -1,7 +1,6 @@
 import { Address } from "wagmi"
 
-import { handledResponse } from "@/lib/api/util"
-import fortressApi from "@/lib/fortressApi"
+import { fortressApi, handledResponse } from "@/lib/api/util"
 
 export type VaultDynamicData = {
   id: number
