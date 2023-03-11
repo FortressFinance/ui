@@ -48,10 +48,7 @@ export const VaultDepositedLpTokens: FC<VaultProps> = (props) => {
   return (
     <div className="grid grid-rows-2">
       <div>
-        <AssetBalance
-          address={props.vaultAddress}
-          abbreviate
-        />
+        <AssetBalance address={props.vaultAddress} abbreviate />
       </div>
       <div className="text-xs">
         <AssetBalanceUsd

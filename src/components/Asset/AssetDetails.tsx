@@ -90,7 +90,7 @@ export const AssetBalanceUsd: FC<AssetBalanceUsdProps> = ({
       asset,
       amount: balance === undefined ? "0" : balance.formatted,
     })
-  
+
   const balanceUsdNumber = Number(balanceUsd ?? 0)
 
   return (
@@ -99,9 +99,7 @@ export const AssetBalanceUsd: FC<AssetBalanceUsdProps> = ({
         <>N/A</>
       ) : (
         <Currency
-          amount={isNaN(balanceUsdNumber)
-            ? 0
-            : balanceUsdNumber}
+          amount={isNaN(balanceUsdNumber) ? 0 : balanceUsdNumber}
           decimals={2}
           symbol="$"
           abbreviate={abbreviate}
