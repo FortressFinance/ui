@@ -50,10 +50,8 @@ export const AssetName: FC<AssetDetailsProps> = ({ address, isLoading }) => {
 type AssetBalanceProps = AssetDetailsProps &
   Partial<Pick<CurrencyProps, "abbreviate">>
 
-type AssetBalanceWithDollarProps = AssetDetailsProps & {
+type AssetBalanceUsdProps = AssetBalanceProps & {
   asset?: Address | undefined
-  abbreviate: CurrencyProps["abbreviate"]
-  abbreviateDollar: CurrencyProps["abbreviate"]
 }
 
 export const AssetBalance: FC<AssetBalanceProps> = ({
@@ -78,11 +76,10 @@ export const AssetBalance: FC<AssetBalanceProps> = ({
   )
 }
 
-export const AssetBalanceWithDollarValue: FC<AssetBalanceWithDollarProps> = ({
+export const AssetBalanceUsd: FC<AssetBalanceUsdProps> = ({
   asset,
   address,
   abbreviate,
-  abbreviateDollar,
 }) => {
   const isReady = useClientReady()
   const { isConnected } = useAccount()
@@ -93,29 +90,22 @@ export const AssetBalanceWithDollarValue: FC<AssetBalanceWithDollarProps> = ({
       asset,
       amount: balance === undefined ? "0" : balance.formatted,
     })
+  
+  const balanceUsdNumber = Number(balanceUsd ?? 0)
 
   return (
     <Skeleton isLoading={isLoading || isLoadingBalanceUsd || !isReady}>
       {!isReady || !isConnected || !address ? (
         <>N/A</>
       ) : (
-        <div className="grid grid-rows-2">
-          <div>
-            <Currency
-              amount={balance?.value ?? BigNumber.from(0)}
-              decimals={balance?.decimals ?? 18}
-              abbreviate={abbreviate}
-            />
-          </div>
-          <div className="text-xs">
-            <Currency
-              amount={balanceUsd ?? 0}
-              decimals={2}
-              symbol="$"
-              abbreviate={abbreviateDollar}
-            />
-          </div>
-        </div>
+        <Currency
+          amount={isNaN(balanceUsdNumber)
+            ? 0
+            : balanceUsdNumber}
+          decimals={2}
+          symbol="$"
+          abbreviate={abbreviate}
+        />
       )}
     </Skeleton>
   )
