@@ -9,7 +9,7 @@ import {
   useVaultTvl,
 } from "@/hooks/data/vaults"
 
-import { AssetBalance } from "@/components/Asset"
+import { AssetBalanceWithDollarValue } from "@/components/Asset"
 import Currency from "@/components/Currency"
 import Percentage from "@/components/Percentage"
 import Skeleton from "@/components/Skeleton"
@@ -54,10 +54,12 @@ export const VaultTvl: FC<VaultProps> = (props) => {
 export const VaultDepositedLpTokens: FC<VaultProps> = (props) => {
   const vault = useVault(props)
   return (
-    <AssetBalance
+    <AssetBalanceWithDollarValue
+      asset={props.asset}
       address={props.vaultAddress}
       isLoading={vault.isLoading}
       abbreviate
+      abbreviateDollar
     />
   )
 }
