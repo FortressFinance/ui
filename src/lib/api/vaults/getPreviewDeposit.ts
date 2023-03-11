@@ -4,8 +4,8 @@ import { PreviewTransactionGetterArgs } from "@/hooks/data/preview"
 
 export type PreviewData = {
   id: number
-  resultWei: number
-  resultFormatted: string
+  resultWei: string
+  resultFormatted?: string
 }
 
 export async function getCompounderVaultsPreviewDeposit(

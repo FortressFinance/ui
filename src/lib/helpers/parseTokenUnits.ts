@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils.js"
 export function parseTokenUnits(amount = "0", decimals?: number) {
   const amountNumber = Number(amount)
   return isNaN(amountNumber)
-    ? BigNumber.from(0)
+    ? BigNumber.from("0")
     : parseUnits(safeToFixed(amount, decimals ?? 18))
 }
 
