@@ -1,21 +1,16 @@
-import { BigNumber } from "ethers"
 import { FC } from "react"
-import { useAccount } from "wagmi"
 
+import { VaultProps } from "@/lib/types"
 import { useCompounderVault } from "@/hooks/data/compounders"
-import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
+import { useHoldingsVaults } from "@/hooks/data/holdings/useHoldingsVaults"
 
 import VaultRow from "@/components/Vault/VaultRow"
 
-import { YieldVaultRowProps } from "@/pages/app/yield"
-
-export const HoldingsRow: FC<YieldVaultRowProps> = (props) => {
-  const vaultAddress = useCompounderVault(props)
-  const { isConnected } = useAccount()
-  const { data: balance, isLoading } = useTokenOrNativeBalance({ address: vaultAddress.data })
-  const formatedBalance = BigNumber.from(balance?.formatted?? 0)
-  
-  return !isConnected || isLoading || formatedBalance.eq(BigNumber.from(0))
+export const HoldingsRow: FC<VaultProps> = (props) => {
+  const vaultAddress = useCompounderVault({ vaultAssetAddress: props.asset?? "0x", vaultType: props.type})  
+  const ybTokenAddress = vaultAddress.data?.ybTokenAddress
+  const { data: holdingsVaults, isLoading: isLoadingHoldingsVault } = useHoldingsVaults()
+  return isLoadingHoldingsVault || !(holdingsVaults?.vaults?? []).includes(ybTokenAddress?? "0x")
   ? null 
-  : <VaultRow {...props} vaultAddress={vaultAddress.data} />
+  : <VaultRow {...props} vaultAddress={ybTokenAddress}  />
 }

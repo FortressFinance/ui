@@ -1,5 +1,5 @@
 import { BigNumber, ethers } from "ethers"
-import { FC } from "react"
+import { FC, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
   erc20ABI,
@@ -15,6 +15,7 @@ import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
 import { useVaultContract } from "@/hooks/contracts/useVaultContract"
+import { useInvalidateHoldingsVaults } from "@/hooks/data/holdings/useHoldingsVaults"
 import { usePreviewDeposit } from "@/hooks/data/preview/usePreviewDeposit"
 import { useVault, useVaultPoolId } from "@/hooks/data/vaults"
 import useActiveChainId from "@/hooks/useActiveChainId"
@@ -27,8 +28,11 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
   const vault = useVault(props)
+  const [invalidateHoldingsVaults, setInvalidateHoldingsVaults] = useState(false)
 
   const underlyingAssets = vault.data?.underlyingAssets
+
+  useInvalidateHoldingsVaults({ enabled: invalidateHoldingsVaults})
 
   // Configure form
   const form = useForm<TokenFormValues>({
@@ -141,10 +145,12 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     } else {
       if (enableDeposit) {
         logger("Depositing", amountIn)
+        setInvalidateHoldingsVaults(true)
         deposit.write?.()
       }
       if (enableDepositUnderlying) {
         logger("Depositing underlying tokens", amountIn)
+        setInvalidateHoldingsVaults(true)
         depositUnderlying.write?.()
       }
     }

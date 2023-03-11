@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers"
-import { FC } from "react"
+import { FC, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
   useAccount,
@@ -12,6 +12,7 @@ import { parseTokenUnits } from "@/lib/helpers"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
 import { useVaultContract } from "@/hooks/contracts/useVaultContract"
+import { useInvalidateHoldingsVaults } from "@/hooks/data/holdings/useHoldingsVaults"
 import { usePreviewRedeem } from "@/hooks/data/preview/usePreviewRedeem"
 import { useVault, useVaultPoolId } from "@/hooks/data/vaults"
 import useActiveChainId from "@/hooks/useActiveChainId"
@@ -24,8 +25,11 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
   const vault = useVault(props)
+  const [invalidateHoldingsVaults, setInvalidateHoldingsVaults] = useState(false)
 
   const underlyingAssets = vault.data?.underlyingAssets
+
+  useInvalidateHoldingsVaults({ enabled: invalidateHoldingsVaults})
 
   // Configure form
   const form = useForm<TokenFormValues>({
@@ -107,10 +111,12 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
     if (enableRedeem) {
       logger("Redeeming", amountIn)
+      setInvalidateHoldingsVaults(true)
       redeem.write?.()
     }
     if (enableRedeemUnderlying) {
       logger("Redeeming underlying tokens", amountIn)
+      setInvalidateHoldingsVaults(true)
       redeemUnderlying.write?.()
     }
   }

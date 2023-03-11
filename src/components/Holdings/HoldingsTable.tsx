@@ -1,57 +1,42 @@
-import { Children, FC } from "react"
-import { Address } from "wagmi"
+import { FC } from "react"
+import { useAccount } from "wagmi"
 
-import { VaultType } from "@/lib/types"
 import { useListCompounders } from "@/hooks/data/compounders"
+import { useHoldingsVaults } from "@/hooks/data/holdings/useHoldingsVaults"
 import { useClientReady } from "@/hooks/util"
 
 import { HoldingsRow } from "@/components/Holdings/HoldingsRow"
-import { TableEmpty, TableLoading } from "@/components/Table"
+import { TableDisconnected, TableEmpty, TableLoading } from "@/components/Table"
 import { VaultTable } from "@/components/Vault/VaultTable"
 
 const HoldingsTable: FC = () => {
   // handle hydration mismatch
   const ready = useClientReady()
+  const { isConnected } = useAccount()
   
-  const curveVaultType = "curve"
-  const balancerVaultType = "balancer"
-  const tokenVaultType = "token"
-  const { data: curveCompoundersList, isLoading: curveIsLoading } = useListCompounders({ type: curveVaultType })
-  const { data: balancerCompoundersList, isLoading: balancerIsLoading } = useListCompounders({ type: balancerVaultType })
-  const { data: tokenCompoundersList, isLoading: tokenIsLoading } = useListCompounders({ type: tokenVaultType })
+  const { data: compoundersList, isLoading } = useListCompounders()
+  const { data: holdingsVaults, isLoading: isLoadingHoldingsVault } = useHoldingsVaults()
 
-  const compoundersList: { [key: string]: Address[] | readonly Address[] } = {}
-  if(curveCompoundersList){
-    compoundersList[curveVaultType] = curveCompoundersList
-  }
-  if(balancerCompoundersList){    
-    compoundersList[balancerVaultType] = balancerCompoundersList
-  }
-  if(tokenCompoundersList){    
-    compoundersList[tokenVaultType] = tokenCompoundersList
-  }
-
-  const showLoadingState = curveIsLoading || balancerIsLoading || tokenIsLoading || !ready
-  const vaultsWithDeposits = Object.entries(compoundersList).map(([key, value]) => (
-    value?.map((address, i) => (
-      <HoldingsRow key={`pool-${key}-${i}`} asset={address} type={key as VaultType} />
-    ))
-  ))
-  const flat = vaultsWithDeposits.flat()
-  flat.map(x => Children.map(x, child => console.log(">>>>>>", Children.toArray(x))))
+  const showLoadingState = isLoading || isLoadingHoldingsVault || !ready
 
   return (
     <VaultTable label="Holdings">
       {/* Table body */}
-      {showLoadingState ? (
+      {!isConnected ? (
+        <TableDisconnected heading="Oops! It looks like you are not connected...">
+          Connect your wallet to start exploring our Vaults.
+        </TableDisconnected>
+      ) : showLoadingState ? (
         <TableLoading>Loading holdings...</TableLoading>
-      ) : !Object.entries(compoundersList)?.length ? (
+      ) : compoundersList?.length === undefined || compoundersList?.length === 0 || holdingsVaults?.vaults?.length === undefined || holdingsVaults?.vaults?.length === 0 ? (
         <TableEmpty heading="Well, this is awkward...">
           You don't appear to have any deposits in our Vaults. There's an easy way
           to change that.
         </TableEmpty>
       ) : (
-        flat.filter(x => Children.count(x) !== 0).length == 0? <div>test</div> : <div>dfdfs</div>
+        compoundersList?.map((vault, index) => (
+          <HoldingsRow key={`pool-${vault.vaultType}-${index}`} asset={vault.vaultAssetAddress} type={vault.vaultType} />
+        ))
       )}
     </VaultTable>
   )
