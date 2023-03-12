@@ -22,7 +22,7 @@ export function useInvalidateHoldingsVaults() {
   const chainId = useActiveChainId()
   // Get QueryClient from the context
   const queryClient = useQueryClient()
-  
+
   const holdingsKey = queryKeys.holdings.list({
     chainId,
     user: userAddress,
