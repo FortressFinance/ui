@@ -29,16 +29,13 @@ const HoldingsTable: FC = () => {
         </TableDisconnected>
       ) : showLoadingState ? (
         <TableLoading>Loading holdings...</TableLoading>
-      ) : compoundersList?.length === undefined ||
-        compoundersList?.length === 0 ||
-        holdingsVaults?.vaults?.length === undefined ||
-        holdingsVaults?.vaults?.length === 0 ? (
+      ) : !compoundersList?.length || !holdingsVaults?.vaults?.length ? (
         <TableEmpty heading="Well, this is awkward...">
           You don't appear to have any deposits in our Vaults. There's an easy
           way to change that.
         </TableEmpty>
       ) : (
-        compoundersList?.map((vault, index) => (
+        compoundersList.map((vault, index) => (
           <HoldingsRow
             key={`pool-${vault.vaultType}-${index}`}
             asset={vault.vaultAssetAddress}

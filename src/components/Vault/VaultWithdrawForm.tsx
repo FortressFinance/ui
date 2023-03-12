@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers"
-import { FC, useState } from "react"
+import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
   useAccount,
@@ -25,12 +25,10 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
   const vault = useVault(props)
-  const [invalidateHoldingsVaults, setInvalidateHoldingsVaults] =
-    useState(false)
 
   const underlyingAssets = vault.data?.underlyingAssets
 
-  useInvalidateHoldingsVaults({ enabled: invalidateHoldingsVaults })
+  const invalidateHoldingsVaults = useInvalidateHoldingsVaults()
 
   // Configure form
   const form = useForm<TokenFormValues>({
@@ -112,12 +110,12 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
     if (enableRedeem) {
       logger("Redeeming", amountIn)
-      setInvalidateHoldingsVaults(true)
+      invalidateHoldingsVaults()
       redeem.write?.()
     }
     if (enableRedeemUnderlying) {
       logger("Redeeming underlying tokens", amountIn)
-      setInvalidateHoldingsVaults(true)
+      invalidateHoldingsVaults()
       redeemUnderlying.write?.()
     }
   }

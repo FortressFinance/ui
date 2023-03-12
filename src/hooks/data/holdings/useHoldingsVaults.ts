@@ -1,5 +1,4 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { useEffect } from "react"
 import { Address, useAccount } from "wagmi"
 
 import { handledResponse } from "@/lib/api/util"
@@ -18,21 +17,21 @@ export function useHoldingsVaults() {
   })
 }
 
-export function useInvalidateHoldingsVaults({ enabled }: { enabled: boolean }) {
+export function useInvalidateHoldingsVaults() {
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
   // Get QueryClient from the context
   const queryClient = useQueryClient()
+  
+  const holdingsKey = queryKeys.holdings.list({
+    chainId,
+    user: userAddress,
+  }).queryKey
 
-  useEffect(() => {
-    const holdingsKey = queryKeys.holdings.list({
-      chainId,
-      user: userAddress,
-    }).queryKey
-    if (enabled) {
-      queryClient.invalidateQueries({ queryKey: holdingsKey })
-    }
-  }, [chainId, enabled, queryClient, userAddress])
+  const invalidateHoldingsVaults = () => {
+    queryClient.invalidateQueries({ queryKey: holdingsKey })
+  }
+  return invalidateHoldingsVaults
 }
 
 type UserVault = {

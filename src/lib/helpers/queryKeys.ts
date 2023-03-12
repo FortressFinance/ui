@@ -44,6 +44,6 @@ export const queryKeys = createQueryKeyStore({
     }: {
       chainId: number
       user: Address | undefined
-    }) => ["holdings", chainId, user ?? "0x"],
+    }) => [chainId, user ?? "0x"],
   },
 })

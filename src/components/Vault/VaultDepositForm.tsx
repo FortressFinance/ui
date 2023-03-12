@@ -1,5 +1,5 @@
 import { BigNumber, ethers } from "ethers"
-import { FC, useState } from "react"
+import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
   erc20ABI,
@@ -28,12 +28,10 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
   const vault = useVault(props)
-  const [invalidateHoldingsVaults, setInvalidateHoldingsVaults] =
-    useState(false)
 
   const underlyingAssets = vault.data?.underlyingAssets
 
-  useInvalidateHoldingsVaults({ enabled: invalidateHoldingsVaults })
+  const invalidateHoldingsVaults = useInvalidateHoldingsVaults()
 
   // Configure form
   const form = useForm<TokenFormValues>({
@@ -146,12 +144,12 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     } else {
       if (enableDeposit) {
         logger("Depositing", amountIn)
-        setInvalidateHoldingsVaults(true)
+        invalidateHoldingsVaults()
         deposit.write?.()
       }
       if (enableDepositUnderlying) {
         logger("Depositing underlying tokens", amountIn)
-        setInvalidateHoldingsVaults(true)
+        invalidateHoldingsVaults()
         depositUnderlying.write?.()
       }
     }

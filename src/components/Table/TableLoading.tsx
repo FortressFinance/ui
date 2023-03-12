@@ -26,9 +26,8 @@ export const TableEmpty: FC<
 export const TableDisconnected: FC<
   PropsWithChildren<TableEmptyOrDisconnectedProps>
 > = ({ heading, children }) => {
-  const connectBtn = <ConnectWalletButton className="col-span-full mt-3 w-72" />
   return (
-    <TableTemplate heading={heading} footing={connectBtn}>
+    <TableTemplate heading={heading} footing={<ConnectWalletButton className="col-span-full mt-3 w-72" />}>
       {children}
     </TableTemplate>
   )
