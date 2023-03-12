@@ -2,10 +2,10 @@ import axios from "axios"
 import { BigNumber } from "ethers"
 import request, { gql } from "graphql-request"
 
+import { getGmxPriceData } from "@/lib/api/pricer/getGlpPrice"
+import { getLlamaApiPrice } from "@/lib/api/pricer/getLlamaApiPrice"
+import { getLlamaEthPrice } from "@/lib/api/pricer/getLlamaEthPrice"
 import { VaultProps } from "@/lib/types"
-import { getGmxPriceData } from "@/hooks/data/vaults/fallbacks/pricer/useGlpPricer"
-import { getLlamaApiPrice } from "@/hooks/data/vaults/fallbacks/pricer/useLlamaApiPricer"
-import { getLlamaEthPrice } from "@/hooks/data/vaults/fallbacks/pricer/useLlamaEthPricer"
 
 import {
   AURA_ADDRESS,

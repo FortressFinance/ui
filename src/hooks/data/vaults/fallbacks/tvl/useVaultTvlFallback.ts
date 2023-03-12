@@ -2,7 +2,7 @@ import { VaultDynamicProps } from "@/lib/types"
 import usePricer from "@/hooks/data/vaults/fallbacks/pricer/usePricer"
 import useVaultTotalAssets from "@/hooks/data/vaults/fallbacks/tvl/useVaultTotalAssets"
 
-export default function useVaultTotalAprFallback({
+export default function useVaultTvlFallback({
   asset,
   vaultAddress,
   enabled,

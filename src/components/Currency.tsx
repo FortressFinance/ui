@@ -1,6 +1,10 @@
 import { BigNumber } from "ethers"
-import { formatUnits, parseUnits } from "ethers/lib/utils.js"
+import { formatUnits } from "ethers/lib/utils.js"
 import { FC, useMemo } from "react"
+
+import { getBrowserLocales } from "@/lib/api/util/getBrowserLocales"
+
+import { SUPPORTED_LOCALES } from "@/constant/locales"
 
 export type CurrencyProps = {
   abbreviate?: boolean
@@ -34,32 +38,27 @@ const Currency: FC<CurrencyProps> = ({
 
 export default Currency
 
-const SUFFIXES = ["", "K", "M", "B", "T"]
+const currentLocale = () => {
+  const userLocales = getBrowserLocales()
+  return userLocales?.filter((l) => SUPPORTED_LOCALES.includes(l))
+}
 
 const abbreviated = (amount: number) => {
-  let i = 0
-  let value = amount
-
-  while (value >= 1000) {
-    i++
-    value = value / 1000
-  }
-
-  let str = String(value).match(/^-?\d+(?:\.\d{0,3})?/)?.[0]
-  if (str?.indexOf(".") === -1) str += ".000"
-  return str + SUFFIXES[i]
+  const locales = currentLocale()
+  const formatter = Intl.NumberFormat(locales, {
+    notation: "compact",
+    maximumFractionDigits: 3,
+  })
+  return formatter.format(amount).toLocaleUpperCase()
 }
 
 const abbreviatedBig = (amount: BigNumber, decimals: number) => {
-  let i = 0
-  let value = amount
-
-  while (value.gte(parseUnits("1000", decimals))) {
-    i++
-    value = value.div(1000)
-  }
-
-  let str = formatUnits(value, decimals).match(/^-?\d+(?:\.\d{0,3})?/)?.[0]
-  if (str?.indexOf(".") === -1) str += ".000"
-  return str + SUFFIXES[i]
+  const locales = currentLocale()
+  const formatter = Intl.NumberFormat(locales, {
+    notation: "compact",
+    maximumFractionDigits: 3,
+  })
+  return formatter
+    .format(Number(formatUnits(amount, decimals)))
+    .toLocaleUpperCase()
 }

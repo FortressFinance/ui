@@ -2,6 +2,7 @@ import { BigNumber } from "ethers"
 import { FC } from "react"
 import { Address, useAccount } from "wagmi"
 
+import { useGetDollarValue } from "@/hooks/data/vaults/fallbacks/pricer/useGetDollarValue"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 import { useClientReady } from "@/hooks/util"
@@ -49,6 +50,10 @@ export const AssetName: FC<AssetDetailsProps> = ({ address, isLoading }) => {
 type AssetBalanceProps = AssetDetailsProps &
   Partial<Pick<CurrencyProps, "abbreviate">>
 
+type AssetBalanceUsdProps = AssetBalanceProps & {
+  asset?: Address | undefined
+}
+
 export const AssetBalance: FC<AssetBalanceProps> = ({
   address,
   abbreviate,
@@ -64,6 +69,39 @@ export const AssetBalance: FC<AssetBalanceProps> = ({
         <Currency
           amount={balance?.value ?? BigNumber.from(0)}
           decimals={balance?.decimals ?? 18}
+          abbreviate={abbreviate}
+        />
+      )}
+    </Skeleton>
+  )
+}
+
+export const AssetBalanceUsd: FC<AssetBalanceUsdProps> = ({
+  asset,
+  address,
+  abbreviate,
+}) => {
+  const isReady = useClientReady()
+  const { isConnected } = useAccount()
+  const { data: balance, isLoading } = useTokenOrNativeBalance({ address })
+
+  const { data: balanceUsd, isLoading: isLoadingBalanceUsd } =
+    useGetDollarValue({
+      asset,
+      amount: balance === undefined ? "0" : balance.formatted,
+    })
+
+  const balanceUsdNumber = Number(balanceUsd ?? 0)
+
+  return (
+    <Skeleton isLoading={isLoading || isLoadingBalanceUsd || !isReady}>
+      {!isReady || !isConnected || !address ? (
+        <>N/A</>
+      ) : (
+        <Currency
+          amount={isNaN(balanceUsdNumber) ? 0 : balanceUsdNumber}
+          decimals={2}
+          symbol="$"
           abbreviate={abbreviate}
         />
       )}
