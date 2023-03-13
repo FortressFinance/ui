@@ -15,6 +15,7 @@ import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
 import { useVaultContract } from "@/hooks/contracts/useVaultContract"
+import { useInvalidateHoldingsVaults } from "@/hooks/data/holdings/useHoldingsVaults"
 import { usePreviewDeposit } from "@/hooks/data/preview/usePreviewDeposit"
 import { useVault, useVaultPoolId } from "@/hooks/data/vaults"
 import useActiveChainId from "@/hooks/useActiveChainId"
@@ -29,6 +30,8 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const vault = useVault(props)
 
   const underlyingAssets = vault.data?.underlyingAssets
+
+  const invalidateHoldingsVaults = useInvalidateHoldingsVaults()
 
   // Configure form
   const form = useForm<TokenFormValues>({
@@ -141,10 +144,12 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     } else {
       if (enableDeposit) {
         logger("Depositing", amountIn)
+        invalidateHoldingsVaults()
         deposit.write?.()
       }
       if (enableDepositUnderlying) {
         logger("Depositing underlying tokens", amountIn)
+        invalidateHoldingsVaults()
         depositUnderlying.write?.()
       }
     }

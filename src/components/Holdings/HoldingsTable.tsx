@@ -1,29 +1,49 @@
 import { FC } from "react"
+import { useAccount } from "wagmi"
 
-import { TableEmpty, TableHeader, TableRow } from "@/components/Table"
+import { useListCompounders } from "@/hooks/data/compounders"
+import { useHoldingsVaults } from "@/hooks/data/holdings/useHoldingsVaults"
+import { useClientReady } from "@/hooks/util"
+
+import { HoldingsRow } from "@/components/Holdings/HoldingsRow"
+import { TableDisconnected, TableEmpty, TableLoading } from "@/components/Table"
+import { VaultTable } from "@/components/Vault/VaultTable"
 
 const HoldingsTable: FC = () => {
-  return (
-    <div className="" role="table">
-      {/* Table headings */}
-      <div className="max-md:hidden" role="rowgroup">
-        <TableRow className="rounded-b-none border-b border-b-pink/30">
-          <TableHeader>Holdings</TableHeader>
-          <TableHeader className="text-center">APY</TableHeader>
-          <TableHeader className="text-center">TVL</TableHeader>
-          <TableHeader className="text-center">Balance</TableHeader>
-          <TableHeader>
-            <span className="sr-only">Vault actions</span>
-          </TableHeader>
-        </TableRow>
-      </div>
+  // handle hydration mismatch
+  const ready = useClientReady()
+  const { isConnected } = useAccount()
 
+  const { data: compoundersList, isLoading } = useListCompounders()
+  const { data: holdingsVaults, isLoading: isLoadingHoldingsVault } =
+    useHoldingsVaults()
+
+  const showLoadingState = isLoading || isLoadingHoldingsVault || !ready
+
+  return (
+    <VaultTable label="Holdings">
       {/* Table body */}
-      <TableEmpty heading="Well, this is awkward...">
-        You don't appear to have any deposits in our Vaults. There's an easy way
-        to change that.
-      </TableEmpty>
-    </div>
+      {!isConnected ? (
+        <TableDisconnected heading="Oops! It looks like you are not connected...">
+          Connect your wallet to start exploring our Vaults.
+        </TableDisconnected>
+      ) : showLoadingState ? (
+        <TableLoading>Loading holdings...</TableLoading>
+      ) : !compoundersList?.length || !holdingsVaults?.vaults?.length ? (
+        <TableEmpty heading="Well, this is awkward...">
+          You don't appear to have any deposits in our Vaults. There's an easy
+          way to change that.
+        </TableEmpty>
+      ) : (
+        compoundersList.map((vault, index) => (
+          <HoldingsRow
+            key={`pool-${vault.vaultType}-${index}`}
+            asset={vault.vaultAssetAddress}
+            type={vault.vaultType}
+          />
+        ))
+      )}
+    </VaultTable>
   )
 }
 

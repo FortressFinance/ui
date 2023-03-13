@@ -12,6 +12,7 @@ import { parseTokenUnits } from "@/lib/helpers"
 import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
 import { useVaultContract } from "@/hooks/contracts/useVaultContract"
+import { useInvalidateHoldingsVaults } from "@/hooks/data/holdings/useHoldingsVaults"
 import { usePreviewRedeem } from "@/hooks/data/preview/usePreviewRedeem"
 import { useVault, useVaultPoolId } from "@/hooks/data/vaults"
 import useActiveChainId from "@/hooks/useActiveChainId"
@@ -26,6 +27,8 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const vault = useVault(props)
 
   const underlyingAssets = vault.data?.underlyingAssets
+
+  const invalidateHoldingsVaults = useInvalidateHoldingsVaults()
 
   // Configure form
   const form = useForm<TokenFormValues>({
@@ -107,10 +110,12 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
     if (enableRedeem) {
       logger("Redeeming", amountIn)
+      invalidateHoldingsVaults()
       redeem.write?.()
     }
     if (enableRedeemUnderlying) {
       logger("Redeeming underlying tokens", amountIn)
+      invalidateHoldingsVaults()
       redeemUnderlying.write?.()
     }
   }
