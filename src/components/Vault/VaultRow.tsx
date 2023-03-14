@@ -38,7 +38,7 @@ const VaultRow: FC<VaultProps> = (props) => {
   return (
     <Disclosure as={Fragment} key={props.asset}>
       <TableRow
-        className="md:py-6 md:first:rounded-t-none"
+        className={clsxm("md:py-6 md:first:rounded-t-none", props.extendedClassName)}
         onClick={toggleVaultOpen}
         disabled={isLoading}
       >
@@ -106,6 +106,7 @@ const VaultRow: FC<VaultProps> = (props) => {
         <TableCell className="pointer-events-none text-center max-md:hidden">
           <VaultDepositedLpTokens {...props} />
         </TableCell>
+        {props.extendedColumns}
 
         {/* Desktop: Action buttons */}
         <TableCell className="relative flex items-center max-md:hidden">

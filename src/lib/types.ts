@@ -1,3 +1,4 @@
+import { ReactNode } from "react"
 import { Address } from "wagmi"
 
 import { CompounderVaultStaticData } from "@/lib/api/vaults"
@@ -8,6 +9,8 @@ export type VaultProps = {
   asset?: Address
   type: VaultType
   vaultAddress?: Address
+  extendedColumns?: ReactNode
+  extendedClassName?:string
 }
 
 export type VaultDynamicProps = VaultProps & {

@@ -6,7 +6,7 @@ import { useHoldingsVaults } from "@/hooks/data/holdings/useHoldingsVaults"
 import { useClientReady } from "@/hooks/util"
 
 import { HoldingsRow } from "@/components/Holdings/HoldingsRow"
-import { TableDisconnected, TableEmpty, TableLoading } from "@/components/Table"
+import { TableDisconnected, TableEmpty, TableHeader, TableLoading } from "@/components/Table"
 import { VaultTable } from "@/components/Vault/VaultTable"
 
 const HoldingsTable: FC = () => {
@@ -21,7 +21,7 @@ const HoldingsTable: FC = () => {
   const showLoadingState = isLoading || isLoadingHoldingsVault || !ready
 
   return (
-    <VaultTable label="Holdings">
+    <VaultTable label="Holdings" extendedColumns={<TableHeader className="text-center">Earn</TableHeader>} extendedClassName="md:grid-cols-[4fr,1fr,1fr,1fr,1fr,3.5rem]">
       {/* Table body */}
       {!isConnected ? (
         <TableDisconnected heading="Oops! It looks like you are not connected...">
