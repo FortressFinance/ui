@@ -88,7 +88,7 @@ export const AssetBalanceUsd: FC<AssetBalanceUsdProps> = ({
   const { data: balanceUsd, isLoading: isLoadingBalanceUsd } =
     useGetDollarValue({
       asset,
-      amount: balance === undefined ? "0" : balance.formatted,
+      amount: balance === undefined ? "0" : balance.value.toString(),
     })
 
   const balanceUsdNumber = Number(balanceUsd ?? 0)
