@@ -113,3 +113,11 @@ export const ButtonLink: FC<PropsWithChildren<ButtonLinkProps>> = ({
     </Link>
   )
 }
+
+interface AnimatedButtonLinkProps extends ButtonProps {
+  className?: string
+  external?: boolean
+  href?: string
+  size?: ButtonSize
+  variant?: ButtonVariant
+}

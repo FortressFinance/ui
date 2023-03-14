@@ -2,7 +2,7 @@ import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from "next"
 import Image from "next/image"
 import Link from "next/link"
 
-import { ButtonLink } from "@/components/Button"
+import Button from "@/components/Button"
 import ExternalLinks from "@/components/ExternalLinks"
 import Seo from "@/components/Seo"
 
@@ -61,14 +61,14 @@ const HomePage: NextPage<
                 Fortress provides composable financial products for passive DeFi
                 investors.
               </p>
-              <ButtonLink
-                className="mt-6 px-8 lg:mt-8"
-                href={`${appUrl}/yield`}
-                size="large"
-                external
-              >
-                Launch App
-              </ButtonLink>
+              <a href={`${appUrl}/yield`} target="_self">
+                <Button
+                  className="mt-6 px-8 lg:mt-8 enabled:hover:-translate-y-0.5 transition-transform"
+                  size="large"
+                >
+                  Launch DApp
+                </Button>
+              </a>
             </div>
 
             {/* Desktop sword image */}
