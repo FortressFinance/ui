@@ -32,7 +32,7 @@ const buttonClasses = (
   variant: ButtonVariant = "base"
 ) =>
   clsxm(
-    "inline-grid grid-cols-1 grid-rows-1 font-medium items-center justify-center rounded px-5 py-3 disabled:opacity-75",
+    "inline-grid grid-cols-1 grid-rows-1 font-medium items-center justify-center rounded px-5 py-3 disabled:opacity-75 enabled:hover:-translate-y-0.5 transition-transform",
     {
       "text-lg lg:text-xl": size === "large",
       "text-sm p-3": size === "small",
@@ -105,7 +105,10 @@ export const ButtonLink: FC<PropsWithChildren<ButtonLinkProps>> = ({
 }) => {
   return (
     <Link
-      className={buttonClasses(className, false, size, variant)}
+      className={clsxm(
+        buttonClasses(className, false, size, variant),
+        "hover:-translate-y-0.5"
+      )}
       {...props}
       {...(external ? { target: "_blank" } : {})}
     >
