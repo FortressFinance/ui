@@ -64,7 +64,7 @@ export const AssetBalance: FC<AssetBalanceProps> = ({
   return (
     <Skeleton isLoading={isLoading || !isReady}>
       {!isReady || !isConnected || !address ? (
-        <>N/A</>
+        <>—</>
       ) : (
         <Currency
           amount={balance?.value ?? BigNumber.from(0)}
@@ -96,7 +96,7 @@ export const AssetBalanceUsd: FC<AssetBalanceUsdProps> = ({
   return (
     <Skeleton isLoading={isLoading || isLoadingBalanceUsd || !isReady}>
       {!isReady || !isConnected || !address ? (
-        <>N/A</>
+        <>—</>
       ) : (
         <Currency
           amount={isNaN(balanceUsdNumber) ? 0 : balanceUsdNumber}
