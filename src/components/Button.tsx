@@ -44,7 +44,7 @@ const buttonClasses = (
       "bg-black ring ring-1 ring-black ring-inset text-white":
         variant === "plain-negative",
       "cursor-wait": isLoading,
-      "disabled:cursor-not-allowed": !isLoading
+      "disabled:cursor-not-allowed": !isLoading,
     },
     className
   )
@@ -105,7 +105,10 @@ export const ButtonLink: FC<PropsWithChildren<ButtonLinkProps>> = ({
 }) => {
   return (
     <Link
-      className={clsxm(buttonClasses(className, false, size, variant), "hover:-translate-y-0.5")}
+      className={clsxm(
+        buttonClasses(className, false, size, variant),
+        "hover:-translate-y-0.5"
+      )}
       {...props}
       {...(external ? { target: "_blank" } : {})}
     >
