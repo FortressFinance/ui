@@ -127,7 +127,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
       userAddress ?? "0x",
       value,
       BigNumber.from(
-        previewDeposit.data?.primaryAssetWei ??
+        previewDeposit.data?.minAmountWei ??
           previewDeposit.data?.resultWei ??
           "0"
       ),

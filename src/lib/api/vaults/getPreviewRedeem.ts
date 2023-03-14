@@ -6,7 +6,7 @@ import { PreviewTransactionGetterArgs } from "@/hooks/data/preview"
 type PreviewRedeemData = {
   id: number
   asset_amount: number
-  primaryAssetWei?: string
+  minAmountWei?: string
   resultWei: string
   ybToken_address: Address
   ybToken_symbol: string
@@ -38,7 +38,7 @@ function normalizeResponse(data?: PreviewRedeemData | null) {
   return data
     ? {
         id: data.id,
-        primaryAssetWei: data.primaryAssetWei,
+        minAmountWei: data.minAmountWei,
         resultWei: data.resultWei,
       }
     : undefined

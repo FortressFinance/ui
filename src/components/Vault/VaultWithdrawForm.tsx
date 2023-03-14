@@ -98,9 +98,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
       userAddress ?? "0x",
       value,
       BigNumber.from(
-        previewRedeem.data?.primaryAssetWei ??
-          previewRedeem.data?.resultWei ??
-          0
+        previewRedeem.data?.minAmountWei ?? previewRedeem.data?.resultWei ?? 0
       ),
     ],
   })
