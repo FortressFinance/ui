@@ -21,6 +21,7 @@ export interface ButtonProps
     HTMLButtonElement
   > {
   isLoading?: boolean
+  isHover?: boolean
   size?: ButtonSize
   variant?: ButtonVariant
 }
@@ -28,6 +29,7 @@ export interface ButtonProps
 const buttonClasses = (
   className?: string,
   isLoading?: boolean,
+  isHover?: boolean,
   size: ButtonSize = "base",
   variant: ButtonVariant = "base"
 ) =>
@@ -45,20 +47,21 @@ const buttonClasses = (
         variant === "plain-negative",
       "cursor-wait": isLoading,
       "disabled:cursor-not-allowed": !isLoading,
+      "enabled:hover":isHover
     },
     className
   )
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { children, className, disabled, isLoading, size, variant, ...props },
+    { children, className, disabled, isLoading, isHover, size, variant, ...props },
     ref
   ) => {
     return (
       <button
         ref={ref}
         aria-disabled={disabled || isLoading}
-        className={buttonClasses(className, isLoading, size, variant)}
+        className={buttonClasses(className, isLoading, isHover, size, variant)}
         disabled={disabled || isLoading}
         {...props}
       >
@@ -105,19 +108,11 @@ export const ButtonLink: FC<PropsWithChildren<ButtonLinkProps>> = ({
 }) => {
   return (
     <Link
-      className={buttonClasses(className, false, size, variant)}
+      className={buttonClasses(className, false, true, size, variant)}
       {...props}
       {...(external ? { target: "_blank" } : {})}
     >
       {children}
     </Link>
   )
-}
-
-interface AnimatedButtonLinkProps extends ButtonProps {
-  className?: string
-  external?: boolean
-  href?: string
-  size?: ButtonSize
-  variant?: ButtonVariant
 }
