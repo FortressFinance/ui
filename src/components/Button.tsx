@@ -47,14 +47,23 @@ const buttonClasses = (
         variant === "plain-negative",
       "cursor-wait": isLoading,
       "disabled:cursor-not-allowed": !isLoading,
-      "enabled:hover":isHover
+      "enabled:hover": isHover,
     },
     className
   )
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { children, className, disabled, isLoading, isHover, size, variant, ...props },
+    {
+      children,
+      className,
+      disabled,
+      isLoading,
+      isHover,
+      size,
+      variant,
+      ...props
+    },
     ref
   ) => {
     return (

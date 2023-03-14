@@ -62,7 +62,7 @@ const HomePage: NextPage<
                 investors.
               </p>
               <ButtonLink
-                className="mt-6 px-8 lg:mt-8 hover:-translate-y-0.5 transition-transform"
+                className="mt-6 px-8 transition-transform hover:-translate-y-0.5 lg:mt-8"
                 href={`${appUrl}/yield`}
                 size="large"
               >
