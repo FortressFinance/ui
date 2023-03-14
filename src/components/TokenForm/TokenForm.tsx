@@ -169,7 +169,7 @@ const TokenForm: FC<TokenFormProps> = ({
         {/* outputToken input */}
         <div
           className={clsxm(
-            "peer relative z-[2] col-start-1 row-start-2 block w-full text-ellipsis bg-transparent px-4 pb-4 pt-1 text-xl text-pink-100/60 placeholder-pink-100/60 focus:outline-none",
+            "peer relative z-[2] col-start-1 row-start-2 block w-full overflow-hidden text-ellipsis bg-transparent px-4 pb-4 pt-1 text-xl text-pink-100/60 placeholder-pink-100/60 focus:outline-none",
             { "animate-pulse": isLoadingPreview }
           )}
         >
