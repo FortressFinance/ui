@@ -45,7 +45,7 @@ async function getUserVaults({
   chainId: number
   user: Address | undefined
 }) {
-  const resp = await fortressApi.post<UserVault>("protocol/get_user_vaults", {
+  const resp = await fortressApi.post<UserVault>("Protocol/get_user_vaults", {
     chainId,
     user,
   })

@@ -61,7 +61,7 @@ async function getDollarValue({
   amount: number | string
 }) {
   const _amount = Number(amount)
-  const resp = await fortressApi.post<usdData>("protocol/get_usd_value", {
+  const resp = await fortressApi.post<usdData>("Protocol/get_usd_value", {
     amount: isNaN(_amount) ? 0 : _amount,
     token: asset,
   })
