@@ -21,7 +21,6 @@ export interface ButtonProps
     HTMLButtonElement
   > {
   isLoading?: boolean
-  isHover?: boolean
   size?: ButtonSize
   variant?: ButtonVariant
 }
@@ -29,12 +28,11 @@ export interface ButtonProps
 const buttonClasses = (
   className?: string,
   isLoading?: boolean,
-  isHover?: boolean,
   size: ButtonSize = "base",
   variant: ButtonVariant = "base"
 ) =>
   clsxm(
-    "inline-grid grid-cols-1 grid-rows-1 font-medium items-center justify-center rounded px-5 py-3 disabled:opacity-75",
+    "inline-grid grid-cols-1 grid-rows-1 font-medium items-center justify-center rounded px-5 py-3 disabled:opacity-75 enabled:hover:-translate-y-0.5 transition-transform",
     {
       "text-lg lg:text-xl": size === "large",
       "text-sm p-3": size === "small",
@@ -46,22 +44,21 @@ const buttonClasses = (
       "bg-black ring ring-1 ring-black ring-inset text-white":
         variant === "plain-negative",
       "cursor-wait": isLoading,
-      "disabled:cursor-not-allowed": !isLoading,
-      "enabled:hover":isHover
+      "disabled:cursor-not-allowed": !isLoading
     },
     className
   )
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { children, className, disabled, isLoading, isHover, size, variant, ...props },
+    { children, className, disabled, isLoading, size, variant, ...props },
     ref
   ) => {
     return (
       <button
         ref={ref}
         aria-disabled={disabled || isLoading}
-        className={buttonClasses(className, isLoading, isHover, size, variant)}
+        className={buttonClasses(className, isLoading, size, variant)}
         disabled={disabled || isLoading}
         {...props}
       >
@@ -108,7 +105,7 @@ export const ButtonLink: FC<PropsWithChildren<ButtonLinkProps>> = ({
 }) => {
   return (
     <Link
-      className={buttonClasses(className, false, true, size, variant)}
+      className={clsxm(buttonClasses(className, false, size, variant), "hover:-translate-y-0.5")}
       {...props}
       {...(external ? { target: "_blank" } : {})}
     >
