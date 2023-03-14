@@ -47,7 +47,7 @@ const abbreviated = (amount: number) => {
   const locales = currentLocale()
   const formatter = Intl.NumberFormat(locales, {
     notation: "compact",
-    maximumFractionDigits: 3,
+    maximumFractionDigits: 2,
   })
   return formatter.format(amount).toLocaleUpperCase()
 }
@@ -56,7 +56,7 @@ const abbreviatedBig = (amount: BigNumber, decimals: number) => {
   const locales = currentLocale()
   const formatter = Intl.NumberFormat(locales, {
     notation: "compact",
-    maximumFractionDigits: 3,
+    maximumFractionDigits: 2,
   })
   return formatter
     .format(Number(formatUnits(amount, decimals)))

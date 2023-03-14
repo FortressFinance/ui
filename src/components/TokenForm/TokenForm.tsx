@@ -195,7 +195,7 @@ const TokenForm: FC<TokenFormProps> = ({
         <div className="relative z-[1] col-span-full col-start-1 row-start-3 h-[38px] px-4 pb-3 text-left align-bottom text-xs">
           <span className="text-pink-100">
             {!isWithdraw ? "Balance: " : "Share: "}
-            <AssetBalance address={inputTokenAddress} />
+            <AssetBalance address={inputTokenAddress} abbreviate />
           </span>
           <button
             className="ml-1.5 cursor-pointer rounded border border-orange-400 px-2 py-1 font-semibold text-pink-100"
