@@ -63,7 +63,7 @@ const HomePage: NextPage<
               </p>
               <a href={`${appUrl}/yield`} target="_self">
                 <Button
-                  className="mt-6 px-8 lg:mt-8 enabled:hover:-translate-y-0.5 transition-transform"
+                  className="mt-6 px-8 transition-transform enabled:hover:-translate-y-0.5 lg:mt-8"
                   size="large"
                 >
                   Launch DApp
