@@ -38,7 +38,10 @@ const VaultRow: FC<VaultProps> = (props) => {
   return (
     <Disclosure as={Fragment} key={props.asset}>
       <TableRow
-        className={clsxm("md:py-6 md:first:rounded-t-none", props.extendedClassName)}
+        className={clsxm(
+          "md:py-6 md:first:rounded-t-none",
+          props.extendedClassName
+        )}
         onClick={toggleVaultOpen}
         disabled={isLoading}
       >

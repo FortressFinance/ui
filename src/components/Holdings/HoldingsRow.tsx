@@ -15,11 +15,18 @@ export const HoldingsRow: FC<VaultProps> = (props) => {
   const ybTokenAddress = vaultAddress.data?.ybTokenAddress
   const { data: holdingsVaults, isLoading: isLoadingHoldingsVault } =
     useHoldingsVaults()
-  const earnColumn = (<TableCell className="pointer-events-none text-center max-md:hidden">
-    $0.0
-  </TableCell>)
+  const earnColumn = (
+    <TableCell className="pointer-events-none text-center max-md:hidden">
+      $0.0
+    </TableCell>
+  )
   return isLoadingHoldingsVault ||
     !(holdingsVaults?.vaults ?? []).includes(ybTokenAddress ?? "0x") ? null : (
-    <VaultRow {...props} vaultAddress={ybTokenAddress} extendedColumns={earnColumn}  extendedClassName="md:grid-cols-[4fr,1fr,1fr,1fr,1fr,3.5rem]"/>
+    <VaultRow
+      {...props}
+      vaultAddress={ybTokenAddress}
+      extendedColumns={earnColumn}
+      extendedClassName="md:grid-cols-[4fr,1fr,1fr,1fr,1fr,3.5rem]"
+    />
   )
 }

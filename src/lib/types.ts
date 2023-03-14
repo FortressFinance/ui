@@ -10,7 +10,7 @@ export type VaultProps = {
   type: VaultType
   vaultAddress?: Address
   extendedColumns?: ReactNode
-  extendedClassName?:string
+  extendedClassName?: string
 }
 
 export type VaultDynamicProps = VaultProps & {
