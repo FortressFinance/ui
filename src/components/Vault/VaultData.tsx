@@ -1,5 +1,6 @@
 import { FC } from "react"
 
+import clsxm from "@/lib/clsxm"
 import { VaultProps } from "@/lib/types"
 import {
   useVault,
@@ -7,6 +8,7 @@ import {
   useVaultPoolId,
   useVaultTvl,
 } from "@/hooks/data/vaults"
+import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 
 import { AssetBalance, AssetBalanceUsd } from "@/components/Asset"
 import Currency from "@/components/Currency"
@@ -45,18 +47,24 @@ export const VaultTvl: FC<VaultProps> = (props) => {
 }
 
 export const VaultDepositedLpTokens: FC<VaultProps> = (props) => {
+  const { data: balance } = useTokenOrNativeBalance({
+    address: props.vaultAddress,
+  })
+
   return (
-    <div className="grid grid-rows-2">
+    <div className={clsxm("grid", { "grid-rows-2": !!balance })}>
       <div>
         <AssetBalance address={props.vaultAddress} abbreviate />
       </div>
-      <div className="text-xs">
-        <AssetBalanceUsd
-          asset={props.asset}
-          address={props.vaultAddress}
-          abbreviate
-        />
-      </div>
+      {balance && (
+        <div className="text-xs">
+          <AssetBalanceUsd
+            asset={props.asset}
+            address={props.vaultAddress}
+            abbreviate
+          />
+        </div>
+      )}
     </div>
   )
 }

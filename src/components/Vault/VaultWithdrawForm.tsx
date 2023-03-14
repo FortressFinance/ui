@@ -97,7 +97,9 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
       userAddress ?? "0x",
       userAddress ?? "0x",
       value,
-      BigNumber.from(previewRedeem.data?.resultWei ?? 0),
+      BigNumber.from(
+        previewRedeem.data?.minAmountWei ?? previewRedeem.data?.resultWei ?? 0
+      ),
     ],
   })
   const redeemUnderlying = useContractWrite(prepareRedeemUnderlying.config)

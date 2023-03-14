@@ -169,7 +169,7 @@ const TokenForm: FC<TokenFormProps> = ({
         {/* outputToken input */}
         <div
           className={clsxm(
-            "peer relative z-[2] col-start-1 row-start-2 block w-full text-ellipsis bg-transparent px-4 pb-4 pt-1 text-xl text-pink-100/60 placeholder-pink-100/60 focus:outline-none",
+            "peer relative z-[2] col-start-1 row-start-2 block w-full overflow-hidden text-ellipsis bg-transparent px-4 pb-4 pt-1 text-xl text-pink-100/60 placeholder-pink-100/60 focus:outline-none",
             { "animate-pulse": isLoadingPreview }
           )}
         >
@@ -195,7 +195,7 @@ const TokenForm: FC<TokenFormProps> = ({
         <div className="relative z-[1] col-span-full col-start-1 row-start-3 h-[38px] px-4 pb-3 text-left align-bottom text-xs">
           <span className="text-pink-100">
             {!isWithdraw ? "Balance: " : "Share: "}
-            <AssetBalance address={inputTokenAddress} />
+            <AssetBalance address={inputTokenAddress} abbreviate />
           </span>
           <button
             className="ml-1.5 cursor-pointer rounded border border-orange-400 px-2 py-1 font-semibold text-pink-100"

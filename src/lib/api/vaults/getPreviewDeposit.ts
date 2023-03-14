@@ -4,6 +4,7 @@ import { PreviewTransactionGetterArgs } from "@/hooks/data/preview"
 
 export type PreviewData = {
   id: number
+  minAmountWei?: string
   resultWei: string
   resultFormatted?: string
 }

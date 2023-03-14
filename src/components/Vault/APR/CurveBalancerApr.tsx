@@ -1,7 +1,9 @@
 import { FC } from "react"
+import { BiInfoCircle } from "react-icons/bi"
 
 import { VaultProps } from "@/lib/types"
 import {
+  useVaultApy,
   useVaultBaseApr,
   useVaultCrvApr,
   useVaultCvxApr,
@@ -12,10 +14,15 @@ import {
 
 import Percentage from "@/components/Percentage"
 import Skeleton from "@/components/Skeleton"
+import Tooltip from "@/components/Tooltip"
 import { GradientText } from "@/components/Typography"
 
 export const CurveBalancerApr: FC<VaultProps> = (props) => {
   const { data: poolId, isLoading: isLoadingId } = useVaultPoolId(props)
+  const { data: totalApy, isLoading: isLoadingTotalApy } = useVaultApy({
+    ...props,
+    poolId,
+  })
   const { data: totalApr, isLoading: isLoadingTotalApr } = useVaultTotalApr({
     ...props,
     poolId,
@@ -38,6 +45,7 @@ export const CurveBalancerApr: FC<VaultProps> = (props) => {
       poolId,
     })
   const noData =
+    totalApy === undefined &&
     totalApr === undefined &&
     baseApr === undefined &&
     crvApr === undefined &&
@@ -45,15 +53,20 @@ export const CurveBalancerApr: FC<VaultProps> = (props) => {
     extraRewardsApr === undefined
   return (
     <>
-      {totalApr !== undefined && (
+      {totalApy !== undefined && (
         <>
-          <dt className="text-base font-bold">
-            <GradientText>Total APR</GradientText>
+          <dt className="flex items-center gap-1 text-base font-bold">
+            <GradientText>Total APY</GradientText>
+            <Tooltip label="APY calculation assumes weekly compounding and excludes Fortress fees">
+              <span>
+                <BiInfoCircle className="h-5 w-5 cursor-pointer" />
+              </span>
+            </Tooltip>
           </dt>
           <dd className="text-right text-base font-bold">
             <GradientText>
-              <Skeleton isLoading={isLoadingId || isLoadingTotalApr}>
-                <Percentage>{totalApr}</Percentage>
+              <Skeleton isLoading={isLoadingId || isLoadingTotalApy}>
+                <Percentage>{totalApy}</Percentage>
               </Skeleton>
             </GradientText>
           </dd>
@@ -95,6 +108,16 @@ export const CurveBalancerApr: FC<VaultProps> = (props) => {
           <dd className="text-right">
             <Skeleton isLoading={isLoadingId || isLoadingExtraRewardsApr}>
               <Percentage>{extraRewardsApr}</Percentage>
+            </Skeleton>
+          </dd>
+        </>
+      )}
+      {totalApr !== undefined && (
+        <>
+          <dt>Total APR</dt>
+          <dd className="text-right">
+            <Skeleton isLoading={isLoadingId || isLoadingTotalApr}>
+              <Percentage>{totalApr}</Percentage>
             </Skeleton>
           </dd>
         </>

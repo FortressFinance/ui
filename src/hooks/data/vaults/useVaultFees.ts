@@ -14,7 +14,7 @@ import { useFallbackRead, useFallbackReads } from "@/hooks/util"
 import { TokenCompounderBase } from "@/constant/abi/TokenCompounderBase"
 
 // TODO: Implement full fees support
-const HARDCODED_FEES = { depositFee: "0", performanceFee: "0" }
+const HARDCODED_FEES = { depositFee: "0", managementFee: "0" }
 
 export function useVaultFees({ asset, type, vaultAddress }: VaultProps) {
   const chainId = useActiveChainId()
