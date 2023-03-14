@@ -85,7 +85,7 @@ export const ConnectWalletModal: FC<ModalBaseProps> = ({ isOpen, onClose }) => {
         By connecting your wallet to Fortress finance, you acknowledge that you
         have read and understand the{" "}
         <Link
-          href="https://docs.fortress.finance/protocol"
+          href="https://docs.fortress.finance"
           className="font-bold underline"
           target="_blank"
         >
