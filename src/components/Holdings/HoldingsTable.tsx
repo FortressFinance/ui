@@ -3,8 +3,10 @@ import { useAccount } from "wagmi"
 
 import { useListCompounders } from "@/hooks/data/compounders"
 import { useHoldingsVaults } from "@/hooks/data/holdings/useHoldingsVaults"
+import useActiveChainId from "@/hooks/useActiveChainId"
 import { useClientReady } from "@/hooks/util"
 
+import { chains } from "@/components/AppProviders"
 import { HoldingsRow } from "@/components/Holdings/HoldingsRow"
 import { TableDisconnected, TableEmpty, TableLoading } from "@/components/Table"
 import { VaultTable } from "@/components/Vault/VaultTable"
@@ -13,6 +15,9 @@ const HoldingsTable: FC = () => {
   // handle hydration mismatch
   const ready = useClientReady()
   const { isConnected } = useAccount()
+  const chainId = useActiveChainId()
+  const availableChains = chains.filter((n) => n.id === chainId)
+  const supportedChain = availableChains?.[0]
 
   const { data: compoundersList, isLoading } = useListCompounders()
   const { data: holdingsVaults, isLoading: isLoadingHoldingsVault } =
@@ -29,6 +34,10 @@ const HoldingsTable: FC = () => {
         </TableDisconnected>
       ) : showLoadingState ? (
         <TableLoading>Loading holdings...</TableLoading>
+      ) : !supportedChain ? (
+        <TableEmpty heading="Unsupported network">
+          Please switch to a supported network to view Compounders.
+        </TableEmpty>
       ) : !compoundersList?.length || !holdingsVaults?.vaults?.length ? (
         <TableEmpty heading="Well, this is awkward...">
           You don't appear to have any deposits in our Vaults. There's an easy
