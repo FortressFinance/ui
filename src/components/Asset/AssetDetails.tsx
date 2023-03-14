@@ -36,16 +36,12 @@ export const AssetName: FC<AssetDetailsProps> = ({ address, isLoading }) => {
   const { data: token, isLoading: isLoadingToken } = useTokenOrNative({
     address,
   })
-  const re = /(\(arb1\))/gi 
+  const re = /(\(arb1\))/gi
   const tokenName = token?.name ?? "Loading..."
-  const updatedTokenName = tokenName.replace(re, ""); 
+  const updatedTokenName = tokenName.replace(re, "")
   return (
     <Skeleton isLoading={isLoading || isLoadingToken || !isReady}>
-      {isReady
-        ? address
-          ? updatedTokenName
-          : "Unknown token"
-        : "Loading..."}
+      {isReady ? (address ? updatedTokenName : "Unknown token") : "Loading..."}
     </Skeleton>
   )
 }
