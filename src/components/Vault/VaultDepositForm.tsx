@@ -126,11 +126,12 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
       inputTokenAddress,
       userAddress ?? "0x",
       value,
-      BigNumber.from(
-        previewDeposit.data?.minAmountWei ??
-          previewDeposit.data?.resultWei ??
-          "0"
-      ),
+      BigNumber.from(0),
+      // BigNumber.from(
+      //   previewDeposit.data?.minAmountWei ??
+      //     previewDeposit.data?.resultWei ??
+      //     "0"
+      // ),
     ],
     overrides: inputIsEth ? { value } : {},
   })
