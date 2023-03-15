@@ -22,7 +22,7 @@ export default function useTokenVaultTotalApr({
     enabled: enabled && isArbitrumFamily,
   })
 
-  const compoundPeriod = 84_600 * 7  // 7 days - 1 week
+  const compoundPeriod = 84_600 * 7 // 7 days - 1 week
   const yearInSecond = 31_556_926
   const n = yearInSecond / compoundPeriod
 
