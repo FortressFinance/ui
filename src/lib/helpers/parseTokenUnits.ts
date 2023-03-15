@@ -5,7 +5,7 @@ export function parseTokenUnits(amount = "0", decimals?: number) {
   const amountNumber = Number(amount)
   return isNaN(amountNumber)
     ? BigNumber.from("0")
-    : parseUnits(safeToFixed(amount, decimals ?? 18))
+    : parseUnits(safeToFixed(amount, decimals ?? 18), decimals ?? 18)
 }
 
 function safeToFixed(numberString: string, decimals: number) {
