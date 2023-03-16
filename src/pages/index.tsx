@@ -66,7 +66,7 @@ const HomePage: NextPage<
                 href={`${appUrl}/yield`}
                 size="large"
               >
-                Launch App
+                Launch dApp
               </ButtonLink>
             </div>
 
