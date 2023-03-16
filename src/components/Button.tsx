@@ -90,7 +90,6 @@ export default Button
 
 interface ButtonLinkProps extends LinkProps {
   className?: string
-  external?: boolean
   size?: ButtonSize
   variant?: ButtonVariant
 }
@@ -98,7 +97,6 @@ interface ButtonLinkProps extends LinkProps {
 export const ButtonLink: FC<PropsWithChildren<ButtonLinkProps>> = ({
   children,
   className,
-  external,
   size,
   variant,
   ...props
@@ -110,7 +108,6 @@ export const ButtonLink: FC<PropsWithChildren<ButtonLinkProps>> = ({
         "hover:-translate-y-0.5"
       )}
       {...props}
-      {...(external ? { target: "_blank" } : {})}
     >
       {children}
     </Link>
