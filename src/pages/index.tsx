@@ -65,7 +65,6 @@ const HomePage: NextPage<
                 className="mt-6 px-8 lg:mt-8"
                 href={`${appUrl}/yield`}
                 size="large"
-                external
               >
                 Launch App
               </ButtonLink>
