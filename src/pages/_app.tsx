@@ -4,6 +4,8 @@ import { Inter, VT323 } from "next/font/google"
 
 import "@/styles/globals.css"
 
+import { trpc } from "@/lib/trpc"
+
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const vt323 = VT323({
   weight: ["400"],
@@ -30,4 +32,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   )
 }
 
-export default MyApp
+export default trpc.withTRPC(MyApp)

@@ -21,7 +21,7 @@ import VaultWithdrawForm from "@/components/Vault/VaultWithdrawForm"
 
 import { FortIconChevronDownCircle } from "@/icons"
 
-const VaultRow: FC<VaultProps> = (props) => {
+const VaultRow: FC<Required<VaultProps>> = (props) => {
   const [isStrategyOpen, setIsStrategyOpen] = useState(false)
   const [isVaultOpen, setIsVaultOpen] = useState(false)
 

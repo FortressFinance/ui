@@ -1,13 +1,10 @@
 import { FC } from "react"
 
 import clsxm from "@/lib/clsxm"
+import { trpc } from "@/lib/trpc"
 import { VaultProps } from "@/lib/types"
-import {
-  useVault,
-  useVaultApy,
-  useVaultPoolId,
-  useVaultTvl,
-} from "@/hooks/data/vaults"
+import { useVault, useVaultPoolId, useVaultTvl } from "@/hooks/data/vaults"
+import useActiveChainId from "@/hooks/useActiveChainId"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 
 import { AssetBalance, AssetBalanceUsd } from "@/components/Asset"
@@ -24,13 +21,17 @@ export const VaultName: FC<VaultProps> = (props) => {
   )
 }
 
-export const VaultApy: FC<VaultProps> = (props) => {
+export const VaultApy: FC<Required<VaultProps>> = (props) => {
   const poolId = useVaultPoolId(props)
-  const totalApy = useVaultApy({ ...props, poolId: poolId.data })
+  const chainId = useActiveChainId()
+  const vaultApr = trpc.vaultApr.useQuery(
+    { ...props, id: poolId.data ?? 0, chainId },
+    { enabled: poolId.data !== undefined }
+  )
 
   return (
-    <Skeleton isLoading={poolId.isLoading || totalApy.isLoading}>
-      <Percentage>{totalApy.data ?? 0}</Percentage>
+    <Skeleton isLoading={poolId.isLoading || vaultApr.isLoading}>
+      <Percentage>{vaultApr.data?.apy ?? 0}</Percentage>
     </Skeleton>
   )
 }

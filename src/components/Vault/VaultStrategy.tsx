@@ -16,8 +16,7 @@ import PurpleModal, {
 import Percentage from "@/components/Percentage"
 import Skeleton from "@/components/Skeleton"
 import Tooltip from "@/components/Tooltip"
-import { CurveBalancerApr } from "@/components/Vault/APR/CurveBalancerApr"
-import { TokenApr } from "@/components/Vault/APR/TokenApr"
+import { VaultAprBreakdown } from "@/components/Vault/VaultAprBreakdown"
 
 import {
   FortIconAddToWallet,
@@ -25,7 +24,7 @@ import {
   FortIconExternalLink,
 } from "@/icons"
 
-const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
+const VaultStrategyModal: FC<Required<VaultProps> & ModalBaseProps> = ({
   isOpen,
   onClose,
   ...vaultProps
@@ -36,7 +35,6 @@ const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
   const { data: ybToken } = useTokenOrNative({
     address: vaultProps.vaultAddress,
   })
-  const isToken = useIsTokenCompounder(vaultProps.type)
 
   const addTokenToWallet: MouseEventHandler<HTMLButtonElement> = () => {
     if (ybToken && ybToken.address && connector && connector.watchAsset) {
@@ -99,11 +97,7 @@ const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
               APR
             </h1>
             <dl className="grid grid-cols-[max-content,auto] gap-2 p-4 pb-5 text-sm text-pink-50 md:px-5">
-              {isToken ? (
-                <TokenApr {...vaultProps} />
-              ) : (
-                <CurveBalancerApr {...vaultProps} />
-              )}
+              <VaultAprBreakdown {...vaultProps} />
             </dl>
           </div>
 
