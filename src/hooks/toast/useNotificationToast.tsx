@@ -46,6 +46,6 @@ export function useDefaultNotificationToast({
     title,
     children,
     position: "top-right",
-    duration: 7000 // 7 sec
+    duration: 7000, // 7 sec
   })
 }
