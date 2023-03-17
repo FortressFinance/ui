@@ -7,31 +7,37 @@ import { FortIconClose } from "@/icons"
 export type ToastComponentProps = {
   isVisible: boolean
   onDismiss?: () => void
-  className?: string,
+  className?: string
 }
 
 export const Toast: FC<PropsWithChildren<ToastComponentProps>> = ({
   className,
   isVisible,
   onDismiss,
-  children
+  children,
 }) => {
   return (
     <div
-      className={clsxm(`${
-        isVisible ? 'animate-enter opacity-100' : 'animate-leave opacity-0'
-      } w-full max-w-xs p-4 rounded-md shadow text-gray-400 bg-gray-800`, className)}
+      className={clsxm(
+        `${
+          isVisible ? "animate-enter opacity-100" : "animate-leave opacity-0"
+        } w-full max-w-xs rounded-md bg-gray-800 p-4 text-gray-400 shadow`,
+        className
+      )}
     >
       {children}
-      { !!onDismiss && (
+      {!!onDismiss && (
         <button
           onClick={onDismiss}
-          className={clsxm("ml-auto rounded-md focus:ring-2 focus:ring-gray-300 p-1.5 inline-flex h-7 w-7 text-gray-500 hover:text-white bg-gray-800 hover:bg-gray-700", className)}
+          className={clsxm(
+            "ml-auto inline-flex h-7 w-7 rounded-md bg-gray-800 p-1.5 text-gray-500 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-gray-300",
+            className
+          )}
         >
           <span className="sr-only">Close</span>
-          <FortIconClose className="w-4 h-4 fill-white" />
+          <FortIconClose className="h-4 w-4 fill-white" />
         </button>
-      )}      
+      )}
     </div>
   )
 }
