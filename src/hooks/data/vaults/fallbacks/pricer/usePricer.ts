@@ -11,43 +11,45 @@ import { getGlpPrice } from "@/lib/api/pricer/getGlpPrice"
 import { getLlamaApiPrice } from "@/lib/api/pricer/getLlamaApiPrice"
 import { getLlamaArbiApiPrice } from "@/lib/api/pricer/getLlamaArbiApiPrice"
 import { getLlamaEthPrice } from "@/lib/api/pricer/getLlamaEthPrice"
+import { queryKeys } from "@/lib/helpers"
 
 import { PRIMARYASSET_PRICER } from "@/constant/mapping"
 
 export default function usePricer({
-  primaryAsset,
+  asset,
   enabled,
 }: {
-  primaryAsset: Address | undefined
+  asset?: Address
   enabled: boolean
 }) {
-  const source = PRIMARYASSET_PRICER[primaryAsset ?? "0x"] ?? ""
+  const source = PRIMARYASSET_PRICER[asset ?? "0x"] ?? ""
 
   const notSupportedSource = () => 0
 
-  return useQuery(["pricer", source, primaryAsset], {
+  return useQuery({
+    ...queryKeys.tokens.priceUsd({ asset }),
     queryFn:
       source === "LLAMA_API"
-        ? () => getLlamaApiPrice(primaryAsset ?? "0x")
+        ? () => getLlamaApiPrice(asset ?? "0x")
         : source === "LLAMA_ARBI_API"
-        ? () => getLlamaArbiApiPrice(primaryAsset ?? "0x")
+        ? () => getLlamaArbiApiPrice(asset ?? "0x")
         : source === "ALADDIN_API"
-        ? () => getAladdinApiPrice(primaryAsset ?? "0x")
+        ? () => getAladdinApiPrice(asset ?? "0x")
         : source === "APY_VISION_API"
-        ? () => getApyVisionApiPrice(primaryAsset ?? "0x")
+        ? () => getApyVisionApiPrice(asset ?? "0x")
         : source === "CURVE_FACTORY"
-        ? () => getCurveFactoryPrice(primaryAsset ?? "0x")
+        ? () => getCurveFactoryPrice(asset ?? "0x")
         : source === "CURVE_FACTORY_CRYPTO"
-        ? () => getCurveFactoryCryptoPrice(primaryAsset ?? "0x")
+        ? () => getCurveFactoryCryptoPrice(asset ?? "0x")
         : source === "CURVE_MAIN"
-        ? () => getCurveMainPrice(primaryAsset ?? "0x")
+        ? () => getCurveMainPrice(asset ?? "0x")
         : source === "LLAMA_ETH"
         ? () => getLlamaEthPrice()
         : source === "GLP"
         ? () => getGlpPrice()
         : source === "CURVE_LPTOKEN"
-        ? () => getCurveLpTokenPrice(primaryAsset ?? "0x")
+        ? () => getCurveLpTokenPrice(asset ?? "0x")
         : notSupportedSource,
-    enabled: enabled,
+    enabled,
   })
 }

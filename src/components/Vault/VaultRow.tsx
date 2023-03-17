@@ -11,9 +11,9 @@ import { TableCell, TableRow } from "@/components/Table"
 import { GradientText } from "@/components/Typography"
 import {
   VaultApy,
-  VaultDepositedLpTokens,
   VaultName,
   VaultTvl,
+  VaultUserBalance,
 } from "@/components/Vault/VaultData"
 import VaultDepositForm from "@/components/Vault/VaultDepositForm"
 import VaultStrategyModal from "@/components/Vault/VaultStrategy"
@@ -104,7 +104,7 @@ const VaultRow: FC<VaultProps> = (props) => {
           <VaultTvl {...props} />
         </TableCell>
         <TableCell className="pointer-events-none text-center max-md:hidden">
-          <VaultDepositedLpTokens {...props} />
+          <VaultUserBalance {...props} />
         </TableCell>
 
         {/* Desktop: Action buttons */}
@@ -208,7 +208,7 @@ const VaultRow: FC<VaultProps> = (props) => {
             </dd>
             <dt className="row-start-2 text-xs text-pink-100/60">Balance</dt>
             <dd className="text-sm font-medium text-pink-100">
-              <VaultDepositedLpTokens {...props} />
+              <VaultUserBalance {...props} />
             </dd>
           </dl>
         </TableCell>

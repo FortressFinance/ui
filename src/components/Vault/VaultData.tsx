@@ -46,7 +46,7 @@ export const VaultTvl: FC<VaultProps> = (props) => {
   )
 }
 
-export const VaultDepositedLpTokens: FC<VaultProps> = (props) => {
+export const VaultUserBalance: FC<VaultProps> = (props) => {
   const { data: balance } = useTokenOrNativeBalance({
     address: props.vaultAddress,
   })

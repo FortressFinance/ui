@@ -12,7 +12,7 @@ export default function useVaultTvlFallback({
   enabled: boolean
 }) {
   const { data: primaryAssetPriceUsd, isLoading: isLoadingPricer } = usePricer({
-    primaryAsset: asset,
+    asset,
     enabled,
   })
   const { data: totalAssets, isLoading: isLoadingTotalAssets } =

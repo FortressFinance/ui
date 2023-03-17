@@ -2,68 +2,52 @@ import { useQuery } from "@tanstack/react-query"
 import { Address } from "wagmi"
 
 import { fortressApi, handledResponse } from "@/lib/api/util"
+import { queryKeys } from "@/lib/helpers"
 import usePricer from "@/hooks/data/vaults/fallbacks/pricer/usePricer"
 
 export function useGetDollarValue({
   asset,
-  amount,
+  amount: amountStr,
 }: {
-  asset: Address | undefined
-  amount: number | string
+  asset?: Address
+  amount: string
 }) {
-  // Preferred: API request
-  const apiQuery = useRequestDollarValue({ asset, amount })
+  const amount = Number(amountStr)
 
+  // preferred: api request
+  const apiQuery = useQuery({
+    ...queryKeys.tokens.priceUsd({ asset, amount }),
+    queryFn: () => getUsdValue({ asset, amount }),
+    enabled: !!asset,
+  })
+
+  // fallback request
   const isFallbackEnabled = apiQuery.isError
+  const fallbackQuery = usePricer({ asset, enabled: isFallbackEnabled })
 
-  const { data: primaryAssetPriceUsd, isLoading: isLoadingPricer } = usePricer({
-    primaryAsset: asset,
-    enabled: isFallbackEnabled,
-  })
-
-  const balanceUsdFallback = Number(primaryAssetPriceUsd ?? 0) * Number(amount)
-
-  if (isFallbackEnabled) {
-    return {
-      isLoading: isLoadingPricer,
-      data: balanceUsdFallback,
-    }
-  }
-
-  return {
-    ...apiQuery,
-    data: apiQuery.data?.usdValue,
-  }
+  return isFallbackEnabled
+    ? { ...fallbackQuery, data: Number(fallbackQuery.data ?? 0) * amount }
+    : { ...apiQuery, data: apiQuery.data?.usdValue }
 }
 
-function useRequestDollarValue({
-  asset,
-  amount,
-}: {
-  asset: Address | undefined
-  amount: number | string
-}) {
-  return useQuery(["requestDollarValue", asset ?? "0x"], {
-    queryFn: () => getDollarValue({ asset: asset ?? "0x", amount }),
-    retry: false,
-  })
-}
-
-type usdData = {
+type GetUsdValueResponse = {
   usdValue: number | string
 }
 
-async function getDollarValue({
+async function getUsdValue({
   asset,
   amount,
 }: {
-  asset: Address | undefined
-  amount: number | string
+  asset?: Address
+  amount?: number
 }) {
   const _amount = Number(amount)
-  const resp = await fortressApi.post<usdData>("Protocol/get_usd_value", {
-    amount: isNaN(_amount) ? 0 : _amount,
-    token: asset,
-  })
+  const resp = await fortressApi.post<GetUsdValueResponse>(
+    "Protocol/get_usd_value",
+    {
+      amount: isNaN(_amount) ? 0 : _amount,
+      token: asset,
+    }
+  )
   return handledResponse(resp?.data?.data)
 }
