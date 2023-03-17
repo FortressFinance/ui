@@ -3,7 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { FC, Fragment, PropsWithChildren, useState } from "react"
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast"
 
 import clsxm from "@/lib/clsxm"
 import { appLink } from "@/lib/helpers"
@@ -58,12 +58,14 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 >
                   <FortressLogo
                     className="h-full w-auto fill-white md:group-hover:hidden"
-                    aria-label="Fortress Finance" />
+                    aria-label="Fortress Finance"
+                  />
                   <Image
                     className="hidden h-full w-auto md:group-hover:flex"
                     priority
                     src={FortressLogoAnimated}
-                    alt="" />
+                    alt=""
+                  />
                 </Link>
 
                 {/* Desktop navigation */}
@@ -145,7 +147,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               >
                 <div
                   className="fixed inset-0 z-0 bg-pink-900/90 backdrop-blur"
-                  aria-hidden="true" />
+                  aria-hidden="true"
+                />
               </Transition.Child>
 
               <div className="fixed inset-0 flex justify-end">
@@ -185,7 +188,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                               className={clsxm(
                                 "block rounded px-3 py-2.5 text-lg font-medium text-white/80",
                                 {
-                                  "bg-gradient-to-r from-orange-400/20 to-orange-400/5 text-white ring-1 ring-inset ring-orange-400/20": router.pathname === "/app/yield",
+                                  "bg-gradient-to-r from-orange-400/20 to-orange-400/5 text-white ring-1 ring-inset ring-orange-400/20":
+                                    router.pathname === "/app/yield",
                                 }
                               )}
                             >
@@ -204,7 +208,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                                 className={clsxm(
                                   "block rounded px-3 py-2.5 text-lg font-medium text-white/80",
                                   {
-                                    "bg-gradient-to-r from-orange-400/20 to-orange-400/5 text-white ring-1 ring-inset ring-orange-400/20": router.pathname ===
+                                    "bg-gradient-to-r from-orange-400/20 to-orange-400/5 text-white ring-1 ring-inset ring-orange-400/20":
+                                      router.pathname ===
                                       "/app/yield/concentrators",
                                   }
                                 )}
@@ -228,7 +233,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                       <ExternalLinks
                         className="flex-col justify-center gap-4 px-3 pb-6 text-sm text-orange-400"
                         showHelp
-                        showLabels />
+                        showLabels
+                      />
                     </div>
                   </Dialog.Panel>
                 </Transition.Child>
@@ -262,16 +268,19 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
             src={FortressBackground}
             className="min-h-full min-w-full object-cover"
             priority
-            alt="" />
+            alt=""
+          />
         </div>
 
         <ConnectWalletModal
           isOpen={connectModal === "disconnected"}
-          onClose={() => setConnectModal(null)} />
+          onClose={() => setConnectModal(null)}
+        />
 
         <DisconnectWalletModal
           isOpen={connectModal === "connected"}
-          onClose={() => setConnectModal(null)} />
+          onClose={() => setConnectModal(null)}
+        />
 
         <Consent />
       </AppProviders>
