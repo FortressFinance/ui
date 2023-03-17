@@ -10,7 +10,7 @@ import {
   useVaultPoolId,
   useVaultTvl,
 } from "@/hooks/data/vaults"
-import { useVaultUserEarnings } from "@/hooks/data/vaults/useVaultUserEarnings"
+import { useVaultUserEarnings } from "@/hooks/data/vaults"
 import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 
