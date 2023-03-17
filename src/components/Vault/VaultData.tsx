@@ -1,4 +1,6 @@
+import { BigNumber } from "ethers"
 import { FC } from "react"
+import { useAccount } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 import { VaultProps } from "@/lib/types"
@@ -8,6 +10,8 @@ import {
   useVaultPoolId,
   useVaultTvl,
 } from "@/hooks/data/vaults"
+import { useVaultUserEarnings } from "@/hooks/data/vaults/useVaultUserEarnings"
+import useTokenOrNative from "@/hooks/useTokenOrNative"
 import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
 
 import { AssetBalance, AssetBalanceUsd } from "@/components/Asset"
@@ -52,12 +56,12 @@ export const VaultUserBalance: FC<VaultProps> = (props) => {
   })
 
   return (
-    <div className={clsxm("grid", { "grid-rows-2": !!balance })}>
+    <div className={clsxm("lg:grid", { "lg:grid-rows-2": !!balance })}>
       <div>
         <AssetBalance address={props.vaultAddress} abbreviate />
       </div>
       {balance && (
-        <div className="text-xs">
+        <div className="text-xs max-lg:hidden">
           <AssetBalanceUsd
             asset={props.asset}
             address={props.vaultAddress}
@@ -66,5 +70,42 @@ export const VaultUserBalance: FC<VaultProps> = (props) => {
         </div>
       )}
     </div>
+  )
+}
+
+export const VaultUserEarnings: FC<VaultProps> = (props) => {
+  const poolId = useVaultPoolId(props)
+  const earnings = useVaultUserEarnings({
+    poolId: poolId.data,
+    type: props.type,
+  })
+  const token = useTokenOrNative({ address: props.asset })
+  const { isConnected } = useAccount()
+  const isLoading = poolId.isLoading || earnings.isLoading
+
+  return isConnected ? (
+    <div className="lg:grid lg:grid-rows-2">
+      <div>
+        <Skeleton isLoading={isLoading}>
+          <Currency
+            amount={BigNumber.from(earnings.data.earned ?? "0")}
+            decimals={token.data?.decimals ?? 18}
+            abbreviate
+          />
+        </Skeleton>
+      </div>
+      <div className="text-xs max-lg:hidden">
+        <Skeleton isLoading={isLoading}>
+          <Currency
+            amount={earnings.data.earnedUSD ?? 0}
+            decimals={2}
+            symbol="$"
+            abbreviate
+          />
+        </Skeleton>
+      </div>
+    </div>
+  ) : (
+    <div>—</div>
   )
 }

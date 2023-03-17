@@ -13,12 +13,13 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
 }) => {
   return (
     <Table>
-      <div className="relative z-[1] max-md:hidden" role="rowgroup">
+      <div className="relative z-[1] max-lg:hidden" role="rowgroup">
         <TableRow className="overflow-visible rounded-b-none border-b border-b-pink/30">
           <TableHeader>{label}</TableHeader>
           <TableHeader className="text-center">APY</TableHeader>
           <TableHeader className="text-center">TVL</TableHeader>
           <TableHeader className="text-center">Balance</TableHeader>
+          <TableHeader className="text-center">Earnings</TableHeader>
           <TableHeader>
             <TxSettingsPopover />
           </TableHeader>

@@ -14,6 +14,7 @@ import {
   VaultName,
   VaultTvl,
   VaultUserBalance,
+  VaultUserEarnings,
 } from "@/components/Vault/VaultData"
 import VaultDepositForm from "@/components/Vault/VaultDepositForm"
 import VaultStrategyModal from "@/components/Vault/VaultStrategy"
@@ -38,18 +39,18 @@ const VaultRow: FC<VaultProps> = (props) => {
   return (
     <Disclosure as={Fragment} key={props.asset}>
       <TableRow
-        className="md:py-6 md:first:rounded-t-none"
+        className="lg:py-6 lg:first:rounded-t-none"
         onClick={toggleVaultOpen}
         disabled={isLoading}
       >
         {/* Row of vault info */}
-        <TableCell className="relative grid grid-cols-[max-content,auto,max-content] items-center gap-x-3 max-md:-mx-3 max-md:border-b max-md:border-b-pink/30 max-md:px-3 max-md:pb-3.5 md:pointer-events-none">
+        <TableCell className="relative grid grid-cols-[max-content,auto,max-content] items-center gap-x-3 max-lg:-mx-3 max-lg:border-b max-lg:border-b-pink/30 max-lg:px-3 max-lg:pb-3.5 lg:pointer-events-none">
           <AssetLogo
             className="flex h-12 w-12"
             tokenAddress={props.vaultAddress}
           />
 
-          <span className="line-clamp-2 max-md:mr-8">
+          <span className="line-clamp-2 max-lg:mr-8">
             <VaultName {...props} />
           </span>
 
@@ -65,7 +66,7 @@ const VaultRow: FC<VaultProps> = (props) => {
 
           {/* Medium: strategy button */}
           <Button
-            className="focus-visible-outline-1 pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 focus:outline-none focus-visible:-translate-y-0.5 focus-visible:outline focus-visible:outline-orange focus-visible:contrast-150 focus-visible:after:opacity-100 active:translate-y-0 max-md:hidden md:enabled:hover:-translate-y-0.5 md:enabled:hover:contrast-150 md:enabled:hover:after:opacity-100 lg:hidden"
+            className="focus-visible-outline-1 pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 focus:outline-none focus-visible:-translate-y-0.5 focus-visible:outline focus-visible:outline-orange focus-visible:contrast-150 focus-visible:after:opacity-100 active:translate-y-0 max-lg:hidden lg:hidden lg:enabled:hover:-translate-y-0.5 lg:enabled:hover:contrast-150 lg:enabled:hover:after:opacity-100"
             size="small"
             variant="outline"
             onClick={() => setIsStrategyOpen(true)}
@@ -75,7 +76,7 @@ const VaultRow: FC<VaultProps> = (props) => {
 
           {/* Mobile: expand/collapse button */}
           <button
-            className="group absolute inset-0 flex items-center justify-end focus:outline-none md:hidden"
+            className="group absolute inset-0 flex items-center justify-end focus:outline-none lg:hidden"
             disabled={isLoading}
             onClick={toggleVaultOpen}
           >
@@ -97,18 +98,21 @@ const VaultRow: FC<VaultProps> = (props) => {
         </TableCell>
 
         {/* Desktop: APY, TVL, Balance */}
-        <TableCell className="pointer-events-none text-center max-md:hidden">
+        <TableCell className="pointer-events-none text-center max-lg:hidden">
           <VaultApy {...props} />
         </TableCell>
-        <TableCell className="pointer-events-none text-center max-md:hidden">
+        <TableCell className="pointer-events-none text-center max-lg:hidden">
           <VaultTvl {...props} />
         </TableCell>
-        <TableCell className="pointer-events-none text-center max-md:hidden">
+        <TableCell className="pointer-events-none text-center max-lg:hidden">
           <VaultUserBalance {...props} />
+        </TableCell>
+        <TableCell className="pointer-events-none text-center max-lg:hidden">
+          <VaultUserEarnings {...props} />
         </TableCell>
 
         {/* Desktop: Action buttons */}
-        <TableCell className="relative flex items-center max-md:hidden">
+        <TableCell className="relative flex items-center max-lg:hidden">
           <button
             className="group absolute inset-0 flex items-center justify-end focus:outline-none"
             disabled={isLoading}
@@ -134,7 +138,7 @@ const VaultRow: FC<VaultProps> = (props) => {
         {/* Forms */}
         <Transition
           show={isVaultOpen}
-          className="col-span-full overflow-hidden max-md:-mx-3"
+          className="col-span-full overflow-hidden max-lg:-mx-3"
           enter="transition-all duration-200"
           enterFrom="transform opacity-0 max-h-0"
           enterTo="transform opacity-100 max-h-80"
@@ -144,13 +148,13 @@ const VaultRow: FC<VaultProps> = (props) => {
         >
           <Disclosure.Panel static>
             {/* Desktop: forms */}
-            <div className="mt-6 grid grid-cols-2 gap-4 max-md:hidden">
+            <div className="mt-6 grid grid-cols-2 gap-4 max-lg:hidden">
               <VaultDepositForm {...props} />
               <VaultWithdrawForm {...props} />
             </div>
 
             {/* Mobile: forms */}
-            <div className="border-b border-b-pink/30 md:hidden">
+            <div className="border-b border-b-pink/30 lg:hidden">
               <Tab.Group>
                 <Tab.List
                   as="div"
@@ -196,8 +200,8 @@ const VaultRow: FC<VaultProps> = (props) => {
         </Transition>
 
         {/* Mobile: APY, TVL, Balance */}
-        <TableCell className="-mx-3 border-b border-b-pink/30 px-3 py-3 md:hidden">
-          <dl className="grid grid-cols-3 gap-x-3 text-center">
+        <TableCell className="-mx-3 border-b border-b-pink/30 px-3 py-3 lg:hidden">
+          <dl className="grid grid-cols-4 gap-x-3 text-center">
             <dt className="row-start-2 text-xs text-pink-100/60">APY</dt>
             <dd className="text-sm font-medium text-pink-100">
               <VaultApy {...props} />
@@ -210,11 +214,15 @@ const VaultRow: FC<VaultProps> = (props) => {
             <dd className="text-sm font-medium text-pink-100">
               <VaultUserBalance {...props} />
             </dd>
+            <dt className="row-start-2 text-xs text-pink-100/60">Earnings</dt>
+            <dd className="text-sm font-medium text-pink-100">
+              <VaultUserEarnings {...props} />
+            </dd>
           </dl>
         </TableCell>
 
         {/* Mobile: Action buttons */}
-        <TableCell className="mb-0.5 pt-3.5 md:hidden">
+        <TableCell className="mb-0.5 pt-3.5 lg:hidden">
           <Button
             className="w-full"
             variant="outline"
