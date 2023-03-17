@@ -47,9 +47,6 @@ export const queryKeys = createQueryKeyStore({
     }) => [chainId, user ?? "0x"],
   },
   tokens: {
-    priceUsd: ({ asset, amount }: { asset?: Address; amount?: number }) => [
-      asset ?? "0x",
-      amount,
-    ],
+    priceUsd: ({ asset = "0x" }: { asset?: Address }) => [asset],
   },
 })
