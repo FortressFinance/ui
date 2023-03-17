@@ -1,20 +1,23 @@
 import axios from "axios"
 import { BigNumber } from "ethers"
 import request, { gql } from "graphql-request"
+import { Address } from "wagmi"
 
 import { getGmxPriceData } from "@/lib/api/pricer/getGlpPrice"
-import { getLlamaApiPrice } from "@/lib/api/pricer/getLlamaApiPrice"
-import { getLlamaEthPrice } from "@/lib/api/pricer/getLlamaEthPrice"
+import { getLlamaPrice } from "@/lib/api/pricer/getLlamaPrice"
 import { VaultProps } from "@/lib/types"
 
 import {
-  AURA_ADDRESS,
-  AURA_BAL_ADDRESS,
-  AURA_FINANCE_URL,
-  AURA_GRAPH_URL,
-  CONVEX_STAKING_URL,
-  CURVE_GRAPH_URL,
-} from "@/constant/env"
+  auraBalTokenAddress,
+  auraTokenAddress,
+  ethTokenAddress,
+} from "@/constant/addresses"
+import {
+  auraFinanceUrl,
+  auraGraphUrl,
+  convexStakingUrl,
+  curveGraphUrl,
+} from "@/constant/urls"
 
 // TODO: These should use types
 // await request<Response, Variables>(...)
@@ -39,7 +42,7 @@ export async function getVaultAprFallback(asset: VaultProps["asset"]) {
     lpToken: asset ?? "0x",
   }
 
-  const data = await request(CURVE_GRAPH_URL, graphqlQuery, variables)
+  const data = await request(curveGraphUrl, graphqlQuery, variables)
   return data?.pools
 }
 
@@ -50,7 +53,7 @@ export async function getFortGlpAprFallback(
   const ethRewardsAnnual =
     ((ethRewardsPerSecond ?? BigNumber.from(0)).toNumber() * 3600 * 24 * 365) /
     1e18
-  const ethPrice = await getLlamaEthPrice()
+  const ethPrice = await getLlamaPrice({ asset: ethTokenAddress })
   const gmxRewardsMonthlyEmissionRate = 0 // need to know why is it zero
   const esGmxRewards = priceGmx * gmxRewardsMonthlyEmissionRate * 12
   const aprGmx = esGmxRewards / aum
@@ -77,7 +80,7 @@ export async function getFortCvxCrvAprFallback() {
       }
     }
   `
-  const data = await request(CONVEX_STAKING_URL, graphqlQuery)
+  const data = await request(convexStakingUrl, graphqlQuery)
   if (data?.dailySnapshots?.length !== 0) {
     const crvApr = Number(data?.dailySnapshots[0].crvApr)
     const cvxApr = Number(data?.dailySnapshots[0].cvxApr)
@@ -100,7 +103,8 @@ export async function getFortCvxCrvAprFallback() {
 export async function getFortAuraBalAprFallback(auraMint: any) {
   const { rewardRates, addresses, totalStaked } = await getAuraBalRewardData()
   const tvl =
-    (await getLlamaApiPrice(AURA_BAL_ADDRESS)) * (Number(totalStaked) / 1e18)
+    (await getLlamaPrice({ asset: auraBalTokenAddress })) *
+    (Number(totalStaked) / 1e18)
 
   let aprTokens = 0
   Object.entries(addresses).map(async ([key, val]) => {
@@ -111,7 +115,7 @@ export async function getFortAuraBalAprFallback(auraMint: any) {
   const BalYearlyRewards = (Number(rewardRates["BAL"]) / 1e18) * 86_400 * 365
   const AuraRewardYearly = calculateAuraMintAmount(auraMint, BalYearlyRewards)
   const AuraRewardAnnualUsd =
-    AuraRewardYearly * (await getLlamaApiPrice(AURA_ADDRESS))
+    AuraRewardYearly * (await getLlamaPrice({ asset: auraTokenAddress }))
   const aprAura = AuraRewardAnnualUsd / tvl
 
   const aprTotal = aprTokens + aprAura
@@ -138,16 +142,16 @@ async function getAuraBalRewardData() {
     }
   `
 
-  const data = await request(AURA_GRAPH_URL, graphqlQuery)
+  const data = await request(auraGraphUrl, graphqlQuery)
   let rewardData = []
   let totalStaked = 0
-  const addresses: { [key: string]: string } = {}
+  const addresses: { [key: string]: Address } = {}
   const rewardRates: { [key: string]: string } = {}
   rewardData = data.pool?.rewardData
   totalStaked = data.pool?.totalStaked
   rewardData?.map(
     (d: { token: { symbol: string; id: string }; rewardRate: string }) => {
-      addresses[d?.token?.symbol] = d?.token?.id
+      addresses[d?.token?.symbol] = d?.token?.id as Address
       rewardRates[d?.token?.symbol] = d?.rewardRate
     }
   )
@@ -178,7 +182,7 @@ export async function getBalancerTotalAprFallback(
   const BalYearlyRewards = (Number(rewardRates["BAL"]) / 1e18) * 86_400 * 365
   const AuraRewardYearly = calculateAuraMintAmount(auraMint, BalYearlyRewards)
   const AuraRewardAnnualUsd =
-    AuraRewardYearly * (await getLlamaApiPrice(AURA_ADDRESS))
+    AuraRewardYearly * (await getLlamaPrice({ asset: auraTokenAddress }))
   const aprAura = AuraRewardAnnualUsd / tvl
 
   const aprTotal =
@@ -219,16 +223,16 @@ function calculateAuraMintAmount(auraMint: any, BALYearlyRewards: number) {
   return 0
 }
 
-async function getTokenAPR(rewardRate: number, token: string, tvl: number) {
+async function getTokenAPR(rewardRate: number, token: Address, tvl: number) {
   const rewardYearly = rewardRate * 86_400 * 365
-  const tokenPriceUsd = await getLlamaApiPrice(token)
+  const tokenPriceUsd = await getLlamaPrice({ asset: token })
   const rewardAnnualUsd = rewardYearly * tokenPriceUsd
   const tokenApr = rewardAnnualUsd / tvl
   return tokenApr
 }
 
 export async function fetchApiAuraFinance(asset: VaultProps["asset"]) {
-  const resp = await axios.get(`${AURA_FINANCE_URL}`)
+  const resp = await axios.get(auraFinanceUrl)
   const pools = resp?.data?.pools
   const relevantAsset = pools.find((pool: { id: string }) => {
     if (asset === undefined) {
@@ -256,7 +260,7 @@ export async function getAuraMint() {
     }
   `
 
-  const data = await request(AURA_GRAPH_URL, graphqlQuery)
+  const data = await request(auraGraphUrl, graphqlQuery)
   return data?.global
 }
 
@@ -279,17 +283,17 @@ async function getAuraRewardDataByAsset(asset: VaultProps["asset"]) {
     lpToken: asset?.toLocaleLowerCase() ?? "0x",
   }
 
-  const data = await request(AURA_GRAPH_URL, graphqlQuery, variables)
+  const data = await request(auraGraphUrl, graphqlQuery, variables)
   let rewardData = []
   let totalStaked = 0
-  const addresses: { [key: string]: string } = {}
+  const addresses: { [key: string]: Address } = {}
   const rewardRates: { [key: string]: string } = {}
   if (data?.pools?.length !== 0) {
     rewardData = data.pools[0].rewardData
     totalStaked = data.pools[0].totalStaked
     rewardData?.map(
       (d: { token: { symbol: string; id: string }; rewardRate: string }) => {
-        addresses[d?.token?.symbol] = d?.token?.id
+        addresses[d?.token?.symbol] = d?.token?.id as Address
         rewardRates[d?.token?.symbol] = d?.rewardRate
       }
     )

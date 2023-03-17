@@ -1,6 +1,6 @@
 import request, { gql } from "graphql-request"
 
-import { GXM_GRAPH_URL } from "@/constant/env"
+import { gmxGraphUrl } from "@/constant/urls"
 
 export async function getGmxPriceData() {
   const graphqlQuery = gql`
@@ -15,7 +15,7 @@ export async function getGmxPriceData() {
       }
     }
   `
-  const data = await request(GXM_GRAPH_URL, graphqlQuery)
+  const data = await request(gmxGraphUrl, graphqlQuery)
   let aum = 0
   let priceGmx = 0
   if (data?.glpStats?.length !== 0) {
@@ -40,7 +40,7 @@ export async function getGlpPrice() {
       }
     }
   `
-  const data = await request(GXM_GRAPH_URL, graphqlQuery)
+  const data = await request(gmxGraphUrl, graphqlQuery)
   let aum = 0
   let supply = 0
   if (data?.glpStats?.length !== 0) {

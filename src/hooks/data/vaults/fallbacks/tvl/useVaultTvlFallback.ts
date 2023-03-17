@@ -1,5 +1,5 @@
 import { VaultDynamicProps } from "@/lib/types"
-import usePricer from "@/hooks/data/vaults/fallbacks/pricer/usePricer"
+import { useTokenPriceUsd } from "@/hooks/data/tokens"
 import useVaultTotalAssets from "@/hooks/data/vaults/fallbacks/tvl/useVaultTotalAssets"
 
 export default function useVaultTvlFallback({
@@ -11,10 +11,8 @@ export default function useVaultTvlFallback({
   vaultAddress: VaultDynamicProps["vaultAddress"]
   enabled: boolean
 }) {
-  const { data: primaryAssetPriceUsd, isLoading: isLoadingPricer } = usePricer({
-    asset,
-    enabled,
-  })
+  const { data: primaryAssetPriceUsd, isLoading: isLoadingPricer } =
+    useTokenPriceUsd({ asset, enabled })
   const { data: totalAssets, isLoading: isLoadingTotalAssets } =
     useVaultTotalAssets({ vaultAddress, enabled })
   return {
