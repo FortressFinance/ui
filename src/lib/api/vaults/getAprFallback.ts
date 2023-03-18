@@ -38,9 +38,7 @@ export async function getVaultAprFallback(asset: VaultProps["asset"]) {
       }
     }
   `
-  const variables = {
-    lpToken: asset ?? "0x",
-  }
+  const variables = { lpToken: asset }
 
   const data = await request(curveGraphUrl, graphqlQuery, variables)
   return data?.pools

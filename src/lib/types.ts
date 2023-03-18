@@ -5,9 +5,9 @@ import { CompounderVaultStaticData } from "@/lib/api/vaults"
 export type VaultType = "balancer" | "curve" | "token"
 
 export type VaultProps = {
-  asset?: Address
+  asset: Address
   type: VaultType
-  vaultAddress?: Address
+  vaultAddress: Address
 }
 
 export type VaultDynamicProps = VaultProps & {

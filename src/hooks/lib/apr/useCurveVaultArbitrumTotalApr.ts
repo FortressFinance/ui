@@ -25,7 +25,7 @@ export default function useCurveVaultArbitrumTotalApr({
   enabled: boolean
 }) {
   const chainId = useActiveChainId()
-  const poolCurveAddress = ARBI_CURVE_ADDRESS[asset ?? "0x"] ?? "0x"
+  const poolCurveAddress = ARBI_CURVE_ADDRESS[asset] ?? "0x"
   const curveApiQuery = useQuery([chainId, asset, "curveApi"], {
     queryFn: () => getCurveArbitrumApi(poolCurveAddress),
     retry: false,

@@ -8,7 +8,7 @@ export function useVaultAprFallback({
   asset,
   enabled,
 }: {
-  asset: Address | undefined
+  asset: Address
   enabled: boolean
 }) {
   return useQuery({

@@ -84,7 +84,10 @@ export function useVaultFees({ asset, type, vaultAddress }: VaultProps) {
     : ammFallbackRequest
 }
 
-function useApiCompounderVaultFees({ asset, type }: VaultProps) {
+function useApiCompounderVaultFees({
+  asset,
+  type,
+}: Pick<VaultProps, "asset" | "type">) {
   const apiCompounderVault = useApiCompounderVaults({ type })
   const matchedVault = findApiCompounderVaultForAsset(
     apiCompounderVault.data,
@@ -104,7 +107,10 @@ function useApiCompounderVaultFees({ asset, type }: VaultProps) {
   }
 }
 
-function useApiTokenCompounderVaultFees({ asset, type }: VaultProps) {
+function useApiTokenCompounderVaultFees({
+  asset,
+  type,
+}: Pick<VaultProps, "asset" | "type">) {
   const apiTokenVault = useApiTokenVaults({ type })
   const matchedVault = findApiTokenVaultForAsset(apiTokenVault.data, asset)
   return {

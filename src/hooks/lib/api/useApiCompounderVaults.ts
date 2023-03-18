@@ -11,7 +11,7 @@ import {
 
 // TODO: Create combined `useApiVaults` hook after https://github.com/FortressFinance/issues/issues/110 is implemented
 
-export function useApiCompounderVaults({ type }: VaultProps) {
+export function useApiCompounderVaults({ type }: Pick<VaultProps, "type">) {
   const chainId = useActiveChainId()
   const isCurve = useIsCurveCompounder(type)
   const isToken = useIsTokenCompounder(type)

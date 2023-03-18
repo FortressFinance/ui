@@ -2,7 +2,7 @@ import { Tab } from "@headlessui/react"
 import { NextPage } from "next"
 
 import { CompounderVaultTable } from "@/components/Compounder"
-import HoldingsTable from "@/components/Holdings/HoldingsTable"
+import HoldingsTable from "@/components/HoldingsTable"
 import Layout from "@/components/Layout"
 import Seo from "@/components/Seo"
 import { TabButton, TabListGroup, TabPanels } from "@/components/Tabs"

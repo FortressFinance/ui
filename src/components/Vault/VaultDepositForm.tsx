@@ -65,8 +65,8 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     abi: erc20ABI,
     address: inputTokenAddress,
     functionName: "allowance",
-    args: [userAddress ?? "0x", props.vaultAddress ?? "0x"],
-    enabled: !!userAddress && !inputIsEth && !!props.vaultAddress,
+    args: [userAddress ?? "0x", props.vaultAddress],
+    enabled: !!userAddress && !inputIsEth,
     watch: true,
   })
   const requiresApproval = inputIsEth ? false : allowance?.lt(value)
@@ -79,8 +79,8 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     abi: erc20ABI,
     address: inputTokenAddress,
     functionName: "approve",
-    args: [props.vaultAddress ?? "0x", ethers.constants.MaxUint256],
-    enabled: requiresApproval && !!props.vaultAddress,
+    args: [props.vaultAddress, ethers.constants.MaxUint256],
+    enabled: requiresApproval,
   })
   const approve = useContractWrite(prepareApprove.config)
   const waitApprove = useWaitForTransaction({

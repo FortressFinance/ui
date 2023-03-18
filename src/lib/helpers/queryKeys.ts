@@ -20,8 +20,8 @@ export const queryKeys = createQueryKeyStore({
       user: Address | undefined
       type: string
     }) => [chainId, type, id, user ?? "0x"],
-    apy: ({ asset }: { asset: Address | undefined }) => ["apy", asset ?? "0x"],
-    apr: ({ asset }: { asset: Address | undefined }) => ["apr", asset ?? "0x"],
+    apy: ({ asset }: { asset: Address }) => ["apy", asset],
+    apr: ({ asset }: { asset: Address }) => ["apr", asset],
     previewTokenDeposit: (args: PreviewTransactionGetterArgs) => [args],
     previewDeposit: (args: PreviewTransactionGetterArgs) => [args],
     previewTokenRedeem: (args: PreviewTransactionGetterArgs) => [args],
@@ -47,6 +47,6 @@ export const queryKeys = createQueryKeyStore({
     }) => [chainId, user ?? "0x"],
   },
   tokens: {
-    priceUsd: ({ asset = "0x" }: { asset?: Address }) => [asset],
+    priceUsd: ({ asset = "0x" }: { asset: Address }) => [asset],
   },
 })

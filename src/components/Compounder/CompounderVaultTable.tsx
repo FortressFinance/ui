@@ -77,6 +77,8 @@ type CompounderVaultRowProps = {
 
 const CompounderVaultRow: FC<CompounderVaultRowProps> = (props) => {
   const vaultAddress = useCompounderVault(props)
+  if (!vaultAddress.data?.ybTokenAddress)
+    return <TableLoading>Loading vaults...</TableLoading>
   return (
     <VaultRow
       {...props}
