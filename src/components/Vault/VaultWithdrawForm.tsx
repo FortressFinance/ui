@@ -38,7 +38,7 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     defaultValues: {
       amountIn: "",
       inputToken: props.vaultAddress,
-      outputToken: props.asset ?? "0x",
+      outputToken: props.asset,
     },
     mode: "all",
     reValidateMode: "onChange",

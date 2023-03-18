@@ -13,7 +13,7 @@ export function useTokenVaultSymbol({
   const registryQuery = useContractRead({
     ...useRegistryContract(),
     functionName: "getTokenCompounderSymbol",
-    args: [asset ?? "0x"],
+    args: [asset],
     enabled: enabled,
   })
 

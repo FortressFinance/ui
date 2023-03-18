@@ -1,20 +1,21 @@
 import { FC } from "react"
-import { useAccount } from "wagmi"
+import { Address, useAccount } from "wagmi"
 
+import { VaultType } from "@/lib/types"
 import {
   useActiveChainId,
   useClientReady,
+  useCompounderVault,
   useHoldingsVaults,
   useListCompounders,
 } from "@/hooks"
 
 import { chains } from "@/components/AppProviders"
-import { HoldingsRow } from "@/components/Holdings/HoldingsRow"
 import { TableDisconnected, TableEmpty, TableLoading } from "@/components/Table"
+import VaultRow from "@/components/Vault/VaultRow"
 import { VaultTable } from "@/components/Vault/VaultTable"
 
 const HoldingsTable: FC = () => {
-  // handle hydration mismatch
   const ready = useClientReady()
   const { isConnected } = useAccount()
   const chainId = useActiveChainId()
@@ -59,3 +60,25 @@ const HoldingsTable: FC = () => {
 }
 
 export default HoldingsTable
+
+type HoldingsRowProps = {
+  asset: Address
+  type: VaultType
+}
+
+export const HoldingsRow: FC<HoldingsRowProps> = (props) => {
+  const vaultAddress = useCompounderVault({
+    vaultAssetAddress: props.asset,
+    vaultType: props.type,
+  })
+  const holdingsVaults = useHoldingsVaults()
+
+  if (!vaultAddress.data?.ybTokenAddress || holdingsVaults.isLoading)
+    return <TableLoading>Loading holdings...</TableLoading>
+
+  return holdingsVaults.data?.vaults?.includes(
+    vaultAddress.data.ybTokenAddress
+  ) ? (
+    <VaultRow {...props} vaultAddress={vaultAddress.data.ybTokenAddress} />
+  ) : null
+}

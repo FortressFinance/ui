@@ -92,9 +92,9 @@ const ConcentratorVaultRow: FC<ConcentratorVaultRowProps> = (props) => {
     return <TableLoading>Loading concentrators...</TableLoading>
   return (
     <VaultRow
-      asset={concentrator.data?.rewardTokenAddress}
+      asset={concentrator.data.rewardTokenAddress}
       type={props.vaultType}
-      vaultAddress={concentrator.data?.ybTokenAddress}
+      vaultAddress={concentrator.data.ybTokenAddress}
     />
   )
 }

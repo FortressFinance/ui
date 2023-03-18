@@ -1,7 +1,7 @@
 import { VaultProps } from "@/lib/types"
 import { useApiVaultDynamic } from "@/hooks/lib/api/useApiVaultDynamic"
 
-type UseVaultUserEarningsParams = VaultProps & {
+type UseVaultUserEarningsParams = Pick<VaultProps, "type"> & {
   poolId?: number
 }
 
