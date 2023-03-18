@@ -58,12 +58,14 @@ export const arbitrumFork: Chain = {
   },
 }
 
-const MAINNET_FORK_ENABLED = Boolean(
-  JSON.parse(process.env.NEXT_PUBLIC_MAINNETFORK_SUPPORTED ?? "false")
-)
-const ARBITRUM_FORK_ENABLED = Boolean(
-  JSON.parse(process.env.NEXT_PUBLIC_ARBITRUMFORK_SUPPORTED ?? "false")
-)
+const MAINNET_FORK_ENABLED =
+  Boolean(
+    JSON.parse(process.env.NEXT_PUBLIC_MAINNETFORK_SUPPORTED ?? "false")
+  ) || process.env.NODE_ENV === "test"
+const ARBITRUM_FORK_ENABLED =
+  Boolean(
+    JSON.parse(process.env.NEXT_PUBLIC_ARBITRUMFORK_SUPPORTED ?? "false")
+  ) || process.env.NODE_ENV === "test"
 
 const fortressForkProvider = ({
   priority,
