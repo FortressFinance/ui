@@ -46,7 +46,6 @@ jobs:
 
       - name: 🔎 Type check
         run: yarn typecheck
-        env: NEXT_PUBLIC_ARBITRUM_SUPPORTED=true
 
   prettier:
     name: 💅 Prettier
@@ -83,4 +82,3 @@ jobs:
 
       - name: 🃏 Run jest
         run: yarn test
-        env: NEXT_PUBLIC_ARBITRUM_SUPPORTED=true

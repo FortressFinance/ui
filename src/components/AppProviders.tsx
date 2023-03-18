@@ -21,9 +21,6 @@ const MAINNET_FORK_ENABLED = Boolean(
 const ARBITRUM_FORK_ENABLED = Boolean(
   JSON.parse(process.env.NEXT_PUBLIC_ARBITRUMFORK_SUPPORTED ?? "false")
 )
-const ARBITRUM_ENABLED = Boolean(
-  JSON.parse(process.env.NEXT_PUBLIC_ARBITRUM_SUPPORTED ?? "false")
-)
 
 export const mainnetFork: Chain = {
   id: 31_337,
@@ -136,7 +133,7 @@ const networks = [
         priority: 2,
       },
     ],
-    enabled: ARBITRUM_ENABLED,
+    enabled: true,
   },
 ]
 
