@@ -1,8 +1,7 @@
 import { FC } from "react"
 
 import { VaultProps } from "@/lib/types"
-import { useCompounderVault } from "@/hooks/data/compounders"
-import { useHoldingsVaults } from "@/hooks/data/holdings/useHoldingsVaults"
+import { useCompounderVault, useHoldingsVaults } from "@/hooks"
 
 import VaultRow from "@/components/Vault/VaultRow"
 

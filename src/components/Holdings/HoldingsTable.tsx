@@ -1,10 +1,12 @@
 import { FC } from "react"
 import { useAccount } from "wagmi"
 
-import { useListCompounders } from "@/hooks/data/compounders"
-import { useHoldingsVaults } from "@/hooks/data/holdings/useHoldingsVaults"
-import useActiveChainId from "@/hooks/useActiveChainId"
-import { useClientReady } from "@/hooks/util"
+import {
+  useActiveChainId,
+  useClientReady,
+  useHoldingsVaults,
+  useListCompounders,
+} from "@/hooks"
 
 import { chains } from "@/components/AppProviders"
 import { HoldingsRow } from "@/components/Holdings/HoldingsRow"

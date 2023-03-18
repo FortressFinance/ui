@@ -3,8 +3,7 @@ import { FC, Fragment } from "react"
 import { useNetwork, useSwitchNetwork } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
-import useActiveChainId from "@/hooks/useActiveChainId"
-import { useClientReady } from "@/hooks/util"
+import { useActiveChainId, useClientReady } from "@/hooks"
 
 import { chains, mainnetFork } from "@/components/AppProviders"
 

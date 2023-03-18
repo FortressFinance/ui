@@ -4,9 +4,9 @@ import { Address } from "wagmi"
 import {
   useConcentratorTargetAssets,
   useConcentratorVault,
+  useFirstConcentrator,
   useListConcentrators,
-} from "@/hooks/data/concentrators"
-import { useFirstConcentrator } from "@/hooks/util"
+} from "@/hooks"
 
 import { AssetBalance, AssetLogo, AssetSymbol } from "@/components/Asset"
 

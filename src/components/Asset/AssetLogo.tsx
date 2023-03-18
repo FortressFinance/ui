@@ -4,8 +4,7 @@ import { BiErrorCircle } from "react-icons/bi"
 import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
-import useActiveChainId from "@/hooks/useActiveChainId"
-import useTokenOrNative from "@/hooks/useTokenOrNative"
+import { useActiveChainId, useTokenOrNative } from "@/hooks"
 
 import { chains } from "@/components/AppProviders"
 import Spinner from "@/components/Spinner"

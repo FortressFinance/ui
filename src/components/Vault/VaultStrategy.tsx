@@ -3,9 +3,12 @@ import { FC, Fragment, MouseEventHandler } from "react"
 import { useAccount } from "wagmi"
 
 import { VaultProps } from "@/lib/types"
-import { useVault, useVaultFees } from "@/hooks/data/vaults"
-import useTokenOrNative from "@/hooks/useTokenOrNative"
-import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
+import {
+  useIsTokenCompounder,
+  useTokenOrNative,
+  useVault,
+  useVaultFees,
+} from "@/hooks"
 
 import { AssetSymbol } from "@/components/Asset"
 import { ModalBaseProps } from "@/components/Modal/ModalBase"

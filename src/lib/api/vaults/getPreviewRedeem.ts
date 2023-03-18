@@ -1,7 +1,7 @@
 import { Address } from "wagmi"
 
 import { fortressApi, handledResponse } from "@/lib/api/util"
-import { PreviewTransactionGetterArgs } from "@/hooks/data/preview"
+import { PreviewTransactionGetterArgs } from "@/hooks/lib/api/types"
 
 type PreviewRedeemData = {
   id: number

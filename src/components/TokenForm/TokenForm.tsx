@@ -11,9 +11,9 @@ import { Address, useAccount } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 import { parseTokenUnits } from "@/lib/helpers"
-import { usePreviewDeposit, usePreviewRedeem } from "@/hooks/data/preview"
-import useTokenOrNative from "@/hooks/useTokenOrNative"
-import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
+import { useTokenOrNative, useTokenOrNativeBalance } from "@/hooks"
+import { usePreviewDeposit } from "@/hooks/lib/api/usePreviewDeposit"
+import { usePreviewRedeem } from "@/hooks/lib/api/usePreviewRedeem"
 
 import { AssetBalance } from "@/components/Asset"
 import Button from "@/components/Button"

@@ -1,7 +1,7 @@
 import { FC, MouseEventHandler } from "react"
 import { useAccount } from "wagmi"
 
-import { useClientReady } from "@/hooks/util"
+import { useClientReady } from "@/hooks"
 
 import Address from "@/components/Address"
 import Button, { ButtonProps } from "@/components/Button"
