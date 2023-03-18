@@ -1,8 +1,8 @@
 import { VaultDynamicProps } from "@/lib/types"
 
 export default function useBalancerVaultArbitrumTotalApr({
-  asset,
-  enabled,
+  asset: _asset,
+  enabled: _enabled,
 }: {
   asset: VaultDynamicProps["asset"]
   enabled: boolean

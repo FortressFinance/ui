@@ -5,7 +5,7 @@ import { VaultDynamicProps } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
 import { RewardDistributor } from "@/constant/abi"
-import { GLP_REWARDS_DISTRIBUTOR_ADDRESS } from "@/constant/env"
+import { glpRewardsDistributorAddress } from "@/constant/addresses"
 
 export default function useTokenGlpVault({
   asset,
@@ -18,7 +18,7 @@ export default function useTokenGlpVault({
   const glpQuery = useContractRead({
     chainId,
     abi: RewardDistributor,
-    address: GLP_REWARDS_DISTRIBUTOR_ADDRESS as `0x${string}`,
+    address: glpRewardsDistributorAddress,
     functionName: "tokensPerInterval",
     enabled: enabled,
   })

@@ -1,11 +1,21 @@
 import axios from "axios"
 import { Address, useQuery } from "wagmi"
+import { z } from "zod"
 
 import { VaultDynamicProps } from "@/lib/types"
 import useActiveChainId from "@/hooks/useActiveChainId"
 
-import { CONVEX_SIDECHAINS_URL } from "@/constant/env"
-import { ARBI_CURVE_ADDRESS } from "@/constant/mapping"
+import {
+  crvTriCryptoPoolAddress,
+  crvTriCryptoTokenAddress,
+  crvTwoCryptoTokenAddress,
+} from "@/constant/addresses"
+import { convexSidechainsUrl } from "@/constant/urls"
+
+const ARBI_CURVE_ADDRESS: Record<Address, Address> = {
+  [crvTriCryptoTokenAddress]: crvTriCryptoPoolAddress,
+  [crvTwoCryptoTokenAddress]: crvTwoCryptoTokenAddress,
+}
 
 export default function useCurveVaultArbitrumTotalApr({
   asset,
@@ -25,22 +35,30 @@ export default function useCurveVaultArbitrumTotalApr({
   return curveApiQuery
 }
 
+const respSchema = z.object({
+  apys: z.record(
+    z.object({
+      baseApy: z.number(),
+      crvApy: z.number(),
+      cvxApy: z.number(),
+      crvBoost: z.string().or(z.number()),
+      extraRewards: z.array(z.unknown()),
+    })
+  ),
+})
+
 async function getCurveArbitrumApi(poolCurveAddress: Address) {
-  const resp = await axios.get(`${CONVEX_SIDECHAINS_URL}`)
-  const apys = resp?.data?.apys
+  const resp = await axios.get(convexSidechainsUrl)
+  const parsed = respSchema.parse(resp.data)
   let totalApr = 0
-  Object.entries(apys).forEach((entry) => {
-    const key = entry[0]
-    const value: any = entry[1]
+  Object.entries(parsed.apys).forEach(([key, value]) => {
     if (
-      key !== undefined &&
       key.toLocaleLowerCase().includes(poolCurveAddress.toLocaleLowerCase())
     ) {
-      const baseApy = Number(value?.baseApy) / 100
-      const crvApy = Number(value?.crvApy) / 100
-      const cvxApy = Number(value?.cvxApy) / 100
-      const extraRewards = Number(value?.extraRewards)
-      totalApr = baseApy + crvApy + cvxApy + extraRewards
+      const baseApy = value.baseApy / 100
+      const crvApy = value.crvApy / 100
+      const cvxApy = value.cvxApy / 100
+      totalApr = baseApy + crvApy + cvxApy
     }
   })
   return totalApr

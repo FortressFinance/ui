@@ -7,7 +7,7 @@ import { useApiCompounderVaults, useApiTokenVaults } from "@/hooks/api"
 import { useVaultContract } from "@/hooks/contracts/useVaultContract"
 import { useFallbackReads } from "@/hooks/util"
 
-export function useVault({ asset, type, vaultAddress }: VaultProps) {
+export function useVault({ asset, vaultAddress }: VaultProps) {
   const vaultContract = useVaultContract(vaultAddress)
   return useFallbackReads(
     {
@@ -63,7 +63,7 @@ export function useVault({ asset, type, vaultAddress }: VaultProps) {
 
 export type UseVaultResult = ReturnType<typeof useVault>["data"]
 
-function useApiCompounderVault({ asset, type }: VaultProps) {
+function _useApiCompounderVault({ asset, type }: VaultProps) {
   const compounderVaults = useApiCompounderVaults({ type })
   const matchedVault = findApiCompounderVaultForAsset(
     compounderVaults.data,
@@ -83,7 +83,7 @@ function useApiCompounderVault({ asset, type }: VaultProps) {
   }
 }
 
-function useApiTokenVault({ asset, type }: VaultProps) {
+function _useApiTokenVault({ asset, type }: VaultProps) {
   const tokenVaults = useApiTokenVaults({ type })
   const matchedVault = findApiTokenVaultForAsset(tokenVaults.data, asset)
   return {
