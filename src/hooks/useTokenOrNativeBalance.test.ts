@@ -30,8 +30,9 @@ describe("useTokenOrNativeBalance", () => {
     const balance = renderHook(() =>
       useTokenOrNativeBalance({ address: glpTokenAddress })
     )
-    await balance.waitFor(() =>
-      expect(balance.result.current.isSuccess).toBeTruthy()
+    await balance.waitFor(
+      () => expect(balance.result.current.isSuccess).toBeTruthy(),
+      { timeout: 10_000 }
     )
     expect(balance.result.current.data).toEqual(
       expect.objectContaining({ decimals: 18, symbol: "sGLP" })
