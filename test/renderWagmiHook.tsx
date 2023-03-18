@@ -1,9 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { renderHook, RenderHookOptions, waitFor } from "@testing-library/react"
-import { Client, createClient, CreateClientConfig, WagmiConfig } from "wagmi"
-import { MockConnector } from "wagmi/connectors/mock"
-
-import { getProvider, getSigners, setupWagmiClient } from "test/utils"
+import { setupWagmiClient } from "test/utils"
+import { Client, WagmiConfig } from "wagmi"
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,14 +15,16 @@ export const queryClient = new QueryClient({
   logger: {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     error: () => {},
+    // eslint-disable-next-line no-console
     log: console.log,
+    // eslint-disable-next-line no-console
     warn: console.warn,
   },
 })
 
 type Props = { client?: Client } & {
-  children?:
-    | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+  children?: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | React.ReactElement<any, string | React.JSXElementConstructor<any>>
     | React.ReactNode
 }
 

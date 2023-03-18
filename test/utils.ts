@@ -1,18 +1,18 @@
+import { act } from "@testing-library/react"
 import type { Provider, WebSocketProvider } from "@wagmi/core"
 import { MockConnector } from "@wagmi/core/connectors/mock"
 import { providers, Wallet } from "ethers"
+import { renderWagmiHook } from "test/renderWagmiHook"
 import {
   Chain,
   Connector,
   createClient,
   CreateClientConfig,
-  useNetwork as _useNetwork,
   useAccount as _useAccount,
+  useNetwork as _useNetwork,
 } from "wagmi"
 
 import { arbitrumFork } from "@/components/AppProviders"
-import { renderWagmiHook } from "test/renderWagmiHook"
-import { act } from "@testing-library/react"
 
 type Config = Partial<CreateClientConfig>
 
@@ -21,6 +21,7 @@ export function setupWagmiClient(config: Config = {}) {
     connectors: [
       new MockConnector({
         options: {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           signer: getSigners()[0]!,
         },
       }),
@@ -182,6 +183,7 @@ export async function actConnect(config: {
 }) {
   const connector = config.connector
   const getConnect = (utils: ReturnType<typeof renderWagmiHook>) =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (utils.result.current as any)?.connect || utils.result.current
   const utils = config.utils
 
@@ -201,6 +203,7 @@ export async function actDisconnect(config: {
   utils: ReturnType<typeof renderWagmiHook>
 }) {
   const getDisconnect = (utils: ReturnType<typeof renderWagmiHook>) =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (utils.result.current as any)?.disconnect || utils.result.current
   const utils = config.utils
 
@@ -219,6 +222,7 @@ export async function actSwitchNetwork(config: {
 }) {
   const chainId = config.chainId
   const getNetwork = (utils: ReturnType<typeof renderWagmiHook>) =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (utils.result.current as any)?.switchNetwork || utils.result.current
   const utils = config.utils
 
@@ -235,6 +239,7 @@ export async function actSwitchNetwork(config: {
  * with tracked values, so we need to use custom hooks.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useAccount(config: any = {}) {
   const { ...values } = _useAccount(config)
   return values
