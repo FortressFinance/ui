@@ -2,7 +2,7 @@ import { act } from "@testing-library/react"
 import type { Provider, WebSocketProvider } from "@wagmi/core"
 import { MockConnector } from "@wagmi/core/connectors/mock"
 import { providers, Wallet } from "ethers"
-import { renderWagmiHook } from "test/renderWagmiHook"
+import { renderHook } from "test/renderHook"
 import {
   Chain,
   Connector,
@@ -16,16 +16,15 @@ import { arbitrumFork } from "@/components/AppProviders"
 
 type Config = Partial<CreateClientConfig>
 
+export function mockConnector() {
+  return new MockConnector({
+    options: { signer: getSigners()[0] },
+  })
+}
+
 export function setupWagmiClient(config: Config = {}) {
   return createClient<Provider, WebSocketProvider>({
-    connectors: [
-      new MockConnector({
-        options: {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          signer: getSigners()[0]!,
-        },
-      }),
-    ],
+    connectors: [mockConnector()],
     provider: ({ chainId }) => getProvider({ chainId, chains: [arbitrumFork] }),
     ...config,
   })
@@ -179,10 +178,10 @@ export function getSigners() {
 export async function actConnect(config: {
   chainId?: number
   connector?: Connector
-  utils: ReturnType<typeof renderWagmiHook>
+  utils: ReturnType<typeof renderHook>
 }) {
   const connector = config.connector
-  const getConnect = (utils: ReturnType<typeof renderWagmiHook>) =>
+  const getConnect = (utils: ReturnType<typeof renderHook>) =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (utils.result.current as any)?.connect || utils.result.current
   const utils = config.utils
@@ -200,9 +199,9 @@ export async function actConnect(config: {
 }
 
 export async function actDisconnect(config: {
-  utils: ReturnType<typeof renderWagmiHook>
+  utils: ReturnType<typeof renderHook>
 }) {
-  const getDisconnect = (utils: ReturnType<typeof renderWagmiHook>) =>
+  const getDisconnect = (utils: ReturnType<typeof renderHook>) =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (utils.result.current as any)?.disconnect || utils.result.current
   const utils = config.utils
@@ -218,10 +217,10 @@ export async function actDisconnect(config: {
 
 export async function actSwitchNetwork(config: {
   chainId: number
-  utils: ReturnType<typeof renderWagmiHook>
+  utils: ReturnType<typeof renderHook>
 }) {
   const chainId = config.chainId
-  const getNetwork = (utils: ReturnType<typeof renderWagmiHook>) =>
+  const getNetwork = (utils: ReturnType<typeof renderHook>) =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (utils.result.current as any)?.switchNetwork || utils.result.current
   const utils = config.utils
@@ -235,7 +234,7 @@ export async function actSwitchNetwork(config: {
 }
 
 /**
- * `renderWagmiHook` in `@testing-library/react` doesn't play well
+ * `renderHook` in `@testing-library/react` doesn't play well
  * with tracked values, so we need to use custom hooks.
  */
 

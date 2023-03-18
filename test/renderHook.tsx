@@ -1,5 +1,9 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { renderHook, RenderHookOptions, waitFor } from "@testing-library/react"
+import {
+  renderHook as defaultRenderHook,
+  RenderHookOptions,
+  waitFor,
+} from "@testing-library/react"
 import { setupWagmiClient } from "test/utils"
 import { Client, WagmiConfig } from "wagmi"
 
@@ -40,7 +44,7 @@ export function wrapper({
   )
 }
 
-export function renderWagmiHook<TResult, TProps>(
+export function renderHook<TResult, TProps>(
   hook: (props: TProps) => TResult,
   {
     wrapper: wrapper_,
@@ -58,7 +62,7 @@ export function renderWagmiHook<TResult, TProps>(
 
   queryClient.clear()
 
-  const utils = renderHook<TResult, TProps>(hook, options)
+  const utils = defaultRenderHook<TResult, TProps>(hook, options)
   return {
     ...utils,
     waitFor: (utils as { waitFor?: typeof waitFor })?.waitFor ?? waitFor,

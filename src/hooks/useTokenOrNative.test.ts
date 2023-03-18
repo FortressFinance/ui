@@ -1,4 +1,4 @@
-import { renderWagmiHook } from "test/renderWagmiHook"
+import { renderHook } from "test/renderHook"
 
 import { useTokenOrNative } from "@/hooks/useTokenOrNative"
 
@@ -6,7 +6,7 @@ import { ethTokenAddress, glpTokenAddress } from "@/constant/addresses"
 
 describe("useTokenOrNative", () => {
   it(`returns ETH information when passed address:${ethTokenAddress}`, async () => {
-    const { result, waitFor } = renderWagmiHook(() =>
+    const { result, waitFor } = renderHook(() =>
       useTokenOrNative({ address: ethTokenAddress })
     )
     await waitFor(() => expect(result.current.isSuccess).toBeTruthy())
@@ -21,7 +21,7 @@ describe("useTokenOrNative", () => {
   })
 
   it("returns token information when passed a token address", async () => {
-    const { result, waitFor } = renderWagmiHook(() =>
+    const { result, waitFor } = renderHook(() =>
       useTokenOrNative({ address: glpTokenAddress })
     )
 
