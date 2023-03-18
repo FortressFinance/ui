@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
-import { DEFAULT_SLIPPAGE } from "@/constant/env"
+export const DEFAULT_SLIPPAGE = 0.05
 
 export interface TxSettingsStore {
   slippageTolerance: number

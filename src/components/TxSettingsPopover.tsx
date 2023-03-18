@@ -10,9 +10,7 @@ import Button from "@/components/Button"
 
 import { FortIconCog } from "@/icons"
 
-import { useTxSettings } from "@/store/txSettings"
-
-import { DEFAULT_SLIPPAGE } from "@/constant/env"
+import { DEFAULT_SLIPPAGE, useTxSettings } from "@/store/txSettings"
 
 type TxSettingsPopoverProps = {
   className?: string
