@@ -1,7 +1,7 @@
 import { VaultDynamicProps } from "@/lib/types"
+import { useActiveChainId } from "@/hooks"
 import useBalancerVaultArbitrumTotalApr from "@/hooks/lib/apr/useBalancerVaultArbitrumTotalApr"
 import useBalancerVaultMainnetTotalApr from "@/hooks/lib/apr/useBalancerVaultMainnetTotalApr"
-import { useActiveChainId } from "@/hooks"
 
 export default function useBalancerVaultTotalApr({
   asset,

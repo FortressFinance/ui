@@ -1,7 +1,7 @@
 import { VaultDynamicProps } from "@/lib/types"
+import { useActiveChainId } from "@/hooks"
 import useTokenVaultArbitrumTotalApr from "@/hooks/lib/apr/useTokenVaultArbitrumTotalApr"
 import useTokenVaultMainnetTotalApr from "@/hooks/lib/apr/useTokenVaultMainnetTotalApr"
-import { useActiveChainId } from "@/hooks"
 
 export default function useTokenVaultTotalApr({
   asset,
