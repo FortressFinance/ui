@@ -16,13 +16,13 @@ const NETWORK_MAINNET_FORK = "mainnetFork"
 const NETWORK_ARBITRUM_FORK = "arbitrumFork"
 
 const MAINNET_FORK_ENABLED = Boolean(
-  JSON.parse(process.env.NEXT_PUBLIC_MAINNETFORK_SUPPORTED ?? "")
+  JSON.parse(process.env.NEXT_PUBLIC_MAINNETFORK_SUPPORTED ?? "false")
 )
 const ARBITRUM_FORK_ENABLED = Boolean(
-  JSON.parse(process.env.NEXT_PUBLIC_ARBITRUMFORK_SUPPORTED ?? "")
+  JSON.parse(process.env.NEXT_PUBLIC_ARBITRUMFORK_SUPPORTED ?? "false")
 )
 const ARBITRUM_ENABLED = Boolean(
-  JSON.parse(process.env.NEXT_PUBLIC_ARBITRUM_SUPPORTED ?? "")
+  JSON.parse(process.env.NEXT_PUBLIC_ARBITRUM_SUPPORTED ?? "false")
 )
 
 export const mainnetFork: Chain = {
