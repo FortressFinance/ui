@@ -2,6 +2,7 @@ import { FC } from "react"
 import { Address, useAccount } from "wagmi"
 
 import { VaultType } from "@/lib/types"
+import { enabledNetworks } from "@/lib/wagmi"
 import {
   useActiveChainId,
   useClientReady,
@@ -10,7 +11,6 @@ import {
   useListCompounders,
 } from "@/hooks"
 
-import { chains } from "@/components/AppProviders"
 import { TableDisconnected, TableEmpty, TableLoading } from "@/components/Table"
 import VaultRow from "@/components/Vault/VaultRow"
 import { VaultTable } from "@/components/Vault/VaultTable"
@@ -19,7 +19,7 @@ const HoldingsTable: FC = () => {
   const ready = useClientReady()
   const { isConnected } = useAccount()
   const chainId = useActiveChainId()
-  const availableChains = chains.filter((n) => n.id === chainId)
+  const availableChains = enabledNetworks.chains.filter((n) => n.id === chainId)
   const supportedChain = availableChains?.[0]
 
   const { data: compoundersList, isLoading } = useListCompounders()

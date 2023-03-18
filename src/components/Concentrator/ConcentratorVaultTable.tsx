@@ -3,6 +3,7 @@ import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
 import { FilterCategory, VaultType } from "@/lib/types"
+import { enabledNetworks } from "@/lib/wagmi"
 import {
   useActiveChainId,
   useClientReady,
@@ -12,7 +13,6 @@ import {
   useListConcentrators,
 } from "@/hooks"
 
-import { chains } from "@/components/AppProviders"
 import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"
 import { TableEmpty, TableLoading } from "@/components/Table"
 import VaultRow from "@/components/Vault/VaultRow"
@@ -45,7 +45,7 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
   const label = capitalizeFirstLetter(filterCategory)
 
   const chainId = useActiveChainId()
-  const availableChains = chains.filter((n) => n.id === chainId)
+  const availableChains = enabledNetworks.chains.filter((n) => n.id === chainId)
   const supportedChain = availableChains?.[0]
 
   return (

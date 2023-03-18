@@ -1,9 +1,8 @@
 import { act } from "@testing-library/react"
 import { renderHook } from "test/renderHook"
 
+import { arbitrumFork, mainnetFork } from "@/lib/wagmi"
 import { useActiveChainId } from "@/hooks/useActiveChainId"
-
-import { arbitrumFork, chains } from "@/components/AppProviders"
 
 import { useActiveChain } from "@/store/activeChain"
 
@@ -13,7 +12,7 @@ describe("useActiveChainId", () => {
       useActiveChain((store) => store.setChainId)
     )
     const { result } = renderHook(() => useActiveChainId())
-    expect(result.current).toEqual(chains[0].id)
+    expect(result.current).toEqual(mainnetFork.id)
 
     act(() => setChainId.result.current(arbitrumFork.id))
     expect(result.current).toEqual(arbitrumFork.id)

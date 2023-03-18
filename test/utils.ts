@@ -12,7 +12,7 @@ import {
   useNetwork as _useNetwork,
 } from "wagmi"
 
-import { arbitrumFork } from "@/components/AppProviders"
+import { arbitrumFork } from "@/lib/wagmi"
 
 type Config = Partial<CreateClientConfig>
 
