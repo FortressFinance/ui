@@ -66,6 +66,9 @@ export const arbitrumFork: Chain = {
     default: {
       http: ["/api/anvil-arbitrum"],
     },
+    foundry: {
+      http: ["http://18.196.63.80:8545"],
+    },
   },
   contracts: {
     multicall3: {
