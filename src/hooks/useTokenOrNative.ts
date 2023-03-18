@@ -20,6 +20,7 @@ export function useTokenOrNative({
       isError: false,
       isLoading: false,
       isFetching: false,
+      isSuccess: true,
       data: {
         address: undefined,
         decimals: 18,

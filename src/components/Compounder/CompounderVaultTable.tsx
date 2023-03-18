@@ -3,6 +3,7 @@ import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
 import { FilterCategory, VaultType } from "@/lib/types"
+import { enabledNetworks } from "@/lib/wagmi"
 import {
   useClientReady,
   useCompounderVault,
@@ -11,7 +12,6 @@ import {
 } from "@/hooks"
 import { useActiveChainId } from "@/hooks"
 
-import { chains } from "@/components/AppProviders"
 import { TableEmpty, TableLoading } from "@/components/Table"
 import VaultRow from "@/components/Vault/VaultRow"
 import { VaultTable } from "@/components/Vault/VaultTable"
@@ -28,7 +28,7 @@ export const CompounderVaultTable: FC<CompounderVaultTableProps> = ({
   // handle hydration mismatch
   const clientReady = useClientReady()
   const chainId = useActiveChainId()
-  const availableChains = chains.filter((n) => n.id === chainId)
+  const availableChains = enabledNetworks.chains.filter((n) => n.id === chainId)
   const supportedChain = availableChains?.[0]
   const network = supportedChain?.name
 
