@@ -4,12 +4,13 @@ import { Address } from "wagmi"
 import { capitalizeFirstLetter } from "@/lib/helpers"
 import { FilterCategory, VaultType } from "@/lib/types"
 import {
+  useActiveChainId,
+  useClientReady,
   useConcentratorTargetAssets,
   useConcentratorVault,
+  useFilteredConcentrators,
   useListConcentrators,
-} from "@/hooks/data/concentrators"
-import useActiveChainId from "@/hooks/useActiveChainId"
-import { useClientReady, useFilteredConcentrators } from "@/hooks/util"
+} from "@/hooks"
 
 import { chains } from "@/components/AppProviders"
 import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"

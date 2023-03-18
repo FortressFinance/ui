@@ -2,8 +2,8 @@ import { Menu } from "@headlessui/react"
 import { Dispatch, FC, SetStateAction } from "react"
 import { Address } from "wagmi"
 
-import { useConcentratorTargetAssets } from "@/hooks/data/concentrators/useConcentratorTargetAssets"
-import { useClientReady } from "@/hooks/util"
+import { useClientReady } from "@/hooks"
+import { useConcentratorTargetAssets } from "@/hooks/useConcentratorTargetAssets"
 
 import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"
 import { DropdownMenu } from "@/components/DropdownMenu"

@@ -14,7 +14,7 @@ type QueryConfig<Data, Error> = Pick<
 type UseMainnetEnsNameArgs = Partial<FetchEnsNameArgs>
 type UseEnsNameConfig = QueryConfig<FetchEnsNameResult, Error>
 
-export default function useMainnetEnsName({
+export function useMainnetEnsName({
   address,
   onError,
   onSettled,

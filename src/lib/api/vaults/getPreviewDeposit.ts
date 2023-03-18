@@ -1,6 +1,6 @@
 import { fortressApi } from "@/lib/api/util"
 import { handledResponse } from "@/lib/api/util/handledResponse"
-import { PreviewTransactionGetterArgs } from "@/hooks/data/preview"
+import { PreviewTransactionGetterArgs } from "@/hooks/lib/api/types"
 
 export type PreviewData = {
   id: number

@@ -2,10 +2,12 @@ import { BigNumber } from "ethers"
 import { FC } from "react"
 import { Address, useAccount } from "wagmi"
 
-import { useTokenPriceUsd } from "@/hooks/data/tokens"
-import useTokenOrNative from "@/hooks/useTokenOrNative"
-import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
-import { useClientReady } from "@/hooks/util"
+import {
+  useClientReady,
+  useTokenOrNative,
+  useTokenOrNativeBalance,
+  useTokenPriceUsd,
+} from "@/hooks"
 
 import Currency, { CurrencyProps } from "@/components/Currency"
 import Skeleton from "@/components/Skeleton"

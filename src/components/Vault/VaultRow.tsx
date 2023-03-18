@@ -3,7 +3,7 @@ import { FC, Fragment, MouseEventHandler, useState } from "react"
 
 import clsxm from "@/lib/clsxm"
 import { VaultProps } from "@/lib/types"
-import { useVault } from "@/hooks/data/vaults"
+import { useVault } from "@/hooks"
 
 import { AssetLogo } from "@/components/Asset"
 import Button from "@/components/Button"

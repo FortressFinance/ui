@@ -1,7 +1,7 @@
 import { createQueryKeyStore } from "@lukemorales/query-key-factory"
 import { Address } from "wagmi"
 
-import { PreviewTransactionGetterArgs } from "@/hooks/data/preview"
+import { PreviewTransactionGetterArgs } from "@/hooks/lib/api/types"
 
 export const queryKeys = createQueryKeyStore({
   vaults: {

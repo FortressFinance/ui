@@ -8,15 +8,18 @@ import {
   useWaitForTransaction,
 } from "wagmi"
 
+import { fortLog } from "@/lib/fortLog"
 import { parseTokenUnits } from "@/lib/helpers"
-import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
-import { useVaultContract } from "@/hooks/contracts/useVaultContract"
-import { useInvalidateHoldingsVaults } from "@/hooks/data/holdings/useHoldingsVaults"
-import { usePreviewRedeem } from "@/hooks/data/preview/usePreviewRedeem"
-import { useVault, useVaultPoolId } from "@/hooks/data/vaults"
-import useActiveChainId from "@/hooks/useActiveChainId"
-import useTokenOrNative from "@/hooks/useTokenOrNative"
+import {
+  useActiveChainId,
+  useInvalidateHoldingsVaults,
+  useTokenOrNative,
+  useVault,
+  useVaultPoolId,
+} from "@/hooks"
+import { usePreviewRedeem } from "@/hooks/lib/api/usePreviewRedeem"
+import { useVaultContract } from "@/hooks/lib/useVaultContract"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
@@ -112,12 +115,12 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
     if (enableRedeem) {
-      logger("Redeeming", amountIn)
+      fortLog("Redeeming", amountIn)
       invalidateHoldingsVaults()
       redeem.write?.()
     }
     if (enableRedeemUnderlying) {
-      logger("Redeeming underlying tokens", amountIn)
+      fortLog("Redeeming underlying tokens", amountIn)
       invalidateHoldingsVaults()
       redeemUnderlying.write?.()
     }

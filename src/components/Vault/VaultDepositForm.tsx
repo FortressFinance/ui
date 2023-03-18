@@ -10,16 +10,19 @@ import {
   useWaitForTransaction,
 } from "wagmi"
 
+import { fortLog } from "@/lib/fortLog"
 import { parseTokenUnits } from "@/lib/helpers"
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
-import logger from "@/lib/logger"
 import { VaultProps } from "@/lib/types"
-import { useVaultContract } from "@/hooks/contracts/useVaultContract"
-import { useInvalidateHoldingsVaults } from "@/hooks/data/holdings/useHoldingsVaults"
-import { usePreviewDeposit } from "@/hooks/data/preview/usePreviewDeposit"
-import { useVault, useVaultPoolId } from "@/hooks/data/vaults"
-import useActiveChainId from "@/hooks/useActiveChainId"
-import useTokenOrNative from "@/hooks/useTokenOrNative"
+import {
+  useActiveChainId,
+  useInvalidateHoldingsVaults,
+  useTokenOrNative,
+  useVault,
+  useVaultPoolId,
+} from "@/hooks"
+import { usePreviewDeposit } from "@/hooks/lib/api/usePreviewDeposit"
+import { useVaultContract } from "@/hooks/lib/useVaultContract"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
@@ -144,16 +147,16 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
     if (requiresApproval) {
-      logger("Approving spend", inputTokenAddress)
+      fortLog("Approving spend", inputTokenAddress)
       approve?.write?.()
     } else {
       if (enableDeposit) {
-        logger("Depositing", amountIn)
+        fortLog("Depositing", amountIn)
         invalidateHoldingsVaults()
         deposit.write?.()
       }
       if (enableDepositUnderlying) {
-        logger("Depositing underlying tokens", amountIn)
+        fortLog("Depositing underlying tokens", amountIn)
         invalidateHoldingsVaults()
         depositUnderlying.write?.()
       }

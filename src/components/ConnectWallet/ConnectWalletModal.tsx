@@ -12,7 +12,7 @@ import {
 import { useAccount, useConnect, useDisconnect, useNetwork } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
-import useActiveChainId from "@/hooks/useActiveChainId"
+import { useActiveChainId } from "@/hooks"
 
 import Address from "@/components/Address"
 import Button from "@/components/Button"

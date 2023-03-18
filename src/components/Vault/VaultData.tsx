@@ -5,14 +5,14 @@ import { useAccount } from "wagmi"
 import clsxm from "@/lib/clsxm"
 import { VaultProps } from "@/lib/types"
 import {
+  useTokenOrNative,
+  useTokenOrNativeBalance,
   useVault,
   useVaultApy,
   useVaultPoolId,
   useVaultTvl,
-} from "@/hooks/data/vaults"
-import { useVaultUserEarnings } from "@/hooks/data/vaults"
-import useTokenOrNative from "@/hooks/useTokenOrNative"
-import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
+  useVaultUserEarnings,
+} from "@/hooks"
 
 import { AssetBalance, AssetBalanceUsd } from "@/components/Asset"
 import Currency from "@/components/Currency"

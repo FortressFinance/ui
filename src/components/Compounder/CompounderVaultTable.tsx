@@ -4,11 +4,12 @@ import { Address } from "wagmi"
 import { capitalizeFirstLetter } from "@/lib/helpers"
 import { FilterCategory, VaultType } from "@/lib/types"
 import {
+  useClientReady,
   useCompounderVault,
+  useFilteredCompounders,
   useListCompounders,
-} from "@/hooks/data/compounders"
-import useActiveChainId from "@/hooks/useActiveChainId"
-import { useClientReady, useFilteredCompounders } from "@/hooks/util"
+} from "@/hooks"
+import { useActiveChainId } from "@/hooks"
 
 import { chains } from "@/components/AppProviders"
 import { TableEmpty, TableLoading } from "@/components/Table"
