@@ -3,7 +3,10 @@ import { FC } from "react"
 import Spinner from "@/components/Spinner"
 import { Toast, TransactionToastComponentProps } from "@/components/Toast"
 
-export const LoadingToast: FC<TransactionToastComponentProps> = ({ message = "Loading...", isVisible }) => {
+export const LoadingToast: FC<TransactionToastComponentProps> = ({
+  message = "Loading...",
+  isVisible,
+}) => {
   return (
     <Toast
       isVisible={isVisible}
