@@ -1,4 +1,5 @@
-import { FC, PropsWithChildren } from "react"
+import { Transition } from "@headlessui/react"
+import { FC, Fragment, PropsWithChildren } from "react"
 
 import clsxm from "@/lib/clsxm"
 
@@ -10,6 +11,11 @@ export type ToastComponentProps = {
   className?: string
 }
 
+export type TransactionToastComponentProps = ToastComponentProps & {
+  message?: string
+  txHash?: string
+}
+
 export const Toast: FC<PropsWithChildren<ToastComponentProps>> = ({
   className,
   isVisible,
@@ -17,27 +23,36 @@ export const Toast: FC<PropsWithChildren<ToastComponentProps>> = ({
   children,
 }) => {
   return (
-    <div
-      className={clsxm(
-        `${
-          isVisible ? "animate-enter opacity-100" : "animate-leave opacity-0"
-        } w-full max-w-xs rounded-md bg-gray-800 p-4 text-gray-400 shadow`,
-        className
-      )}
-    >
-      {children}
-      {!!onDismiss && (
-        <button
-          onClick={onDismiss}
-          className={clsxm(
-            "ml-auto inline-flex h-7 w-7 rounded-md bg-gray-800 p-1.5 text-gray-500 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-gray-300",
-            className
-          )}
+    <Transition
+          as={Fragment}
+          show={isVisible}
+          enter="transition ease-linear duration-100"
+          enterFrom="transform opacity-0"
+          enterTo="transform opacity-100"
+          leave="transition ease-in duration-75"
+          leaveFrom="transform opacity-100"
+          leaveTo="transform opacity-0"
         >
-          <span className="sr-only">Close</span>
-          <FortIconClose className="h-4 w-4 fill-white" />
-        </button>
-      )}
-    </div>
+      <div
+        className={clsxm(
+          "w-full max-w-xs rounded-md bg-gray-800 p-4 text-gray-400 shadow",
+          className
+        )}
+      >
+        {children}
+        {!!onDismiss && (
+          <button
+            onClick={onDismiss}
+            className={clsxm(
+              "ml-auto inline-flex h-7 w-7 rounded-md bg-gray-800 p-1.5 text-gray-500 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-gray-300",
+              className
+            )}
+          >
+            <span className="sr-only">Close</span>
+            <FortIconClose className="h-4 w-4 fill-white" />
+          </button>
+        )}
+      </div>
+    </Transition>
   )
 }
