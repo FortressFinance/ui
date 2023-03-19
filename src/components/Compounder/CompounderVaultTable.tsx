@@ -13,8 +13,8 @@ import {
 import { useActiveChainId } from "@/hooks"
 
 import { TableEmpty, TableLoading } from "@/components/Table"
-import VaultRow from "@/components/Vault/VaultRow"
-import { VaultTable } from "@/components/Vault/VaultTable"
+import { VaultRow } from "@/components/VaultRow"
+import { VaultTable } from "@/components/VaultRow/lib"
 
 type CompounderVaultTableProps = {
   filterCategory?: FilterCategory

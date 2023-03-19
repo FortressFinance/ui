@@ -1,26 +1,23 @@
 import Link from "next/link"
-import { FC, Fragment, MouseEventHandler } from "react"
+import { FC, MouseEventHandler } from "react"
 import { useAccount } from "wagmi"
 
+import { formatPercentage } from "@/lib/helpers/formatPercentage"
 import { VaultProps } from "@/lib/types"
-import {
-  useIsTokenCompounder,
-  useTokenOrNative,
-  useVault,
-  useVaultFees,
-} from "@/hooks"
+import { useIsTokenCompounder, useTokenOrNative, useVaultFees } from "@/hooks"
 
-import { AssetSymbol } from "@/components/Asset"
 import { ModalBaseProps } from "@/components/Modal/ModalBase"
 import PurpleModal, {
   PurpleModalContent,
   PurpleModalHeader,
 } from "@/components/Modal/PurpleModal"
-import Percentage from "@/components/Percentage"
 import Skeleton from "@/components/Skeleton"
 import Tooltip from "@/components/Tooltip"
-import { CurveBalancerApr } from "@/components/Vault/APR/CurveBalancerApr"
-import { TokenApr } from "@/components/Vault/APR/TokenApr"
+import {
+  VaultStrategyModalAmmApr,
+  VaultStrategyModalTokenApr,
+  VaultStrategyText,
+} from "@/components/VaultStrategyModal/lib"
 
 import {
   FortIconAddToWallet,
@@ -28,7 +25,7 @@ import {
   FortIconExternalLink,
 } from "@/icons"
 
-const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
+export const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
   isOpen,
   onClose,
   ...vaultProps
@@ -101,13 +98,13 @@ const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
             <h1 className="border-b border-pink-800 p-3 text-xs font-semibold uppercase text-pink-300 max-md:text-center md:px-5">
               APR
             </h1>
-            <dl className="grid grid-cols-[max-content,auto] gap-2 p-4 pb-5 text-sm text-pink-50 md:px-5">
+            <div className="p-4 pb-5 md:px-5">
               {isToken ? (
-                <TokenApr {...vaultProps} />
+                <VaultStrategyModalTokenApr {...vaultProps} />
               ) : (
-                <CurveBalancerApr {...vaultProps} />
+                <VaultStrategyModalAmmApr {...vaultProps} />
               )}
-            </dl>
+            </div>
           </div>
 
           {/* Fees */}
@@ -119,25 +116,25 @@ const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
               <dt>Deposit</dt>
               <dd className="text-right">
                 <Skeleton isLoading={fees.isLoading}>
-                  <Percentage>{fees.data?.depositFee ?? "0"}</Percentage>
+                  {formatPercentage(fees.data?.depositFee)}
                 </Skeleton>
               </dd>
               <dt>Withdrawal</dt>
               <dd className="text-right">
                 <Skeleton isLoading={fees.isLoading}>
-                  <Percentage>{fees.data?.withdrawFee ?? "0"}</Percentage>
+                  {formatPercentage(fees.data?.withdrawFee)}
                 </Skeleton>
               </dd>
               <dt>Management</dt>
               <dd className="text-right">
                 <Skeleton isLoading={fees.isLoading}>
-                  <Percentage>{fees.data?.managementFee ?? "0"}</Percentage>
+                  {formatPercentage(fees.data?.managementFee)}
                 </Skeleton>
               </dd>
               <dt>Performance</dt>
               <dd className="text-right">
                 <Skeleton isLoading={fees.isLoading}>
-                  <Percentage>{fees.data?.platformFee ?? "0"}</Percentage>
+                  {formatPercentage(fees.data?.platformFee)}
                 </Skeleton>
               </dd>
             </dl>
@@ -145,83 +142,5 @@ const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
         </div>
       </PurpleModalContent>
     </PurpleModal>
-  )
-}
-
-export default VaultStrategyModal
-
-const VaultStrategyText: FC<VaultProps> = ({ asset, type, vaultAddress }) => {
-  const isToken = useIsTokenCompounder(type)
-  const vault = useVault({ asset, type, vaultAddress })
-  const underlyingAssets = vault.data?.underlyingAssets
-  return (
-    <>
-      {isToken ? (
-        // THE TEXT HERE WAS WRITTEN FOR THE GLP COUMPOUNDER
-        <div className="space-y-3 leading-relaxed">
-          <p>
-            This vault accepts deposits in form of its primary asset{" "}
-            <AssetSymbol address={asset} /> and any of its underlying assets
-            mentioned below, all of which will be converted to staked{" "}
-            <AssetSymbol address={asset} /> automatically.
-          </p>
-          <p>
-            Deposited assets are used to provide liquidity for GMX traders,
-            earning trading fees plus GMX emissions on its staked{" "}
-            <AssetSymbol address={asset} />
-          </p>
-          <p>
-            The vault auto-compounds the accumulated rewards periodically into
-            more staked <AssetSymbol address={asset} />
-          </p>
-          <p>
-            Investors receive vault shares as ERC20 tokens called{" "}
-            <AssetSymbol address={vaultAddress} />, representing their pro-rata
-            share of the compounding funds.{" "}
-          </p>
-          <p>
-            Investors can use <AssetSymbol address={vaultAddress} /> in other
-            Fortress products or integrated protocols.{" "}
-          </p>
-          <p>
-            The staked <AssetSymbol address={asset} /> contains the following
-            basket of assets:{" "}
-            {underlyingAssets?.map((address, index) => (
-              <Fragment key={`underlying-asset-${index}`}>
-                {underlyingAssets.length > 2 &&
-                index > 0 &&
-                index !== underlyingAssets.length - 1
-                  ? ", "
-                  : index > 0
-                  ? " and "
-                  : null}
-                <AssetSymbol key={`token-symbol-${index}`} address={address} />
-              </Fragment>
-            ))}
-            .
-          </p>
-        </div>
-      ) : (
-        <p>
-          This token represents a {type === "curve" ? "Curve" : "Balancer"}{" "}
-          liquidity pool. Holders earn fees from users trading in the pool, and
-          can also deposit the LP to Curve's gauges to earn CRV emissions. This
-          Curve v2 crypto pool contains{" "}
-          {underlyingAssets?.map((address, index) => (
-            <Fragment key={`underlying-asset-${index}`}>
-              {underlyingAssets.length > 2 &&
-              index > 0 &&
-              index !== underlyingAssets.length - 1
-                ? ", "
-                : index > 0
-                ? " and "
-                : null}
-              <AssetSymbol key={`token-symbol-${index}`} address={address} />
-            </Fragment>
-          ))}
-          .
-        </p>
-      )}
-    </>
   )
 }

@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers"
+import { formatUnits, parseUnits } from "ethers/lib/utils.js"
 import { FC, useState } from "react"
 import React from "react"
 import {
@@ -10,7 +10,6 @@ import {
 import { Address, useAccount } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
-import { parseTokenUnits } from "@/lib/helpers"
 import { useTokenOrNative, useTokenOrNativeBalance } from "@/hooks"
 import { usePreviewDeposit } from "@/hooks/lib/api/usePreviewDeposit"
 import { usePreviewRedeem } from "@/hooks/lib/api/usePreviewRedeem"
@@ -18,7 +17,6 @@ import { usePreviewRedeem } from "@/hooks/lib/api/usePreviewRedeem"
 import { AssetBalance } from "@/components/Asset"
 import Button from "@/components/Button"
 import ConnectWalletButton from "@/components/ConnectWallet/ConnectWalletButton"
-import Currency from "@/components/Currency"
 import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
 import TokenSelectModal from "@/components/TokenForm/TokenSelectModal"
 
@@ -114,9 +112,9 @@ const TokenForm: FC<TokenFormProps> = ({
             validate: {
               positive: (amount) => Number(amount) > 0 || "Enter an amount",
               lessThanBalance: (amount) => {
-                const isValid = parseTokenUnits(
-                  amount,
-                  inputToken?.decimals
+                const isValid = parseUnits(
+                  amount || "0",
+                  inputToken?.decimals ?? 18
                 ).lte(inputTokenBalanceOrShare?.value ?? 0)
                 return isValid ? undefined : "Insufficient balance"
               },
@@ -172,10 +170,12 @@ const TokenForm: FC<TokenFormProps> = ({
             { "animate-pulse": isLoadingPreview }
           )}
         >
-          <Currency
-            amount={BigNumber.from(preview.data?.resultWei ?? "0")}
-            decimals={outputToken?.decimals ?? 18}
-          />
+          <span>
+            {formatUnits(
+              preview.data?.resultWei ?? "0",
+              outputToken?.decimals ?? 18
+            )}
+          </span>
         </div>
         {/* outputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-2 flex items-start space-x-1 justify-self-end pr-4 pb-4">

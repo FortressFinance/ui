@@ -12,8 +12,8 @@ import {
 } from "@/hooks"
 
 import { TableDisconnected, TableEmpty, TableLoading } from "@/components/Table"
-import VaultRow from "@/components/Vault/VaultRow"
-import { VaultTable } from "@/components/Vault/VaultTable"
+import { VaultRow } from "@/components/VaultRow"
+import { VaultTable } from "@/components/VaultRow/lib"
 
 const HoldingsTable: FC = () => {
   const ready = useClientReady()

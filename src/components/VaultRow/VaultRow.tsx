@@ -11,18 +11,18 @@ import { TableCell, TableRow } from "@/components/Table"
 import { GradientText } from "@/components/Typography"
 import {
   VaultApy,
+  VaultDepositForm,
   VaultName,
   VaultTvl,
   VaultUserBalance,
   VaultUserEarnings,
-} from "@/components/Vault/VaultData"
-import VaultDepositForm from "@/components/Vault/VaultDepositForm"
-import VaultStrategyModal from "@/components/Vault/VaultStrategy"
-import VaultWithdrawForm from "@/components/Vault/VaultWithdrawForm"
+  VaultWithdrawForm,
+} from "@/components/VaultRow/lib"
+import { VaultStrategyModal } from "@/components/VaultStrategyModal"
 
 import { FortIconChevronDownCircle } from "@/icons"
 
-const VaultRow: FC<VaultProps> = (props) => {
+export const VaultRow: FC<VaultProps> = (props) => {
   const [isStrategyOpen, setIsStrategyOpen] = useState(false)
   const [isVaultOpen, setIsVaultOpen] = useState(false)
 
@@ -242,5 +242,3 @@ const VaultRow: FC<VaultProps> = (props) => {
     </Disclosure>
   )
 }
-
-export default VaultRow
