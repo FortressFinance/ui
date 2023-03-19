@@ -37,7 +37,6 @@
     "react-popper": "^2.3.0",
     "sharp": "^0.31.3",
     "tailwind-merge": "^1.8.1",
-    "uuid": "^9.0.0",
     "wagmi": "^0.10.10",
     "zod": "^3.20.6",
     "zustand": "^4.3.1"
