@@ -1,4 +1,5 @@
 import { BigNumber } from "ethers"
+import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
@@ -9,7 +10,6 @@ import {
 } from "wagmi"
 
 import { fortLog } from "@/lib/fortLog"
-import { parseTokenUnits } from "@/lib/helpers"
 import { VaultProps } from "@/lib/types"
 import {
   useActiveChainId,
@@ -23,7 +23,7 @@ import { useVaultContract } from "@/hooks/lib/useVaultContract"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
-const VaultWithdrawForm: FC<VaultProps> = (props) => {
+export const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const { data: poolId } = useVaultPoolId(props)
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
@@ -53,9 +53,12 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
 
   // preview redeem currently returns a value with slippage accounted for
   // no math is required here
-  const value = parseTokenUnits(amountIn, inputToken?.decimals)
+  const value = parseUnits(amountIn || "0", inputToken?.decimals ?? 18)
 
-  const onWithdrawSuccess = () => form.resetField("amountIn")
+  const onWithdrawSuccess = () => {
+    form.resetField("amountIn")
+    invalidateHoldingsVaults()
+  }
 
   // Preview redeem method
   const previewRedeem = usePreviewRedeem({
@@ -94,16 +97,13 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const prepareRedeemUnderlying = usePrepareContractWrite({
     ...vaultContract,
     functionName: "redeemUnderlying",
-    enabled: enableRedeemUnderlying,
+    enabled: enableRedeemUnderlying && previewRedeem.isSuccess,
     args: [
       outputTokenAddress,
       userAddress ?? "0x",
       userAddress ?? "0x",
       value,
-      BigNumber.from(0),
-      // BigNumber.from(
-      //   previewRedeem.data?.minAmountWei ?? previewRedeem.data?.resultWei ?? 0
-      // ),
+      BigNumber.from(previewRedeem.data?.minAmountWei ?? "0"),
     ],
   })
   const redeemUnderlying = useContractWrite(prepareRedeemUnderlying.config)
@@ -116,12 +116,10 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
     if (enableRedeem) {
       fortLog("Redeeming", amountIn)
-      invalidateHoldingsVaults()
       redeem.write?.()
     }
     if (enableRedeemUnderlying) {
       fortLog("Redeeming underlying tokens", amountIn)
-      invalidateHoldingsVaults()
       redeemUnderlying.write?.()
     }
   }
@@ -155,5 +153,3 @@ const VaultWithdrawForm: FC<VaultProps> = (props) => {
     </div>
   )
 }
-
-export default VaultWithdrawForm

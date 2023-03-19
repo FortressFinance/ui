@@ -15,8 +15,8 @@ import {
 
 import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"
 import { TableEmpty, TableLoading } from "@/components/Table"
-import VaultRow from "@/components/Vault/VaultRow"
-import { VaultTable } from "@/components/Vault/VaultTable"
+import { VaultRow } from "@/components/VaultRow"
+import { VaultTable } from "@/components/VaultRow/lib"
 
 type ConcentratorVaultTableProps = {
   concentratorTargetAsset: Address

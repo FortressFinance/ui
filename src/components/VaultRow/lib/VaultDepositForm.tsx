@@ -1,4 +1,5 @@
 import { BigNumber, ethers } from "ethers"
+import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
@@ -11,7 +12,6 @@ import {
 } from "wagmi"
 
 import { fortLog } from "@/lib/fortLog"
-import { parseTokenUnits } from "@/lib/helpers"
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import { VaultProps } from "@/lib/types"
 import {
@@ -26,7 +26,7 @@ import { useVaultContract } from "@/hooks/lib/useVaultContract"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
-const VaultDepositForm: FC<VaultProps> = (props) => {
+export const VaultDepositForm: FC<VaultProps> = (props) => {
   const { data: poolId } = useVaultPoolId(props)
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
@@ -57,7 +57,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
 
   // preview redeem currently returns a value with slippage accounted for
   // no math is required here
-  const value = parseTokenUnits(amountIn, inputToken?.decimals)
+  const value = parseUnits(amountIn || "0", inputToken?.decimals ?? 18)
 
   // Check token approval if necessary
   const { data: allowance, isLoading: isLoadingAllowance } = useContractRead({
@@ -71,7 +71,10 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   })
   const requiresApproval = inputIsEth ? false : allowance?.lt(value)
 
-  const onDepositSuccess = () => form.resetField("amountIn")
+  const onDepositSuccess = () => {
+    form.resetField("amountIn")
+    invalidateHoldingsVaults()
+  }
 
   // Configure approve method
   const prepareApprove = usePrepareContractWrite({
@@ -124,19 +127,14 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
   const prepareDepositUnderlying = usePrepareContractWrite({
     ...vaultContract,
     functionName: "depositUnderlying",
-    enabled: enableDepositUnderlying,
+    enabled: enableDepositUnderlying && previewDeposit.isSuccess,
     args: [
       inputTokenAddress,
       userAddress ?? "0x",
       value,
-      BigNumber.from(0),
-      // BigNumber.from(
-      //   previewDeposit.data?.minAmountWei ??
-      //     previewDeposit.data?.resultWei ??
-      //     "0"
-      // ),
+      BigNumber.from(previewDeposit.data?.minAmountWei ?? "0"),
     ],
-    overrides: inputIsEth ? { value } : {},
+    overrides: { value: inputIsEth ? value : BigNumber.from(0) },
   })
   const depositUnderlying = useContractWrite(prepareDepositUnderlying.config)
   const waitDepositUnderlying = useWaitForTransaction({
@@ -152,12 +150,10 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     } else {
       if (enableDeposit) {
         fortLog("Depositing", amountIn)
-        invalidateHoldingsVaults()
         deposit.write?.()
       }
       if (enableDepositUnderlying) {
         fortLog("Depositing underlying tokens", amountIn)
-        invalidateHoldingsVaults()
         depositUnderlying.write?.()
       }
     }
@@ -170,7 +166,7 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
       </h2>
       <FormProvider {...form}>
         <TokenForm
-          isError={prepareDeposit.isError || prepareDepositUnderlying.isError}
+          isError={prepareDeposit.isError}
           isLoadingPreview={previewDeposit.isFetching}
           isLoadingTransaction={
             isLoadingAllowance ||
@@ -195,5 +191,3 @@ const VaultDepositForm: FC<VaultProps> = (props) => {
     </div>
   )
 }
-
-export default VaultDepositForm
