@@ -166,7 +166,7 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
       </h2>
       <FormProvider {...form}>
         <TokenForm
-          isError={prepareDeposit.isError}
+          isError={prepareDeposit.isError || prepareDepositUnderlying.isError}
           isLoadingPreview={previewDeposit.isFetching}
           isLoadingTransaction={
             isLoadingAllowance ||
