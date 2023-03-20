@@ -14,12 +14,13 @@ import { VaultProps } from "@/lib/types"
 import {
   useActiveChainId,
   useInvalidateHoldingsVaults,
+  usePreviewRedeem,
   useTokenOrNative,
   useVault,
   useVaultPoolId,
 } from "@/hooks"
-import { usePreviewRedeem } from "@/hooks/lib/api/usePreviewRedeem"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
+import useDebounce from "@/hooks/useDebounce"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
@@ -46,6 +47,7 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
 
   // Watch form values
   const amountIn = form.watch("amountIn")
+  const amountInDebounced = useDebounce(amountIn)
   const outputTokenAddress = form.watch("outputToken")
   // Calculate + fetch information on selected tokens
   const outputIsLp = outputTokenAddress === props.asset
@@ -53,7 +55,7 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
 
   // preview redeem currently returns a value with slippage accounted for
   // no math is required here
-  const value = parseUnits(amountIn || "0", inputToken?.decimals ?? 18)
+  const value = parseUnits(amountInDebounced || "0", inputToken?.decimals ?? 18)
 
   const onWithdrawSuccess = () => {
     form.resetField("amountIn")
@@ -113,13 +115,13 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
   })
 
   // Form submit handler
-  const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
+  const onSubmitForm: SubmitHandler<TokenFormValues> = async () => {
     if (enableRedeem) {
-      fortLog("Redeeming", amountIn)
+      fortLog("Redeeming", amountInDebounced)
       redeem.write?.()
     }
     if (enableRedeemUnderlying) {
-      fortLog("Redeeming underlying tokens", amountIn)
+      fortLog("Redeeming underlying tokens", amountInDebounced)
       redeemUnderlying.write?.()
     }
   }
@@ -132,6 +134,7 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
       <FormProvider {...form}>
         <TokenForm
           isWithdraw
+          isDebouncing={amountIn !== amountInDebounced}
           isError={prepareRedeem.isError || prepareRedeemUnderlying.isError}
           isLoadingPreview={previewRedeem.isFetching}
           isLoadingTransaction={
@@ -144,7 +147,7 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
             previewRedeem.isFetching
           }
           onSubmit={onSubmitForm}
-          preview={previewRedeem}
+          previewResultWei={previewRedeem.data?.resultWei}
           submitText="Withdraw"
           asset={props.asset}
           tokenAddresses={underlyingAssets}

@@ -9,7 +9,7 @@ export type PreviewData = {
   resultFormatted?: string
 }
 
-export async function getCompounderVaultsPreviewDeposit(
+export async function getPreviewDepositAmmVault(
   args: PreviewTransactionGetterArgs
 ) {
   const resp = await fortressApi.post<PreviewData>(
@@ -19,7 +19,7 @@ export async function getCompounderVaultsPreviewDeposit(
   return handledResponse(resp?.data?.data)
 }
 
-export async function getTokenVaultsPreviewDeposit(
+export async function getPreviewDepositTokenVault(
   args: PreviewTransactionGetterArgs
 ) {
   const resp = await fortressApi.post<PreviewData>(

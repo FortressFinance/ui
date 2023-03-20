@@ -13,7 +13,7 @@ type PreviewRedeemData = {
   yb_amount: number
 }
 
-export async function getCompounderVaultsPreviewRedeem({
+export async function getPreviewRedeemAmmVault({
   amount: ybTokenAmount,
   ...args
 }: PreviewTransactionGetterArgs) {
@@ -24,7 +24,7 @@ export async function getCompounderVaultsPreviewRedeem({
   return handledResponse(normalizeResponse(resp?.data?.data))
 }
 
-export async function getTokenVaultsPreviewRedeem(
+export async function getPreviewRedeemTokenVault(
   args: PreviewTransactionGetterArgs
 ) {
   const resp = await fortressApi.post<PreviewRedeemData>(

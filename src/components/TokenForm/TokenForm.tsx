@@ -11,8 +11,6 @@ import { Address, useAccount } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 import { useTokenOrNative, useTokenOrNativeBalance } from "@/hooks"
-import { usePreviewDeposit } from "@/hooks/lib/api/usePreviewDeposit"
-import { usePreviewRedeem } from "@/hooks/lib/api/usePreviewRedeem"
 
 import { AssetBalance } from "@/components/Asset"
 import Button from "@/components/Button"
@@ -24,11 +22,12 @@ type TokenFormProps = {
   asset: Address | undefined
   submitText: string
   tokenAddresses: Address[] | readonly Address[] | undefined
+  isDebouncing: boolean
   isError: boolean
   isLoadingPreview: boolean
   isLoadingTransaction: boolean
   isWithdraw?: boolean
-  preview: ReturnType<typeof usePreviewDeposit | typeof usePreviewRedeem>
+  previewResultWei?: string
   onSubmit: SubmitHandler<TokenFormValues>
 }
 
@@ -44,11 +43,12 @@ const TokenForm: FC<TokenFormProps> = ({
   asset,
   submitText,
   tokenAddresses,
+  isDebouncing,
   isError,
   isLoadingPreview,
   isLoadingTransaction,
   isWithdraw = false,
-  preview,
+  previewResultWei,
   onSubmit,
 }) => {
   const [tokenSelectMode, setTokenSelectMode] = useState<TokenSelectMode>(null)
@@ -171,10 +171,7 @@ const TokenForm: FC<TokenFormProps> = ({
           )}
         >
           <span>
-            {formatUnits(
-              preview.data?.resultWei ?? "0",
-              outputToken?.decimals ?? 18
-            )}
+            {formatUnits(previewResultWei ?? "0", outputToken?.decimals ?? 18)}
           </span>
         </div>
         {/* outputToken select button */}
@@ -219,7 +216,8 @@ const TokenForm: FC<TokenFormProps> = ({
             disabled={!form.formState.isValid || isError}
             isLoading={
               !isError &&
-              (isLoadingInputToken ||
+              (isDebouncing ||
+                isLoadingInputToken ||
                 isLoadingInputTokenBalanceOrShare ||
                 isLoadingTransaction)
             }

@@ -22,9 +22,7 @@ export const queryKeys = createQueryKeyStore({
     }) => [chainId, type, id, user ?? "0x"],
     apy: ({ asset }: { asset: Address }) => ["apy", asset],
     apr: ({ asset }: { asset: Address }) => ["apr", asset],
-    previewTokenDeposit: (args: PreviewTransactionGetterArgs) => [args],
     previewDeposit: (args: PreviewTransactionGetterArgs) => [args],
-    previewTokenRedeem: (args: PreviewTransactionGetterArgs) => [args],
     previewRedeem: (args: PreviewTransactionGetterArgs) => [args],
   },
   concentrators: {
