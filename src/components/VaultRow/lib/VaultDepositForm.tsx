@@ -17,12 +17,13 @@ import { VaultProps } from "@/lib/types"
 import {
   useActiveChainId,
   useInvalidateHoldingsVaults,
+  usePreviewDeposit,
   useTokenOrNative,
   useVault,
   useVaultPoolId,
 } from "@/hooks"
-import { usePreviewDeposit } from "@/hooks/lib/api/usePreviewDeposit"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
+import useDebounce from "@/hooks/useDebounce"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
@@ -49,6 +50,7 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
 
   // Watch form values
   const amountIn = form.watch("amountIn")
+  const amountInDebounced = useDebounce(amountIn, 500)
   const inputTokenAddress = form.watch("inputToken")
   // Calculate + fetch information on selected tokens
   const inputIsLp = inputTokenAddress === props.asset
@@ -57,10 +59,10 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
 
   // preview redeem currently returns a value with slippage accounted for
   // no math is required here
-  const value = parseUnits(amountIn || "0", inputToken?.decimals ?? 18)
+  const value = parseUnits(amountInDebounced || "0", inputToken?.decimals ?? 18)
 
   // Check token approval if necessary
-  const { data: allowance, isLoading: isLoadingAllowance } = useContractRead({
+  const allowance = useContractRead({
     chainId,
     abi: erc20ABI,
     address: inputTokenAddress,
@@ -69,7 +71,7 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
     enabled: !!userAddress && !inputIsEth,
     watch: true,
   })
-  const requiresApproval = inputIsEth ? false : allowance?.lt(value)
+  const requiresApproval = inputIsEth ? false : allowance.data?.lt(value)
 
   const onDepositSuccess = () => {
     form.resetField("amountIn")
@@ -143,17 +145,17 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
   })
 
   // Form submit handler
-  const onSubmitForm: SubmitHandler<TokenFormValues> = async ({ amountIn }) => {
+  const onSubmitForm: SubmitHandler<TokenFormValues> = async () => {
     if (requiresApproval) {
       fortLog("Approving spend", inputTokenAddress)
       approve?.write?.()
     } else {
       if (enableDeposit) {
-        fortLog("Depositing", amountIn)
+        fortLog("Depositing", amountInDebounced)
         deposit.write?.()
       }
       if (enableDepositUnderlying) {
-        fortLog("Depositing underlying tokens", amountIn)
+        fortLog("Depositing underlying tokens", amountInDebounced)
         depositUnderlying.write?.()
       }
     }
@@ -166,13 +168,14 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
       </h2>
       <FormProvider {...form}>
         <TokenForm
+          isDebouncing={amountIn !== amountInDebounced}
           isError={prepareDeposit.isError || prepareDepositUnderlying.isError}
           isLoadingPreview={previewDeposit.isFetching}
           isLoadingTransaction={
-            isLoadingAllowance ||
+            (amountInDebounced && allowance.isFetching) ||
             prepareApprove.isLoading ||
             prepareDeposit.isLoading ||
-            prepareDepositUnderlying.isFetching ||
+            prepareDepositUnderlying.isLoading ||
             approve.isLoading ||
             deposit.isLoading ||
             depositUnderlying.isLoading ||
@@ -183,7 +186,7 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
           }
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
-          preview={previewDeposit}
+          previewResultWei={previewDeposit.data?.resultWei}
           asset={props.asset}
           tokenAddresses={underlyingAssets}
         />
