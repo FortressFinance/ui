@@ -3,17 +3,18 @@ import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
 import { FilterCategory, VaultType } from "@/lib/types"
+import { enabledNetworks } from "@/lib/wagmi"
 import {
+  useClientReady,
   useCompounderVault,
+  useFilteredCompounders,
   useListCompounders,
-} from "@/hooks/data/compounders"
-import useActiveChainId from "@/hooks/useActiveChainId"
-import { useClientReady, useFilteredCompounders } from "@/hooks/util"
+} from "@/hooks"
+import { useActiveChainId } from "@/hooks"
 
-import { chains } from "@/components/AppProviders"
 import { TableEmpty, TableLoading } from "@/components/Table"
-import VaultRow from "@/components/Vault/VaultRow"
-import { VaultTable } from "@/components/Vault/VaultTable"
+import { VaultRow } from "@/components/VaultRow"
+import { VaultTable } from "@/components/VaultRow/lib"
 
 type CompounderVaultTableProps = {
   filterCategory?: FilterCategory
@@ -27,7 +28,7 @@ export const CompounderVaultTable: FC<CompounderVaultTableProps> = ({
   // handle hydration mismatch
   const clientReady = useClientReady()
   const chainId = useActiveChainId()
-  const availableChains = chains.filter((n) => n.id === chainId)
+  const availableChains = enabledNetworks.chains.filter((n) => n.id === chainId)
   const supportedChain = availableChains?.[0]
   const network = supportedChain?.name
 
@@ -76,6 +77,8 @@ type CompounderVaultRowProps = {
 
 const CompounderVaultRow: FC<CompounderVaultRowProps> = (props) => {
   const vaultAddress = useCompounderVault(props)
+  if (!vaultAddress.data?.ybTokenAddress)
+    return <TableLoading>Loading vaults...</TableLoading>
   return (
     <VaultRow
       {...props}

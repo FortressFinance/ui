@@ -11,7 +11,7 @@ import {
   ConcentratorRewards,
   ConcentratorVaultTable,
 } from "@/components/Concentrator"
-import HoldingsTable from "@/components/Holdings/HoldingsTable"
+import HoldingsTable from "@/components/HoldingsTable"
 import Layout from "@/components/Layout"
 import Seo from "@/components/Seo"
 import { TabButton, TabListGroup, TabPanels } from "@/components/Tabs"

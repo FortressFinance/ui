@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-import { chains } from "@/components/AppProviders"
+import { enabledNetworks } from "@/lib/wagmi"
 
 export interface ActiveChainStore {
   chainId: number
@@ -8,6 +8,6 @@ export interface ActiveChainStore {
 }
 
 export const useActiveChain = create<ActiveChainStore>((set, _get) => ({
-  chainId: chains[0].id,
+  chainId: enabledNetworks.chains[0].id,
   setChainId: (chainId) => set({ chainId }),
 }))

@@ -4,10 +4,9 @@ import { BiErrorCircle } from "react-icons/bi"
 import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
-import useActiveChainId from "@/hooks/useActiveChainId"
-import useTokenOrNative from "@/hooks/useTokenOrNative"
+import { enabledNetworks } from "@/lib/wagmi"
+import { useActiveChainId, useTokenOrNative } from "@/hooks"
 
-import { chains } from "@/components/AppProviders"
 import Spinner from "@/components/Spinner"
 
 export type AssetLogoProps = {
@@ -29,7 +28,9 @@ export const AssetLogo: FC<AssetLogoProps> = ({ className, tokenAddress }) => {
   const [isError, setIsError] = useState(false)
 
   const chainId = useActiveChainId()
-  const [supportedChain] = chains.filter((n) => n.id === chainId)
+  const [supportedChain] = enabledNetworks.chains.filter(
+    (n) => n.id === chainId
+  )
   const logosNetworkName = LOGOS_NETWORK_NAME[supportedChain.network]
 
   const { data: token } = useTokenOrNative({ address: tokenAddress })

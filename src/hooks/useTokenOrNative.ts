@@ -1,9 +1,9 @@
 import { Address, useToken } from "wagmi"
 
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
-import useActiveChainId from "@/hooks/useActiveChainId"
+import { useActiveChainId } from "@/hooks"
 
-export default function useTokenOrNative({
+export function useTokenOrNative({
   address,
 }: {
   address: Address | undefined
@@ -20,6 +20,7 @@ export default function useTokenOrNative({
       isError: false,
       isLoading: false,
       isFetching: false,
+      isSuccess: true,
       data: {
         address: undefined,
         decimals: 18,

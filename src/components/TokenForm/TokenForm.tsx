@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers"
+import { formatUnits, parseUnits } from "ethers/lib/utils.js"
 import { FC, useState } from "react"
 import React from "react"
 import {
@@ -10,15 +10,11 @@ import {
 import { Address, useAccount } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
-import { parseTokenUnits } from "@/lib/helpers"
-import { usePreviewDeposit, usePreviewRedeem } from "@/hooks/data/preview"
-import useTokenOrNative from "@/hooks/useTokenOrNative"
-import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
+import { useTokenOrNative, useTokenOrNativeBalance } from "@/hooks"
 
 import { AssetBalance } from "@/components/Asset"
 import Button from "@/components/Button"
 import ConnectWalletButton from "@/components/ConnectWallet/ConnectWalletButton"
-import Currency from "@/components/Currency"
 import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
 import TokenSelectModal from "@/components/TokenForm/TokenSelectModal"
 
@@ -26,11 +22,12 @@ type TokenFormProps = {
   asset: Address | undefined
   submitText: string
   tokenAddresses: Address[] | readonly Address[] | undefined
+  isDebouncing: boolean
   isError: boolean
   isLoadingPreview: boolean
   isLoadingTransaction: boolean
   isWithdraw?: boolean
-  preview: ReturnType<typeof usePreviewDeposit | typeof usePreviewRedeem>
+  previewResultWei?: string
   onSubmit: SubmitHandler<TokenFormValues>
 }
 
@@ -46,11 +43,12 @@ const TokenForm: FC<TokenFormProps> = ({
   asset,
   submitText,
   tokenAddresses,
+  isDebouncing,
   isError,
   isLoadingPreview,
   isLoadingTransaction,
   isWithdraw = false,
-  preview,
+  previewResultWei,
   onSubmit,
 }) => {
   const [tokenSelectMode, setTokenSelectMode] = useState<TokenSelectMode>(null)
@@ -114,9 +112,9 @@ const TokenForm: FC<TokenFormProps> = ({
             validate: {
               positive: (amount) => Number(amount) > 0 || "Enter an amount",
               lessThanBalance: (amount) => {
-                const isValid = parseTokenUnits(
-                  amount,
-                  inputToken?.decimals
+                const isValid = parseUnits(
+                  amount || "0",
+                  inputToken?.decimals ?? 18
                 ).lte(inputTokenBalanceOrShare?.value ?? 0)
                 return isValid ? undefined : "Insufficient balance"
               },
@@ -172,10 +170,9 @@ const TokenForm: FC<TokenFormProps> = ({
             { "animate-pulse": isLoadingPreview }
           )}
         >
-          <Currency
-            amount={BigNumber.from(preview.data?.resultWei ?? "0")}
-            decimals={outputToken?.decimals ?? 18}
-          />
+          <span>
+            {formatUnits(previewResultWei ?? "0", outputToken?.decimals ?? 18)}
+          </span>
         </div>
         {/* outputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-2 flex items-start space-x-1 justify-self-end pr-4 pb-4">
@@ -219,7 +216,8 @@ const TokenForm: FC<TokenFormProps> = ({
             disabled={!form.formState.isValid || isError}
             isLoading={
               !isError &&
-              (isLoadingInputToken ||
+              (isDebouncing ||
+                isLoadingInputToken ||
                 isLoadingInputTokenBalanceOrShare ||
                 isLoadingTransaction)
             }

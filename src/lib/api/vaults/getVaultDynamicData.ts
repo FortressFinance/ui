@@ -26,6 +26,8 @@ export type VaultDynamicData = {
     ybToken: string
     primaryAsset: string
     usd: number
+    earned: string
+    earnedUSD: number
   }
   blockExplorerUrls: {
     primaryAsset: string

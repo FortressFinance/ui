@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { Address } from "wagmi"
 
-import useMainnetEnsName from "@/hooks/useMainnetEnsName"
+import { useMainnetEnsName } from "@/hooks"
 
 type AddressProps = {
   children: string | undefined

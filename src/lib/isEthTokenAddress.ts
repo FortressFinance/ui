@@ -1,7 +1,7 @@
 import { Address } from "wagmi"
 
-export const ETH_TOKEN_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+import { ethTokenAddress } from "@/constant/addresses"
 
 export default function isEthTokenAddress(address: Address | undefined) {
-  return address === ETH_TOKEN_ADDRESS
+  return address === ethTokenAddress
 }

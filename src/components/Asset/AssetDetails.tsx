@@ -1,13 +1,13 @@
-import { BigNumber } from "ethers"
 import { FC } from "react"
 import { Address, useAccount } from "wagmi"
 
-import { useGetDollarValue } from "@/hooks/data/vaults/fallbacks/pricer/useGetDollarValue"
-import useTokenOrNative from "@/hooks/useTokenOrNative"
-import useTokenOrNativeBalance from "@/hooks/useTokenOrNativeBalance"
-import { useClientReady } from "@/hooks/util"
+import { formatCurrencyUnits, formatUsd } from "@/lib/helpers/formatCurrency"
+import {
+  useTokenOrNative,
+  useTokenOrNativeBalance,
+  useTokenPriceUsd,
+} from "@/hooks"
 
-import Currency, { CurrencyProps } from "@/components/Currency"
 import Skeleton from "@/components/Skeleton"
 
 export type AssetDetailsProps = {
@@ -16,23 +16,17 @@ export type AssetDetailsProps = {
 }
 
 export const AssetSymbol: FC<AssetDetailsProps> = ({ address, isLoading }) => {
-  const isReady = useClientReady()
   const { data: token, isLoading: isLoadingToken } = useTokenOrNative({
     address,
   })
   return (
-    <Skeleton isLoading={isLoading || isLoadingToken || !isReady}>
-      {isReady
-        ? address
-          ? token?.symbol ?? "Loading..."
-          : "???"
-        : "Loading..."}
+    <Skeleton isLoading={isLoading || isLoadingToken}>
+      {address ? token?.symbol ?? "Unknown" : "???"}
     </Skeleton>
   )
 }
 
 export const AssetName: FC<AssetDetailsProps> = ({ address, isLoading }) => {
-  const isReady = useClientReady()
   const { data: token, isLoading: isLoadingToken } = useTokenOrNative({
     address,
   })
@@ -40,39 +34,37 @@ export const AssetName: FC<AssetDetailsProps> = ({ address, isLoading }) => {
   const tokenName = token?.name ?? "Loading..."
   const updatedTokenName = tokenName.replace(re, "")
   return (
-    <Skeleton isLoading={isLoading || isLoadingToken || !isReady}>
-      {isReady ? (address ? updatedTokenName : "Unknown token") : "Loading..."}
+    <Skeleton isLoading={isLoading || isLoadingToken}>
+      {address ? updatedTokenName : "Unknown token"}
     </Skeleton>
   )
 }
 
-type AssetBalanceProps = AssetDetailsProps &
-  Partial<Pick<CurrencyProps, "abbreviate">>
-
-type AssetBalanceUsdProps = AssetBalanceProps & {
-  asset?: Address | undefined
+type AssetBalanceProps = AssetDetailsProps & {
+  abbreviate?: boolean
 }
 
 export const AssetBalance: FC<AssetBalanceProps> = ({
   address,
   abbreviate,
 }) => {
-  const isReady = useClientReady()
   const { isConnected } = useAccount()
   const { data: balance, isLoading } = useTokenOrNativeBalance({ address })
   return (
-    <Skeleton isLoading={isLoading || !isReady}>
-      {!isReady || !isConnected || !address ? (
-        <>—</>
-      ) : (
-        <Currency
-          amount={balance?.value ?? BigNumber.from(0)}
-          decimals={balance?.decimals ?? 18}
-          abbreviate={abbreviate}
-        />
-      )}
+    <Skeleton isLoading={isLoading}>
+      {isConnected
+        ? formatCurrencyUnits({
+            abbreviate,
+            amountWei: balance?.value?.toString(),
+            decimals: balance?.decimals,
+          })
+        : "—"}
     </Skeleton>
   )
+}
+
+type AssetBalanceUsdProps = AssetBalanceProps & {
+  asset?: Address | undefined
 }
 
 export const AssetBalanceUsd: FC<AssetBalanceUsdProps> = ({
@@ -80,30 +72,17 @@ export const AssetBalanceUsd: FC<AssetBalanceUsdProps> = ({
   address,
   abbreviate,
 }) => {
-  const isReady = useClientReady()
-  const { isConnected } = useAccount()
   const { data: balance, isLoading } = useTokenOrNativeBalance({ address })
-
-  const { data: balanceUsd, isLoading: isLoadingBalanceUsd } =
-    useGetDollarValue({
-      asset,
-      amount: balance === undefined ? "0" : balance.value.toString(),
-    })
-
-  const balanceUsdNumber = Number(balanceUsd ?? 0)
-
+  const { data: tokenPriceUsd, isLoading: isLoadingTokenPriceUsd } =
+    useTokenPriceUsd({ asset })
   return (
-    <Skeleton isLoading={isLoading || isLoadingBalanceUsd || !isReady}>
-      {!isReady || !isConnected || !address ? (
-        <>—</>
-      ) : (
-        <Currency
-          amount={isNaN(balanceUsdNumber) ? 0 : balanceUsdNumber}
-          decimals={2}
-          symbol="$"
-          abbreviate={abbreviate}
-        />
-      )}
+    <Skeleton isLoading={isLoading || isLoadingTokenPriceUsd}>
+      {address
+        ? formatUsd({
+            abbreviate,
+            amount: Number(balance?.formatted ?? "0") * (tokenPriceUsd ?? 0),
+          })
+        : "—"}
     </Skeleton>
   )
 }

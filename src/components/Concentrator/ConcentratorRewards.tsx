@@ -4,14 +4,15 @@ import { Address } from "wagmi"
 
 import { FilterCategory } from "@/lib/types"
 import {
+  useClientReady,
   useConcentratorClaim,
   useConcentratorPendingReward,
   useConcentratorTargetAssets,
   useConcentratorVault,
+  useFirstConcentrator,
   useListConcentrators,
-} from "@/hooks/data/concentrators"
-import useTokenOrNative from "@/hooks/useTokenOrNative"
-import { useClientReady, useFirstConcentrator } from "@/hooks/util"
+  useTokenOrNative,
+} from "@/hooks"
 
 import Button from "@/components/Button"
 import {

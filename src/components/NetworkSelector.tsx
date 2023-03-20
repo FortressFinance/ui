@@ -3,10 +3,8 @@ import { FC, Fragment } from "react"
 import { useNetwork, useSwitchNetwork } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
-import useActiveChainId from "@/hooks/useActiveChainId"
-import { useClientReady } from "@/hooks/util"
-
-import { chains, mainnetFork } from "@/components/AppProviders"
+import { enabledNetworks, mainnetFork } from "@/lib/wagmi"
+import { useActiveChainId, useClientReady } from "@/hooks"
 
 import { FortIconChevronDown, NetIconArbitrum, NetIconEthereum } from "@/icons"
 
@@ -22,11 +20,13 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
   const { switchNetwork } = useSwitchNetwork()
   const setActiveChainId = useActiveChain((state) => state.setChainId)
   const disconnectedChainId = useActiveChainId()
-  const disconnectedChain = chains.find((c) => c.id === disconnectedChainId)
+  const disconnectedChain = enabledNetworks.chains.find(
+    (c) => c.id === disconnectedChainId
+  )
 
   const chain = isReady
     ? connectedChain ?? { ...disconnectedChain, unsupported: false }
-    : { ...chains[0], unsupported: false }
+    : { ...enabledNetworks.chains[0], unsupported: false }
 
   const onClickChain = (chainId: number) => {
     if (connectedChain && switchNetwork) {
@@ -92,7 +92,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
         >
           <Menu.Items className="absolute bottom-0 left-1/2 w-56 min-w-full -translate-x-1/2 translate-y-[calc(100%+0.5rem)] rounded border border-black/60 bg-orange-400 text-white shadow-lg focus:outline-none md:rounded-md">
             <div className="space-y-1 px-1 py-1">
-              {chains.map((curChain, index) => (
+              {enabledNetworks.chains.map((curChain, index) => (
                 <Menu.Item key={index} as={Fragment}>
                   <button
                     onClick={() => onClickChain(curChain.id)}
