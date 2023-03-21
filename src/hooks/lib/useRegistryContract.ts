@@ -7,11 +7,11 @@ import { YieldOptimizersRegistry } from "@/constant/abi"
 
 const REGISTRY_ADDRESS: Record<number, Address> = {
   // arbitrum
-  42161: "0x425A22a10C04c7fCaCb0FD8Dfe2094bd43cb5874",
+  42161: "0x31A65C6d4EB07ad51E7afc890aC3b7bE84dF2Ead",
   // mainnet fork
-  31337: "0x425A22a10C04c7fCaCb0FD8Dfe2094bd43cb5874",
+  31337: "0x31A65C6d4EB07ad51E7afc890aC3b7bE84dF2Ead",
   // arbitrum fork
-  313371: "0x425A22a10C04c7fCaCb0FD8Dfe2094bd43cb5874",
+  313371: "0x31A65C6d4EB07ad51E7afc890aC3b7bE84dF2Ead",
 }
 
 export function useRegistryContract() {
