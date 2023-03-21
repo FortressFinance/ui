@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://fortress.finance
+
+# Sitemaps
+Sitemap: https://fortress.finance/sitemap.xml

@@ -1,4 +1,4 @@
-import { Chain, ChainProviderFn } from "wagmi"
+import { Chain, ChainProviderFn, mainnet } from "wagmi"
 import { arbitrum } from "wagmi/chains"
 import { alchemyProvider } from "wagmi/providers/alchemy"
 import { infuraProvider } from "wagmi/providers/infura"
@@ -28,6 +28,7 @@ export const mainnetFork: Chain = {
       blockCreated: 14353601,
     },
   },
+  blockExplorers: mainnet.blockExplorers,
 }
 
 export const arbitrumFork: Chain = {
@@ -56,6 +57,7 @@ export const arbitrumFork: Chain = {
       blockCreated: 7654707,
     },
   },
+  blockExplorers: arbitrum.blockExplorers,
 }
 
 const MAINNET_FORK_ENABLED =
