@@ -3,7 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { FC, Fragment, PropsWithChildren, useState } from "react"
-import { Toaster } from "react-hot-toast"
+import { ToastBar, Toaster } from "react-hot-toast"
 
 import clsxm from "@/lib/clsxm"
 import { appLink } from "@/lib/helpers"
@@ -46,7 +46,24 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <AppProviders>
-      <Toaster />
+      <Toaster
+        containerStyle={{
+          top: 10,
+          right: 46,
+        }}
+      >
+        {(t) => (
+          <ToastBar
+            toast={t}
+            style={{
+              ...t.style,
+              animation: t.visible
+                ? "ease-linear duration-100"
+                : "ease-in duration-75",
+            }}
+          />
+        )}
+      </Toaster>
       <div className="min-h-screen-small relative z-[1] grid grid-cols-1 grid-rows-[auto,1fr]">
         <header className="sticky top-0 z-10 border-b border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
