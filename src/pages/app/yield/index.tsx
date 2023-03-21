@@ -1,8 +1,6 @@
 import { Tab } from "@headlessui/react"
 import { NextPage } from "next"
 
-import { useToast } from "@/hooks/toast"
-
 import { CompounderVaultTable } from "@/components/Compounder"
 import HoldingsTable from "@/components/HoldingsTable"
 import Layout from "@/components/Layout"
@@ -10,9 +8,6 @@ import Seo from "@/components/Seo"
 import { TabButton, TabListGroup, TabPanels } from "@/components/Tabs"
 
 const Yield: NextPage = () => {
-  const tt = useToast()
-
-  tt.success("Transaction done", "1234")
   return (
     <Layout>
       <Seo
