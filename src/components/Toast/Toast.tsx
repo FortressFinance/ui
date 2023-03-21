@@ -20,7 +20,7 @@ export const Toast: FC<PropsWithChildren<ToastComponentProps>> = ({
   return (
     <div
       className={clsxm(
-        "w-full max-w-xs rounded-md bg-gray-800 p-4 text-gray-400 shadow",
+        "w-full max-w-xs rounded-md bg-pink-900 p-4 text-white",
         className
       )}
     >

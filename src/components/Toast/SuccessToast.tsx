@@ -14,7 +14,7 @@ export const SuccessToast: FC<TransactionToastComponentProps> = ({
 }) => {
   const { chain } = useNetwork()
   return (
-    <Toast className="bg-pink-900 text-white" {...toastProps}>
+    <Toast {...toastProps}>
       <div className="flex">
         <div className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center">
           <FortIconCheck className="col-span-full row-span-full h-5 w-5 fill-green-500" />

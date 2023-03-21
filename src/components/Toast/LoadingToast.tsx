@@ -8,10 +8,7 @@ export const LoadingToast: FC<TransactionToastComponentProps> = ({
   isVisible,
 }) => {
   return (
-    <Toast
-      isVisible={isVisible}
-      className="flex items-center bg-pink-900 text-white"
-    >
+    <Toast isVisible={isVisible} className="flex items-center">
       <div className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg">
         <Spinner className="col-span-full row-span-full h-5 w-5" />
       </div>
