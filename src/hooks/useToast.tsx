@@ -3,13 +3,12 @@ import toast from "react-hot-toast"
 import { ErrorToast, LoadingToast, SuccessToast } from "@/components/Toast"
 
 const duration = 7000
-const position = "top-right"
 
 export const useToast = () => ({
   loading: (message: string) =>
     toast.custom(
       (t) => <LoadingToast isVisible={t.visible} message={message} />,
-      { duration: Infinity, position }
+      { duration: Infinity }
     ),
   success: (message: string, txHash: string) =>
     toast.custom(
@@ -21,7 +20,7 @@ export const useToast = () => ({
           onDismiss={() => toast.dismiss(t.id)}
         />
       ),
-      { duration, position }
+      { duration }
     ),
   error: (message: string, txHash: string) =>
     toast.custom(
@@ -33,6 +32,6 @@ export const useToast = () => ({
           onDismiss={() => toast.dismiss(t.id)}
         />
       ),
-      { duration, position }
+      { duration }
     ),
 })

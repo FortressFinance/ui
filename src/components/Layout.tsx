@@ -3,10 +3,11 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { FC, Fragment, PropsWithChildren, useState } from "react"
-import { ToastBar, Toaster } from "react-hot-toast"
+import { Toaster } from "react-hot-toast"
 
 import clsxm from "@/lib/clsxm"
 import { appLink } from "@/lib/helpers"
+import { useMedia } from "@/hooks/useMedia"
 
 import AppProviders from "@/components/AppProviders"
 import Button from "@/components/Button"
@@ -43,28 +44,22 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   ])
 
   const router = useRouter()
+  const smScreen = useMedia("(max-width: 640px)")
+  const mdScreen = useMedia("(max-width: 768px)")
 
   return (
     <AppProviders>
-      <Toaster
-        containerStyle={{
-          top: 10,
-          right: 46,
-        }}
-      >
-        {(t) => (
-          <ToastBar
-            toast={t}
-            style={{
-              ...t.style,
-              animation: t.visible
-                ? "ease-linear duration-100"
-                : "ease-in duration-75",
-            }}
-          />
-        )}
-      </Toaster>
       <div className="min-h-screen-small relative z-[1] grid grid-cols-1 grid-rows-[auto,1fr]">
+        <Toaster
+          position={mdScreen ? "bottom-center" : "top-right"}
+          containerClassName={
+            smScreen
+              ? ""
+              : mdScreen
+              ? "mr-[2%] -mt-[10px]"
+              : "mr-[2.5%] -mt-[5px]"
+          }
+        />
         <header className="sticky top-0 z-10 border-b border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
             <div className="flex items-center space-x-10 max-sm:pl-1">

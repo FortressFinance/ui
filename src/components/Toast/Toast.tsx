@@ -1,4 +1,5 @@
-import { FC, PropsWithChildren } from "react"
+import { Transition } from "@headlessui/react"
+import { FC, Fragment, PropsWithChildren } from "react"
 
 import clsxm from "@/lib/clsxm"
 
@@ -15,16 +16,28 @@ export type TransactionToastComponentProps = ToastComponentProps & {
 
 export const Toast: FC<PropsWithChildren<ToastComponentProps>> = ({
   className,
+  isVisible,
   children,
 }) => {
   return (
-    <div
-      className={clsxm(
-        "w-full max-w-xs rounded-md bg-pink-900 p-4 text-white",
-        className
-      )}
+    <Transition
+      as={Fragment}
+      show={isVisible}
+      enter="transition ease-linear duration-100"
+      enterFrom="transform opacity-0"
+      enterTo="transform opacity-100"
+      leave="transition ease-in duration-75"
+      leaveFrom="transform opacity-100"
+      leaveTo="transform opacity-0"
     >
-      {children}
-    </div>
+      <div
+        className={clsxm(
+          "w-full max-w-xs rounded-md bg-gray-800 p-4 text-gray-400 shadow",
+          className
+        )}
+      >
+        {children}
+      </div>
+    </Transition>
   )
 }
