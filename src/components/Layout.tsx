@@ -44,20 +44,13 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   ])
 
   const router = useRouter()
-  const smScreen = useMedia("(max-width: 640px)")
   const mdScreen = useMedia("(max-width: 768px)")
 
   return (
     <AppProviders>
       <Toaster
         position={mdScreen ? "bottom-center" : "top-right"}
-        containerClassName={
-          smScreen
-            ? ""
-            : mdScreen
-            ? "mr-[2%] -mt-[10px]"
-            : "mr-[2.5%] -mt-[5px]"
-        }
+        containerClassName={mdScreen ? "" : "mr-[2.5%] -mt-[5px]"}
       />
       <div className="min-h-screen-small relative z-[1] grid grid-cols-1 grid-rows-[auto,1fr]">
         <header className="sticky top-0 z-10 border-b border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
