@@ -49,17 +49,17 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <AppProviders>
+      <Toaster
+        position={mdScreen ? "bottom-center" : "top-right"}
+        containerClassName={
+          smScreen
+            ? ""
+            : mdScreen
+            ? "mr-[2%] -mt-[10px]"
+            : "mr-[2.5%] -mt-[5px]"
+        }
+      />
       <div className="min-h-screen-small relative z-[1] grid grid-cols-1 grid-rows-[auto,1fr]">
-        <Toaster
-          position={mdScreen ? "bottom-center" : "top-right"}
-          containerClassName={
-            smScreen
-              ? ""
-              : mdScreen
-              ? "mr-[2%] -mt-[10px]"
-              : "mr-[2.5%] -mt-[5px]"
-          }
-        />
         <header className="sticky top-0 z-10 border-b border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
             <div className="flex items-center space-x-10 max-sm:pl-1">
