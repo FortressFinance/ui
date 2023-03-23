@@ -1,8 +1,10 @@
 import { BigNumber, ethers } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
-import { FC } from "react"
+import { FC, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
+import toast from "react-hot-toast"
 import {
+  Address,
   erc20ABI,
   useAccount,
   useContractRead,
@@ -24,6 +26,7 @@ import {
 } from "@/hooks"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
 import useDebounce from "@/hooks/useDebounce"
+import { useToast } from "@/hooks/useToast"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
@@ -32,6 +35,15 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
   const vault = useVault(props)
+  const toastManager = useToast()
+  const [depositToastId, setDepositToastId] = useState<string | undefined>()
+  const [approveToastId, setApproveToastId] = useState<string | undefined>()
+  const depositLoadingMsg = "Waiting for deposit transaction..."
+  const depositSuccessMsg = "Deposit transaction done successfully."
+  const depositErrorMsg = "Deposit transaction failed."
+  const approveLoadingMsg = "Waiting for approve transaction..."
+  const approveSuccessMsg = "Approve transaction done successfully."
+  const approveErrorMsg = "Approve transaction failed."
 
   const underlyingAssets = vault.data?.underlyingAssets
 
@@ -73,9 +85,36 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
   })
   const requiresApproval = inputIsEth ? false : allowance.data?.lt(value)
 
-  const onDepositSuccess = () => {
+  const onDepositStart = () => {
+    const id = toastManager.loading(depositLoadingMsg)
+    setDepositToastId(id)
+  }
+
+  const onDepositSuccess = (txHash: Address | undefined) => {
     form.resetField("amountIn")
     invalidateHoldingsVaults()
+    toast.dismiss(depositToastId)
+    toastManager.success(depositSuccessMsg, txHash ?? "0x")
+  }
+
+  const onDepositError = (txHash: Address | undefined) => {
+    toast.dismiss(depositToastId)
+    toastManager.error(depositErrorMsg, txHash ?? "0x")
+  }
+
+  const onApproveStart = () => {
+    const id = toastManager.loading(approveLoadingMsg)
+    setApproveToastId(id)
+  }
+
+  const onApproveSuccess = (txHash: Address | undefined) => {
+    toast.dismiss(approveToastId)
+    toastManager.success(approveSuccessMsg, txHash ?? "0x")
+  }
+
+  const onApproveError = (txHash: Address | undefined) => {
+    toast.dismiss(approveToastId)
+    toastManager.error(approveErrorMsg, txHash ?? "0x")
   }
 
   // Configure approve method
@@ -88,8 +127,11 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
     enabled: requiresApproval,
   })
   const approve = useContractWrite(prepareApprove.config)
+  const approveTxHash = approve.data?.hash
   const waitApprove = useWaitForTransaction({
-    hash: approve.data?.hash,
+    hash: approveTxHash,
+    onSuccess: () => onApproveSuccess(approveTxHash),
+    onError: () => onApproveError(approveTxHash),
   })
 
   const previewDeposit = usePreviewDeposit({
@@ -120,9 +162,11 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
     args: [value, userAddress ?? "0x"],
   })
   const deposit = useContractWrite(prepareDeposit.config)
+  const depositTxHash = deposit.data?.hash
   const waitDeposit = useWaitForTransaction({
-    hash: deposit.data?.hash,
-    onSuccess: onDepositSuccess,
+    hash: depositTxHash,
+    onSuccess: () => onDepositSuccess(depositTxHash),
+    onError: () => onDepositError(depositTxHash),
   })
 
   // Configure depositUnderlying method
@@ -139,17 +183,21 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
     overrides: { value: inputIsEth ? value : BigNumber.from(0) },
   })
   const depositUnderlying = useContractWrite(prepareDepositUnderlying.config)
+  const depositUnderlyingTxHash = depositUnderlying.data?.hash
   const waitDepositUnderlying = useWaitForTransaction({
-    hash: depositUnderlying.data?.hash,
-    onSuccess: onDepositSuccess,
+    hash: depositUnderlyingTxHash,
+    onSuccess: () => onDepositSuccess(depositUnderlyingTxHash),
+    onError: () => onDepositError(depositUnderlyingTxHash),
   })
 
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async () => {
     if (requiresApproval) {
+      onApproveStart()
       fortLog("Approving spend", inputTokenAddress)
       approve?.write?.()
     } else {
+      onDepositStart()
       if (enableDeposit) {
         fortLog("Depositing", amountInDebounced)
         deposit.write?.()

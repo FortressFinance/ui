@@ -32,7 +32,7 @@ export const Toast: FC<PropsWithChildren<ToastComponentProps>> = ({
     >
       <div
         className={clsxm(
-          "w-full max-w-xs rounded-md bg-gradient-radial from-[#61312A] to-[#5D2741] p-4 text-white shadow",
+          "w-auto rounded-md bg-gradient-radial from-[#61312A] to-[#5D2741] p-4 text-white shadow",
           className
         )}
       >

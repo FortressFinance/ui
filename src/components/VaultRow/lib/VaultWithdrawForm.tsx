@@ -1,8 +1,10 @@
 import { BigNumber } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
-import { FC } from "react"
+import { FC, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
+import toast from "react-hot-toast"
 import {
+  Address,
   useAccount,
   useContractWrite,
   usePrepareContractWrite,
@@ -21,6 +23,7 @@ import {
 } from "@/hooks"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
 import useDebounce from "@/hooks/useDebounce"
+import { useToast } from "@/hooks/useToast"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
@@ -29,6 +32,11 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
   const vault = useVault(props)
+  const toastManager = useToast()
+  const [withdrawToastId, setWithdrawToastId] = useState<string | undefined>()
+  const withdrawLoadingMsg = "Waiting for withdraw transaction..."
+  const withdrawSuccessMsg = "Withdraw transaction done successfully."
+  const withdrawErrorMsg = "Withdraw transaction failed."
 
   const underlyingAssets = vault.data?.underlyingAssets
 
@@ -57,9 +65,21 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
   // no math is required here
   const value = parseUnits(amountInDebounced || "0", inputToken?.decimals ?? 18)
 
-  const onWithdrawSuccess = () => {
+  const onWithdrawStart = () => {
+    const id = toastManager.loading(withdrawLoadingMsg)
+    setWithdrawToastId(id)
+  }
+
+  const onWithdrawSuccess = (txHash: Address | undefined) => {
     form.resetField("amountIn")
     invalidateHoldingsVaults()
+    toast.dismiss(withdrawToastId)
+    toastManager.success(withdrawSuccessMsg, txHash ?? "0x")
+  }
+
+  const onWithdrawError = (txHash: Address | undefined) => {
+    toast.dismiss(withdrawToastId)
+    toastManager.error(withdrawErrorMsg, txHash ?? "0x")
   }
 
   // Preview redeem method
@@ -90,9 +110,11 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
     args: [value, userAddress ?? "0x", userAddress ?? "0x"],
   })
   const redeem = useContractWrite(prepareRedeem.config)
+  const redeemTxHash = redeem.data?.hash
   const waitRedeem = useWaitForTransaction({
-    hash: redeem.data?.hash,
-    onSuccess: onWithdrawSuccess,
+    hash: redeemTxHash,
+    onSuccess: () => onWithdrawSuccess(redeemTxHash),
+    onError: () => onWithdrawError(redeemTxHash),
   })
 
   // Configure redeemUnderlying method
@@ -109,13 +131,16 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
     ],
   })
   const redeemUnderlying = useContractWrite(prepareRedeemUnderlying.config)
+  const redeemUnderlyingTxHash = redeemUnderlying.data?.hash
   const waitRedeemUnderlying = useWaitForTransaction({
     hash: redeemUnderlying.data?.hash,
-    onSuccess: onWithdrawSuccess,
+    onSuccess: () => onWithdrawSuccess(redeemUnderlyingTxHash),
+    onError: () => onWithdrawError(redeemUnderlyingTxHash),
   })
 
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async () => {
+    onWithdrawStart()
     if (enableRedeem) {
       fortLog("Redeeming", amountInDebounced)
       redeem.write?.()
