@@ -1,5 +1,4 @@
 import { BigNumber, ethers } from "ethers"
-import { parseUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
@@ -12,6 +11,7 @@ import {
 } from "wagmi"
 
 import { fortLog } from "@/lib/fortLog"
+import { parseCurrencyUnits } from "@/lib/helpers"
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import { VaultProps } from "@/lib/types"
 import {
@@ -57,9 +57,11 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
   const inputIsEth = isEthTokenAddress(inputTokenAddress)
   const { data: inputToken } = useTokenOrNative({ address: inputTokenAddress })
 
-  // preview redeem currently returns a value with slippage accounted for
-  // no math is required here
-  const value = parseUnits(amountInDebounced || "0", inputToken?.decimals ?? 18)
+  // preview redeem currently returns a value with slippage accounted for; no math is required here
+  const value = parseCurrencyUnits({
+    amountFormatted: amountInDebounced,
+    decimals: inputToken?.decimals,
+  })
 
   // Check token approval if necessary
   const allowance = useContractRead({

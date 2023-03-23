@@ -1,4 +1,3 @@
-import { formatUnits, parseUnits } from "ethers/lib/utils.js"
 import { FC, useState } from "react"
 import React from "react"
 import {
@@ -10,6 +9,7 @@ import {
 import { Address, useAccount } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
+import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
 import { useTokenOrNative, useTokenOrNativeBalance } from "@/hooks"
 
 import { AssetBalance } from "@/components/Asset"
@@ -112,10 +112,10 @@ const TokenForm: FC<TokenFormProps> = ({
             validate: {
               positive: (amount) => Number(amount) > 0 || "Enter an amount",
               lessThanBalance: (amount) => {
-                const isValid = parseUnits(
-                  amount || "0",
-                  inputToken?.decimals ?? 18
-                ).lte(inputTokenBalanceOrShare?.value ?? 0)
+                const isValid = parseCurrencyUnits({
+                  amountFormatted: amount,
+                  decimals: inputToken?.decimals,
+                }).lte(inputTokenBalanceOrShare?.value ?? 0)
                 return isValid ? undefined : "Insufficient balance"
               },
             },
@@ -171,7 +171,10 @@ const TokenForm: FC<TokenFormProps> = ({
           )}
         >
           <span>
-            {formatUnits(previewResultWei ?? "0", outputToken?.decimals ?? 18)}
+            {formatCurrencyUnits({
+              amountWei: previewResultWei,
+              decimals: outputToken?.decimals,
+            })}
           </span>
         </div>
         {/* outputToken select button */}
