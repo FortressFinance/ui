@@ -7,7 +7,6 @@ import { Toaster } from "react-hot-toast"
 
 import clsxm from "@/lib/clsxm"
 import { appLink } from "@/lib/helpers"
-import { useMedia } from "@/hooks/useMedia"
 
 import AppProviders from "@/components/AppProviders"
 import Button from "@/components/Button"
@@ -44,14 +43,20 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   ])
 
   const router = useRouter()
-  const mdScreen = useMedia("(max-width: 768px)")
 
   return (
     <AppProviders>
-      <Toaster
-        position={mdScreen ? "bottom-center" : "top-right"}
-        containerClassName={mdScreen ? "" : "mr-[2.5%] -mt-[5px]"}
-      />
+      <div className="max-md:hidden">
+        {/* desktop toaster */}
+        <Toaster
+          position="top-right"
+          containerClassName="mr-[2.5%] -mt-[5px]"
+        />
+      </div>
+      <div className="md:hidden">
+        {/* mobile toaster */}
+        <Toaster position="bottom-center" />
+      </div>
       <div className="min-h-screen-small relative z-[1] grid grid-cols-1 grid-rows-[auto,1fr]">
         <header className="sticky top-0 z-10 border-b border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
