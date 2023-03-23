@@ -20,7 +20,9 @@ export const SuccessToast: FC<TransactionToastComponentProps> = ({
           <FortIconCheck className="col-span-full row-span-full h-5 w-5 fill-green-500" />
         </div>
         <div className="ml-3">
-          <span className="text-md mb-1 font-semibold">{message}</span>
+          <span className="mb-1 font-semibold max-md:text-sm max-md:font-medium">
+            {message}
+          </span>
           <div className="mb-2">
             <Link
               className="text-xs text-slate-300 underline underline-offset-4"

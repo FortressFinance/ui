@@ -12,7 +12,9 @@ export const LoadingToast: FC<TransactionToastComponentProps> = ({
       <div className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg">
         <Spinner className="col-span-full row-span-full h-5 w-5" />
       </div>
-      <div className="text-md ml-3 font-semibold">{message}</div>
+      <div className="ml-3 mr-5 font-semibold max-md:text-sm max-md:font-medium">
+        {message}
+      </div>
     </Toast>
   )
 }
