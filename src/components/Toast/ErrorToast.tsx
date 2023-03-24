@@ -36,7 +36,7 @@ export const ErrorToast: FC<TransactionToastComponentProps> = ({
         {!!onDismiss && (
           <button
             onClick={onDismiss}
-            className="ml-auto inline-flex h-7 w-7 rounded-md p-1.5 align-top"
+            className="ml-3 inline-flex h-7 w-7 rounded-md p-1.5 align-top"
           >
             <span className="sr-only">Close</span>
             <FortIconClose className="h-4 w-4 fill-white" />
