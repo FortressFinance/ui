@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers"
-import { FC } from "react"
+import { FC, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
   useAccount,
@@ -8,7 +8,6 @@ import {
   useWaitForTransaction,
 } from "wagmi"
 
-import { fortLog } from "@/lib/fortLog"
 import { parseCurrencyUnits } from "@/lib/helpers"
 import { VaultProps } from "@/lib/types"
 import {
@@ -22,9 +21,12 @@ import {
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
 import useDebounce from "@/hooks/useDebounce"
 
+import { ConfirmTransactionModal } from "@/components/Modal"
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
 export const VaultWithdrawForm: FC<VaultProps> = (props) => {
+  const [showConfirmWithdrawModal, setShowConfirmWithdraw] = useState(false)
+
   const { data: poolId } = useVaultPoolId(props)
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
@@ -116,17 +118,8 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
     onSuccess: onWithdrawSuccess,
   })
 
-  // Form submit handler
-  const onSubmitForm: SubmitHandler<TokenFormValues> = async () => {
-    if (enableRedeem) {
-      fortLog("Redeeming", amountInDebounced)
-      redeem.write?.()
-    }
-    if (enableRedeemUnderlying) {
-      fortLog("Redeeming underlying tokens", amountInDebounced)
-      redeemUnderlying.write?.()
-    }
-  }
+  const onSubmitForm: SubmitHandler<TokenFormValues> = async () =>
+    setShowConfirmWithdraw(true)
 
   return (
     <div className="p-3 md:rounded-md md:bg-pink-100/10 lg:p-4">
@@ -155,6 +148,20 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
           tokenAddresses={underlyingAssets}
         />
       </FormProvider>
+
+      <ConfirmTransactionModal
+        isOpen={showConfirmWithdrawModal}
+        onClose={() => setShowConfirmWithdraw(false)}
+        onConfirm={enableRedeem ? redeem.write : redeemUnderlying.write}
+        inputAmount={value.toString()}
+        inputTokenAddress={props.vaultAddress}
+        outputAmount={previewRedeem.data?.resultWei}
+        outputAmountMin={previewRedeem.data?.minAmountWei}
+        outputTokenAddress={outputTokenAddress}
+        isPreparing={prepareRedeem.isFetching}
+        isWaitingForSignature={redeem.isLoading || redeemUnderlying.isLoading}
+        type="deposit"
+      />
     </div>
   )
 }

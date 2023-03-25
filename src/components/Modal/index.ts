@@ -1,4 +1,5 @@
 export * from "./AccountModal"
+export * from "./ConfirmTransactionModal"
 export * from "./ConnectModal"
 export * from "./ConsentModal"
 export * from "./TokenSelectModal"

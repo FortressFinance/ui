@@ -1,5 +1,5 @@
 import { BigNumber, ethers } from "ethers"
-import { FC } from "react"
+import { FC, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
   erc20ABI,
@@ -10,7 +10,6 @@ import {
   useWaitForTransaction,
 } from "wagmi"
 
-import { fortLog } from "@/lib/fortLog"
 import { parseCurrencyUnits } from "@/lib/helpers"
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import { VaultProps } from "@/lib/types"
@@ -25,9 +24,12 @@ import {
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
 import useDebounce from "@/hooks/useDebounce"
 
+import { ConfirmTransactionModal } from "@/components/Modal"
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
 export const VaultDepositForm: FC<VaultProps> = (props) => {
+  const [showConfirmDepositModal, setShowConfirmDepositModal] = useState(false)
+
   const { data: poolId } = useVaultPoolId(props)
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
@@ -146,22 +148,8 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
     onSuccess: onDepositSuccess,
   })
 
-  // Form submit handler
-  const onSubmitForm: SubmitHandler<TokenFormValues> = async () => {
-    if (requiresApproval) {
-      fortLog("Approving spend", inputTokenAddress)
-      approve?.write?.()
-    } else {
-      if (enableDeposit) {
-        fortLog("Depositing", amountInDebounced)
-        deposit.write?.()
-      }
-      if (enableDepositUnderlying) {
-        fortLog("Depositing underlying tokens", amountInDebounced)
-        depositUnderlying.write?.()
-      }
-    }
-  }
+  const onSubmitForm: SubmitHandler<TokenFormValues> = async () =>
+    requiresApproval ? approve?.write?.() : setShowConfirmDepositModal(true)
 
   return (
     <div className="p-3 md:rounded-md md:bg-pink-100/10 lg:p-4">
@@ -193,6 +181,20 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
           tokenAddresses={underlyingAssets}
         />
       </FormProvider>
+
+      <ConfirmTransactionModal
+        isOpen={showConfirmDepositModal}
+        onClose={() => setShowConfirmDepositModal(false)}
+        onConfirm={enableDeposit ? deposit.write : depositUnderlying.write}
+        inputAmount={value.toString()}
+        inputTokenAddress={inputTokenAddress}
+        outputAmount={previewDeposit.data?.resultWei}
+        outputAmountMin={previewDeposit.data?.minAmountWei}
+        outputTokenAddress={props.vaultAddress}
+        isPreparing={prepareDeposit.isFetching}
+        isWaitingForSignature={deposit.isLoading || depositUnderlying.isLoading}
+        type="deposit"
+      />
     </div>
   )
 }
