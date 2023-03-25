@@ -1,5 +1,6 @@
 import { Transition } from "@headlessui/react"
 import { FC, Fragment, PropsWithChildren } from "react"
+import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 
@@ -11,7 +12,7 @@ export type ToastComponentProps = {
 
 export type TransactionToastComponentProps = ToastComponentProps & {
   message: string
-  txHash?: string
+  txHash?: Address
 }
 
 export const Toast: FC<PropsWithChildren<ToastComponentProps>> = ({
@@ -26,13 +27,13 @@ export const Toast: FC<PropsWithChildren<ToastComponentProps>> = ({
       enter="transition ease-linear duration-100"
       enterFrom="transform opacity-0"
       enterTo="transform opacity-100"
-      leave="transition ease-in duration-75"
+      leave="transition ease-in duration-700"
       leaveFrom="transform opacity-100"
       leaveTo="transform opacity-0"
     >
       <div
         className={clsxm(
-          "w-auto rounded-md bg-gradient-radial from-[#61312A] to-[#5D2741] p-4 text-white shadow",
+          "rounded-md bg-gradient-radial from-[#61312A] to-[#5D2741] p-4 text-white shadow",
           className
         )}
       >

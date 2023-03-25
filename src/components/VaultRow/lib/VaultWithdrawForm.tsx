@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers"
-import { FC, useState } from "react"
+import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import {
@@ -7,6 +7,7 @@ import {
   useAccount,
   useContractWrite,
   usePrepareContractWrite,
+  UserRejectedRequestError,
   useWaitForTransaction,
 } from "wagmi"
 
@@ -33,10 +34,6 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const { address: userAddress } = useAccount()
   const vault = useVault(props)
   const toastManager = useToast()
-  const [withdrawToastId, setWithdrawToastId] = useState<string | undefined>()
-  const withdrawLoadingMsg = "Waiting for withdraw transaction..."
-  const withdrawSuccessMsg = "Withdraw transaction done successfully."
-  const withdrawErrorMsg = "Withdraw transaction failed."
 
   const underlyingAssets = vault.data?.underlyingAssets
 
@@ -67,21 +64,9 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
     decimals: inputToken?.decimals,
   })
 
-  const onWithdrawStart = () => {
-    const id = toastManager.loading(withdrawLoadingMsg)
-    setWithdrawToastId(id)
-  }
-
-  const onWithdrawSuccess = (txHash: Address | undefined) => {
+  const onWithdrawSuccess = () => {
     form.resetField("amountIn")
     invalidateHoldingsVaults()
-    toast.dismiss(withdrawToastId)
-    toastManager.success(withdrawSuccessMsg, txHash ?? "0x")
-  }
-
-  const onWithdrawError = (txHash: Address | undefined) => {
-    toast.dismiss(withdrawToastId)
-    toastManager.error(withdrawErrorMsg, txHash ?? "0x")
   }
 
   // Preview redeem method
@@ -112,11 +97,19 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
     args: [value, userAddress ?? "0x", userAddress ?? "0x"],
   })
   const redeem = useContractWrite(prepareRedeem.config)
-  const redeemTxHash = redeem.data?.hash
   const waitRedeem = useWaitForTransaction({
-    hash: redeemTxHash,
-    onSuccess: () => onWithdrawSuccess(redeemTxHash),
-    onError: () => onWithdrawError(redeemTxHash),
+    hash: redeem.data?.hash,
+    onSettled: (receipt, error) =>
+      error
+        ? toastManager.error(
+            "Withdraw transaction failed.",
+            receipt?.transactionHash as Address
+          )
+        : toastManager.success(
+            "Withdraw transaction done successfully.",
+            receipt?.transactionHash as Address
+          ),
+    onSuccess: () => onWithdrawSuccess(),
   })
 
   // Configure redeemUnderlying method
@@ -133,23 +126,66 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
     ],
   })
   const redeemUnderlying = useContractWrite(prepareRedeemUnderlying.config)
-  const redeemUnderlyingTxHash = redeemUnderlying.data?.hash
   const waitRedeemUnderlying = useWaitForTransaction({
     hash: redeemUnderlying.data?.hash,
-    onSuccess: () => onWithdrawSuccess(redeemUnderlyingTxHash),
-    onError: () => onWithdrawError(redeemUnderlyingTxHash),
+    onSettled: (receipt, error) =>
+      error
+        ? toastManager.error(
+            "Withdraw transaction failed.",
+            receipt?.transactionHash as Address
+          )
+        : toastManager.success(
+            "Withdraw transaction done successfully.",
+            receipt?.transactionHash as Address
+          ),
+    onSuccess: () => onWithdrawSuccess(),
   })
 
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async () => {
-    onWithdrawStart()
     if (enableRedeem) {
       fortLog("Redeeming", amountInDebounced)
-      redeem.write?.()
+      const redeemWaitingForSigner = toastManager.loading(
+        "Waiting for signature..."
+      )
+      redeem
+        .writeAsync?.()
+        .then((receipt) =>
+          toastManager.loading(
+            "Waiting for transaction confirmation...",
+            receipt.hash
+          )
+        )
+        .catch((err) =>
+          toastManager.error(
+            err instanceof UserRejectedRequestError
+              ? "User rejected request"
+              : "Error broadcasting transaction"
+          )
+        )
+        .finally(() => toast.dismiss(redeemWaitingForSigner))
     }
     if (enableRedeemUnderlying) {
       fortLog("Redeeming underlying tokens", amountInDebounced)
-      redeemUnderlying.write?.()
+      const redeemUnderlyingWaitingForSigner = toastManager.loading(
+        "Waiting for signature..."
+      )
+      redeemUnderlying
+        .writeAsync?.()
+        .then((receipt) =>
+          toastManager.loading(
+            "Waiting for transaction confirmation...",
+            receipt.hash
+          )
+        )
+        .catch((err) =>
+          toastManager.error(
+            err instanceof UserRejectedRequestError
+              ? "User rejected request"
+              : "Error broadcasting transaction"
+          )
+        )
+        .finally(() => toast.dismiss(redeemUnderlyingWaitingForSigner))
     }
   }
 

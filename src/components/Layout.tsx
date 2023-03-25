@@ -4,10 +4,10 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { FC, Fragment, PropsWithChildren, useState } from "react"
 import { Toaster } from "react-hot-toast"
+import { useMediaQuery } from "react-responsive"
 
 import clsxm from "@/lib/clsxm"
 import { appLink } from "@/lib/helpers"
-import { useMedia } from "@/hooks/useMedia"
 
 import AppProviders from "@/components/AppProviders"
 import Button from "@/components/Button"
@@ -44,7 +44,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   ])
 
   const router = useRouter()
-  const mdScreen = useMedia("(max-width: 768px)")
+  const mdScreen = useMediaQuery({ query: "(max-width: 768px)" })
 
   return (
     <AppProviders>

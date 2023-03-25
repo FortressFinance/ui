@@ -19,19 +19,21 @@ export const ErrorToast: FC<TransactionToastComponentProps> = ({
         <div className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center">
           <FortIconWarning className="col-span-full row-span-full h-5 w-5 fill-red-500" />
         </div>
-        <div className="ml-3">
+        <div className="ml-3 pt-0.5">
           <span className="mb-1 font-semibold max-md:text-sm max-md:font-medium">
             {message}
           </span>
-          <div className="mb-2">
-            <Link
-              className="text-xs text-slate-300 underline underline-offset-4"
-              href={`${chain?.blockExplorers?.default.url}/tx/${txHash}`}
-              target="_blank"
-            >
-              View on explorer
-            </Link>
-          </div>
+          {!!txHash && (
+            <div className="mb-2">
+              <Link
+                className="text-xs text-slate-300 underline underline-offset-4"
+                href={`${chain?.blockExplorers?.default.url}/tx/${txHash}`}
+                target="_blank"
+              >
+                View on explorer
+              </Link>
+            </div>
+          )}
         </div>
         {!!onDismiss && (
           <button
