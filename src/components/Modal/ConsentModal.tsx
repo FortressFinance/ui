@@ -1,35 +1,29 @@
 import { Dialog } from "@headlessui/react"
-import { FC, useEffect, useState } from "react"
+import { FC } from "react"
+
+import { useClientReady } from "@/hooks"
 
 import Button from "@/components/Button"
 import PurpleModal, {
   PurpleModalContent,
   PurpleModalHeader,
-} from "@/components/Modal/PurpleModal"
+} from "@/components/Modal/lib/PurpleModal"
 
-import useConsentStorage from "@/store/consent"
+import { useGlobalStore } from "@/store"
 
-export const Consent: FC = () => {
-  const consent = useConsentStorage((state) => state.consent)
-  const understandDisclaimer = useConsentStorage(
-    (state) => state.understandDisclaimer
-  )
-  const [isOpen, setIsOpen] = useState(false)
+export const ConsentModal: FC = () => {
+  const isClientReady = useClientReady()
 
-  function closeModal() {
-    understandDisclaimer()
-    setIsOpen(false)
-  }
-
-  useEffect(() => {
-    if (!consent) {
-      setIsOpen(true)
-    }
-  }, [setIsOpen, consent])
+  const consentAccepted = useGlobalStore((store) => store.consentAccepted)
+  const setConsentAccepted = useGlobalStore((store) => store.setConsentAccepted)
 
   return (
     <>
-      <PurpleModal className="w-auto" isOpen={isOpen} onClose={() => null}>
+      <PurpleModal
+        className="w-auto"
+        isOpen={isClientReady && !consentAccepted}
+        onClose={() => null}
+      >
         <PurpleModalHeader>
           <Dialog.Title
             as="h3"
@@ -83,7 +77,7 @@ export const Consent: FC = () => {
             <Button
               className="inline-flex w-full justify-center px-4 py-2 text-sm font-medium"
               size="large"
-              onClick={closeModal}
+              onClick={() => setConsentAccepted(true)}
             >
               I understand
             </Button>

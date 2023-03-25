@@ -5,7 +5,7 @@ import { mainnet, useNetwork } from "wagmi"
 import { arbitrumFork, mainnetFork } from "@/lib/wagmi"
 import { useActiveChainId } from "@/hooks/useActiveChainId"
 
-import { useActiveChain } from "@/store/activeChain"
+import { useGlobalStore } from "@/store"
 
 jest.mock("wagmi", () => ({
   ...jest.requireActual("wagmi"),
@@ -17,7 +17,7 @@ const mockUseNetwork = jest.mocked(useNetwork)
 describe("useActiveChainId", () => {
   it("returns the expected chainId when the user is not connected", async () => {
     const setChainId = renderHook(() =>
-      useActiveChain((store) => store.setChainId)
+      useGlobalStore((store) => store.setActiveChainId)
     )
     const { result } = renderHook(() => useActiveChainId())
     expect(result.current).toEqual(mainnetFork.id)

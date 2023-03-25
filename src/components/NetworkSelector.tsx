@@ -4,11 +4,11 @@ import { useNetwork, useSwitchNetwork } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 import { enabledNetworks, mainnetFork } from "@/lib/wagmi"
-import { useActiveChainId, useClientReady } from "@/hooks"
+import { useClientReady } from "@/hooks"
 
 import { FortIconChevronDown, NetIconArbitrum, NetIconEthereum } from "@/icons"
 
-import { useActiveChain } from "@/store/activeChain"
+import { useGlobalStore } from "@/store"
 
 type NetworkSelectorProps = {
   className?: string
@@ -18,14 +18,16 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
   const isReady = useClientReady()
   const { chain: connectedChain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
-  const setActiveChainId = useActiveChain((state) => state.setChainId)
-  const disconnectedChainId = useActiveChainId()
-  const disconnectedChain = enabledNetworks.chains.find(
-    (c) => c.id === disconnectedChainId
+
+  const activeChainId = useGlobalStore((store) => store.activeChainId)
+  const setActiveChainId = useGlobalStore((store) => store.setActiveChainId)
+
+  const fallbackChain = enabledNetworks.chains.find(
+    (c) => c.id === activeChainId
   )
 
   const chain = isReady
-    ? connectedChain ?? { ...disconnectedChain, unsupported: false }
+    ? connectedChain ?? { ...fallbackChain, unsupported: false }
     : { ...enabledNetworks.chains[0], unsupported: false }
 
   const onClickChain = (chainId: number) => {

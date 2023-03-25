@@ -1,9 +1,9 @@
 import { useNetwork } from "wagmi"
 
-import { useActiveChain } from "@/store/activeChain"
+import { useGlobalStore } from "@/store"
 
 export function useActiveChainId() {
   const { chain } = useNetwork()
-  const disconnectedChainId = useActiveChain((state) => state.chainId)
-  return chain?.id ?? disconnectedChainId
+  const fallbackChainId = useGlobalStore((store) => store.activeChainId)
+  return chain?.id ?? fallbackChainId
 }

@@ -7,6 +7,7 @@ import { useVault } from "@/hooks"
 
 import { AssetLogo } from "@/components/Asset"
 import Button from "@/components/Button"
+import { VaultStrategyModal } from "@/components/Modal"
 import { TableCell, TableRow } from "@/components/Table"
 import { GradientText } from "@/components/Typography"
 import {
@@ -18,7 +19,6 @@ import {
   VaultUserEarnings,
   VaultWithdrawForm,
 } from "@/components/VaultRow/lib"
-import { VaultStrategyModal } from "@/components/VaultStrategyModal"
 
 import { FortIconChevronDownCircle } from "@/icons"
 
