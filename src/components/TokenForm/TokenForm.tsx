@@ -14,9 +14,9 @@ import { useTokenOrNative, useTokenOrNativeBalance } from "@/hooks"
 
 import { AssetBalance } from "@/components/Asset"
 import Button from "@/components/Button"
-import ConnectWalletButton from "@/components/ConnectWallet/ConnectWalletButton"
+import { ConnectButton } from "@/components/ConnectButton"
+import TokenSelectModal from "@/components/Modal/TokenSelectModal"
 import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
-import TokenSelectModal from "@/components/TokenForm/TokenSelectModal"
 
 type TokenFormProps = {
   asset: Address | undefined
@@ -239,7 +239,7 @@ const TokenForm: FC<TokenFormProps> = ({
               : "Enter an amount"}
           </Button>
         ) : (
-          <ConnectWalletButton className="col-span-full mt-3 w-full" />
+          <ConnectButton className="col-span-full mt-3 w-full" />
         )}
 
         {/* Token selection modal */}

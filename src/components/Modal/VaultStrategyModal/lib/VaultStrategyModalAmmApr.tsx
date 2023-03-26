@@ -11,7 +11,7 @@ import {
   useVaultTotalApr,
 } from "@/hooks"
 
-import { VaultStrategyModalDefinitionList } from "@/components/VaultStrategyModal/lib/VaultStrategyModalDefinitionList"
+import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalDefinitionList"
 
 export const VaultStrategyModalAmmApr: FC<VaultProps> = (props) => {
   const { data: poolId, ...poolIdQuery } = useVaultPoolId(props)

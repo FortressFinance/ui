@@ -8,8 +8,10 @@ import {
   AssetName,
   AssetSymbol,
 } from "@/components/Asset"
-import { ModalBaseProps } from "@/components/Modal/ModalBase"
-import PurpleModal, { PurpleModalContent } from "@/components/Modal/PurpleModal"
+import { ModalBaseProps } from "@/components/Modal/lib/ModalBase"
+import PurpleModal, {
+  PurpleModalContent,
+} from "@/components/Modal/lib/PurpleModal"
 import { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
 import { FortIconCloseCircle } from "@/icons"

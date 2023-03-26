@@ -3,7 +3,7 @@ import { FC, PropsWithChildren } from "react"
 
 import clsxm from "@/lib/clsxm"
 
-import ModalBase, { ModalBaseProps } from "@/components/Modal/ModalBase"
+import ModalBase, { ModalBaseProps } from "@/components/Modal/lib/ModalBase"
 
 type PurpleModalProps = ModalBaseProps & {
   className?: string

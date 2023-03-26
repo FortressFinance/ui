@@ -10,7 +10,7 @@ import Button from "@/components/Button"
 
 import { FortIconCog } from "@/icons"
 
-import { useTxSettings } from "@/store/txSettings"
+import { useGlobalStore } from "@/store"
 
 import { DEFAULT_SLIPPAGE } from "@/constant/env"
 
@@ -81,7 +81,7 @@ const formValuesSchema = z.object({
 })
 
 const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
-  const [slippageTolerance, setSlippageTolerance] = useTxSettings((store) => [
+  const [slippageTolerance, setSlippageTolerance] = useGlobalStore((store) => [
     store.slippageTolerance,
     store.setSlippageTolerance,
   ])

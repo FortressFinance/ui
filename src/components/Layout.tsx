@@ -10,11 +10,7 @@ import { appLink } from "@/lib/helpers"
 
 import AppProviders from "@/components/AppProviders"
 import Button from "@/components/Button"
-import ConnectWalletButton from "@/components/ConnectWallet/ConnectWalletButton"
-import ConnectWalletModal, {
-  DisconnectWalletModal,
-} from "@/components/ConnectWallet/ConnectWalletModal"
-import { Consent } from "@/components/Disclaimer/Consent"
+import { ConnectButton } from "@/components/ConnectButton"
 import {
   DropdownMenu,
   DropdownMenuButton,
@@ -22,12 +18,11 @@ import {
   DropdownMenuItems,
 } from "@/components/DropdownMenu"
 import ExternalLinks from "@/components/ExternalLinks"
+import { AccountModal, ConnectModal, ConsentModal } from "@/components/Modal"
 import NetworkSelector from "@/components/NetworkSelector"
 import { TxSettingsPopover } from "@/components/TxSettingsPopover"
 
 import { FortIconClose, FortIconHamburger } from "@/icons"
-
-import { useConnectWallet } from "@/store/connectWallet"
 
 import { DISABLE_CONCENTRATORS } from "@/constant/env"
 
@@ -37,10 +32,6 @@ import FortressLogo from "~/svg/fortress-logo.svg"
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [connectModal, setConnectModal] = useConnectWallet((state) => [
-    state.connectModal,
-    state.setConnectModal,
-  ])
 
   const router = useRouter()
 
@@ -124,7 +115,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 <NetworkSelector />
               </div>
 
-              <ConnectWalletButton className="max-w-[12rem]" />
+              <ConnectButton className="max-w-[12rem]" />
 
               {/* Hamburger menu button for mobile */}
               <Button
@@ -281,17 +272,9 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         />
       </div>
 
-      <ConnectWalletModal
-        isOpen={connectModal === "disconnected"}
-        onClose={() => setConnectModal(null)}
-      />
-
-      <DisconnectWalletModal
-        isOpen={connectModal === "connected"}
-        onClose={() => setConnectModal(null)}
-      />
-
-      <Consent />
+      <AccountModal />
+      <ConnectModal />
+      <ConsentModal />
     </AppProviders>
   )
 }

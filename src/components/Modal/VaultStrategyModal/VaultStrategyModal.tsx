@@ -7,18 +7,16 @@ import { formatPercentage } from "@/lib/helpers/formatPercentage"
 import { VaultProps } from "@/lib/types"
 import { useIsTokenCompounder, useTokenOrNative, useVaultFees } from "@/hooks"
 
-import { ModalBaseProps } from "@/components/Modal/ModalBase"
+import { ModalBaseProps } from "@/components/Modal/lib/ModalBase"
 import PurpleModal, {
   PurpleModalContent,
   PurpleModalHeader,
-} from "@/components/Modal/PurpleModal"
+} from "@/components/Modal/lib/PurpleModal"
+import { VaultStrategyModalAmmApr } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalAmmApr"
+import { VaultStrategyText } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalText"
+import { VaultStrategyModalTokenApr } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalTokenApr"
 import Skeleton from "@/components/Skeleton"
 import Tooltip from "@/components/Tooltip"
-import {
-  VaultStrategyModalAmmApr,
-  VaultStrategyModalTokenApr,
-  VaultStrategyText,
-} from "@/components/VaultStrategyModal/lib"
 
 import {
   FortIconAddToWallet,

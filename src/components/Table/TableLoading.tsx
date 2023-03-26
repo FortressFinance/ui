@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, ReactNode } from "react"
 
-import ConnectWalletButton from "@/components/ConnectWallet/ConnectWalletButton"
+import { ConnectButton } from "@/components/ConnectButton"
 import Spinner from "@/components/Spinner"
 
 export const TableLoading: FC<PropsWithChildren> = ({ children }) => {
@@ -29,7 +29,7 @@ export const TableDisconnected: FC<
   return (
     <TableTemplate
       heading={heading}
-      footing={<ConnectWalletButton className="col-span-full mt-3 w-72" />}
+      footing={<ConnectButton className="col-span-full mt-3 w-72" />}
     >
       {children}
     </TableTemplate>
