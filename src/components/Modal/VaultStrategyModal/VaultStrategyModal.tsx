@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { FC, MouseEventHandler } from "react"
+import { BiInfoCircle } from "react-icons/bi"
 import { useAccount } from "wagmi"
 
 import { formatPercentage } from "@/lib/helpers/formatPercentage"
@@ -117,7 +118,14 @@ export const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
                   {formatPercentage(fees.data?.depositFee)}
                 </Skeleton>
               </dd>
-              <dt>Withdrawal</dt>
+              <dt className="flex items-center gap-1">
+                Withdrawal{" "}
+                <Tooltip label="Withdrawal fees stay in the vault and are distributed to vault participants. Used as a mechanism to protect against mercenary capital">
+                  <span>
+                    <BiInfoCircle className="h-5 w-5 cursor-pointer" />
+                  </span>
+                </Tooltip>
+              </dt>
               <dd className="text-right">
                 <Skeleton isLoading={fees.isLoading}>
                   {formatPercentage(fees.data?.withdrawFee)}
