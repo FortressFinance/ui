@@ -1,12 +1,14 @@
 import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
+import toast from "react-hot-toast"
 import {
   erc20ABI,
   useAccount,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
+  UserRejectedRequestError,
   useWaitForTransaction,
 } from "wagmi"
 
@@ -24,6 +26,7 @@ import {
 } from "@/hooks"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
 import useDebounce from "@/hooks/useDebounce"
+import { useToast } from "@/hooks/useToast"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
@@ -32,6 +35,7 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
   const vault = useVault(props)
+  const toastManager = useToast()
 
   const underlyingAssets = vault.data?.underlyingAssets
 
@@ -92,6 +96,16 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
   const approve = useContractWrite(prepareApprove.config)
   const waitApprove = useWaitForTransaction({
     hash: approve.data?.hash,
+    onSettled: (receipt, error) =>
+      error
+        ? toastManager.error(
+            "Approve transaction failed.",
+            receipt?.transactionHash
+          )
+        : toastManager.success(
+            "Approve transaction done successfully.",
+            receipt?.transactionHash
+          ),
   })
 
   const previewDeposit = usePreviewDeposit({
@@ -124,7 +138,17 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
   const deposit = useContractWrite(prepareDeposit.config)
   const waitDeposit = useWaitForTransaction({
     hash: deposit.data?.hash,
-    onSuccess: onDepositSuccess,
+    onSettled: (receipt, error) =>
+      error
+        ? toastManager.error(
+            "Deposit transaction failed.",
+            receipt?.transactionHash
+          )
+        : toastManager.success(
+            "Deposit transaction done successfully.",
+            receipt?.transactionHash
+          ),
+    onSuccess: () => onDepositSuccess(),
   })
 
   // Configure depositUnderlying method
@@ -143,22 +167,90 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
   const depositUnderlying = useContractWrite(prepareDepositUnderlying.config)
   const waitDepositUnderlying = useWaitForTransaction({
     hash: depositUnderlying.data?.hash,
-    onSuccess: onDepositSuccess,
+    onSettled: (receipt, error) =>
+      error
+        ? toastManager.error(
+            "Deposit transaction failed.",
+            receipt?.transactionHash
+          )
+        : toastManager.success(
+            "Deposit transaction done successfully.",
+            receipt?.transactionHash
+          ),
+    onSuccess: () => onDepositSuccess(),
   })
 
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async () => {
     if (requiresApproval) {
       fortLog("Approving spend", inputTokenAddress)
-      approve?.write?.()
+      const approveWaitingForSigner = toastManager.loading(
+        "Waiting for signature..."
+      )
+      approve
+        .writeAsync?.()
+        .then((receipt) =>
+          toastManager.loading(
+            "Waiting for transaction confirmation...",
+            receipt.hash
+          )
+        )
+        .catch((err) =>
+          toastManager.error(
+            err instanceof UserRejectedRequestError
+              ? "User rejected request"
+              : "Error broadcasting transaction"
+          )
+        )
+        .finally(() => toast.dismiss(approveWaitingForSigner))
     } else {
       if (enableDeposit) {
         fortLog("Depositing", amountInDebounced)
-        deposit.write?.()
+        const depositWaitingForSigner = toastManager.loading(
+          "Waiting for signature..."
+        )
+        deposit
+          .writeAsync?.()
+          .then((receipt) =>
+            // this fires after the transaction has been broadcast successfully
+            toastManager.loading(
+              "Waiting for transaction confirmation...",
+              receipt.hash
+            )
+          )
+          .catch((err) =>
+            // this fires after a failure to broadcast the transaction
+            toastManager.error(
+              err instanceof UserRejectedRequestError
+                ? "User rejected request"
+                : "Error broadcasting transaction"
+            )
+          )
+          .finally(() => toast.dismiss(depositWaitingForSigner))
       }
       if (enableDepositUnderlying) {
         fortLog("Depositing underlying tokens", amountInDebounced)
-        depositUnderlying.write?.()
+        const depositUnderlyngWaitingForSigner = toastManager.loading(
+          "Waiting for signature..."
+        )
+        depositUnderlying
+          .writeAsync?.()
+          .then((receipt) =>
+            // this fires after the transaction has been broadcast successfully
+            toastManager.loading(
+              "Waiting for transaction confirmation...",
+              receipt.hash
+            )
+          )
+          .catch((err) =>
+            // this fires after a failure to broadcast the transaction
+            toastManager.error(
+              err instanceof UserRejectedRequestError
+                ? "User rejected request"
+                : "Error broadcasting transaction"
+            )
+          )
+          .finally(() => toast.dismiss(depositUnderlyngWaitingForSigner))
       }
     }
   }

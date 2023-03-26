@@ -37,6 +37,7 @@
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.7.1",
     "react-popper": "^2.3.0",
+    "react-responsive": "^9.0.2",
     "sharp": "^0.31.3",
     "tailwind-merge": "^1.8.1",
     "wagmi": "^0.10.10",
