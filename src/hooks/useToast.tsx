@@ -1,12 +1,11 @@
 import toast from "react-hot-toast"
-import { Address } from "wagmi"
 
 import { ErrorToast, LoadingToast, SuccessToast } from "@/components/Toast"
 
 const duration = 7000
 
 export const useToast = () => ({
-  loading: (message: string, txHash?: Address) =>
+  loading: (message: string, txHash?: string) =>
     toast.custom(
       (t) => (
         <LoadingToast
@@ -18,7 +17,7 @@ export const useToast = () => ({
       ),
       { duration: Infinity }
     ),
-  success: (message: string, txHash?: Address) =>
+  success: (message: string, txHash?: string) =>
     toast.custom(
       (t) => (
         <SuccessToast
@@ -30,7 +29,7 @@ export const useToast = () => ({
       ),
       { duration }
     ),
-  error: (message: string, txHash?: Address) =>
+  error: (message: string, txHash?: string) =>
     toast.custom(
       (t) => (
         <ErrorToast

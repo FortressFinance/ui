@@ -3,7 +3,6 @@ import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import {
-  Address,
   erc20ABI,
   useAccount,
   useContractRead,
@@ -101,11 +100,11 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
       error
         ? toastManager.error(
             "Approve transaction failed.",
-            receipt?.transactionHash as Address
+            receipt?.transactionHash
           )
         : toastManager.success(
             "Approve transaction done successfully.",
-            receipt?.transactionHash as Address
+            receipt?.transactionHash
           ),
   })
 
@@ -143,11 +142,11 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
       error
         ? toastManager.error(
             "Deposit transaction failed.",
-            receipt?.transactionHash as Address
+            receipt?.transactionHash
           )
         : toastManager.success(
             "Deposit transaction done successfully.",
-            receipt?.transactionHash as Address
+            receipt?.transactionHash
           ),
     onSuccess: () => onDepositSuccess(),
   })
@@ -172,11 +171,11 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
       error
         ? toastManager.error(
             "Deposit transaction failed.",
-            receipt?.transactionHash as Address
+            receipt?.transactionHash
           )
         : toastManager.success(
             "Deposit transaction done successfully.",
-            receipt?.transactionHash as Address
+            receipt?.transactionHash
           ),
     onSuccess: () => onDepositSuccess(),
   })

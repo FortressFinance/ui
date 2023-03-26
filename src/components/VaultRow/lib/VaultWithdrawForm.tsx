@@ -3,7 +3,6 @@ import { FC } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import {
-  Address,
   useAccount,
   useContractWrite,
   usePrepareContractWrite,
@@ -103,11 +102,11 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
       error
         ? toastManager.error(
             "Withdraw transaction failed.",
-            receipt?.transactionHash as Address
+            receipt?.transactionHash
           )
         : toastManager.success(
             "Withdraw transaction done successfully.",
-            receipt?.transactionHash as Address
+            receipt?.transactionHash
           ),
     onSuccess: () => onWithdrawSuccess(),
   })
@@ -132,11 +131,11 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
       error
         ? toastManager.error(
             "Withdraw transaction failed.",
-            receipt?.transactionHash as Address
+            receipt?.transactionHash
           )
         : toastManager.success(
             "Withdraw transaction done successfully.",
-            receipt?.transactionHash as Address
+            receipt?.transactionHash
           ),
     onSuccess: () => onWithdrawSuccess(),
   })

@@ -1,6 +1,5 @@
 import { Transition } from "@headlessui/react"
 import { FC, Fragment, PropsWithChildren } from "react"
-import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 
@@ -12,7 +11,7 @@ export type ToastComponentProps = {
 
 export type TransactionToastComponentProps = ToastComponentProps & {
   message: string
-  txHash?: Address
+  txHash?: string
 }
 
 export const Toast: FC<PropsWithChildren<ToastComponentProps>> = ({

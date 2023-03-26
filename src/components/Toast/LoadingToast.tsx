@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { useWaitForTransaction } from "wagmi"
+import { Address, useWaitForTransaction } from "wagmi"
 
 import Spinner from "@/components/Spinner"
 import { Toast, TransactionToastComponentProps } from "@/components/Toast"
@@ -10,7 +10,10 @@ export const LoadingToast: FC<TransactionToastComponentProps> = ({
   onDismiss,
   isVisible,
 }) => {
-  useWaitForTransaction({ hash: txHash, onSettled: onDismiss })
+  useWaitForTransaction({
+    hash: (txHash ?? "0x") as Address,
+    onSettled: onDismiss,
+  })
   return (
     <Toast isVisible={isVisible} className="flex items-center">
       <div className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg">
