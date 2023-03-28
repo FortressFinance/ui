@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers"
 import { FC, useState } from "react"
-import { FormProvider, useForm } from "react-hook-form"
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import {
   useAccount,
@@ -25,17 +25,25 @@ import { useVaultContract } from "@/hooks/lib/useVaultContract"
 import useDebounce from "@/hooks/useDebounce"
 import { useToast } from "@/hooks/useToast"
 
-import { ConfirmTransactionModal } from "@/components/Modal"
+import {
+  ConfirmTransactionModal,
+  InvalidMinAmountModal,
+} from "@/components/Modal"
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
+
+import { useGlobalStore } from "@/store"
 
 export const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const [showConfirmWithdrawModal, setShowConfirmWithdraw] = useState(false)
+  const [showInvalidMinAmountModal, setShowInvalidMinAmountModal] =
+    useState(false)
 
   const { data: poolId } = useVaultPoolId(props)
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
   const vault = useVault(props)
   const toastManager = useToast()
+  const expertMode = useGlobalStore((store) => store.expertMode)
 
   const underlyingAssets = vault.data?.underlyingAssets
 
@@ -143,6 +151,16 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
     onSuccess: () => onWithdrawSuccess(),
   })
 
+  const onSubmitForm: SubmitHandler<TokenFormValues> = async () => {
+    if (!outputIsLp && !previewRedeem.data?.minAmountWei) {
+      setShowInvalidMinAmountModal(true)
+    } else if (expertMode) {
+      onConfirmTransactionDetails()
+    } else {
+      setShowConfirmWithdraw(true)
+    }
+  }
+
   const onConfirmTransactionDetails = () => {
     if (enableRedeem) {
       fortLog("Redeeming", amountInDebounced)
@@ -211,7 +229,7 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
             waitRedeemUnderlying.isLoading ||
             previewRedeem.isFetching
           }
-          onSubmit={() => setShowConfirmWithdraw(true)}
+          onSubmit={onSubmitForm}
           previewResultWei={previewRedeem.data?.resultWei}
           submitText="Withdraw"
           asset={props.asset}
@@ -235,6 +253,12 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
         isLoading={previewRedeem.isFetching}
         isPreparing={prepareRedeem.isFetching}
         isWaitingForSignature={redeem.isLoading || redeemUnderlying.isLoading}
+        type="withdraw"
+      />
+
+      <InvalidMinAmountModal
+        isOpen={showInvalidMinAmountModal}
+        onClose={() => setShowInvalidMinAmountModal(false)}
         type="withdraw"
       />
     </div>

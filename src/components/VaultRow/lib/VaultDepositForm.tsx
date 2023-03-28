@@ -28,17 +28,25 @@ import { useVaultContract } from "@/hooks/lib/useVaultContract"
 import useDebounce from "@/hooks/useDebounce"
 import { useToast } from "@/hooks/useToast"
 
-import { ConfirmTransactionModal } from "@/components/Modal"
+import {
+  ConfirmTransactionModal,
+  InvalidMinAmountModal,
+} from "@/components/Modal"
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
+
+import { useGlobalStore } from "@/store"
 
 export const VaultDepositForm: FC<VaultProps> = (props) => {
   const [showConfirmDepositModal, setShowConfirmDepositModal] = useState(false)
+  const [showInvalidMinAmountModal, setShowInvalidMinAmountModal] =
+    useState(false)
 
   const { data: poolId } = useVaultPoolId(props)
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
   const vault = useVault(props)
   const toastManager = useToast()
+  const expertMode = useGlobalStore((store) => store.expertMode)
 
   const underlyingAssets = vault.data?.underlyingAssets
 
@@ -206,7 +214,13 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
         )
         .finally(() => toast.dismiss(approveWaitingForSigner))
     } else {
-      setShowConfirmDepositModal(true)
+      if (!inputIsLp && !previewDeposit.data?.minAmountWei) {
+        setShowInvalidMinAmountModal(true)
+      } else if (expertMode) {
+        onConfirmTransactionDetails()
+      } else {
+        setShowConfirmDepositModal(true)
+      }
     }
   }
 
@@ -309,6 +323,12 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
         isLoading={previewDeposit.isFetching}
         isPreparing={prepareDeposit.isFetching}
         isWaitingForSignature={deposit.isLoading || depositUnderlying.isLoading}
+        type="deposit"
+      />
+
+      <InvalidMinAmountModal
+        isOpen={showInvalidMinAmountModal}
+        onClose={() => setShowInvalidMinAmountModal(false)}
         type="deposit"
       />
     </div>
