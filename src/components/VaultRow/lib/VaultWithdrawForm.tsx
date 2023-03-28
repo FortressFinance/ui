@@ -151,12 +151,13 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
       )
       redeem
         .writeAsync?.()
-        .then((receipt) =>
+        .then((receipt) => {
+          setShowConfirmWithdraw(false)
           toastManager.loading(
             "Waiting for transaction confirmation...",
             receipt.hash
           )
-        )
+        })
         .catch((err) =>
           toastManager.error(
             err instanceof UserRejectedRequestError
@@ -172,12 +173,13 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
       )
       redeemUnderlying
         .writeAsync?.()
-        .then((receipt) =>
+        .then((receipt) => {
+          setShowConfirmWithdraw(false)
           toastManager.loading(
             "Waiting for transaction confirmation...",
             receipt.hash
           )
-        )
+        })
         .catch((err) =>
           toastManager.error(
             err instanceof UserRejectedRequestError
