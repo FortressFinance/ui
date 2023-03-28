@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { FC, Fragment, PropsWithChildren, useState } from "react"
 import { Toaster } from "react-hot-toast"
+import { useMediaQuery } from "react-responsive"
 
 import clsxm from "@/lib/clsxm"
 import { appLink } from "@/lib/helpers"
@@ -34,20 +35,14 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const router = useRouter()
+  const mdScreen = useMediaQuery({ query: "(max-width: 768px)" })
 
   return (
     <AppProviders>
-      <div className="max-md:hidden">
-        {/* desktop toaster */}
-        <Toaster
-          position="top-right"
-          containerClassName="mr-[2.5%] -mt-[5px]"
-        />
-      </div>
-      <div className="md:hidden">
-        {/* mobile toaster */}
-        <Toaster position="bottom-center" />
-      </div>
+      <Toaster
+        position={mdScreen ? "bottom-center" : "top-right"}
+        containerClassName={mdScreen ? "" : "mr-[2.5%] -mt-[5px]"}
+      />
       <div className="min-h-screen-small relative z-[1] grid grid-cols-1 grid-rows-[auto,1fr]">
         <header className="sticky top-0 z-10 border-b border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">

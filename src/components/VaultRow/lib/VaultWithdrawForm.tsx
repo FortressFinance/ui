@@ -1,13 +1,16 @@
 import { BigNumber } from "ethers"
 import { FC, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
+import toast from "react-hot-toast"
 import {
   useAccount,
   useContractWrite,
   usePrepareContractWrite,
+  UserRejectedRequestError,
   useWaitForTransaction,
 } from "wagmi"
 
+import { fortLog } from "@/lib/fortLog"
 import { parseCurrencyUnits } from "@/lib/helpers"
 import { VaultProps } from "@/lib/types"
 import {
@@ -20,6 +23,7 @@ import {
 } from "@/hooks"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
 import useDebounce from "@/hooks/useDebounce"
+import { useToast } from "@/hooks/useToast"
 
 import { ConfirmTransactionModal } from "@/components/Modal"
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
@@ -31,6 +35,7 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
   const vault = useVault(props)
+  const toastManager = useToast()
 
   const underlyingAssets = vault.data?.underlyingAssets
 
@@ -96,7 +101,17 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const redeem = useContractWrite(prepareRedeem.config)
   const waitRedeem = useWaitForTransaction({
     hash: redeem.data?.hash,
-    onSuccess: onWithdrawSuccess,
+    onSettled: (receipt, error) =>
+      error
+        ? toastManager.error(
+            "Withdraw transaction failed.",
+            receipt?.transactionHash
+          )
+        : toastManager.success(
+            "Withdraw transaction done successfully.",
+            receipt?.transactionHash
+          ),
+    onSuccess: () => onWithdrawSuccess(),
   })
 
   // Configure redeemUnderlying method
@@ -115,11 +130,66 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const redeemUnderlying = useContractWrite(prepareRedeemUnderlying.config)
   const waitRedeemUnderlying = useWaitForTransaction({
     hash: redeemUnderlying.data?.hash,
-    onSuccess: onWithdrawSuccess,
+    onSettled: (receipt, error) =>
+      error
+        ? toastManager.error(
+            "Withdraw transaction failed.",
+            receipt?.transactionHash
+          )
+        : toastManager.success(
+            "Withdraw transaction done successfully.",
+            receipt?.transactionHash
+          ),
+    onSuccess: () => onWithdrawSuccess(),
   })
 
-  const onSubmitForm: SubmitHandler<TokenFormValues> = async () =>
-    setShowConfirmWithdraw(true)
+  // Form submit handler
+  const onSubmitForm: SubmitHandler<TokenFormValues> = async () => {
+    if (enableRedeem) {
+      fortLog("Redeeming", amountInDebounced)
+      const redeemWaitingForSigner = toastManager.loading(
+        "Waiting for signature..."
+      )
+      redeem
+        .writeAsync?.()
+        .then((receipt) =>
+          toastManager.loading(
+            "Waiting for transaction confirmation...",
+            receipt.hash
+          )
+        )
+        .catch((err) =>
+          toastManager.error(
+            err instanceof UserRejectedRequestError
+              ? "User rejected request"
+              : "Error broadcasting transaction"
+          )
+        )
+        .finally(() => toast.dismiss(redeemWaitingForSigner))
+    }
+    if (enableRedeemUnderlying) {
+      fortLog("Redeeming underlying tokens", amountInDebounced)
+      const redeemUnderlyingWaitingForSigner = toastManager.loading(
+        "Waiting for signature..."
+      )
+      redeemUnderlying
+        .writeAsync?.()
+        .then((receipt) =>
+          toastManager.loading(
+            "Waiting for transaction confirmation...",
+            receipt.hash
+          )
+        )
+        .catch((err) =>
+          toastManager.error(
+            err instanceof UserRejectedRequestError
+              ? "User rejected request"
+              : "Error broadcasting transaction"
+          )
+        )
+        .finally(() => toast.dismiss(redeemUnderlyingWaitingForSigner))
+    }
+  }
 
   return (
     <div className="p-3 md:rounded-md md:bg-pink-100/10 lg:p-4">
