@@ -1,9 +1,3 @@
-//  WebClient and Transaction errors like user cancellation, network reverts, gas issues etc. have no affect on influencing slippage settings.
-//  Transaction summaries always show slippage used to sign transactions.
-//  Unusual slippage shows warning separately in a prominent way.
-//  Unusual slippage is considered to be <= 0% and >=2%.
-//  In the event that an error occurs previewing deposit/withdraw, user should see an error message and not be allowed to swap
-
 import { Dialog } from "@headlessui/react"
 import { FC, useEffect, useState } from "react"
 import { Address } from "wagmi"
