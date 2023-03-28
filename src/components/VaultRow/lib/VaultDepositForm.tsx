@@ -300,7 +300,11 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
         inputAmount={value.toString()}
         inputTokenAddress={inputTokenAddress}
         outputAmount={previewDeposit.data?.resultWei}
-        outputAmountMin={previewDeposit.data?.minAmountWei}
+        outputAmountMin={
+          inputIsLp
+            ? previewDeposit.data?.resultWei
+            : previewDeposit.data?.minAmountWei
+        }
         outputTokenAddress={props.vaultAddress}
         isLoading={previewDeposit.isFetching}
         isPreparing={prepareDeposit.isFetching}

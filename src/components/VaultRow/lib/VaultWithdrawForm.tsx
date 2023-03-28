@@ -226,7 +226,11 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
         inputAmount={value.toString()}
         inputTokenAddress={props.vaultAddress}
         outputAmount={previewRedeem.data?.resultWei}
-        outputAmountMin={previewRedeem.data?.minAmountWei}
+        outputAmountMin={
+          outputIsLp
+            ? previewRedeem.data?.resultWei
+            : previewRedeem.data?.minAmountWei
+        }
         outputTokenAddress={outputTokenAddress}
         isLoading={previewRedeem.isFetching}
         isPreparing={prepareRedeem.isFetching}
