@@ -246,9 +246,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               target="_blank"
               rel="noreferrer"
             >
-              <strong className="font-semibold">
-                This project is in beta. Use at your own risk.
-              </strong>
+              <strong>This project is in beta. Use at your own risk.</strong>
             </a>
             <div className="max-md:hidden">
               <ExternalLinks showHelp />

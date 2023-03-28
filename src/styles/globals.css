@@ -12,6 +12,10 @@
     @apply font-sans text-white;
   }
 
+  strong {
+    @apply font-semibold;
+  }
+
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;

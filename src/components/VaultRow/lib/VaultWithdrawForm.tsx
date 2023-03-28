@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers"
-import { FC } from "react"
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
+import { FC, useState } from "react"
+import { FormProvider, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import {
   useAccount,
@@ -25,9 +25,12 @@ import { useVaultContract } from "@/hooks/lib/useVaultContract"
 import useDebounce from "@/hooks/useDebounce"
 import { useToast } from "@/hooks/useToast"
 
+import { ConfirmTransactionModal } from "@/components/Modal"
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
 export const VaultWithdrawForm: FC<VaultProps> = (props) => {
+  const [showConfirmWithdrawModal, setShowConfirmWithdraw] = useState(false)
+
   const { data: poolId } = useVaultPoolId(props)
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
@@ -140,8 +143,7 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
     onSuccess: () => onWithdrawSuccess(),
   })
 
-  // Form submit handler
-  const onSubmitForm: SubmitHandler<TokenFormValues> = async () => {
+  const onConfirmTransactionDetails = () => {
     if (enableRedeem) {
       fortLog("Redeeming", amountInDebounced)
       const redeemWaitingForSigner = toastManager.loading(
@@ -149,12 +151,13 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
       )
       redeem
         .writeAsync?.()
-        .then((receipt) =>
+        .then((receipt) => {
+          setShowConfirmWithdraw(false)
           toastManager.loading(
             "Waiting for transaction confirmation...",
             receipt.hash
           )
-        )
+        })
         .catch((err) =>
           toastManager.error(
             err instanceof UserRejectedRequestError
@@ -163,20 +166,20 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
           )
         )
         .finally(() => toast.dismiss(redeemWaitingForSigner))
-    }
-    if (enableRedeemUnderlying) {
+    } else if (enableRedeemUnderlying) {
       fortLog("Redeeming underlying tokens", amountInDebounced)
       const redeemUnderlyingWaitingForSigner = toastManager.loading(
         "Waiting for signature..."
       )
       redeemUnderlying
         .writeAsync?.()
-        .then((receipt) =>
+        .then((receipt) => {
+          setShowConfirmWithdraw(false)
           toastManager.loading(
             "Waiting for transaction confirmation...",
             receipt.hash
           )
-        )
+        })
         .catch((err) =>
           toastManager.error(
             err instanceof UserRejectedRequestError
@@ -208,13 +211,32 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
             waitRedeemUnderlying.isLoading ||
             previewRedeem.isFetching
           }
-          onSubmit={onSubmitForm}
+          onSubmit={() => setShowConfirmWithdraw(true)}
           previewResultWei={previewRedeem.data?.resultWei}
           submitText="Withdraw"
           asset={props.asset}
           tokenAddresses={underlyingAssets}
         />
       </FormProvider>
+
+      <ConfirmTransactionModal
+        isOpen={showConfirmWithdrawModal}
+        onClose={() => setShowConfirmWithdraw(false)}
+        onConfirm={onConfirmTransactionDetails}
+        inputAmount={value.toString()}
+        inputTokenAddress={props.vaultAddress}
+        outputAmount={previewRedeem.data?.resultWei}
+        outputAmountMin={
+          outputIsLp
+            ? previewRedeem.data?.resultWei
+            : previewRedeem.data?.minAmountWei
+        }
+        outputTokenAddress={outputTokenAddress}
+        isLoading={previewRedeem.isFetching}
+        isPreparing={prepareRedeem.isFetching}
+        isWaitingForSignature={redeem.isLoading || redeemUnderlying.isLoading}
+        type="withdraw"
+      />
     </div>
   )
 }
