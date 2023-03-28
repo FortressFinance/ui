@@ -186,7 +186,6 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async () => {
     if (requiresApproval) {
-      fortLog("Approving spend", inputTokenAddress)
       const approveWaitingForSigner = toastManager.loading(
         "Waiting for signature..."
       )
@@ -207,54 +206,59 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
         )
         .finally(() => toast.dismiss(approveWaitingForSigner))
     } else {
-      if (enableDeposit) {
-        fortLog("Depositing", amountInDebounced)
-        const depositWaitingForSigner = toastManager.loading(
-          "Waiting for signature..."
+      setShowConfirmDepositModal(true)
+    }
+  }
+
+  const onConfirmTransactionDetails = () => {
+    if (enableDeposit) {
+      fortLog("Depositing", amountInDebounced)
+      const depositWaitingForSigner = toastManager.loading(
+        "Waiting for signature..."
+      )
+      deposit
+        .writeAsync?.()
+        .then((receipt) => {
+          // this fires after the transaction has been broadcast successfully
+          setShowConfirmDepositModal(false)
+          toastManager.loading(
+            "Waiting for transaction confirmation...",
+            receipt.hash
+          )
+        })
+        .catch((err) =>
+          // this fires after a failure to broadcast the transaction
+          toastManager.error(
+            err instanceof UserRejectedRequestError
+              ? "User rejected request"
+              : "Error broadcasting transaction"
+          )
         )
-        deposit
-          .writeAsync?.()
-          .then((receipt) =>
-            // this fires after the transaction has been broadcast successfully
-            toastManager.loading(
-              "Waiting for transaction confirmation...",
-              receipt.hash
-            )
+        .finally(() => toast.dismiss(depositWaitingForSigner))
+    } else if (enableDepositUnderlying) {
+      fortLog("Depositing underlying tokens", amountInDebounced)
+      const depositUnderlyngWaitingForSigner = toastManager.loading(
+        "Waiting for signature..."
+      )
+      depositUnderlying
+        .writeAsync?.()
+        .then((receipt) => {
+          // this fires after the transaction has been broadcast successfully
+          setShowConfirmDepositModal(false)
+          toastManager.loading(
+            "Waiting for transaction confirmation...",
+            receipt.hash
           )
-          .catch((err) =>
-            // this fires after a failure to broadcast the transaction
-            toastManager.error(
-              err instanceof UserRejectedRequestError
-                ? "User rejected request"
-                : "Error broadcasting transaction"
-            )
+        })
+        .catch((err) =>
+          // this fires after a failure to broadcast the transaction
+          toastManager.error(
+            err instanceof UserRejectedRequestError
+              ? "User rejected request"
+              : "Error broadcasting transaction"
           )
-          .finally(() => toast.dismiss(depositWaitingForSigner))
-      }
-      if (enableDepositUnderlying) {
-        fortLog("Depositing underlying tokens", amountInDebounced)
-        const depositUnderlyngWaitingForSigner = toastManager.loading(
-          "Waiting for signature..."
         )
-        depositUnderlying
-          .writeAsync?.()
-          .then((receipt) =>
-            // this fires after the transaction has been broadcast successfully
-            toastManager.loading(
-              "Waiting for transaction confirmation...",
-              receipt.hash
-            )
-          )
-          .catch((err) =>
-            // this fires after a failure to broadcast the transaction
-            toastManager.error(
-              err instanceof UserRejectedRequestError
-                ? "User rejected request"
-                : "Error broadcasting transaction"
-            )
-          )
-          .finally(() => toast.dismiss(depositUnderlyngWaitingForSigner))
-      }
+        .finally(() => toast.dismiss(depositUnderlyngWaitingForSigner))
     }
   }
 
@@ -292,12 +296,13 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
       <ConfirmTransactionModal
         isOpen={showConfirmDepositModal}
         onClose={() => setShowConfirmDepositModal(false)}
-        onConfirm={enableDeposit ? deposit.write : depositUnderlying.write}
+        onConfirm={onConfirmTransactionDetails}
         inputAmount={value.toString()}
         inputTokenAddress={inputTokenAddress}
         outputAmount={previewDeposit.data?.resultWei}
         outputAmountMin={previewDeposit.data?.minAmountWei}
         outputTokenAddress={props.vaultAddress}
+        isLoading={previewDeposit.isFetching}
         isPreparing={prepareDeposit.isFetching}
         isWaitingForSignature={deposit.isLoading || depositUnderlying.isLoading}
         type="deposit"

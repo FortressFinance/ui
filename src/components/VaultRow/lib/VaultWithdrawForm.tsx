@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers"
 import { FC, useState } from "react"
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
+import { FormProvider, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import {
   useAccount,
@@ -143,8 +143,7 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
     onSuccess: () => onWithdrawSuccess(),
   })
 
-  // Form submit handler
-  const onSubmitForm: SubmitHandler<TokenFormValues> = async () => {
+  const onConfirmTransactionDetails = () => {
     if (enableRedeem) {
       fortLog("Redeeming", amountInDebounced)
       const redeemWaitingForSigner = toastManager.loading(
@@ -166,8 +165,7 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
           )
         )
         .finally(() => toast.dismiss(redeemWaitingForSigner))
-    }
-    if (enableRedeemUnderlying) {
+    } else if (enableRedeemUnderlying) {
       fortLog("Redeeming underlying tokens", amountInDebounced)
       const redeemUnderlyingWaitingForSigner = toastManager.loading(
         "Waiting for signature..."
@@ -211,7 +209,7 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
             waitRedeemUnderlying.isLoading ||
             previewRedeem.isFetching
           }
-          onSubmit={onSubmitForm}
+          onSubmit={() => setShowConfirmWithdraw(true)}
           previewResultWei={previewRedeem.data?.resultWei}
           submitText="Withdraw"
           asset={props.asset}
@@ -222,15 +220,16 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
       <ConfirmTransactionModal
         isOpen={showConfirmWithdrawModal}
         onClose={() => setShowConfirmWithdraw(false)}
-        onConfirm={enableRedeem ? redeem.write : redeemUnderlying.write}
+        onConfirm={onConfirmTransactionDetails}
         inputAmount={value.toString()}
         inputTokenAddress={props.vaultAddress}
         outputAmount={previewRedeem.data?.resultWei}
         outputAmountMin={previewRedeem.data?.minAmountWei}
         outputTokenAddress={outputTokenAddress}
+        isLoading={previewRedeem.isFetching}
         isPreparing={prepareRedeem.isFetching}
         isWaitingForSignature={redeem.isLoading || redeemUnderlying.isLoading}
-        type="deposit"
+        type="withdraw"
       />
     </div>
   )
