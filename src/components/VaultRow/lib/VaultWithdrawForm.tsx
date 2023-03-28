@@ -1,13 +1,16 @@
 import { BigNumber } from "ethers"
 import { FC, useState } from "react"
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
+import { FormProvider, useForm } from "react-hook-form"
+import toast from "react-hot-toast"
 import {
   useAccount,
   useContractWrite,
   usePrepareContractWrite,
+  UserRejectedRequestError,
   useWaitForTransaction,
 } from "wagmi"
 
+import { fortLog } from "@/lib/fortLog"
 import { parseCurrencyUnits } from "@/lib/helpers"
 import { VaultProps } from "@/lib/types"
 import {
@@ -140,8 +143,51 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
     onSuccess: () => onWithdrawSuccess(),
   })
 
-  const onSubmitForm: SubmitHandler<TokenFormValues> = async () =>
-    setShowConfirmWithdraw(true)
+  const onConfirmTransactionDetails = () => {
+    if (enableRedeem) {
+      fortLog("Redeeming", amountInDebounced)
+      const redeemWaitingForSigner = toastManager.loading(
+        "Waiting for signature..."
+      )
+      redeem
+        .writeAsync?.()
+        .then((receipt) =>
+          toastManager.loading(
+            "Waiting for transaction confirmation...",
+            receipt.hash
+          )
+        )
+        .catch((err) =>
+          toastManager.error(
+            err instanceof UserRejectedRequestError
+              ? "User rejected request"
+              : "Error broadcasting transaction"
+          )
+        )
+        .finally(() => toast.dismiss(redeemWaitingForSigner))
+    } else if (enableRedeemUnderlying) {
+      fortLog("Redeeming underlying tokens", amountInDebounced)
+      const redeemUnderlyingWaitingForSigner = toastManager.loading(
+        "Waiting for signature..."
+      )
+      redeemUnderlying
+        .writeAsync?.()
+        .then((receipt) =>
+          toastManager.loading(
+            "Waiting for transaction confirmation...",
+            receipt.hash
+          )
+        )
+        .catch((err) =>
+          toastManager.error(
+            err instanceof UserRejectedRequestError
+              ? "User rejected request"
+              : "Error broadcasting transaction"
+          )
+        )
+        .finally(() => toast.dismiss(redeemUnderlyingWaitingForSigner))
+    }
+  }
 
   return (
     <div className="p-3 md:rounded-md md:bg-pink-100/10 lg:p-4">
@@ -163,7 +209,7 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
             waitRedeemUnderlying.isLoading ||
             previewRedeem.isFetching
           }
-          onSubmit={onSubmitForm}
+          onSubmit={() => setShowConfirmWithdraw(true)}
           previewResultWei={previewRedeem.data?.resultWei}
           submitText="Withdraw"
           asset={props.asset}
@@ -174,15 +220,16 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
       <ConfirmTransactionModal
         isOpen={showConfirmWithdrawModal}
         onClose={() => setShowConfirmWithdraw(false)}
-        onConfirm={enableRedeem ? redeem.write : redeemUnderlying.write}
+        onConfirm={onConfirmTransactionDetails}
         inputAmount={value.toString()}
         inputTokenAddress={props.vaultAddress}
         outputAmount={previewRedeem.data?.resultWei}
         outputAmountMin={previewRedeem.data?.minAmountWei}
         outputTokenAddress={outputTokenAddress}
+        isLoading={previewRedeem.isFetching}
         isPreparing={prepareRedeem.isFetching}
         isWaitingForSignature={redeem.isLoading || redeemUnderlying.isLoading}
-        type="deposit"
+        type="withdraw"
       />
     </div>
   )

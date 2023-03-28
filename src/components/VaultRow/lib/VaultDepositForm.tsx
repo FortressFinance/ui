@@ -1,15 +1,18 @@
 import { BigNumber, ethers } from "ethers"
 import { FC, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
+import toast from "react-hot-toast"
 import {
   erc20ABI,
   useAccount,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
+  UserRejectedRequestError,
   useWaitForTransaction,
 } from "wagmi"
 
+import { fortLog } from "@/lib/fortLog"
 import { parseCurrencyUnits } from "@/lib/helpers"
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import { VaultProps } from "@/lib/types"
@@ -180,8 +183,84 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
     onSuccess: () => onDepositSuccess(),
   })
 
-  const onSubmitForm: SubmitHandler<TokenFormValues> = async () =>
-    requiresApproval ? approve?.write?.() : setShowConfirmDepositModal(true)
+  // Form submit handler
+  const onSubmitForm: SubmitHandler<TokenFormValues> = async () => {
+    if (requiresApproval) {
+      const approveWaitingForSigner = toastManager.loading(
+        "Waiting for signature..."
+      )
+      approve
+        .writeAsync?.()
+        .then((receipt) =>
+          toastManager.loading(
+            "Waiting for transaction confirmation...",
+            receipt.hash
+          )
+        )
+        .catch((err) =>
+          toastManager.error(
+            err instanceof UserRejectedRequestError
+              ? "User rejected request"
+              : "Error broadcasting transaction"
+          )
+        )
+        .finally(() => toast.dismiss(approveWaitingForSigner))
+    } else {
+      setShowConfirmDepositModal(true)
+    }
+  }
+
+  const onConfirmTransactionDetails = () => {
+    if (enableDeposit) {
+      fortLog("Depositing", amountInDebounced)
+      const depositWaitingForSigner = toastManager.loading(
+        "Waiting for signature..."
+      )
+      deposit
+        .writeAsync?.()
+        .then((receipt) => {
+          // this fires after the transaction has been broadcast successfully
+          setShowConfirmDepositModal(false)
+          toastManager.loading(
+            "Waiting for transaction confirmation...",
+            receipt.hash
+          )
+        })
+        .catch((err) =>
+          // this fires after a failure to broadcast the transaction
+          toastManager.error(
+            err instanceof UserRejectedRequestError
+              ? "User rejected request"
+              : "Error broadcasting transaction"
+          )
+        )
+        .finally(() => toast.dismiss(depositWaitingForSigner))
+    } else if (enableDepositUnderlying) {
+      fortLog("Depositing underlying tokens", amountInDebounced)
+      const depositUnderlyngWaitingForSigner = toastManager.loading(
+        "Waiting for signature..."
+      )
+      depositUnderlying
+        .writeAsync?.()
+        .then((receipt) => {
+          // this fires after the transaction has been broadcast successfully
+          setShowConfirmDepositModal(false)
+          toastManager.loading(
+            "Waiting for transaction confirmation...",
+            receipt.hash
+          )
+        })
+        .catch((err) =>
+          // this fires after a failure to broadcast the transaction
+          toastManager.error(
+            err instanceof UserRejectedRequestError
+              ? "User rejected request"
+              : "Error broadcasting transaction"
+          )
+        )
+        .finally(() => toast.dismiss(depositUnderlyngWaitingForSigner))
+    }
+  }
 
   return (
     <div className="p-3 md:rounded-md md:bg-pink-100/10 lg:p-4">
@@ -217,12 +296,13 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
       <ConfirmTransactionModal
         isOpen={showConfirmDepositModal}
         onClose={() => setShowConfirmDepositModal(false)}
-        onConfirm={enableDeposit ? deposit.write : depositUnderlying.write}
+        onConfirm={onConfirmTransactionDetails}
         inputAmount={value.toString()}
         inputTokenAddress={inputTokenAddress}
         outputAmount={previewDeposit.data?.resultWei}
         outputAmountMin={previewDeposit.data?.minAmountWei}
         outputTokenAddress={props.vaultAddress}
+        isLoading={previewDeposit.isFetching}
         isPreparing={prepareDeposit.isFetching}
         isWaitingForSignature={deposit.isLoading || depositUnderlying.isLoading}
         type="deposit"
