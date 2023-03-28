@@ -33,15 +33,14 @@ import FortressLogo from "~/svg/fortress-logo.svg"
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-
   const router = useRouter()
   const mdScreen = useMediaQuery({ query: "(max-width: 768px)" })
 
   return (
     <AppProviders>
       <Toaster
+        containerClassName={mdScreen ? "" : "layout mt-[70px]"}
         position={mdScreen ? "bottom-center" : "top-right"}
-        containerClassName={mdScreen ? "" : "mr-[2.5%] -mt-[5px]"}
       />
       <div className="min-h-screen-small relative z-[1] grid grid-cols-1 grid-rows-[auto,1fr]">
         <header className="sticky top-0 z-10 border-b border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">

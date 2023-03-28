@@ -11,7 +11,7 @@ export const LoadingToast: FC<TransactionToastComponentProps> = ({
   isVisible,
 }) => {
   useWaitForTransaction({
-    hash: (txHash ?? "0x") as Address,
+    hash: txHash as Address,
     onSettled: onDismiss,
   })
   return (
