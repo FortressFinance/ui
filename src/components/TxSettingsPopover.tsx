@@ -31,7 +31,7 @@ export const TxSettingsPopover: FC<TxSettingsPopoverProps> = ({
             <button
               className={clsxm(
                 "relative flex items-center justify-center transition-transform duration-200 max-md:h-full max-md:w-full max-md:rounded-sm max-md:bg-black/30 max-md:p-3 md:h-5 md:w-5 md:justify-center",
-                { "md:-rotate-180": open },
+                { "md:-rotate-90": open },
                 className
               )}
             >
