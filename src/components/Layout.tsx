@@ -39,7 +39,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <AppProviders>
       <Toaster
-        containerClassName="layout mt-[70px]"
+        containerClassName={mdScreen ? "" : "layout mt-[70px]"}
         position={mdScreen ? "bottom-center" : "top-right"}
       />
       <div className="min-h-screen-small relative z-[1] grid grid-cols-1 grid-rows-[auto,1fr]">
