@@ -18,6 +18,7 @@ import {
   useInvalidateHoldingsVaults,
   usePreviewRedeem,
   useTokenOrNative,
+  useTokenOrNativeBalance,
   useVault,
   useVaultPoolId,
 } from "@/hooks"
@@ -68,6 +69,13 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const outputIsLp = outputTokenAddress === props.asset
   const { data: inputToken } = useTokenOrNative({ address: props.vaultAddress })
 
+  const inputTokenBalance = useTokenOrNativeBalance({
+    address: props.vaultAddress,
+  })
+  const outputTokenBalance = useTokenOrNativeBalance({
+    address: outputTokenAddress,
+  })
+
   // preview redeem currently returns a value with slippage accounted for; no math is required here
   const value = parseCurrencyUnits({
     amountFormatted: amountInDebounced,
@@ -77,6 +85,8 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const onWithdrawSuccess = () => {
     form.resetField("amountIn")
     invalidateHoldingsVaults()
+    inputTokenBalance.refetch()
+    outputTokenBalance.refetch()
   }
 
   // Preview redeem method

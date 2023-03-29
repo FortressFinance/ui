@@ -7,7 +7,7 @@ import { YieldOptimizersRegistry } from "@/constant/abi"
 
 const REGISTRY_ADDRESS: Record<number, Address> = {
   // arbitrum
-  42161: "0x31A65C6d4EB07ad51E7afc890aC3b7bE84dF2Ead",
+  42161: "0x03605C3A3dAf860774448df807742c0d0e49460C",
   // mainnet fork
   31337: "0x31A65C6d4EB07ad51E7afc890aC3b7bE84dF2Ead",
   // arbitrum fork

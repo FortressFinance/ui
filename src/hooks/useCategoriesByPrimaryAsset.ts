@@ -8,7 +8,9 @@ const CATEGORIES_BY_PRIMARY_ASSET: Record<
   Record<Address, FilterCategory[]>
 > = {
   // arbitrum
-  42161: {},
+  42161: {
+    "0x5402B5F40310bDED796c7D0F3FF6683f5C0cFfdf": ["featured", "crypto"],
+  },
   // mainnet fork
   31337: {},
   // arbitrum fork

@@ -21,6 +21,7 @@ import {
   useInvalidateHoldingsVaults,
   usePreviewDeposit,
   useTokenOrNative,
+  useTokenOrNativeBalance,
   useVault,
   useVaultPoolId,
 } from "@/hooks"
@@ -72,6 +73,13 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
   const inputIsEth = isEthTokenAddress(inputTokenAddress)
   const { data: inputToken } = useTokenOrNative({ address: inputTokenAddress })
 
+  const inputTokenBalance = useTokenOrNativeBalance({
+    address: inputTokenAddress,
+  })
+  const outputTokenBalance = useTokenOrNativeBalance({
+    address: props.vaultAddress,
+  })
+
   // preview redeem currently returns a value with slippage accounted for; no math is required here
   const value = parseCurrencyUnits({
     amountFormatted: amountInDebounced,
@@ -86,13 +94,14 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
     functionName: "allowance",
     args: [userAddress ?? "0x", props.vaultAddress],
     enabled: !!userAddress && !inputIsEth,
-    watch: true,
   })
   const requiresApproval = inputIsEth ? false : allowance.data?.lt(value)
 
   const onDepositSuccess = () => {
     form.resetField("amountIn")
     invalidateHoldingsVaults()
+    inputTokenBalance.refetch()
+    outputTokenBalance.refetch()
   }
 
   // Configure approve method
@@ -117,6 +126,7 @@ export const VaultDepositForm: FC<VaultProps> = (props) => {
             "Approve transaction done successfully.",
             receipt?.transactionHash
           ),
+    onSuccess: () => allowance.refetch(),
   })
 
   const previewDeposit = usePreviewDeposit({
