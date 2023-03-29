@@ -1,12 +1,14 @@
 import { Popover, Switch, Transition } from "@headlessui/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FC, FormEventHandler, Fragment, useEffect } from "react"
-import { SubmitHandler, useForm } from "react-hook-form"
+import { Controller, SubmitHandler, useForm } from "react-hook-form"
+import { BiInfoCircle } from "react-icons/bi"
 import { z } from "zod"
 
 import clsxm from "@/lib/clsxm"
 
 import Button from "@/components/Button"
+import Tooltip from "@/components/Tooltip"
 
 import { FortIconCog } from "@/icons"
 
@@ -29,7 +31,7 @@ export const TxSettingsPopover: FC<TxSettingsPopoverProps> = ({
             <button
               className={clsxm(
                 "relative flex items-center justify-center transition-transform duration-200 max-md:h-full max-md:w-full max-md:rounded-sm max-md:bg-black/30 max-md:p-3 md:h-5 md:w-5 md:justify-center",
-                { "md:-rotate-180": open },
+                { "md:-rotate-90": open },
                 className
               )}
             >
@@ -67,27 +69,34 @@ type TxSettingsFormProps = {
 }
 
 type TxSettingsFormValues = {
+  expertMode: boolean
   slippageToleranceString: string
 }
 
 const formValuesSchema = z.object({
+  expertMode: z.boolean(),
   slippageToleranceString: z.coerce
     .number({
       invalid_type_error: "Invalid slippage percentage",
     })
     .positive({
       message: "Invalid slippage percentage",
-    }),
+    })
+    .lt(100, { message: "Invalid slippage percentage" }),
 })
 
 const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
-  const [slippageTolerance, setSlippageTolerance] = useGlobalStore((store) => [
-    store.slippageTolerance,
-    store.setSlippageTolerance,
-  ])
+  const [expertMode, setExpertMode, slippageTolerance, setSlippageTolerance] =
+    useGlobalStore((store) => [
+      store.expertMode,
+      store.setExpertMode,
+      store.slippageTolerance,
+      store.setSlippageTolerance,
+    ])
 
   const form = useForm<TxSettingsFormValues>({
     values: {
+      expertMode,
       slippageToleranceString: String(slippageTolerance),
     },
     mode: "all",
@@ -101,8 +110,10 @@ const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
   const submitHandler: SubmitHandler<TxSettingsFormValues> = (data) => {
     // we can't rely on the formState to be accurate while the component is being unmounted
     const parsedData = formValuesSchema.safeParse(data)
-    if (parsedData.success)
+    if (parsedData.success) {
+      setExpertMode(parsedData.data.expertMode)
       setSlippageTolerance(parsedData.data.slippageToleranceString)
+    }
   }
 
   const closeHandler: FormEventHandler = (e) => {
@@ -122,16 +133,19 @@ const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
 
   return (
     <form onSubmit={closeHandler}>
-      <h1 className="mb-2 md:text-lg">Transaction settings</h1>
+      <h1 className="mb-2 font-medium">Transaction settings</h1>
       <div>
-        <label className="mb-3 block font-medium" htmlFor="slippageTolerance">
+        <label
+          className="mb-3 block text-sm font-medium"
+          htmlFor="slippageTolerance"
+        >
           Slippage tolerance
         </label>
         <div className="grid grid-cols-[1fr,2fr] gap-2">
           {/* Auto switch */}
           <Switch
             as={Button}
-            className="shrink-0 text-base ui-not-checked:bg-black/20 ui-not-checked:ring-transparent"
+            className="shrink-0 ui-not-checked:bg-black/20 ui-not-checked:ring-transparent"
             variant="plain-negative"
             checked={isAutoSlippage}
             onChange={(checked: boolean) => {
@@ -158,6 +172,9 @@ const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
               type="text"
               id="slippageTolerance"
               autoFocus
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
               {...form.register("slippageToleranceString")}
             />
             <span className="relative z-[1] col-start-2 row-start-1 self-center pr-3 pl-1 text-xl text-black">
@@ -172,11 +189,43 @@ const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
 
           {/* Error messaging */}
           {slippageError && (
-            <div className="col-span-2 text-center text-sm font-semibold">
+            <div className="col-span-2 text-sm font-semibold">
               {slippageError.message}
             </div>
           )}
         </div>
+      </div>
+      <h1 className="mt-4 mb-2 font-medium">Transaction settings</h1>
+      <div className="flex items-center justify-between">
+        <label
+          className="relative z-10 flex items-center gap-1 text-sm font-medium"
+          htmlFor="expertMode"
+        >
+          Expert mode{" "}
+          <Tooltip label="Only enable if you know what you're doing. Disable transaction confirmations in the UI.">
+            <span>
+              <BiInfoCircle className="h-5 w-5 cursor-pointer" />
+            </span>
+          </Tooltip>
+        </label>
+        <Controller
+          name="expertMode"
+          control={form.control}
+          render={({ field }) => (
+            <Switch
+              checked={field.value}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              ref={field.ref}
+              className="group relative inline-flex h-6 w-12 items-center rounded-full ring-1 ring-inset ring-white/20 transition-all ui-checked:ring-orange"
+            >
+              <span className="sr-only">Enable expert mode</span>
+              <span className="relative z-10 block h-6 w-6 rounded-full bg-white transition-transform ui-checked:translate-x-6" />
+              <span className="absolute inset-0 rounded-full bg-gradient-to-t from-orange opacity-0 transition-opacity ui-checked:opacity-100" />
+              <span className="opacity-1 absolute inset-0 rounded-full bg-gradient-to-t from-white/20 transition-opacity ui-checked:opacity-0" />
+            </Switch>
+          )}
+        />
       </div>
     </form>
   )

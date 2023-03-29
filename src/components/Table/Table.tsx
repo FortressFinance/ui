@@ -65,7 +65,7 @@ export const TableHeader: FC<PropsWithChildren<TableChildProps>> = ({
   children,
   className,
 }) => (
-  <span className={clsx("text-sm", className)} role="rowheader">
+  <span className={className} role="rowheader">
     {children}
   </span>
 )

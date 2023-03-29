@@ -14,6 +14,8 @@ type GlobalStore = {
   setActiveModal: (activeModal: GlobalModalName) => void
   consentAccepted: boolean
   setConsentAccepted: (consentAccepted: boolean) => void
+  expertMode: boolean
+  setExpertMode: (expertMode: boolean) => void
   slippageTolerance: number
   setSlippageTolerance: (slippageTolerance: number) => void
 }
@@ -27,6 +29,8 @@ export const useGlobalStore = create<GlobalStore>()(
       setActiveModal: (activeModal) => set({ activeModal }),
       consentAccepted: false,
       setConsentAccepted: (consentAccepted) => set({ consentAccepted }),
+      expertMode: false,
+      setExpertMode: (expertMode) => set({ expertMode }),
       slippageTolerance: DEFAULT_SLIPPAGE,
       setSlippageTolerance: (slippageTolerance) => set({ slippageTolerance }),
     }),
@@ -35,6 +39,7 @@ export const useGlobalStore = create<GlobalStore>()(
       partialize: (store) => ({
         // persist only the following properties
         consentAccepted: store.consentAccepted,
+        expertMode: store.expertMode,
         slippageTolerance: store.slippageTolerance,
       }),
     }
