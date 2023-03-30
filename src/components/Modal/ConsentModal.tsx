@@ -84,7 +84,7 @@ export const ConsentModal: FC = () => {
           </div>
           <div className="mt-4 mb-2 text-center">
             <a
-              href="about:blank"
+              href="https://google.com"
               className="text-sm text-pink-100/50 underline"
             >
               Leave site
