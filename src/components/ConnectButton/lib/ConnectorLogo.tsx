@@ -16,7 +16,7 @@ type ConnectorLogoProps = {
 const ConnectorLogo: FC<ConnectorLogoProps> = ({ className, id, name }) => {
   if (id === "metaMask") {
     return <ConnIconMetaMask className={className} />
-  } else if (id === "walletConnect") {
+  } else if (id === "walletConnect" || id === "walletConnectLegacy") {
     return <ConnIconWalletConnect className={className} />
   } else if (id === "coinbaseWallet") {
     return <ConnIconCoinbaseWallet className={className} />
