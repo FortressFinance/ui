@@ -43,6 +43,10 @@ export const ConnectModal: FC = () => {
             // do not show connectors that aren't available
             return null
           }
+          const connectorName =
+            connector.name === "WalletConnectLegacy"
+              ? "WalletConnect"
+              : connector.name
           return (
             <Button
               key={connector.id}
@@ -54,12 +58,12 @@ export const ConnectModal: FC = () => {
               variant="plain"
             >
               <div className="flex w-full items-center justify-between">
-                <span>{connector.name}</span>
+                <span>{connectorName}</span>
                 <div className="flex h-10 w-10 items-center justify-center">
                   <ConnectorLogo
                     className="h-full max-h-full w-full max-w-full"
                     id={connector.id}
-                    name={connector.name}
+                    name={connectorName}
                   />
                 </div>
               </div>
