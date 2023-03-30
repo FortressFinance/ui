@@ -122,7 +122,7 @@ const TokenForm: FC<TokenFormProps> = ({
           }}
           render={({ field: { onChange, onBlur, value, name, ref } }) => (
             <input
-              className="peer relative z-[2] col-start-1 row-start-1 block w-full text-ellipsis bg-transparent px-4 pt-4 pb-2 text-2xl placeholder-pink-100/50 focus:outline-none md:text-4xl"
+              className="peer relative z-[2] col-start-1 row-start-1 block w-full text-ellipsis bg-transparent px-4 pb-2 pt-4 text-2xl placeholder-pink-100/50 focus:outline-none md:text-4xl"
               // universal input options
               inputMode="decimal"
               autoComplete="off"
@@ -178,7 +178,7 @@ const TokenForm: FC<TokenFormProps> = ({
           </span>
         </div>
         {/* outputToken select button */}
-        <div className="relative z-[1] col-start-2 row-start-2 flex items-start space-x-1 justify-self-end pr-4 pb-4">
+        <div className="relative z-[1] col-start-2 row-start-2 flex items-start space-x-1 justify-self-end pb-4 pr-4">
           <TokenSelectButton
             canChange={
               isWithdraw &&

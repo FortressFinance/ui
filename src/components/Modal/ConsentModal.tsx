@@ -82,7 +82,7 @@ export const ConsentModal: FC = () => {
               I understand
             </Button>
           </div>
-          <div className="mt-4 mb-2 text-center">
+          <div className="mb-2 mt-4 text-center">
             <a
               href="https://google.com"
               className="text-sm text-pink-100/50 underline"
