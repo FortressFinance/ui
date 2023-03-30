@@ -42,9 +42,9 @@ export const ConsentModal: FC = () => {
             </p>
             <p className="mb-2">
               By interacting or attempting to interact (in both cases,
-              “interacting”) with Fortress Finance, you confirm that you not a
-              person subject or target of any sanctions, including a person that
-              is:
+              “interacting”) with Fortress Finance, you confirm that you are not
+              a person, subject or target of any sanctions, including a person
+              that is:
             </p>
             <ul className="list-inside list-disc">
               <li>
