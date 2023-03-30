@@ -78,7 +78,7 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
       >
         <div
           ref={setPopperElement}
-          className="z-20 max-w-sm rounded-lg bg-blue py-2 px-4 text-center text-sm"
+          className="z-20 max-w-sm rounded-lg bg-blue py-2 px-4 text-center text-sm font-normal text-white"
           style={styles.popper}
           {...attributes.popper}
         >
