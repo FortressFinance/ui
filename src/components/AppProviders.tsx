@@ -20,10 +20,16 @@ const wagmiClient = createClient({
   connectors: [
     new MetaMaskConnector({
       chains,
-      options: { shimDisconnect: true, shimChainChangedDisconnect: false },
+      options: { shimDisconnect: true },
     }),
     new InjectedConnector({ chains }),
-    new WalletConnectConnector({ chains, options: { qrcode: true } }),
+    new WalletConnectConnector({
+      chains,
+      options: {
+        projectId: "daacd878d9425131c647eca1cd7a7e06",
+        showQrModal: true,
+      },
+    }),
     new CoinbaseWalletConnector({
       chains,
       options: { appName: "Fortress Finance" },
