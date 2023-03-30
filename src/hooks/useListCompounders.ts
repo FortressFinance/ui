@@ -3,7 +3,7 @@ import { useFallbackReads } from "@/hooks/lib/useFallbackRequest"
 import { useRegistryContract } from "@/hooks/lib/useRegistryContract"
 import { useCategoriesByPrimaryAsset } from "@/hooks/useCategoriesByPrimaryAsset"
 
-const vaultTypeByIndex: VaultType[] = ["curve", "balancer", "token"]
+const vaultTypeByIndex: VaultType[] = ["token", "curve", "balancer"]
 
 export function useListCompounders() {
   // TODO: Preferred: API request
@@ -18,6 +18,10 @@ export function useListCompounders() {
       contracts: [
         {
           ...registryContract,
+          functionName: "getTokenCompoundersPrimaryAssets",
+        },
+        {
+          ...registryContract,
           functionName: "getAmmCompoundersPrimaryAssets",
           args: [true],
         },
@@ -25,10 +29,6 @@ export function useListCompounders() {
           ...registryContract,
           functionName: "getAmmCompoundersPrimaryAssets",
           args: [false],
-        },
-        {
-          ...registryContract,
-          functionName: "getTokenCompoundersPrimaryAssets",
         },
       ],
       select: (data) =>
