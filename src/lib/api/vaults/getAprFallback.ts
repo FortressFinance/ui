@@ -40,7 +40,8 @@ export async function getVaultAprFallback(asset: VaultProps["asset"]) {
   `
   const variables = { lpToken: asset }
 
-  const data = await request(curveGraphUrl, graphqlQuery, variables)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = await request<any>(curveGraphUrl, graphqlQuery, variables)
   return data?.pools
 }
 
@@ -78,7 +79,8 @@ export async function getFortCvxCrvAprFallback() {
       }
     }
   `
-  const data = await request(convexStakingUrl, graphqlQuery)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = await request<any>(convexStakingUrl, graphqlQuery)
   if (data?.dailySnapshots?.length !== 0) {
     const crvApr = Number(data?.dailySnapshots[0].crvApr)
     const cvxApr = Number(data?.dailySnapshots[0].cvxApr)
@@ -140,7 +142,8 @@ async function getAuraBalRewardData() {
     }
   `
 
-  const data = await request(auraGraphUrl, graphqlQuery)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = await request<any>(auraGraphUrl, graphqlQuery)
   let rewardData = []
   let totalStaked = 0
   const addresses: { [key: string]: Address } = {}
@@ -258,7 +261,8 @@ export async function getAuraMint() {
     }
   `
 
-  const data = await request(auraGraphUrl, graphqlQuery)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = await request<any>(auraGraphUrl, graphqlQuery)
   return data?.global
 }
 
@@ -281,7 +285,8 @@ async function getAuraRewardDataByAsset(asset: VaultProps["asset"]) {
     lpToken: asset?.toLocaleLowerCase() ?? "0x",
   }
 
-  const data = await request(auraGraphUrl, graphqlQuery, variables)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = await request<any>(auraGraphUrl, graphqlQuery, variables)
   let rewardData = []
   let totalStaked = 0
   const addresses: { [key: string]: Address } = {}
