@@ -55,7 +55,7 @@ async function getCurveArbitrumApi(poolCurveAddress: Address) {
   let totalApr = 0
   Object.entries(parsed.apys).forEach(([key, value]) => {
     if (
-      poolCurveAddress.toLocaleLowerCase() !== "0x" &&
+      poolCurveAddress !== "0x" &&
       key.toLocaleLowerCase().includes(poolCurveAddress.toLocaleLowerCase())
     ) {
       const baseApy = value.baseApy / 100
