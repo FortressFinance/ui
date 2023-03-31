@@ -67,7 +67,7 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
 
       <Transition
         as="div"
-        className="fixed max-md:hidden"
+        className="fixed"
         show={isOpen}
         enter="transition-opacity duration-200"
         enterFrom="opacity-0"
