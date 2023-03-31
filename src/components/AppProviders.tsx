@@ -4,7 +4,7 @@ import { configureChains, createClient, WagmiConfig } from "wagmi"
 import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet"
 import { InjectedConnector } from "wagmi/connectors/injected"
 import { MetaMaskConnector } from "wagmi/connectors/metaMask"
-import { WalletConnectConnector } from "wagmi/connectors/walletConnect"
+import { WalletConnectLegacyConnector } from "wagmi/connectors/walletConnectLegacy"
 
 import { enabledNetworks } from "@/lib/wagmi"
 
@@ -20,10 +20,15 @@ const wagmiClient = createClient({
   connectors: [
     new MetaMaskConnector({
       chains,
-      options: { shimDisconnect: true, shimChainChangedDisconnect: false },
+      options: { shimDisconnect: true },
     }),
     new InjectedConnector({ chains }),
-    new WalletConnectConnector({ chains, options: { qrcode: true } }),
+    new WalletConnectLegacyConnector({
+      chains,
+      options: {
+        qrcode: true,
+      },
+    }),
     new CoinbaseWalletConnector({
       chains,
       options: { appName: "Fortress Finance" },

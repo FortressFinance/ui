@@ -47,7 +47,7 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
         </div>
         <FortIconChevronDown className="w-3.5 shrink-0 stroke-white group-focus-visible:stroke-pink-900 ui-open:rotate-180 ui-not-open:group-hover:stroke-pink-900" />
       </Menu.Button>
-      <Menu.Items className="divide-y divide-pink/30 overflow-hidden rounded-b-md border-l border-r border-b border-pink/30 bg-pink-900/80 backdrop-blur-md focus-visible:outline-none">
+      <Menu.Items className="divide-y divide-pink/30 overflow-hidden rounded-b-md border-b border-l border-r border-pink/30 bg-pink-900/80 backdrop-blur-md focus-visible:outline-none">
         {clientReady &&
           concentratorTargetAssets.data
             ?.filter((x) => x !== "0x")

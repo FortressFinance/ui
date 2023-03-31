@@ -30,7 +30,7 @@ export const VaultStrategyModalDefinitionList: FC<
                 <>
                   <dt className="flex items-center gap-1 text-base font-bold">
                     <GradientText>{item.label}</GradientText>
-                    <Tooltip label="APY calculation assumes weekly compounding and excludes Fortress fees">
+                    <Tooltip label="APY calculation assumes weekly compounding and excludes Fortress fees.">
                       <span>
                         <BiInfoCircle className="h-5 w-5 cursor-pointer" />
                       </span>

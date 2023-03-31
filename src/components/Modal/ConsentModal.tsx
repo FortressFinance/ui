@@ -42,9 +42,9 @@ export const ConsentModal: FC = () => {
             </p>
             <p className="mb-2">
               By interacting or attempting to interact (in both cases,
-              “interacting”) with Fortress Finance, you confirm that you not a
-              person subject or target of any sanctions, including a person that
-              is:
+              “interacting”) with Fortress Finance, you confirm that you are not
+              a person, subject or target of any sanctions, including a person
+              that is:
             </p>
             <ul className="list-inside list-disc">
               <li>
@@ -82,9 +82,9 @@ export const ConsentModal: FC = () => {
               I understand
             </Button>
           </div>
-          <div className="mt-4 mb-2 text-center">
+          <div className="mb-2 mt-4 text-center">
             <a
-              href="about:blank"
+              href="https://google.com"
               className="text-sm text-pink-100/50 underline"
             >
               Leave site

@@ -120,7 +120,7 @@ export const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
               </dd>
               <dt className="flex items-center gap-1">
                 Withdrawal{" "}
-                <Tooltip label="Withdrawal fees stay in the vault and are distributed to vault participants. Used as a mechanism to protect against mercenary capital">
+                <Tooltip label="Withdrawal fees stay in the vault and are distributed to vault participants. Used as a mechanism to protect against mercenary capital.">
                   <span>
                     <BiInfoCircle className="h-5 w-5 cursor-pointer" />
                   </span>

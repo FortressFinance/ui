@@ -177,7 +177,7 @@ const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
               autoCapitalize="off"
               {...form.register("slippageToleranceString")}
             />
-            <span className="relative z-[1] col-start-2 row-start-1 self-center pr-3 pl-1 text-xl text-black">
+            <span className="relative z-[1] col-start-2 row-start-1 self-center pl-1 pr-3 text-xl text-black">
               %
             </span>
 
@@ -195,7 +195,7 @@ const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
           )}
         </div>
       </div>
-      <h1 className="mt-4 mb-2 font-medium">Transaction settings</h1>
+      <h1 className="mb-2 mt-4 font-medium">Transaction settings</h1>
       <div className="flex items-center justify-between">
         <label
           className="relative z-10 flex items-center gap-1 text-sm font-medium"

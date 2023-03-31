@@ -83,7 +83,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 </Menu>
                 <span className="flex cursor-not-allowed items-center">
                   <span className="opacity-50">Lend</span>
-                  <span className="ml-1 grow-0 rounded bg-pink-200/20 py-0.5 px-1 text-[9px] uppercase leading-tight text-pink-100/80">
+                  <span className="ml-1 grow-0 rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
                     Coming soon
                   </span>
                 </span>
@@ -179,7 +179,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                           {DISABLE_CONCENTRATORS ? (
                             <span className="flex items-center gap-1 rounded px-3 py-2.5 text-lg font-medium text-white/20">
                               <span>Concentrators</span>
-                              <span className="ml-1 grow-0 whitespace-nowrap rounded bg-pink-200/20 py-0.5 px-1 text-[9px] uppercase leading-tight text-pink-100/60">
+                              <span className="ml-1 grow-0 whitespace-nowrap rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/60">
                                 Coming soon
                               </span>
                             </span>
@@ -225,7 +225,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
         <div className="layout py-4 md:py-8">{children}</div>
 
-        <footer className="layout pt-6 pb-3 md:py-6">
+        <footer className="layout pb-3 pt-6 md:py-6">
           <div className="grid grid-cols-[1fr,auto,1fr] md:gap-4">
             <a
               className="col-start-2 items-center rounded-full bg-pink-900/80 px-4 py-2 text-center text-xs font-medium leading-5 text-pink-100"

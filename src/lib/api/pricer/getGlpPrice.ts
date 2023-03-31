@@ -15,7 +15,8 @@ export async function getGmxPriceData() {
       }
     }
   `
-  const data = await request(gmxGraphUrl, graphqlQuery)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = await request<any>(gmxGraphUrl, graphqlQuery)
   let aum = 0
   let priceGmx = 0
   if (data?.glpStats?.length !== 0) {
@@ -40,7 +41,8 @@ export async function getGlpPrice() {
       }
     }
   `
-  const data = await request(gmxGraphUrl, graphqlQuery)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = await request<any>(gmxGraphUrl, graphqlQuery)
   let aum = 0
   let supply = 0
   if (data?.glpStats?.length !== 0) {
