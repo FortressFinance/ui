@@ -9,14 +9,14 @@ import {
   crvTriCryptoPoolAddress,
   crvTriCryptoTokenAddress,
   crvTwoCryptoTokenAddress,
-  fraxBpPoolAddress,
+  fraxBpTokenAddress,
 } from "@/constant/addresses"
 import { convexSidechainsUrl } from "@/constant/urls"
 
 const ARBI_CURVE_ADDRESS: Record<Address, Address> = {
   [crvTriCryptoTokenAddress]: crvTriCryptoPoolAddress,
   [crvTwoCryptoTokenAddress]: crvTwoCryptoTokenAddress,
-  [fraxBpPoolAddress]: fraxBpPoolAddress,
+  [fraxBpTokenAddress]: fraxBpTokenAddress,
 }
 
 export default function useCurveVaultArbitrumTotalApr({
