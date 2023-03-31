@@ -153,10 +153,7 @@ const TokenForm: FC<TokenFormProps> = ({
         <div className="relative z-[1] col-start-2 row-start-1 flex items-start justify-self-end pr-4 pt-4">
           <TokenSelectButton
             canChange={
-              !isWithdraw &&
-              isConnected &&
-              !!tokenAddresses &&
-              tokenAddresses.length > 1
+              !isWithdraw && !!tokenAddresses && tokenAddresses.length > 1
             }
             tokenAddress={inputTokenAddress}
             onClick={() => setTokenSelectMode("inputToken")}
@@ -181,10 +178,7 @@ const TokenForm: FC<TokenFormProps> = ({
         <div className="relative z-[1] col-start-2 row-start-2 flex items-start space-x-1 justify-self-end pb-4 pr-4">
           <TokenSelectButton
             canChange={
-              isWithdraw &&
-              isConnected &&
-              !!tokenAddresses &&
-              tokenAddresses.length > 1
+              isWithdraw && !!tokenAddresses && tokenAddresses.length > 1
             }
             tokenAddress={outputTokenAddress}
             onClick={() => setTokenSelectMode("outputToken")}
