@@ -9,12 +9,14 @@ import {
   crvTriCryptoPoolAddress,
   crvTriCryptoTokenAddress,
   crvTwoCryptoTokenAddress,
+  fraxBpTokenAddress,
 } from "@/constant/addresses"
 import { convexSidechainsUrl } from "@/constant/urls"
 
 const ARBI_CURVE_ADDRESS: Record<Address, Address> = {
   [crvTriCryptoTokenAddress]: crvTriCryptoPoolAddress,
   [crvTwoCryptoTokenAddress]: crvTwoCryptoTokenAddress,
+  [fraxBpTokenAddress]: fraxBpTokenAddress,
 }
 
 export default function useCurveVaultArbitrumTotalApr({
@@ -53,6 +55,7 @@ async function getCurveArbitrumApi(poolCurveAddress: Address) {
   let totalApr = 0
   Object.entries(parsed.apys).forEach(([key, value]) => {
     if (
+      poolCurveAddress !== "0x" &&
       key.toLocaleLowerCase().includes(poolCurveAddress.toLocaleLowerCase())
     ) {
       const baseApy = value.baseApy / 100
