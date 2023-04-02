@@ -2,7 +2,7 @@
 
 import { VaultProps } from "@/lib/types"
 import { useApiVaultDynamic } from "@/hooks/lib/api/useApiVaultDynamic"
-import useVaultTvlFallback from "@/hooks/lib/tvl/useVaultTvlFallback"
+import useVaultTvlFallback from "@/hooks/lib/tvl/compounder/useVaultTvlFallback"
 
 type UseVaultTvlParams = VaultProps & {
   poolId: number | undefined

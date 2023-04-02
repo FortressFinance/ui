@@ -10,6 +10,8 @@ import { TabButton } from "@/components/Tabs"
 
 import { FortIconChevronDown } from "@/icons"
 
+import { AddressZero } from "@/constant/addresses"
+
 type ConcentratorMenuProps = {
   concentratorTargetAsset: Address | undefined
   setConcentratorTargetAsset: Dispatch<SetStateAction<Address>>
@@ -22,8 +24,12 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
   const clientReady = useClientReady()
   const concentratorTargetAssets = useConcentratorTargetAssets({
     onSuccess: (data) => {
-      if (concentratorTargetAsset === "0x" && data?.length)
-        setConcentratorTargetAsset(data[0])
+      if (concentratorTargetAsset === "0x" && data?.length) {
+        const filterData = data.filter((x) => x !== AddressZero)
+        if (filterData.length) {
+          setConcentratorTargetAsset(filterData[0])
+        }
+      }
     },
   })
 
@@ -50,7 +56,7 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
       <Menu.Items className="divide-y divide-pink/30 overflow-hidden rounded-b-md border-b border-l border-r border-pink/30 bg-pink-900/80 backdrop-blur-md focus-visible:outline-none">
         {clientReady &&
           concentratorTargetAssets.data
-            ?.filter((x) => x !== "0x")
+            ?.filter((x) => x !== AddressZero)
             .map((targetAsset, index) => (
               <Menu.Item
                 as="button"

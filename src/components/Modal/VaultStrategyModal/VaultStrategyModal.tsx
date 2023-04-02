@@ -5,7 +5,7 @@ import { useAccount } from "wagmi"
 
 import { formatPercentage } from "@/lib/helpers/formatPercentage"
 import { VaultProps } from "@/lib/types"
-import { useIsTokenCompounder, useTokenOrNative, useVaultFees } from "@/hooks"
+import { useIsTokenVault, useTokenOrNative, useVaultFees } from "@/hooks"
 
 import { ModalBaseProps } from "@/components/Modal/lib/ModalBase"
 import PurpleModal, {
@@ -35,7 +35,7 @@ export const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
   const { data: ybToken } = useTokenOrNative({
     address: vaultProps.vaultAddress,
   })
-  const isToken = useIsTokenCompounder(vaultProps.type)
+  const isToken = useIsTokenVault(vaultProps.type)
 
   const addTokenToWallet: MouseEventHandler<HTMLButtonElement> = () => {
     if (ybToken && ybToken.address && connector && connector.watchAsset) {

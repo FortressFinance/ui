@@ -1,7 +1,7 @@
 import { FC, Fragment } from "react"
 
 import { VaultProps } from "@/lib/types"
-import { useIsTokenCompounder, useVault } from "@/hooks"
+import { useIsTokenVault, useVault } from "@/hooks"
 
 import { AssetSymbol } from "@/components/Asset"
 
@@ -10,7 +10,7 @@ export const VaultStrategyText: FC<VaultProps> = ({
   type,
   vaultAddress,
 }) => {
-  const isToken = useIsTokenCompounder(type)
+  const isToken = useIsTokenVault(type)
   const vault = useVault({ asset, type, vaultAddress })
   const underlyingAssets = vault.data?.underlyingAssets
   return (

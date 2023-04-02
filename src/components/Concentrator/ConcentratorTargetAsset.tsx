@@ -28,7 +28,6 @@ export const ConcentratorTargetAssetSymbol: FC<
     vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
     vaultType: firstConcentrator?.vaultType ?? "balancer",
   })
-
   return (
     <AssetSymbol
       address={concentrator.data?.rewardTokenAddress}

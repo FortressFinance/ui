@@ -2,7 +2,6 @@ import axios from "axios"
 import { Address, useQuery } from "wagmi"
 import { z } from "zod"
 
-import { VaultDynamicProps } from "@/lib/types"
 import { useActiveChainId } from "@/hooks"
 
 import {
@@ -21,7 +20,7 @@ export default function useCurveVaultArbitrumTotalApr({
   asset,
   enabled,
 }: {
-  asset: VaultDynamicProps["asset"]
+  asset: Address
   enabled: boolean
 }) {
   const chainId = useActiveChainId()
