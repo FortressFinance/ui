@@ -1,3 +1,4 @@
+import { convertToApy } from "@/lib/api/vaults/convertToApy"
 import { VaultDynamicProps } from "@/lib/types"
 import { useActiveChainId } from "@/hooks"
 import useCurveVaultArbitrumTotalApr from "@/hooks/lib/apr/useCurveVaultArbitrumTotalApr"
@@ -22,17 +23,15 @@ export default function useCurveVaultTotalApr({
     enabled: enabled && isArbitrumFamily,
   })
 
-  const compoundPeriod = 84_600 * 7 // 7 days - 1 week
-  const yearInSecond = 31_556_926
-  const n = yearInSecond / compoundPeriod
-
   if (!isArbitrumFamily) {
-    const totalApr = curveVaultMainnetTotalApr.data ?? 0
-    const apy = (1 + totalApr / n) ** n - 1
     return {
       ...curveVaultMainnetTotalApr,
-      data: apy,
+      data: convertToApy(curveVaultMainnetTotalApr.data),
     }
   }
-  return curveVaultArbitrumTotalApr
+
+  return {
+    ...curveVaultArbitrumTotalApr,
+    data: convertToApy(curveVaultArbitrumTotalApr.data),
+  }
 }
