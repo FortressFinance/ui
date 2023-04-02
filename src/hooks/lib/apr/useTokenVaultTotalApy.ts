@@ -4,7 +4,7 @@ import { useActiveChainId } from "@/hooks"
 import useTokenVaultArbitrumTotalApr from "@/hooks/lib/apr/useTokenVaultArbitrumTotalApr"
 import useTokenVaultMainnetTotalApr from "@/hooks/lib/apr/useTokenVaultMainnetTotalApr"
 
-export default function useTokenVaultTotalApr({
+export default function useTokenVaultTotalApy({
   asset,
   enabled,
 }: {

@@ -4,7 +4,7 @@ import { useActiveChainId } from "@/hooks"
 import useBalancerVaultArbitrumTotalApr from "@/hooks/lib/apr/useBalancerVaultArbitrumTotalApr"
 import useBalancerVaultMainnetTotalApr from "@/hooks/lib/apr/useBalancerVaultMainnetTotalApr"
 
-export default function useBalancerVaultTotalApr({
+export default function useBalancerVaultTotalApy({
   asset,
   enabled,
 }: {

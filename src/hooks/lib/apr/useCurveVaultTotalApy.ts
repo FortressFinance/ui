@@ -4,7 +4,7 @@ import { useActiveChainId } from "@/hooks"
 import useCurveVaultArbitrumTotalApr from "@/hooks/lib/apr/useCurveVaultArbitrumTotalApr"
 import useCurveVaultMainnetTotalApr from "@/hooks/lib/apr/useCurveVaultMainnetTotalApr"
 
-export default function useCurveVaultTotalApr({
+export default function useCurveVaultTotalApy({
   asset,
   enabled,
 }: {
