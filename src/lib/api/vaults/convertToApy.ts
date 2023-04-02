@@ -3,6 +3,5 @@ export async function convertToApy(apr: number | undefined) {
   const yearInSecond = 31_556_926
   const n = yearInSecond / compoundPeriod
 
-  const totalApr = apr ?? 0
-  return (1 + totalApr / n) ** n - 1
+  return apr === undefined ? 0 : (1 + apr / n) ** n - 1
 }
