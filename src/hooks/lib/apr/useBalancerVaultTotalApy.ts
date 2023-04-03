@@ -1,9 +1,10 @@
+import { convertToApy } from "@/lib/api/vaults/convertToApy"
 import { VaultDynamicProps } from "@/lib/types"
 import { useActiveChainId } from "@/hooks"
 import useBalancerVaultArbitrumTotalApr from "@/hooks/lib/apr/useBalancerVaultArbitrumTotalApr"
 import useBalancerVaultMainnetTotalApr from "@/hooks/lib/apr/useBalancerVaultMainnetTotalApr"
 
-export default function useBalancerVaultTotalApr({
+export default function useBalancerVaultTotalApy({
   asset,
   enabled,
 }: {
@@ -22,17 +23,14 @@ export default function useBalancerVaultTotalApr({
     enabled: enabled && isArbitrumFamily,
   })
 
-  const compoundPeriod = 84_600 * 7 // 7 days - 1 week
-  const yearInSecond = 31_556_926
-  const n = yearInSecond / compoundPeriod
-
   if (!isArbitrumFamily) {
-    const totalApr = balancerVaultMainnetTotalApr.data ?? 0
-    const apy = (1 + totalApr / n) ** n - 1
     return {
       ...balancerVaultMainnetTotalApr,
-      data: apy,
+      data: convertToApy(balancerVaultMainnetTotalApr.data),
     }
   }
-  return balancerVaultArbitrumTotalApr
+  return {
+    ...balancerVaultArbitrumTotalApr,
+    data: convertToApy(balancerVaultArbitrumTotalApr.data),
+  }
 }
