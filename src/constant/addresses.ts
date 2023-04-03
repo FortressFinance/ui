@@ -10,7 +10,7 @@ export const crvTriCryptoTokenAddress: Address =
   "0x8e0B8c8BB9db49a46697F3a5Bb8A308e744821D2"
 export const crvTwoCryptoPoolAddress: Address =
   "0x7f90122BF0700F9E7e1F688fe926940E8839F353"
-export const crvTwoCryptoTokenAddress = crvTriCryptoTokenAddress
+export const crvTwoCryptoTokenAddress = crvTwoCryptoPoolAddress
 export const ethTokenAddress: Address =
   "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
 export const AddressZero: Address = "0x0000000000000000000000000000000000000000"

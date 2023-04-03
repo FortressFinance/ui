@@ -3,6 +3,7 @@ import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
 import { Address } from "wagmi"
 
+import { formatPercentage } from "@/lib/helpers"
 import { FilterCategory } from "@/lib/types"
 import {
   useClientReady,
@@ -14,6 +15,7 @@ import {
   useListConcentrators,
   useTokenOrNative,
 } from "@/hooks"
+import { useConcentratorApy } from "@/hooks/useConcentratorApy"
 
 import Button from "@/components/Button"
 import {
@@ -55,7 +57,12 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
           <dl className="text-right">
             <dt className="text-sm">APY</dt>
             <dd className="font-semibold">
-              <GradientText>23.35%</GradientText>
+              <GradientText>
+                <ConcentratorRewardsApy
+                  concentratorTargetAsset={concentratorTargetAsset}
+                  filterCategory={filterCategory}
+                />
+              </GradientText>
             </dd>
           </dl>
         </div>
@@ -97,6 +104,37 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
         />
       </div>
     </div>
+  )
+}
+
+const ConcentratorRewardsApy: FC<ConcentratorRewardsProps> = ({
+  concentratorTargetAsset,
+  filterCategory,
+}) => {
+  const isReady = useClientReady()
+  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
+  const firstConcentrator = useFirstConcentrator({
+    concentratorsList,
+    concentratorTargetAsset,
+    filterCategory,
+  })
+  const totalApy = useConcentratorApy({
+    asset: firstConcentrator?.vaultAssetAddress ?? "0x",
+    type: firstConcentrator?.vaultType ?? "balancer",
+  })
+
+  return (
+    <Skeleton
+      isLoading={
+        !isReady ||
+        concentratorTargetAssets.isLoading ||
+        concentratorsList.isLoading ||
+        totalApy.isLoading
+      }
+    >
+      {formatPercentage(totalApy.data)}
+    </Skeleton>
   )
 }
 

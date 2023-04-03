@@ -5,5 +5,8 @@ export default function useBalancerConcentratorVaultTotalApr(/*{
   asset: Address
   enabled: boolean
 }*/) {
-  return null
+  return {
+    isLoading: false,
+    data: 0,
+  }
 }

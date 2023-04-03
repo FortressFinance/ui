@@ -1,12 +1,12 @@
 import { VaultDynamicProps } from "@/lib/types"
 import { useApiVaultDynamic } from "@/hooks/lib/api/useApiVaultDynamic"
 import useBalancerVaultMainnetTotalApr from "@/hooks/lib/apr/compounder/useBalancerVaultMainnetTotalApr"
-import useBalancerVaultTotalApr from "@/hooks/lib/apr/compounder/useBalancerVaultTotalApr"
-import useCurveVaultTotalApr from "@/hooks/lib/apr/compounder/useCurveVaultTotalApr"
+import useBalancerVaultTotalApy from "@/hooks/lib/apr/compounder/useBalancerVaultTotalApy"
+import useCurveVaultTotalApy from "@/hooks/lib/apr/compounder/useCurveVaultTotalApy"
 import useTokenAuraBalVault from "@/hooks/lib/apr/compounder/useTokenAuraBalVault"
 import useTokenGlpVault from "@/hooks/lib/apr/compounder/useTokenGlpVault"
 import useTokenVaultMainnetTotalApr from "@/hooks/lib/apr/compounder/useTokenVaultMainnetTotalApr"
-import useTokenVaultTotalApr from "@/hooks/lib/apr/compounder/useTokenVaultTotalApr"
+import useTokenVaultTotalApy from "@/hooks/lib/apr/compounder/useTokenVaultTotalApy"
 import { useVaultAprFallback } from "@/hooks/lib/apr/compounder/useVaultAprFallback"
 import useCurveVaultMainnetTotalApr from "@/hooks/lib/apr/useCurveVaultMainnetTotalApr"
 import { useTokenVaultSymbol } from "@/hooks/useTokenVaultSymbol"
@@ -22,33 +22,29 @@ export function useVaultApy({ asset, poolId, type }: VaultDynamicProps) {
   const isBalancerFallbackEnabled = apiQuery.isError && !isCurve && !isToken
   const isTokenFallbackEnabled = apiQuery.isError && isToken
 
-  const curveVaultTotalApr = useCurveVaultTotalApr({
+  const curveVaultTotalApy = useCurveVaultTotalApy({
     asset,
     enabled: isCurveFallbackEnabled ?? false,
   })
-  const balancerVaultTotalApr = useBalancerVaultTotalApr({
+  const balancerVaultTotalApy = useBalancerVaultTotalApy({
     asset,
     enabled: isBalancerFallbackEnabled ?? false,
   })
-  const tokenVaultTotalApr = useTokenVaultTotalApr({
+  const tokenVaultTotalApy = useTokenVaultTotalApy({
     asset,
     enabled: isTokenFallbackEnabled ?? false,
   })
 
   if (isCurveFallbackEnabled) {
-    return {
-      ...curveVaultTotalApr,
-      isLoading: curveVaultTotalApr?.isLoading ?? true,
-      data: curveVaultTotalApr?.data,
-    }
+    return curveVaultTotalApy
   }
 
   if (isBalancerFallbackEnabled) {
-    return balancerVaultTotalApr
+    return balancerVaultTotalApy
   }
 
   if (isTokenFallbackEnabled) {
-    return tokenVaultTotalApr
+    return tokenVaultTotalApy
   }
 
   return {

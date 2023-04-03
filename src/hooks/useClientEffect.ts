@@ -6,7 +6,7 @@ export const useClientEffect = (
   deps?: DependencyList
 ) => {
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && typeof navigator !== "undefined") {
       effect()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
