@@ -3,7 +3,7 @@ import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
 import { Address } from "wagmi"
 
-import { formatPercentage } from "@/lib/helpers"
+import { formatPercentage, formatUsd } from "@/lib/helpers"
 import { FilterCategory } from "@/lib/types"
 import {
   useClientReady,
@@ -16,6 +16,7 @@ import {
   useTokenOrNative,
 } from "@/hooks"
 import { useConcentratorApy } from "@/hooks/useConcentratorApy"
+import { useConcentratorAum } from "@/hooks/useConcentratorAum"
 
 import Button from "@/components/Button"
 import {
@@ -71,7 +72,10 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
         <dl className="grid grid-cols-[1fr,auto] gap-y-2">
           <dt className="text-xs font-medium text-white/80">AUM</dt>
           <dd className="text-right text-xs font-medium text-white/80">
-            $3,067,000
+            <ConcentratorRewardsAum
+              concentratorTargetAsset={concentratorTargetAsset}
+              filterCategory={filterCategory}
+            />
           </dd>
           <dt className="text-xs font-medium text-white/80">Balance</dt>
           <dd className="text-right text-xs font-medium text-white/80">
@@ -104,6 +108,44 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
         />
       </div>
     </div>
+  )
+}
+
+const ConcentratorRewardsAum: FC<ConcentratorRewardsProps> = ({
+  concentratorTargetAsset,
+  filterCategory,
+}) => {
+  const isReady = useClientReady()
+  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
+  const firstConcentrator = useFirstConcentrator({
+    concentratorsList,
+    concentratorTargetAsset,
+    filterCategory,
+  })
+  const concentrator = useConcentratorVault({
+    concentratorTargetAsset,
+    vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
+    vaultType: firstConcentrator?.vaultType,
+  })
+
+  const tvl = useConcentratorAum({
+    asset: firstConcentrator?.vaultAssetAddress ?? "0x",
+    ybTokenAddress: concentrator.data?.ybTokenAddress ?? "0x",
+  })
+
+  return (
+    <Skeleton
+      isLoading={
+        !isReady ||
+        concentratorTargetAssets.isLoading ||
+        concentratorsList.isLoading ||
+        concentrator.isLoading ||
+        tvl.isLoading
+      }
+    >
+      {formatUsd({ abbreviate: true, amount: tvl.data })}
+    </Skeleton>
   )
 }
 

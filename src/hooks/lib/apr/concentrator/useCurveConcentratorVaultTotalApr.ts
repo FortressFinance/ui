@@ -1,5 +1,6 @@
 import { Address } from "wagmi"
 
+import { convertToApy } from "@/lib/api/vaults/convertToApy"
 import useCurveVaultArbitrumTotalApr from "@/hooks/lib/apr/useCurveVaultArbitrumTotalApr"
 import useCurveVaultMainnetTotalApr from "@/hooks/lib/apr/useCurveVaultMainnetTotalApr"
 import { useActiveChainId } from "@/hooks/useActiveChainId"
@@ -24,7 +25,13 @@ export default function useCurveConcentratorVaultTotalApr({
   })
 
   if (!isArbitrumFamily) {
-    return curveVaultMainnetTotalApr
+    return {
+      ...curveVaultMainnetTotalApr,
+      data: convertToApy(curveVaultMainnetTotalApr.data),
+    }
   }
-  return curveVaultArbitrumTotalApr
+  return {
+    ...curveVaultArbitrumTotalApr,
+    data: convertToApy(curveVaultArbitrumTotalApr.data),
+  }
 }
