@@ -20,11 +20,19 @@ export function useTokenPriceUsd({
   enabled?: boolean
 }) {
   const chainId = useActiveChainId()
-  return useQuery({
+  const priceRequest = useQuery({
     ...queryKeys.tokens.priceUsd({ asset }),
     queryFn: customPricers[asset]
       ? customPricers[asset]
       : () => getLlamaPrice({ asset, chainId }),
     enabled: enabled && asset !== "0x",
   })
+
+  if (asset === "0x") {
+    return {
+      isLoading: false,
+      data: 0,
+    }
+  }
+  return priceRequest
 }
