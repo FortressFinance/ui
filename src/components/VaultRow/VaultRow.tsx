@@ -1,4 +1,5 @@
 import { Disclosure, Tab, Transition } from "@headlessui/react"
+import { useRouter } from "next/router"
 import { FC, Fragment, MouseEventHandler, useState } from "react"
 
 import clsxm from "@/lib/clsxm"
@@ -6,8 +7,7 @@ import { VaultProps } from "@/lib/types"
 import { useVault } from "@/hooks"
 
 import { AssetLogo } from "@/components/Asset"
-import Button from "@/components/Button"
-import { VaultStrategyModal } from "@/components/Modal"
+import { ButtonLink } from "@/components/Button"
 import { TableCell, TableRow } from "@/components/Table"
 import { GradientText } from "@/components/Typography"
 import {
@@ -23,10 +23,12 @@ import {
 import { FortIconChevronDownCircle } from "@/icons"
 
 export const VaultRow: FC<VaultProps> = (props) => {
-  const [isStrategyOpen, setIsStrategyOpen] = useState(false)
   const [isVaultOpen, setIsVaultOpen] = useState(false)
 
+  const router = useRouter()
   const { isLoading } = useVault(props)
+
+  const vaultStrategyUrl = `${router.asPath}?asset=${props.asset}&type=${props.type}&vaultAddress=${props.vaultAddress}`
 
   const toggleVaultOpen: MouseEventHandler<
     HTMLButtonElement | HTMLDivElement
@@ -55,24 +57,24 @@ export const VaultRow: FC<VaultProps> = (props) => {
           </span>
 
           {/* Large: strategy button */}
-          <Button
-            className="focus-visible-outline-1 pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 focus:outline-none focus-visible:-translate-y-0.5 focus-visible:outline focus-visible:outline-orange focus-visible:contrast-150 focus-visible:after:opacity-100 active:translate-y-0 enabled:hover:-translate-y-0.5 enabled:hover:contrast-150 enabled:hover:after:opacity-100 max-lg:hidden"
+          <ButtonLink
+            href={vaultStrategyUrl}
+            className="focus-visible-outline-1 pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 hover:-translate-y-0.5 hover:contrast-150 hover:after:opacity-100 focus:outline-none focus-visible:-translate-y-0.5 focus-visible:outline focus-visible:outline-orange focus-visible:contrast-150 focus-visible:after:opacity-100 active:translate-y-0 max-lg:hidden"
             size="base"
             variant="outline"
-            onClick={() => setIsStrategyOpen(true)}
           >
             <GradientText>Strategy</GradientText>
-          </Button>
+          </ButtonLink>
 
           {/* Medium: strategy button */}
-          <Button
+          <ButtonLink
+            href={vaultStrategyUrl}
             className="focus-visible-outline-1 pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 focus:outline-none focus-visible:-translate-y-0.5 focus-visible:outline focus-visible:outline-orange focus-visible:contrast-150 focus-visible:after:opacity-100 active:translate-y-0 max-lg:hidden lg:hidden lg:enabled:hover:-translate-y-0.5 lg:enabled:hover:contrast-150 lg:enabled:hover:after:opacity-100"
             size="small"
             variant="outline"
-            onClick={() => setIsStrategyOpen(true)}
           >
             <GradientText>Strategy</GradientText>
-          </Button>
+          </ButtonLink>
 
           {/* Mobile: expand/collapse button */}
           <button
@@ -223,21 +225,15 @@ export const VaultRow: FC<VaultProps> = (props) => {
 
         {/* Mobile: Action buttons */}
         <TableCell className="mb-0.5 pt-3.5 lg:hidden">
-          <Button
-            className="w-full"
+          <ButtonLink
+            href={vaultStrategyUrl}
+            className="w-full text-center"
             variant="outline"
             size="small"
-            onClick={() => setIsStrategyOpen(true)}
           >
             <GradientText>Strategy</GradientText>
-          </Button>
+          </ButtonLink>
         </TableCell>
-
-        <VaultStrategyModal
-          isOpen={isStrategyOpen}
-          onClose={() => setIsStrategyOpen(false)}
-          {...props}
-        />
       </TableRow>
     </Disclosure>
   )

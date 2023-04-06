@@ -1,13 +1,22 @@
 import { Tab } from "@headlessui/react"
 import { NextPage } from "next"
+import { useRouter } from "next/router"
+import { Address } from "wagmi"
+
+import { appLink } from "@/lib/helpers"
+import { VaultType } from "@/lib/types"
 
 import { CompounderVaultTable } from "@/components/Compounder"
 import HoldingsTable from "@/components/HoldingsTable"
 import Layout from "@/components/Layout"
+import { VaultStrategyModal } from "@/components/Modal"
 import Seo from "@/components/Seo"
 import { TabButton, TabListGroup, TabPanels } from "@/components/Tabs"
 
 const Yield: NextPage = () => {
+  const router = useRouter()
+  const { asset, type, vaultAddress } = router.query
+
   return (
     <Layout>
       <Seo
@@ -60,6 +69,14 @@ const Yield: NextPage = () => {
           </Tab.Panels>
         </Tab.Group>
       </main>
+
+      <VaultStrategyModal
+        isOpen={!!router.query.asset}
+        onClose={() => router.push(appLink("/yield"))}
+        asset={asset as Address}
+        type={type as VaultType}
+        vaultAddress={vaultAddress as Address}
+      />
     </Layout>
   )
 }
