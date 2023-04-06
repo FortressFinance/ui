@@ -3,7 +3,6 @@ import { useRouter } from "next/router"
 import { FC, Fragment, MouseEventHandler, useState } from "react"
 
 import clsxm from "@/lib/clsxm"
-import { appLink } from "@/lib/helpers"
 import { VaultProps } from "@/lib/types"
 import { useVault } from "@/hooks"
 
@@ -29,9 +28,7 @@ export const VaultRow: FC<VaultProps> = (props) => {
   const router = useRouter()
   const { isLoading } = useVault(props)
 
-  const vaultStrategyUrl = appLink(
-    `${router.asPath}?asset=${props.asset}&type=${props.type}&vaultAddress=${props.vaultAddress}`
-  )
+  const vaultStrategyUrl = `${router.asPath}?asset=${props.asset}&type=${props.type}&vaultAddress=${props.vaultAddress}`
 
   const toggleVaultOpen: MouseEventHandler<
     HTMLButtonElement | HTMLDivElement
