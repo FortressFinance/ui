@@ -89,7 +89,7 @@ export const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
                 Vault description
               </h1>
 
-              <div className="space-y-3 p-4 pb-5 leading-relaxed text-pink-50 max-md:divide-y max-md:divide-pink-700 max-md:text-sm md:px-5">
+              <div className="space-y-3 p-4 pb-5 leading-relaxed text-pink-50 max-md:text-sm md:px-5">
                 {strategyText[vaultProps.asset] ?? "No description available"}
               </div>
             </div>
