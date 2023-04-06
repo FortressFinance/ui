@@ -3,6 +3,7 @@ import { NextPage } from "next"
 import { useRouter } from "next/router"
 import { Address } from "wagmi"
 
+import { appLink } from "@/lib/helpers"
 import { VaultType } from "@/lib/types"
 
 import { CompounderVaultTable } from "@/components/Compounder"
@@ -71,7 +72,7 @@ const Yield: NextPage = () => {
 
       <VaultStrategyModal
         isOpen={!!router.query.asset}
-        onClose={() => router.push("/yield")}
+        onClose={() => router.push(appLink("/yield"))}
         asset={asset as Address}
         type={type as VaultType}
         vaultAddress={vaultAddress as Address}
