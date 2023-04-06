@@ -10,8 +10,6 @@ import { TabButton } from "@/components/Tabs"
 
 import { FortIconChevronDown } from "@/icons"
 
-import { AddressZero } from "@/constant/addresses"
-
 type ConcentratorMenuProps = {
   concentratorTargetAsset: Address | undefined
   setConcentratorTargetAsset: Dispatch<SetStateAction<Address>>
@@ -25,10 +23,7 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
   const concentratorTargetAssets = useConcentratorTargetAssets({
     onSuccess: (data) => {
       if (concentratorTargetAsset === "0x" && data?.length) {
-        const filterData = data.filter((x) => x !== AddressZero)
-        if (filterData.length) {
-          setConcentratorTargetAsset(filterData[0])
-        }
+        setConcentratorTargetAsset(data[0])
       }
     },
   })
@@ -55,20 +50,18 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
       </Menu.Button>
       <Menu.Items className="divide-y divide-pink/30 overflow-hidden rounded-b-md border-b border-l border-r border-pink/30 bg-pink-900/80 backdrop-blur-md focus-visible:outline-none">
         {clientReady &&
-          concentratorTargetAssets.data
-            ?.filter((x) => x !== AddressZero)
-            .map((targetAsset, index) => (
-              <Menu.Item
-                as="button"
-                key={`concentrator-menu-item-${index}`}
-                className="block w-full overflow-hidden text-ellipsis whitespace-nowrap px-4 py-3 text-left ui-active:bg-white ui-active:text-pink-900"
-                onClick={() => setConcentratorTargetAsset(targetAsset)}
-              >
-                <ConcentratorTargetAssetSymbol
-                  concentratorTargetAsset={targetAsset}
-                />
-              </Menu.Item>
-            ))}
+          concentratorTargetAssets.data?.map((targetAsset, index) => (
+            <Menu.Item
+              as="button"
+              key={`concentrator-menu-item-${index}`}
+              className="block w-full overflow-hidden text-ellipsis whitespace-nowrap px-4 py-3 text-left ui-active:bg-white ui-active:text-pink-900"
+              onClick={() => setConcentratorTargetAsset(targetAsset)}
+            >
+              <ConcentratorTargetAssetSymbol
+                concentratorTargetAsset={targetAsset}
+              />
+            </Menu.Item>
+          ))}
       </Menu.Items>
     </Menu>
   )

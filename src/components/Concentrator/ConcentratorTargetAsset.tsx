@@ -17,7 +17,10 @@ type ConcentratorTargetAssetProps = {
 export const ConcentratorTargetAssetSymbol: FC<
   ConcentratorTargetAssetProps
 > = ({ concentratorTargetAsset }) => {
-  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const {
+    data: concentratorTargetAssets,
+    isLoading: concentratorTargetAssetsIsLoading,
+  } = useConcentratorTargetAssets()
   const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
@@ -32,7 +35,7 @@ export const ConcentratorTargetAssetSymbol: FC<
     <AssetSymbol
       address={concentrator.data?.rewardTokenAddress}
       isLoading={
-        concentratorTargetAssets.isLoading ||
+        concentratorTargetAssetsIsLoading ||
         concentratorsList.isLoading ||
         concentrator.isLoading
       }
@@ -43,7 +46,10 @@ export const ConcentratorTargetAssetSymbol: FC<
 export const ConcentratorTargetAssetBalance: FC<
   ConcentratorTargetAssetProps
 > = ({ concentratorTargetAsset }) => {
-  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const {
+    data: concentratorTargetAssets,
+    isLoading: concentratorTargetAssetsIsLoading,
+  } = useConcentratorTargetAssets()
   const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
@@ -58,7 +64,7 @@ export const ConcentratorTargetAssetBalance: FC<
     <AssetBalance
       address={concentrator.data?.rewardTokenAddress}
       isLoading={
-        concentratorTargetAssets.isLoading ||
+        concentratorTargetAssetsIsLoading ||
         concentratorsList.isLoading ||
         concentrator.isLoading
       }
@@ -69,7 +75,7 @@ export const ConcentratorTargetAssetBalance: FC<
 export const ConcentratorTargetAssetLogo: FC<ConcentratorTargetAssetProps> = ({
   concentratorTargetAsset,
 }) => {
-  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const { data: concentratorTargetAssets } = useConcentratorTargetAssets()
   const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,

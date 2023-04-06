@@ -116,7 +116,10 @@ const ConcentratorRewardsAum: FC<ConcentratorRewardsProps> = ({
   filterCategory,
 }) => {
   const isReady = useClientReady()
-  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const {
+    data: concentratorTargetAssets,
+    isLoading: concentratorTargetAssetsIsLoading,
+  } = useConcentratorTargetAssets()
   const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
@@ -138,7 +141,7 @@ const ConcentratorRewardsAum: FC<ConcentratorRewardsProps> = ({
     <Skeleton
       isLoading={
         !isReady ||
-        concentratorTargetAssets.isLoading ||
+        concentratorTargetAssetsIsLoading ||
         concentratorsList.isLoading ||
         concentrator.isLoading ||
         tvl.isLoading
@@ -154,7 +157,10 @@ const ConcentratorRewardsApy: FC<ConcentratorRewardsProps> = ({
   filterCategory,
 }) => {
   const isReady = useClientReady()
-  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const {
+    data: concentratorTargetAssets,
+    isLoading: concentratorTargetAssetsIsLoading,
+  } = useConcentratorTargetAssets()
   const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
@@ -162,7 +168,8 @@ const ConcentratorRewardsApy: FC<ConcentratorRewardsProps> = ({
     filterCategory,
   })
   const totalApy = useConcentratorApy({
-    asset: firstConcentrator?.vaultAssetAddress ?? "0x",
+    targetAsset: concentratorTargetAsset,
+    primaryAsset: firstConcentrator?.vaultAssetAddress ?? "0x",
     type: firstConcentrator?.vaultType ?? "balancer",
   })
 
@@ -170,7 +177,7 @@ const ConcentratorRewardsApy: FC<ConcentratorRewardsProps> = ({
     <Skeleton
       isLoading={
         !isReady ||
-        concentratorTargetAssets.isLoading ||
+        concentratorTargetAssetsIsLoading ||
         concentratorsList.isLoading ||
         totalApy.isLoading
       }
@@ -185,7 +192,10 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
   filterCategory,
 }) => {
   const isReady = useClientReady()
-  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const {
+    data: concentratorTargetAssets,
+    isLoading: concentratorTargetAssetsIsLoading,
+  } = useConcentratorTargetAssets()
   const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
@@ -210,7 +220,7 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
   return (
     <Skeleton
       isLoading={
-        concentratorTargetAssets.isLoading ||
+        concentratorTargetAssetsIsLoading ||
         concentratorsList.isLoading ||
         concentrator.isLoading ||
         rewardsBalance.isLoading ||
@@ -228,7 +238,10 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
   filterCategory,
 }) => {
   const isReady = useClientReady()
-  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const {
+    data: concentratorTargetAssets,
+    isLoading: concentratorTargetAssetsIsLoading,
+  } = useConcentratorTargetAssets()
   const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
@@ -251,7 +264,7 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
       className="mt-4 w-full py-2"
       disabled={rewardsBalance.data?.eq(0) || !isReady}
       isLoading={
-        concentratorTargetAssets.isLoading ||
+        concentratorTargetAssetsIsLoading ||
         concentratorsList.isLoading ||
         concentrator.isLoading ||
         rewardsBalance.isLoading ||

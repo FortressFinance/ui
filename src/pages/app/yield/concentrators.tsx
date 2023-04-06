@@ -9,12 +9,10 @@ import { FilterCategory } from "@/lib/types"
 import {
   ConcentratorMenu,
   ConcentratorRewards,
-  ConcentratorVaultTable,
 } from "@/components/Concentrator"
-import HoldingsTable from "@/components/HoldingsTable"
 import Layout from "@/components/Layout"
 import Seo from "@/components/Seo"
-import { TabButton, TabListGroup, TabPanels } from "@/components/Tabs"
+import { TabButton, TabListGroup } from "@/components/Tabs"
 
 const Concentrators: NextPage = () => {
   return (
@@ -86,7 +84,7 @@ const ConcentratorVaults: FC = () => {
         </div>
 
         <div className="col-span-full lg:col-span-2 lg:row-start-3">
-          <Tab.Panels as={TabPanels}>
+          {/* <Tab.Panels as={TabPanels}>
             {filterCategories.map((filterCategory, index) => (
               <Tab.Panel key={`tab-panel-${index}`}>
                 <ConcentratorVaultTable
@@ -99,7 +97,7 @@ const ConcentratorVaults: FC = () => {
             <Tab.Panel>
               <HoldingsTable />
             </Tab.Panel>
-          </Tab.Panels>
+          </Tab.Panels> */}
         </div>
       </div>
     </Tab.Group>
