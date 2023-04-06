@@ -201,10 +201,9 @@ const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
           className="relative z-10 flex items-center gap-1 text-sm font-medium"
           htmlFor="expertMode"
         >
-          Expert mode{" "}
           <Tooltip label="Only enable if you know what you're doing. Disable transaction confirmations in the UI.">
-            <span>
-              <BiInfoCircle className="h-5 w-5 cursor-pointer" />
+            <span className="flex items-center gap-1">
+              Expert mode <BiInfoCircle className="h-5 w-5" />
             </span>
           </Tooltip>
         </label>
