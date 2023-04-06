@@ -1,4 +1,5 @@
 import { Disclosure, Tab, Transition } from "@headlessui/react"
+import { useRouter } from "next/router"
 import { FC, Fragment, MouseEventHandler, useState } from "react"
 
 import clsxm from "@/lib/clsxm"
@@ -25,10 +26,11 @@ import { FortIconChevronDownCircle } from "@/icons"
 export const VaultRow: FC<VaultProps> = (props) => {
   const [isVaultOpen, setIsVaultOpen] = useState(false)
 
+  const router = useRouter()
   const { isLoading } = useVault(props)
 
   const vaultStrategyUrl = appLink(
-    `/yield?asset=${props.asset}&type=${props.type}&vaultAddress=${props.vaultAddress}`
+    `${router.asPath}?asset=${props.asset}&type=${props.type}&vaultAddress=${props.vaultAddress}`
   )
 
   const toggleVaultOpen: MouseEventHandler<
