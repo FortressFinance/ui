@@ -118,11 +118,10 @@ export const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
                   {formatPercentage(fees.data?.depositFee)}
                 </Skeleton>
               </dd>
-              <dt className="flex items-center gap-1">
-                Withdrawal{" "}
+              <dt>
                 <Tooltip label="Withdrawal fees stay in the vault and are distributed to vault participants. Used as a mechanism to protect against mercenary capital.">
-                  <span>
-                    <BiInfoCircle className="h-5 w-5 cursor-pointer" />
+                  <span className="flex items-center gap-1">
+                    Withdrawal <BiInfoCircle className="h-5 w-5" />
                   </span>
                 </Tooltip>
               </dt>
