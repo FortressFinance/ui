@@ -4,15 +4,15 @@ import { Address, useContractRead } from "wagmi"
 import { useConcentratorContract } from "@/hooks/lib/useConcentratorContract"
 
 export default function useConcentratorAsset({
-  ybTokenAddress,
+  ybToken,
   share,
   enabled,
 }: {
-  ybTokenAddress: Address
+  ybToken: Address
   share: BigNumber
   enabled: boolean
 }) {
-  const concentratorContract = useConcentratorContract(ybTokenAddress)
+  const concentratorContract = useConcentratorContract(ybToken)
 
   const assetQuery = useContractRead({
     ...concentratorContract,

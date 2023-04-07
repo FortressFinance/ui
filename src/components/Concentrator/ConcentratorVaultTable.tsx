@@ -27,7 +27,10 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
   filterCategory,
 }) => {
   const clientReady = useClientReady()
-  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const {
+    data: concentratorTargetAssets,
+    isLoading: concentratorTargetAssetsIsLoading,
+  } = useConcentratorTargetAssets()
   const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const filteredConcentratorVaults = useFilteredConcentrators({
     concentratorsList,
@@ -38,7 +41,7 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
   // TODO: should handle failure
   const showLoadingState =
     !clientReady ||
-    concentratorTargetAssets.isLoading ||
+    concentratorTargetAssetsIsLoading ||
     concentratorsList.isLoading ||
     !concentratorTargetAsset
   const label = capitalizeFirstLetter(filterCategory)
