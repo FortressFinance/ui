@@ -2,7 +2,7 @@ import { FC } from "react"
 import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
-import { FilterCategory, VaultType } from "@/lib/types"
+import { FilterCategory } from "@/lib/types"
 import { enabledNetworks } from "@/lib/wagmi"
 import {
   useActiveChainId,
@@ -13,8 +13,8 @@ import {
 } from "@/hooks"
 
 import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"
+import { ConcentratorVaultRow } from "@/components/Concentrator/ConcentratorVaultRow"
 import { TableEmpty, TableLoading } from "@/components/Table"
-import { VaultRow } from "@/components/VaultRow"
 import { VaultTable } from "@/components/VaultRow/lib"
 
 type ConcentratorVaultTableProps = {
@@ -71,31 +71,13 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
           ({ concentratorTargetAsset, vaultAssetAddress, vaultType }, i) => (
             <ConcentratorVaultRow
               key={`pool-${i}`}
-              concentratorTargetAsset={concentratorTargetAsset}
-              vaultAssetAddress={vaultAssetAddress}
-              vaultType={vaultType}
+              targetAsset={concentratorTargetAsset}
+              primaryAsset={vaultAssetAddress}
+              type={vaultType}
             />
           )
         )
       )}
     </VaultTable>
-  )
-}
-
-type ConcentratorVaultRowProps = {
-  concentratorTargetAsset?: Address
-  vaultAssetAddress: Address
-  vaultType: VaultType
-}
-
-const ConcentratorVaultRow: FC<ConcentratorVaultRowProps> = (props) => {
-  //const concentrator = useConcentratorVault(props)
-
-  return (
-    <VaultRow
-      asset={props.concentratorTargetAsset ?? "0x"}
-      vaultAddress={props.vaultAssetAddress ?? "0x"}
-      type={props.vaultType}
-    />
   )
 }

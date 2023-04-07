@@ -2,10 +2,10 @@ import { Address } from "wagmi"
 
 import { convertToApy } from "@/lib/api/vaults/convertToApy"
 import { useActiveChainId } from "@/hooks"
-import useTokenVaultArbitrumTotalApr from "@/hooks/lib/apr/compounder/useTokenVaultArbitrumTotalApr"
-import useTokenVaultMainnetTotalApr from "@/hooks/lib/apr/compounder/useTokenVaultMainnetTotalApr"
+import useConcentratorTokenVaultArbitrumTotalApr from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultArbitrumTotalApr"
+import useConcentratorTokenVaultMainnetTotalApr from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultMainnetTotalApr"
 
-export default function useTokenVaultTotalApy({
+export default function useConcentratorTokenVaultTotalApy({
   asset,
   enabled,
 }: {
@@ -14,12 +14,12 @@ export default function useTokenVaultTotalApy({
 }) {
   const chainId = useActiveChainId()
   const isArbitrumFamily = chainId === 313371 || chainId === 42161
-  const tokenVaultMainnetTotalApr = useTokenVaultMainnetTotalApr({
+  const tokenVaultMainnetTotalApr = useConcentratorTokenVaultMainnetTotalApr({
     asset,
     enabled: enabled && !isArbitrumFamily,
   })
 
-  const tokenVaultArbitrumTotalApr = useTokenVaultArbitrumTotalApr({
+  const tokenVaultArbitrumTotalApr = useConcentratorTokenVaultArbitrumTotalApr({
     asset,
     enabled: enabled && isArbitrumFamily,
   })

@@ -7,7 +7,7 @@ export default function useVaultTvlFallback({
   vaultAddress,
   enabled,
 }: {
-  asset: VaultDynamicProps["asset"]
+  asset: Address
   vaultAddress: VaultDynamicProps["vaultAddress"]
   enabled: boolean
 }) {

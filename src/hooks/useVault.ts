@@ -1,3 +1,5 @@
+import { Address } from "wagmi"
+
 import {
   findApiCompounderVaultForAsset,
   findApiTokenVaultForAsset,
@@ -8,7 +10,13 @@ import { useApiTokenVaults } from "@/hooks/lib/api/useApiTokenVaults"
 import { useFallbackReads } from "@/hooks/lib/useFallbackRequest"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
 
-export function useVault({ asset, vaultAddress }: VaultProps) {
+export function useVault({
+  asset,
+  vaultAddress,
+}: {
+  asset: Address
+  vaultAddress: Address
+}) {
   const vaultContract = useVaultContract(vaultAddress)
   return useFallbackReads(
     {

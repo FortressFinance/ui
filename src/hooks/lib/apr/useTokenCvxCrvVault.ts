@@ -1,14 +1,13 @@
 import { useQuery } from "@tanstack/react-query"
 
 import { getFortCvxCrvAprFallback } from "@/lib/api/vaults"
-import { VaultDynamicProps } from "@/lib/types"
 import { useActiveChainId } from "@/hooks"
 
 export default function useTokenCvxCrvVault({
   asset,
   enabled,
 }: {
-  asset: VaultDynamicProps["asset"]
+  asset: Address
   enabled: boolean
 }) {
   const chainId = useActiveChainId()

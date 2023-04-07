@@ -7,11 +7,11 @@ import { useVault } from "@/hooks"
 
 import { AssetLogo } from "@/components/Asset"
 import Button from "@/components/Button"
+import { CompounderVaultApy } from "@/components/Compounder/CompounderVaultApy"
 import { VaultStrategyModal } from "@/components/Modal"
 import { TableCell, TableRow } from "@/components/Table"
 import { GradientText } from "@/components/Typography"
 import {
-  VaultApy,
   VaultDepositForm,
   VaultName,
   VaultTvl,
@@ -99,7 +99,7 @@ export const VaultRow: FC<VaultProps> = (props) => {
 
         {/* Desktop: APY, TVL, Balance */}
         <TableCell className="pointer-events-none text-center max-lg:hidden">
-          <VaultApy {...props} />
+          <CompounderVaultApy {...props} />
         </TableCell>
         <TableCell className="pointer-events-none text-center max-lg:hidden">
           <VaultTvl {...props} />
@@ -204,7 +204,7 @@ export const VaultRow: FC<VaultProps> = (props) => {
           <dl className="grid grid-cols-4 gap-x-3 text-center">
             <dt className="row-start-2 text-xs text-pink-100/60">APY</dt>
             <dd className="text-sm font-medium text-pink-100">
-              <VaultApy {...props} />
+              <CompounderVaultApy {...props} />
             </dd>
             <dt className="row-start-2 text-xs text-pink-100/60">TVL</dt>
             <dd className="text-sm font-medium text-pink-100">

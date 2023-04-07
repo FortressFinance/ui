@@ -6,7 +6,7 @@ import { useVaultApy, useVaultPoolId } from "@/hooks"
 
 import Skeleton from "@/components/Skeleton"
 
-export const VaultApy: FC<VaultProps> = (props) => {
+export const CompounderVaultApy: FC<VaultProps> = (props) => {
   const poolId = useVaultPoolId(props)
   const totalApy = useVaultApy({ ...props, poolId: poolId.data })
 

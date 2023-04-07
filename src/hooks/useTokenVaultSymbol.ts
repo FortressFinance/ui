@@ -1,13 +1,12 @@
-import { useContractRead } from "wagmi"
+import { Address, useContractRead } from "wagmi"
 
-import { VaultDynamicProps } from "@/lib/types"
 import { useRegistryContract } from "@/hooks/lib/useRegistryContract"
 
 export function useTokenVaultSymbol({
   asset,
   enabled,
 }: {
-  asset: VaultDynamicProps["asset"]
+  asset: Address
   enabled: boolean
 }) {
   const registryQuery = useContractRead({

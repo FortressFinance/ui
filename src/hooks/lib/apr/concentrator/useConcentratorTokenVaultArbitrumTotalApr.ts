@@ -1,21 +1,23 @@
 import { Address } from "wagmi"
 
 import useTokenGlpVault from "@/hooks/lib/apr/useTokenGlpVault"
-import { useTokenVaultSymbol } from "@/hooks/useTokenVaultSymbol"
+import { useTokenOrNative } from "@/hooks/useTokenOrNative"
 
-export default function useTokenVaultArbitrumTotalApr({
+export default function useConcentratorTokenVaultArbitrumTotalApr({
   asset,
   enabled,
 }: {
   asset: Address
   enabled: boolean
 }) {
-  const tokenVaultSymbol = useTokenVaultSymbol({ asset, enabled })
+  const { data: token } = useTokenOrNative({
+    address: asset,
+  })
 
-  const ybTokenSymbol = tokenVaultSymbol.data
+  const targetAssetSymbol = token?.symbol
 
   const isGlpTokenFallbackEnabled =
-    enabled && !!ybTokenSymbol && ybTokenSymbol === "fcGLP"
+    enabled && !!targetAssetSymbol && targetAssetSymbol === "fcGLP"
   const tokenGlpVault = useTokenGlpVault({
     asset,
     enabled: isGlpTokenFallbackEnabled ?? false,

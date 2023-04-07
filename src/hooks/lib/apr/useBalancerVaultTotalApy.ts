@@ -1,14 +1,15 @@
+import { Address } from "wagmi"
+
 import { convertToApy } from "@/lib/api/vaults/convertToApy"
-import { VaultDynamicProps } from "@/lib/types"
 import { useActiveChainId } from "@/hooks"
-import useBalancerVaultArbitrumTotalApr from "@/hooks/lib/apr/compounder/useBalancerVaultArbitrumTotalApr"
-import useBalancerVaultMainnetTotalApr from "@/hooks/lib/apr/compounder/useBalancerVaultMainnetTotalApr"
+import useBalancerVaultArbitrumTotalApr from "@/hooks/lib/apr/useBalancerVaultArbitrumTotalApr"
+import useBalancerVaultMainnetTotalApr from "@/hooks/lib/apr/useBalancerVaultMainnetTotalApr"
 
 export default function useBalancerVaultTotalApy({
   asset,
   enabled,
 }: {
-  asset: VaultDynamicProps["asset"]
+  asset: Address
   enabled: boolean
 }) {
   const chainId = useActiveChainId()

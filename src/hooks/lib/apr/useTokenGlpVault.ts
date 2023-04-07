@@ -1,7 +1,6 @@
-import { useContractRead, useQuery } from "wagmi"
+import { Address, useContractRead, useQuery } from "wagmi"
 
 import { getFortGlpAprFallback } from "@/lib/api/vaults"
-import { VaultDynamicProps } from "@/lib/types"
 import { useActiveChainId } from "@/hooks"
 
 import { RewardDistributor } from "@/constant/abi"
@@ -11,7 +10,7 @@ export default function useTokenGlpVault({
   asset,
   enabled,
 }: {
-  asset: VaultDynamicProps["asset"]
+  asset: Address
   enabled: boolean
 }) {
   const chainId = useActiveChainId()

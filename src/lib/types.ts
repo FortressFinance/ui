@@ -20,3 +20,9 @@ export type FilterCategory =
   | "stable"
   | "balancer"
   | "curve"
+
+export type ConcentratorVaultProps = {
+  primaryAsset: Address
+  targetAsset: Address
+  type: VaultType
+}
