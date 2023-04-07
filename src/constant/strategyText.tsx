@@ -15,11 +15,11 @@ const strategyText = {
       </p>
       <p>
         Deposited assets are used to provide liquidity for GMX traders, earning
-        trading fees plus GMX emissions on its staked sGLP
+        trading fees plus GMX emissions on its staked sGLP.
       </p>
       <p>
         The vault auto-compounds the accumulated rewards periodically into more
-        staked sGLP
+        staked sGLP.
       </p>
       <p>
         Investors receive vault shares as ERC20 tokens called fcGLP,
