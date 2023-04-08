@@ -5,14 +5,18 @@ import useBalancerVaultTotalApy from "@/hooks/lib/apr/useBalancerVaultTotalApy"
 import useCurveVaultTotalApy from "@/hooks/lib/apr/useCurveVaultTotalApy"
 import { useConcentratorId } from "@/hooks/useConcentratorId"
 import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAssetId"
+import {
+  useIsConcentratorCurveVault,
+  useIsConcentratorTokenVault,
+} from "@/hooks/useVaultTypes"
 
 export function useConcentratorVaultApy({
   primaryAsset,
   targetAsset,
   type,
 }: ConcentratorVaultProps) {
-  //const isCurve = useIsCurveVault(type)
-  //const isToken = useIsTokenVault(type)
+  const isCurve = useIsConcentratorCurveVault(targetAsset)
+  const isToken = useIsConcentratorTokenVault(targetAsset)
 
   const { data: targetAssetId, isLoading: targetAssetIdIsLoading } =
     useConcentratorTargetAssetId({ targetAsset })
@@ -29,9 +33,9 @@ export function useConcentratorVaultApy({
     type,
   })
 
-  const isCurveFallbackEnabled = apiQuery.isError
-  const isBalancerFallbackEnabled = apiQuery.isError
-  const isTokenFallbackEnabled = apiQuery.isError
+  const isCurveFallbackEnabled = apiQuery.isError && isCurve && !isToken
+  const isBalancerFallbackEnabled = apiQuery.isError && !isCurve && !isToken
+  const isTokenFallbackEnabled = apiQuery.isError && isToken
 
   const curveVaultTotalApy = useCurveVaultTotalApy({
     asset: targetAsset,
@@ -53,26 +57,16 @@ export function useConcentratorVaultApy({
     }
   }
 
-  // to do so, because we don't have notion about token/curve and balancer in concentrator
-  // at least atm
-  if (
-    isCurveFallbackEnabled ||
-    isBalancerFallbackEnabled ||
-    isTokenFallbackEnabled
-  ) {
-    const fallbackReturns = [
-      curveVaultTotalApy.data,
-      balancerVaultTotalApy.data,
-      tokenVaultTotalApy.data,
-    ]
-    return {
-      ...curveVaultTotalApy,
-      isLoading:
-        curveVaultTotalApy.isLoading ||
-        balancerVaultTotalApy.isLoading ||
-        tokenVaultTotalApy.isLoading,
-      data: Math.max(...fallbackReturns),
-    }
+  if (isCurveFallbackEnabled) {
+    return curveVaultTotalApy
+  }
+
+  if (isBalancerFallbackEnabled) {
+    return balancerVaultTotalApy
+  }
+
+  if (isTokenFallbackEnabled) {
+    return tokenVaultTotalApy
   }
 
   return {

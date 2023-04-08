@@ -1,4 +1,7 @@
 export * from "./ConcentratorMenu"
 export * from "./ConcentratorRewards"
 export * from "./ConcentratorTargetAsset"
+export * from "./ConcentratorVaultApy"
+export * from "./ConcentratorVaultRow"
 export * from "./ConcentratorVaultTable"
+export * from "./ConcentratorVaultTvl"

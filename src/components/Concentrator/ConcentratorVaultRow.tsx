@@ -7,6 +7,7 @@ import { useVault } from "@/hooks"
 
 import { AssetLogo } from "@/components/Asset"
 import { ConcentratorVaultApy } from "@/components/Concentrator/ConcentratorVaultApy"
+import { ConcentratorVaultTvl } from "@/components/Concentrator/ConcentratorVaultTvl"
 import { TableCell, TableRow } from "@/components/Table"
 import { VaultName } from "@/components/VaultRow/lib"
 
@@ -83,7 +84,9 @@ export const ConcentratorVaultRow: FC<ConcentratorVaultProps> = (props) => {
         <TableCell className="pointer-events-none text-center max-lg:hidden">
           <ConcentratorVaultApy {...props} />
         </TableCell>
-        <TableCell className="pointer-events-none text-center max-lg:hidden"></TableCell>
+        <TableCell className="pointer-events-none text-center max-lg:hidden">
+          <ConcentratorVaultTvl {...props} />
+        </TableCell>
         <TableCell className="pointer-events-none text-center max-lg:hidden"></TableCell>
         <TableCell className="pointer-events-none text-center max-lg:hidden"></TableCell>
       </TableRow>

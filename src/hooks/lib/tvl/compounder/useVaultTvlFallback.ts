@@ -1,3 +1,5 @@
+import { Address } from "wagmi"
+
 import { VaultDynamicProps } from "@/lib/types"
 import useVaultTotalAssets from "@/hooks/lib/tvl/compounder/useVaultTotalAssets"
 import { useTokenPriceUsd } from "@/hooks/useTokenPriceUsd"
