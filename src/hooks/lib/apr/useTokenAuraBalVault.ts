@@ -20,11 +20,15 @@ export default function useTokenAuraBalVault({
 
   const auraTokenMint = auraTokenQuery.data
 
-  const fortAuraBalAprFallback = useQuery([asset, "fortAuraBalAprFallback"], {
-    queryFn: () => getFortAuraBalAprFallback(auraTokenMint),
-    retry: false,
-    enabled: enabled && !!auraTokenMint,
-  })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const fortAuraBalAprFallback = useQuery(
+    [chainId, asset, "fortAuraBalAprFallback"],
+    {
+      queryFn: () => getFortAuraBalAprFallback(auraTokenMint),
+      retry: false,
+      enabled: enabled && auraTokenQuery.isSuccess,
+    }
+  )
 
   return fortAuraBalAprFallback
 }

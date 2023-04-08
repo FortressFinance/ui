@@ -31,10 +31,17 @@ export default function useConcentratorTokenVaultMainnetTotalApr({
     enabled: isCvxCrvTokenFallbackEnabled ?? false,
   })
 
-  if (!tokenAuraBalVault.isError && !!tokenAuraBalVault.data) {
+  if (asset === "0x") {
+    return {
+      isLoading: false,
+      data: 0,
+    }
+  }
+
+  if (!tokenAuraBalVault.isError) {
     return {
       ...tokenAuraBalVault,
-      data: tokenAuraBalVault.data.totalApr,
+      data: tokenAuraBalVault?.data?.totalApr,
     }
   }
 

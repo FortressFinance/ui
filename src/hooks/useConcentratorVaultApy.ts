@@ -46,6 +46,13 @@ export function useConcentratorVaultApy({
     enabled: isTokenFallbackEnabled ?? false,
   })
 
+  if (targetAsset === "0x") {
+    return {
+      isLoading: false,
+      data: 0,
+    }
+  }
+
   // to do so, because we don't have notion about token/curve and balancer in concentrator
   // at least atm
   if (
@@ -72,6 +79,6 @@ export function useConcentratorVaultApy({
     ...apiQuery,
     isLoading:
       targetAssetIdIsLoading || concentratorIdIsLoading || apiQuery.isLoading,
-    data: apiQuery.data?.APY.compounder_APR,
+    data: apiQuery.data?.APY.compounderAPY,
   }
 }

@@ -53,6 +53,13 @@ export function useConcentratorApy({
     enabled: isTokenFallbackEnabled ?? false,
   })
 
+  if (primaryAsset === "0x") {
+    return {
+      isLoading: false,
+      data: 0,
+    }
+  }
+
   // to do so, because we don't have notion about token/curve and balancer in concentrator
   // at least atm
   if (

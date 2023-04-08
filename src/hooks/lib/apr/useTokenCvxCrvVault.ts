@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
+import { Address } from "wagmi"
 
 import { getFortCvxCrvAprFallback } from "@/lib/api/vaults"
 import { useActiveChainId } from "@/hooks"

@@ -27,7 +27,7 @@ export type ConcentratorDynamicData = {
       ETHApr: number
       totalApr: number
     }
-    compounder_APR: number
+    compounderAPY: number
   }
   userShare: {
     address?: Address
