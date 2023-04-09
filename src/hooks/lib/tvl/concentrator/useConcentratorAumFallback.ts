@@ -2,8 +2,8 @@ import { BigNumber } from "ethers"
 import { Address } from "wagmi"
 
 import useConcentratorAsset from "@/hooks/lib/tvl/concentrator/useConcentratorAsset"
+import { useConcentratorTokenPriceUsd } from "@/hooks/useConcentratorTokenPriceUsd"
 import { useTokenOrNativeBalance } from "@/hooks/useTokenOrNativeBalance"
-import { useTokenPriceUsd } from "@/hooks/useTokenPriceUsd"
 
 export default function useConcentratorAumFallback({
   asset,
@@ -15,7 +15,7 @@ export default function useConcentratorAumFallback({
   enabled: boolean
 }) {
   const { data: primaryAssetPriceUsd, isLoading: isLoadingPricer } =
-    useTokenPriceUsd({ asset, enabled })
+    useConcentratorTokenPriceUsd({ asset, enabled })
 
   const { data: userShare, isLoading: isLoadingUserShare } =
     useTokenOrNativeBalance({ address: ybToken })
