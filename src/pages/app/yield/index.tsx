@@ -64,7 +64,7 @@ const Yield: NextPage = () => {
               <CompounderVaultTable vaultType="balancer" />
             </Tab.Panel>
             <Tab.Panel>
-              <HoldingsTable />
+              <HoldingsTable earningEnabled />
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>
