@@ -11,6 +11,9 @@ export const crvTriCryptoTokenAddress: Address =
 export const crvTwoCryptoPoolAddress: Address =
   "0x7f90122BF0700F9E7e1F688fe926940E8839F353"
 export const crvTwoCryptoTokenAddress = crvTwoCryptoPoolAddress
+export const fraxBpTokenAddress: Address =
+  "0xC9B8a3FDECB9D5b218d02555a8Baf332E5B740d5"
+export const fraxBpPoolAddress = fraxBpTokenAddress
 export const ethTokenAddress: Address =
   "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
 export const AddressZero: Address = "0x0000000000000000000000000000000000000000"

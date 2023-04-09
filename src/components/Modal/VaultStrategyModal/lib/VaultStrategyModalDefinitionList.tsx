@@ -29,10 +29,11 @@ export const VaultStrategyModalDefinitionList: FC<
               {item.emphasis ? (
                 <>
                   <dt className="flex items-center gap-1 text-base font-bold">
-                    <GradientText>{item.label}</GradientText>
                     <Tooltip label="APY calculation assumes weekly compounding and excludes Fortress fees.">
-                      <span>
-                        <BiInfoCircle className="h-5 w-5 cursor-pointer" />
+                      <span className="flex items-center gap-1">
+                        <GradientText>{item.label}</GradientText>
+
+                        <BiInfoCircle className="h-5 w-5" />
                       </span>
                     </Tooltip>
                   </dt>

@@ -1,6 +1,5 @@
-import { Address } from "wagmi"
-
 import { convertToApy } from "@/lib/api/vaults/convertToApy"
+import { VaultDynamicProps } from "@/lib/types"
 import { useActiveChainId } from "@/hooks"
 import useTokenVaultArbitrumTotalApr from "@/hooks/lib/apr/compounder/useTokenVaultArbitrumTotalApr"
 import useTokenVaultMainnetTotalApr from "@/hooks/lib/apr/compounder/useTokenVaultMainnetTotalApr"
@@ -9,7 +8,7 @@ export default function useTokenVaultTotalApy({
   asset,
   enabled,
 }: {
-  asset: Address
+  asset: VaultDynamicProps["asset"]
   enabled: boolean
 }) {
   const chainId = useActiveChainId()

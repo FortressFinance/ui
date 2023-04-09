@@ -34,7 +34,7 @@ function getBrowserLocales(options = {}) {
 
   const browserLocales =
     typeof navigator === "undefined"
-      ? undefined
+      ? ["en-US"]
       : navigator.languages === undefined
       ? [navigator.language]
       : navigator.languages
