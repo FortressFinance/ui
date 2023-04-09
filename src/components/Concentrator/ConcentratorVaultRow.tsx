@@ -40,7 +40,7 @@ export const ConcentratorVaultRow: FC<ConcentratorVaultProps> = (props) => {
   return (
     <Disclosure as={Fragment} key={props.primaryAsset}>
       <TableRow
-        className="lg:py-6 lg:first:rounded-t-none"
+        className="lg:grid-cols-[4fr,1fr,1fr,1fr,3.5rem] lg:py-6 lg:first:rounded-t-none"
         onClick={toggleVaultOpen}
         disabled={isLoading}
       >
@@ -91,7 +91,6 @@ export const ConcentratorVaultRow: FC<ConcentratorVaultProps> = (props) => {
         <TableCell className="pointer-events-none text-center max-lg:hidden">
           <ConcentratorVaultUserBalance {...props} />
         </TableCell>
-        <TableCell className="pointer-events-none text-center max-lg:hidden"></TableCell>
       </TableRow>
     </Disclosure>
   )
