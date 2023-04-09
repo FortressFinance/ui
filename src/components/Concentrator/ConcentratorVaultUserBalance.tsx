@@ -1,27 +1,32 @@
 import { FC } from "react"
 
 import clsxm from "@/lib/clsxm"
-import { VaultProps } from "@/lib/types"
-import { useTokenOrNativeBalance, useTokenPriceUsd } from "@/hooks"
+import { ConcentratorVaultProps } from "@/lib/types"
+import { useTokenOrNativeBalance } from "@/hooks"
+import { useConcentratorTokenPriceUsd } from "@/hooks/useConcentratorTokenPriceUsd"
 
 import { AssetBalance, AssetBalanceUsd } from "@/components/Asset"
 
-export const VaultUserBalance: FC<VaultProps> = (props) => {
+export const ConcentratorVaultUserBalance: FC<ConcentratorVaultProps> = (
+  props
+) => {
   const { data: balance } = useTokenOrNativeBalance({
-    address: props.vaultAddress,
+    address: props.targetAsset,
   })
-  const tokenPriceUsd = useTokenPriceUsd({ asset: props.asset })
+  const tokenPriceUsd = useConcentratorTokenPriceUsd({
+    asset: props.targetAsset,
+  })
 
   return (
     <div className={clsxm("lg:grid", { "lg:grid-rows-2": !!balance })}>
       <div>
-        <AssetBalance address={props.vaultAddress} abbreviate />
+        <AssetBalance address={props.targetAsset} abbreviate />
       </div>
       {balance && (
         <div className="text-xs max-lg:hidden">
           <AssetBalanceUsd
             tokenPriceUsd={tokenPriceUsd}
-            address={props.vaultAddress}
+            address={props.targetAsset}
             abbreviate
           />
         </div>
