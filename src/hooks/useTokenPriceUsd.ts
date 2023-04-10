@@ -10,6 +10,7 @@ import { glpTokenAddress } from "@/constant/addresses"
 
 const customPricers: Record<Address, () => Promise<number>> = {
   [glpTokenAddress]: getGlpPrice,
+  ["0xBDF9001c5d3fFc03AB6564CA28E530665594dfF7"]: getGlpPrice,
 }
 
 export function useTokenPriceUsd({

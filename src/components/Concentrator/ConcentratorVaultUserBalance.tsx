@@ -2,8 +2,7 @@ import { FC } from "react"
 
 import clsxm from "@/lib/clsxm"
 import { ConcentratorVaultProps } from "@/lib/types"
-import { useTokenOrNativeBalance } from "@/hooks"
-import { useConcentratorTokenPriceUsd } from "@/hooks/useConcentratorTokenPriceUsd"
+import { useConcentratorVault, useTokenOrNativeBalance } from "@/hooks"
 
 import { AssetBalance, AssetBalanceUsd } from "@/components/Asset"
 
@@ -13,8 +12,10 @@ export const ConcentratorVaultUserBalance: FC<ConcentratorVaultProps> = (
   const { data: balance } = useTokenOrNativeBalance({
     address: props.targetAsset,
   })
-  const tokenPriceUsd = useConcentratorTokenPriceUsd({
-    asset: props.targetAsset,
+  const concentrator = useConcentratorVault({
+    concentratorTargetAsset: props.targetAsset,
+    vaultAssetAddress: props.primaryAsset,
+    vaultType: props.type,
   })
 
   return (
@@ -25,8 +26,8 @@ export const ConcentratorVaultUserBalance: FC<ConcentratorVaultProps> = (
       {balance && (
         <div className="text-xs max-lg:hidden">
           <AssetBalanceUsd
-            tokenPriceUsd={tokenPriceUsd}
-            address={props.targetAsset}
+            asset={props.targetAsset}
+            address={concentrator?.data?.ybTokenAddress}
             abbreviate
           />
         </div>

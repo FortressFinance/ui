@@ -1,4 +1,3 @@
-//import { BigNumber, ethers } from "ethers"
 import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
 import { Address } from "wagmi"
@@ -7,6 +6,8 @@ import { formatPercentage, formatUsd } from "@/lib/helpers"
 import { FilterCategory } from "@/lib/types"
 import {
   useClientReady,
+  useConcentratorApy,
+  useConcentratorAum,
   useConcentratorClaim,
   useConcentratorPendingReward,
   useConcentratorTargetAssets,
@@ -15,8 +16,6 @@ import {
   useListConcentrators,
   useTokenOrNative,
 } from "@/hooks"
-import { useConcentratorApy } from "@/hooks/useConcentratorApy"
-import { useConcentratorAum } from "@/hooks/useConcentratorAum"
 
 import Button from "@/components/Button"
 import {

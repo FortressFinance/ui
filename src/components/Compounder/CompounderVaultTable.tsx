@@ -43,7 +43,7 @@ export const CompounderVaultTable: FC<CompounderVaultTableProps> = ({
   const showLoadingState = compoundersList.isLoading || !clientReady
 
   return (
-    <VaultTable label={`${displayName} Compounders`} earningEnabled>
+    <VaultTable label={`${displayName} Compounders`} showEarningsColumn>
       {showLoadingState ? (
         <TableLoading>Loading compounders...</TableLoading>
       ) : !supportedChain ? (

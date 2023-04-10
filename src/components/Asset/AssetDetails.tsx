@@ -7,7 +7,6 @@ import {
   useTokenOrNativeBalance,
   useTokenPriceUsd,
 } from "@/hooks"
-import { useConcentratorTokenPriceUsd } from "@/hooks/useConcentratorTokenPriceUsd"
 
 import Skeleton from "@/components/Skeleton"
 
@@ -65,24 +64,23 @@ export const AssetBalance: FC<AssetBalanceProps> = ({
 }
 
 type AssetBalanceUsdProps = AssetBalanceProps & {
-  tokenPriceUsd:
-    | ReturnType<typeof useTokenPriceUsd>
-    | ReturnType<typeof useConcentratorTokenPriceUsd>
+  asset?: Address | undefined
 }
 
 export const AssetBalanceUsd: FC<AssetBalanceUsdProps> = ({
+  asset,
   address,
   abbreviate,
-  tokenPriceUsd,
 }) => {
   const { data: balance, isLoading } = useTokenOrNativeBalance({ address })
+  const { data: tokenPriceUsd, isLoading: isLoadingTokenPriceUsd } =
+    useTokenPriceUsd({ asset })
   return (
-    <Skeleton isLoading={isLoading || tokenPriceUsd.isLoading}>
+    <Skeleton isLoading={isLoading || isLoadingTokenPriceUsd}>
       {address
         ? formatUsd({
             abbreviate,
-            amount:
-              Number(balance?.formatted ?? "0") * (tokenPriceUsd.data ?? 0),
+            amount: Number(balance?.formatted ?? "0") * (tokenPriceUsd ?? 0),
           })
         : "—"}
     </Skeleton>

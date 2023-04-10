@@ -6,13 +6,13 @@ import { TxSettingsPopover } from "@/components/TxSettingsPopover"
 
 type VaultTableProps = {
   label: string
-  earningEnabled: boolean
+  showEarningsColumn: boolean
 }
 
 export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
   children,
   label,
-  earningEnabled,
+  showEarningsColumn,
 }) => {
   return (
     <Table>
@@ -20,14 +20,14 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
         <TableRow
           className={clsx(
             "overflow-visible rounded-b-none border-b border-b-pink/30",
-            earningEnabled ? "" : "lg:grid-cols-[4fr,1fr,1fr,1fr,3.5rem]"
+            showEarningsColumn ? "" : "lg:grid-cols-[4fr,1fr,1fr,1fr,3.5rem]"
           )}
         >
           <TableHeader className="text-sm">{label}</TableHeader>
           <TableHeader className="text-center text-sm">APY</TableHeader>
           <TableHeader className="text-center text-sm">TVL</TableHeader>
           <TableHeader className="text-center text-sm">Balance</TableHeader>
-          {earningEnabled && (
+          {showEarningsColumn && (
             <TableHeader className="text-center text-sm">Earnings</TableHeader>
           )}
           <TableHeader>

@@ -15,9 +15,7 @@ export function useIsTokenVault(type: VaultType) {
 export function useIsConcentratorCurveVault(asset: Address) {
   const vaultTypeAvailable = useConcentratorVaultTypeByAsset()
   return useMemo(
-    () =>
-      vaultTypeAvailable[asset] !== undefined &&
-      vaultTypeAvailable[asset] === "curve",
+    () => vaultTypeAvailable[asset] === "curve",
     [asset, vaultTypeAvailable]
   )
 }
@@ -25,9 +23,7 @@ export function useIsConcentratorCurveVault(asset: Address) {
 export function useIsConcentratorTokenVault(asset: Address) {
   const vaultTypeAvailable = useConcentratorVaultTypeByAsset()
   return useMemo(
-    () =>
-      vaultTypeAvailable[asset] !== undefined &&
-      vaultTypeAvailable[asset] === "token",
+    () => vaultTypeAvailable[asset] === "token",
     [asset, vaultTypeAvailable]
   )
 }

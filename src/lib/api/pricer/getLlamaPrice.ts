@@ -31,5 +31,5 @@ export async function getLlamaPrice({
     `https://coins.llama.fi/prices/current/${llamaKey}`
   )
   const parsed = respSchema.parse(resp.data)
-  return parsed?.coins[llamaKey].price
+  return parsed.coins[llamaKey].price
 }
