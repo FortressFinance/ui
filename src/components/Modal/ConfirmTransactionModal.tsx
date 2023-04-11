@@ -66,7 +66,7 @@ export const ConfirmTransactionModal: FC<ConfirmTransactionModalProps> = ({
         <Dialog.Title className="text-xl">
           {outputAmountMin ? `Confirm ${type}` : `Unable to ${type}`}
         </Dialog.Title>
-        <Dialog.Close onClick={modalProps.onClose} tabIndex={-1}>
+        <Dialog.Close>
           <FortIconCloseCircle className="h-7 w-7" />
           <span className="sr-only">Close</span>
         </Dialog.Close>

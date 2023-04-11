@@ -25,10 +25,7 @@ export const ConsentModal: FC = () => {
         onClose={() => null}
       >
         <PurpleModalHeader>
-          <Dialog.Title
-            className="font-base text-pink-100 focus:outline-none md:text-xl"
-            tabIndex={0}
-          >
+          <Dialog.Title className="font-base text-pink-100 focus:outline-none md:text-xl">
             DISCLAIMER
           </Dialog.Title>
         </PurpleModalHeader>

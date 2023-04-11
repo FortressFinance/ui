@@ -55,7 +55,7 @@ export const AccountModal: FC = () => {
         <Dialog.Title className="col-span-2 col-start-1 row-start-1 text-center font-display text-3xl sm:text-4xl">
           Account
         </Dialog.Title>
-        <Dialog.Close onClick={onClose} className="col-start-2 row-start-1">
+        <Dialog.Close className="col-start-2 row-start-1">
           <FortIconCloseCircle className="h-8 w-8" />
         </Dialog.Close>
       </div>

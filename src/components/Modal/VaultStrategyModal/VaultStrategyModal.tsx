@@ -77,7 +77,7 @@ export const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
                 </Link>
               </Tooltip>
             </div>
-            <Dialog.Close className="h-6 w-6 p-[1px]" onClick={onClose}>
+            <Dialog.Close className="h-6 w-6 p-[1px]">
               <FortIconClose className="h-full w-full fill-white" />
               <span className="sr-only">Close</span>
             </Dialog.Close>
