@@ -1,7 +1,16 @@
-import { FC, PropsWithChildren } from "react"
+import * as Accordion from "@radix-ui/react-accordion"
+import {
+  Children,
+  cloneElement,
+  FC,
+  isValidElement,
+  PropsWithChildren,
+  useState,
+} from "react"
 
 import { Table, TableBody, TableHeader, TableRow } from "@/components/Table"
 import { TxSettingsPopover } from "@/components/TxSettingsPopover"
+import { VaultTableRowProps } from "@/components/VaultRow/VaultRow"
 
 type VaultTableProps = {
   label: string
@@ -11,6 +20,8 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
   children,
   label,
 }) => {
+  const [activeVault, setActiveVault] = useState<string | undefined>()
+
   return (
     <Table>
       <div className="relative z-[1] max-lg:hidden" role="rowgroup">
@@ -26,7 +37,24 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
         </TableRow>
       </div>
 
-      <TableBody>{children}</TableBody>
+      <Accordion.Root
+        asChild
+        value={activeVault}
+        onValueChange={setActiveVault}
+        type="single"
+        collapsible
+      >
+        <TableBody>
+          {Children.map(children, (c) => {
+            if (isValidElement<VaultTableRowProps>(c)) {
+              return cloneElement<VaultTableRowProps>(c, {
+                activeVault,
+                setActiveVault,
+              })
+            }
+          })}
+        </TableBody>
+      </Accordion.Root>
     </Table>
   )
 }
