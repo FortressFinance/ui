@@ -23,6 +23,7 @@
     "@lukemorales/query-key-factory": "^1.1.0",
     "@popperjs/core": "^2.11.6",
     "@radix-ui/react-collapsible": "^1.0.2",
+    "@radix-ui/react-dropdown-menu": "^2.0.4",
     "@radix-ui/react-navigation-menu": "^1.1.2",
     "@radix-ui/react-tabs": "^1.0.3",
     "@sentry/nextjs": "^7.43.0",

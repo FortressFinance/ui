@@ -63,10 +63,15 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               </Link>
 
               {/* Desktop navigation */}
-              <NavigationMenu.Root delayDuration={0}>
+              <NavigationMenu.Root>
                 <NavigationMenu.List className="hidden space-x-10 md:flex">
                   <NavigationMenu.Item>
-                    <NavigationMenu.Trigger asChild>
+                    <NavigationMenu.Trigger
+                      // we must override these to disable showing menu on hover
+                      onPointerMove={(e) => e.preventDefault()}
+                      onPointerLeave={(e) => e.preventDefault()}
+                      asChild
+                    >
                       <DropdownMenuButton>Yield</DropdownMenuButton>
                     </NavigationMenu.Trigger>
                     <NavigationMenu.Content asChild>
