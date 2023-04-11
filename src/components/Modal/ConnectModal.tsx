@@ -1,4 +1,4 @@
-import { Dialog } from "@headlessui/react"
+import * as Dialog from "@radix-ui/react-dialog"
 import Link from "next/link"
 import { FC } from "react"
 import { useConnect } from "wagmi"
@@ -26,15 +26,12 @@ export const ConnectModal: FC = () => {
   return (
     <ConnectModalBase isOpen={isOpen} onClose={onClose}>
       <div className="grid grid-cols-[1fr,max-content] grid-rows-1 items-center">
-        <Dialog.Title
-          as="h1"
-          className="col-span-2 col-start-1 row-start-1 text-center font-display text-3xl sm:text-4xl"
-        >
+        <Dialog.Title className="col-span-2 col-start-1 row-start-1 text-center font-display text-3xl sm:text-4xl">
           Connect Wallet
         </Dialog.Title>
-        <button onClick={onClose} className="col-start-2 row-start-1">
+        <Dialog.Close onClick={onClose} className="col-start-2 row-start-1">
           <FortIconCloseCircle className="h-8 w-8" />
-        </button>
+        </Dialog.Close>
       </div>
       <div className="mt-6 space-y-3">
         {connectors.map((connector) => {

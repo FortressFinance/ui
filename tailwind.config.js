@@ -59,10 +59,20 @@ module.exports = {
           "0%": { opacity: 1 },
           "100%": { opacity: 0 },
         },
+        "slide-in-right": {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "slide-out-right": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(100%)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 200ms ease-in-out",
         "fade-out": "fade-out 200ms ease-in-out",
+        "slide-in-right": "slide-in-right 200ms ease-in-out",
+        "slide-out-right": "slide-out-right 200ms ease-in-out",
       },
     },
   },

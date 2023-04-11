@@ -1,4 +1,3 @@
-import { Dialog } from "@headlessui/react"
 import { FC, PropsWithChildren } from "react"
 
 import clsxm from "@/lib/clsxm"
@@ -15,14 +14,14 @@ const PurpleModal: FC<PropsWithChildren<PurpleModalProps>> = ({
   ...modalProps
 }) => (
   <ModalBase {...modalProps}>
-    <Dialog.Panel
+    <div
       className={clsxm(
         "w-full rounded-lg border border-pink-700 bg-pink-900",
         className
       )}
     >
       {children}
-    </Dialog.Panel>
+    </div>
   </ModalBase>
 )
 

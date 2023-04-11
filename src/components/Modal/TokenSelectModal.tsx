@@ -1,4 +1,5 @@
-import { Dialog, RadioGroup } from "@headlessui/react"
+import { RadioGroup } from "@headlessui/react"
+import * as Dialog from "@radix-ui/react-dialog"
 import { FC, forwardRef, KeyboardEventHandler, MouseEventHandler } from "react"
 import { UseControllerReturn } from "react-hook-form"
 import { Address } from "wagmi"
@@ -47,13 +48,11 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
     <PurpleModal className="max-w-md" isOpen={isOpen} onClose={onClose}>
       <PurpleModalContent>
         <header className="mb-4 flex items-center justify-between">
-          <Dialog.Title as="h1" className="text-xl">
-            Select a token
-          </Dialog.Title>
-          <button onClick={onClose} tabIndex={-1}>
+          <Dialog.Title className="text-xl">Select a token</Dialog.Title>
+          <Dialog.Close onClick={onClose} tabIndex={-1}>
             <FortIconCloseCircle className="h-7 w-7" />
             <span className="sr-only">Close</span>
-          </button>
+          </Dialog.Close>
         </header>
 
         <RadioGroup
@@ -98,7 +97,7 @@ const TokenSelectOption = forwardRef<HTMLDivElement, TokenSelectOptionProps>(
       <RadioGroup.Option
         as="div"
         ref={ref}
-        className="grid grid-cols-[auto,1fr] grid-rows-[1fr,auto] items-center gap-x-2 rounded-lg p-2 ui-checked:bg-white/80 ui-checked:text-pink-900 ui-not-checked:bg-black ui-not-checked:text-white ui-disabled:cursor-not-allowed ui-disabled:opacity-50 ui-not-disabled:cursor-pointer md:gap-x-3 md:p-3"
+        className="grid grid-cols-[auto,1fr] grid-rows-[1fr,auto] items-center gap-x-2 rounded-lg p-2 ui-checked:bg-white/80 ui-checked:text-pink-900 ui-not-checked:bg-black ui-not-checked:text-white ui-not-disabled:cursor-pointer ui-disabled:cursor-not-allowed ui-disabled:opacity-50 md:gap-x-3 md:p-3"
         value={tokenAddress}
         onClick={onClick}
         onKeyDown={onKeyDown}

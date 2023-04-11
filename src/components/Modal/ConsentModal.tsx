@@ -1,4 +1,4 @@
-import { Dialog } from "@headlessui/react"
+import * as Dialog from "@radix-ui/react-dialog"
 import { FC } from "react"
 
 import { useClientReady } from "@/hooks"
@@ -26,7 +26,6 @@ export const ConsentModal: FC = () => {
       >
         <PurpleModalHeader>
           <Dialog.Title
-            as="h3"
             className="font-base text-pink-100 focus:outline-none md:text-xl"
             tabIndex={0}
           >
