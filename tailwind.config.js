@@ -55,5 +55,6 @@ module.exports = {
   plugins: [
     require("@headlessui/tailwindcss"),
     require("@tailwindcss/line-clamp"),
+    require("tailwindcss-radix"),
   ],
 }

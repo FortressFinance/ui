@@ -38,7 +38,3 @@ export const TabButton = forwardRef<
     </button>
   )
 })
-
-export const TabPanels = forwardRef<HTMLDivElement>((props, ref) => (
-  <div ref={ref} {...props} />
-))
