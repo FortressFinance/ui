@@ -1,6 +1,8 @@
-import { Popover, Switch, Transition } from "@headlessui/react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { FC, FormEventHandler, Fragment, useEffect } from "react"
+import * as Popover from "@radix-ui/react-popover"
+import * as Switch from "@radix-ui/react-switch"
+import * as Toggle from "@radix-ui/react-toggle"
+import { FC, FormEventHandler, useEffect, useState } from "react"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { BiInfoCircle } from "react-icons/bi"
 import { z } from "zod"
@@ -23,44 +25,30 @@ type TxSettingsPopoverProps = {
 export const TxSettingsPopover: FC<TxSettingsPopoverProps> = ({
   className,
 }) => {
-  return (
-    <Popover className="max-md:h-12 max-md:w-12 md:relative md:flex md:justify-end">
-      {({ open }) => (
-        <>
-          <Popover.Button as={Fragment}>
-            <button
-              className={clsxm(
-                "relative flex items-center justify-center transition-transform duration-200 max-md:h-full max-md:w-full max-md:rounded-sm max-md:bg-black/30 max-md:p-3 md:h-5 md:w-5 md:justify-center",
-                { "md:-rotate-90": open },
-                className
-              )}
-            >
-              <FortIconCog className="h-5 w-5 fill-white" />
-              <span className="sr-only">Transaction settings</span>
-            </button>
-          </Popover.Button>
+  const [isOpen, setIsOpen] = useState(false)
 
-          <Transition
-            show={open}
-            as={Fragment}
-            enter="transition-all duration-200"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="transition-all duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <Popover.Panel
-              as="div"
-              className="absolute right-0 z-20 mt-2 rounded border border-black/60 bg-orange-400 p-4 shadow-lg max-md:absolute max-md:left-0 max-md:w-full md:-bottom-3 md:-mr-6 md:w-72 md:translate-y-full md:rounded-md md:rounded-t-none md:border-t-0 md:shadow-pink-900/50"
-              static
-            >
-              {({ close }) => <TxSettingsForm close={close} />}
-            </Popover.Panel>
-          </Transition>
-        </>
-      )}
-    </Popover>
+  return (
+    <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
+      <Popover.Trigger asChild>
+        <button
+          className={clsxm(
+            "relative flex items-center justify-center transition-transform duration-200 max-md:h-full max-md:w-full max-md:rounded-sm max-md:bg-black/30 max-md:p-3 md:h-5 md:w-5 md:justify-center md:ui-state-open:-rotate-90",
+            className
+          )}
+        >
+          <FortIconCog className="h-5 w-5 fill-white" />
+          <span className="sr-only">Transaction settings</span>
+        </button>
+      </Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Content
+          align="end"
+          className="z-40 rounded border border-black/60 bg-orange-400 p-4 shadow-lg ui-state-closed:animate-fade-out ui-state-open:animate-fade-in max-md:left-0 max-md:w-full md:-mr-6 md:w-72 md:translate-x-9 md:translate-y-3 md:rounded-md md:rounded-t-none md:border-t-0 md:shadow-pink-900/50"
+        >
+          <TxSettingsForm close={() => setIsOpen(false)} />
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
   )
 }
 
@@ -143,12 +131,9 @@ const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
         </label>
         <div className="grid grid-cols-[1fr,2fr] gap-2">
           {/* Auto switch */}
-          <Switch
-            as={Button}
-            className="shrink-0 ui-not-checked:bg-black/20 ui-not-checked:ring-transparent"
-            variant="plain-negative"
-            checked={isAutoSlippage}
-            onChange={(checked: boolean) => {
+          <Toggle.Root
+            pressed={isAutoSlippage}
+            onPressedChange={(checked: boolean) => {
               if (checked) {
                 form.setValue(
                   "slippageToleranceString",
@@ -161,9 +146,15 @@ const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
                 )
               }
             }}
+            asChild
           >
-            Auto
-          </Switch>
+            <Button
+              className="shrink-0 ui-state-off:bg-black/20 ui-state-off:ring-transparent"
+              variant="plain-negative"
+            >
+              Auto
+            </Button>
+          </Toggle.Root>
 
           {/* Input */}
           <div className="grid h-full grid-cols-[auto,1fr] grid-rows-1">
@@ -211,18 +202,16 @@ const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
           name="expertMode"
           control={form.control}
           render={({ field }) => (
-            <Switch
+            <Switch.Root
               checked={field.value}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
+              onCheckedChange={field.onChange}
               ref={field.ref}
-              className="group relative inline-flex h-6 w-12 items-center rounded-full ring-1 ring-inset ring-white/20 transition-all ui-checked:ring-orange"
+              className="group relative inline-flex h-6 w-12 items-center rounded-full ring-1 ring-inset ring-white/20 transition-all ui-state-checked:ring-orange"
             >
-              <span className="sr-only">Enable expert mode</span>
-              <span className="relative z-10 block h-6 w-6 rounded-full bg-white transition-transform ui-checked:translate-x-6" />
-              <span className="absolute inset-0 rounded-full bg-gradient-to-t from-orange opacity-0 transition-opacity ui-checked:opacity-100" />
-              <span className="opacity-1 absolute inset-0 rounded-full bg-gradient-to-t from-white/20 transition-opacity ui-checked:opacity-0" />
-            </Switch>
+              <Switch.Thumb className="relative z-10 block h-6 w-6 rounded-full bg-white transition-transform ui-state-checked:translate-x-6" />
+              <span className="absolute inset-0 rounded-full bg-gradient-to-t from-orange opacity-0 transition-opacity group-ui-state-checked:opacity-100" />
+              <span className="opacity-1 absolute inset-0 rounded-full bg-gradient-to-t from-white/20 transition-opacity group-ui-state-checked:opacity-0" />
+            </Switch.Root>
           )}
         />
       </div>
