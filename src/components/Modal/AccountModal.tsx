@@ -69,7 +69,7 @@ export const AccountModal: FC = () => {
           </div>
 
           <Button
-            className="max-sm:w-1/2"
+            className="max-sm:w-full"
             onClick={onClickDisconnect}
             variant="plain-negative"
           >

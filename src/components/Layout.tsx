@@ -143,9 +143,9 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 <div className="grid h-full grid-cols-1 grid-rows-[1fr,auto] gap-16 p-3">
                   <div>
                     <div className="relative grid grid-cols-[auto,min-content,min-content] grid-rows-1 gap-x-2">
-                      <NetworkSelector />
+                      <NetworkSelector isMobile />
 
-                      <TxSettingsPopover />
+                      <TxSettingsPopover isMobile />
 
                       <Dialog.Close className="h-12 w-12 shrink-0 rounded bg-pink-900/40 p-3.5">
                         <FortIconClose className="h-full w-full fill-white" />

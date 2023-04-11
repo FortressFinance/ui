@@ -49,7 +49,7 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
         </TabButton>
       </Collapsible.Trigger>
       <Collapsible.Content asChild>
-        <div className="divide-y divide-pink-700 overflow-hidden rounded-md bg-pink-900/80 backdrop-blur-md first-of-type:rounded-t-none focus-visible:outline-none">
+        <div className="divide-y divide-pink-700 overflow-hidden rounded-md border border-pink-800 bg-pink-900/80 backdrop-blur-md first-of-type:rounded-t-none focus-visible:outline-none">
           {concentratorTargetAssets.data?.map((targetAsset, index) => (
             <Collapsible.Trigger
               key={`concentrator-menu-item-${index}`}

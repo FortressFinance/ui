@@ -11,10 +11,10 @@ import { FortIconChevronDown, NetIconArbitrum, NetIconEthereum } from "@/icons"
 import { useGlobalStore } from "@/store"
 
 type NetworkSelectorProps = {
-  className?: string
+  isMobile?: boolean
 }
 
-const NetworkSelector: FC<NetworkSelectorProps> = () => {
+const NetworkSelector: FC<NetworkSelectorProps> = ({ isMobile }) => {
   const isReady = useClientReady()
   const { chain: connectedChain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
@@ -76,8 +76,8 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
         </button>
       </DropdownMenu.Trigger>
 
-      <DropdownMenu.Content asChild>
-        <div className="absolute bottom-0 left-1/2 w-56 min-w-full -translate-x-1/2 translate-y-[calc(100%+0.5rem)] rounded border border-black/60 bg-orange-400 text-white shadow-lg ui-state-closed:animate-fade-out ui-state-open:animate-fade-in md:rounded-md">
+      <DropdownMenu.Content align={isMobile ? "start" : "center"} asChild>
+        <div className="w-[283px] min-w-full translate-y-3 rounded border border-black/60 bg-orange-400 text-white shadow-lg ui-state-closed:animate-fade-out ui-state-open:animate-fade-in md:absolute md:bottom-0 md:left-1/2 md:w-56 md:-translate-x-1/2 md:translate-y-[calc(100%+0.5rem)] md:rounded-md">
           <DropdownMenu.RadioGroup
             className="space-y-1 px-1 py-1"
             onValueChange={(chainIdStr) => onClickChain(Number(chainIdStr))}
