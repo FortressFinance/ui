@@ -50,11 +50,25 @@ module.exports = {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
       },
+      keyframes: {
+        "fade-in": {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
+        "fade-out": {
+          "0%": { opacity: 1 },
+          "100%": { opacity: 0 },
+        },
+      },
+      animation: {
+        "fade-in": "fade-in 200ms ease-in-out",
+        "fade-out": "fade-out 200ms ease-in-out",
+      },
     },
   },
   plugins: [
     require("@headlessui/tailwindcss"),
     require("@tailwindcss/line-clamp"),
-    require("tailwindcss-radix"),
+    require("tailwindcss-radix")({ variantPrefix: "ui" }),
   ],
 }

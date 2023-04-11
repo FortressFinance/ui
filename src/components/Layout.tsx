@@ -1,4 +1,5 @@
-import { Dialog, Menu, Transition } from "@headlessui/react"
+import { Dialog, Transition } from "@headlessui/react"
+import * as NavigationMenu from "@radix-ui/react-navigation-menu"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -13,7 +14,6 @@ import AppProviders from "@/components/AppProviders"
 import Button from "@/components/Button"
 import { ConnectButton } from "@/components/ConnectButton"
 import {
-  DropdownMenu,
   DropdownMenuButton,
   DropdownMenuItemLink,
   DropdownMenuItems,
@@ -63,44 +63,48 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               </Link>
 
               {/* Desktop navigation */}
-              <nav className="hidden space-x-10 md:flex" aria-label="Global">
-                <Menu as={DropdownMenu}>
-                  <Menu.Button as={DropdownMenuButton}>Yield</Menu.Button>
-                  <Menu.Items as={DropdownMenuItems}>
-                    <Menu.Item
-                      as={DropdownMenuItemLink}
-                      href={appLink("/yield")}
-                    >
-                      Compounders
-                    </Menu.Item>
-                    {DISABLE_CONCENTRATORS ? (
-                      <Menu.Item
-                        as="span"
-                        className="flex cursor-not-allowed items-center px-3 py-2.5 ui-active:bg-white ui-active:text-pink-900"
-                        disabled
-                      >
-                        <span className="opacity-50">Concentrators</span>
-                        <span className="ml-1 grow-0 whitespace-nowrap rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
-                          Coming soon
-                        </span>
-                      </Menu.Item>
-                    ) : (
-                      <Menu.Item
-                        as={DropdownMenuItemLink}
-                        href={appLink("/yield/concentrators")}
-                      >
-                        Concentrators
-                      </Menu.Item>
-                    )}
-                  </Menu.Items>
-                </Menu>
-                <span className="flex cursor-not-allowed items-center">
-                  <span className="opacity-50">Lend</span>
-                  <span className="ml-1 grow-0 rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
-                    Coming soon
-                  </span>
-                </span>
-              </nav>
+              <NavigationMenu.Root delayDuration={0}>
+                <NavigationMenu.List className="hidden space-x-10 md:flex">
+                  <NavigationMenu.Item>
+                    <NavigationMenu.Trigger asChild>
+                      <DropdownMenuButton>Yield</DropdownMenuButton>
+                    </NavigationMenu.Trigger>
+                    <NavigationMenu.Content asChild>
+                      <DropdownMenuItems>
+                        <NavigationMenu.Link asChild>
+                          <DropdownMenuItemLink href={appLink("/yield")}>
+                            Compounders
+                          </DropdownMenuItemLink>
+                        </NavigationMenu.Link>
+                        {DISABLE_CONCENTRATORS ? (
+                          <span className="flex cursor-not-allowed items-center px-3 py-2.5 ui-active:bg-white ui-active:text-pink-900">
+                            <span className="opacity-50">Concentrators</span>
+                            <span className="ml-1 grow-0 whitespace-nowrap rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
+                              Coming soon
+                            </span>
+                          </span>
+                        ) : (
+                          <NavigationMenu.Link asChild>
+                            <DropdownMenuItemLink
+                              href={appLink("/yield/concentrators")}
+                            >
+                              Concentrators
+                            </DropdownMenuItemLink>
+                          </NavigationMenu.Link>
+                        )}
+                      </DropdownMenuItems>
+                    </NavigationMenu.Content>
+                  </NavigationMenu.Item>
+                  <NavigationMenu.Item asChild>
+                    <span className="flex cursor-not-allowed items-center">
+                      <span className="opacity-50">Lend</span>
+                      <span className="ml-1 grow-0 rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
+                        Coming soon
+                      </span>
+                    </span>
+                  </NavigationMenu.Item>
+                </NavigationMenu.List>
+              </NavigationMenu.Root>
             </div>
 
             <div className="flex items-center gap-2 md:gap-4">
