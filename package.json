@@ -17,8 +17,6 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.7",
-    "@headlessui/tailwindcss": "^0.1.2",
     "@hookform/resolvers": "^2.9.11",
     "@lukemorales/query-key-factory": "^1.1.0",
     "@popperjs/core": "^2.11.6",
