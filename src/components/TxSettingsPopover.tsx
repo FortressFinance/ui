@@ -43,7 +43,7 @@ export const TxSettingsPopover: FC<TxSettingsPopoverProps> = ({
       <Popover.Portal>
         <Popover.Content
           align="end"
-          className="z-40 rounded border border-black/60 bg-orange-400 p-4 shadow-lg ui-state-closed:animate-fade-out ui-state-open:animate-fade-in max-md:left-0 max-md:w-full md:-mr-6 md:w-72 md:translate-x-9 md:translate-y-3 md:rounded-md md:rounded-t-none md:border-t-0 md:shadow-pink-900/50"
+          className="z-40 rounded border border-black/60 bg-orange-400 p-4 shadow-lg ui-state-closed:animate-fade-out ui-state-open:animate-fade-in max-md:left-0 max-md:w-full md:-mr-6 md:w-72 md:translate-y-3 md:rounded-md md:rounded-t-none md:border-t-0 md:shadow-pink-900/50"
         >
           <TxSettingsForm close={() => setIsOpen(false)} />
         </Popover.Content>

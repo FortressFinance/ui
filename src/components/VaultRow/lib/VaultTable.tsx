@@ -20,7 +20,7 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
           <TableHeader className="text-center text-sm">TVL</TableHeader>
           <TableHeader className="text-center text-sm">Balance</TableHeader>
           <TableHeader className="text-center text-sm">Earnings</TableHeader>
-          <TableHeader>
+          <TableHeader className="flex justify-end">
             <TxSettingsPopover />
           </TableHeader>
         </TableRow>
