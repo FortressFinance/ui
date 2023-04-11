@@ -1,4 +1,3 @@
-import { Transition } from "@headlessui/react"
 import {
   Children,
   cloneElement,
@@ -10,6 +9,8 @@ import {
 } from "react"
 import { usePopper } from "react-popper"
 
+import clsxm from "@/lib/clsxm"
+
 import Triangle from "~/svg/triangle.svg"
 
 type TooltipProps = {
@@ -18,8 +19,10 @@ type TooltipProps = {
 
 const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
   const enterTimeout = useRef<NodeJS.Timeout | null>(null)
+  const exitTimeout = useRef<NodeJS.Timeout | null>(null)
 
   const [isOpen, setIsOpen] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(
     null
   )
@@ -29,11 +32,14 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
   const onOpen = useCallback(() => {
     if (enterTimeout.current) clearTimeout(enterTimeout.current)
     setIsOpen(true)
+    setIsMounted(true)
   }, [])
   const onMouseEnter = useCallback(() => {
-    if (!enterTimeout.current) {
-      enterTimeout.current = setTimeout(onOpen, 300)
+    if (exitTimeout.current) {
+      clearTimeout(exitTimeout.current)
+      exitTimeout.current = null
     }
+    if (!enterTimeout.current) enterTimeout.current = setTimeout(onOpen, 300)
   }, [onOpen])
   const onMouseLeave = useCallback(() => {
     if (enterTimeout.current) {
@@ -41,6 +47,7 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
       enterTimeout.current = null
     }
     setIsOpen(false)
+    exitTimeout.current = setTimeout(() => setIsMounted(false), 200)
   }, [setIsOpen])
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -64,34 +71,31 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
         onMouseLeave,
         ref: setReferenceElement,
       })}
-
-      <Transition
-        as="div"
-        className="fixed"
-        show={isOpen}
-        enter="transition-opacity duration-200"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="transition-opacity duration-200"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-      >
-        <div
-          ref={setPopperElement}
-          className="z-20 max-w-sm rounded-lg bg-blue px-4 py-2 text-center text-sm font-normal text-white"
-          style={styles.popper}
-          {...attributes.popper}
-        >
-          <span className="-translate-y-4">{label}</span>
-          <span
-            ref={setArrowElement}
-            style={styles.arrow}
-            {...attributes.arrow}
+      {isMounted && (
+        <div className="fixed">
+          <div
+            ref={setPopperElement}
+            className={clsxm(
+              "z-20 max-w-sm rounded-lg bg-blue px-4 py-2 text-center text-sm font-normal text-white",
+              {
+                "animate-fade-in": isOpen,
+                "animate-fade-out": !isOpen,
+              }
+            )}
+            style={styles.popper}
+            {...attributes.popper}
           >
-            <Triangle className="h-3 w-6 translate-y-6 fill-blue" />
-          </span>
+            <span className="-translate-y-4">{label}</span>
+            <span
+              ref={setArrowElement}
+              style={styles.arrow}
+              {...attributes.arrow}
+            >
+              <Triangle className="h-3 w-6 translate-y-6 fill-blue" />
+            </span>
+          </div>
         </div>
-      </Transition>
+      )}
     </>
   )
 }
