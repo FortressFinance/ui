@@ -36,7 +36,7 @@ export const TabButton = forwardRef<
     <button
       ref={ref}
       className={clsxm(
-        "transition-color px-6 py-3 duration-200 first:rounded-l-md last:rounded-r-md ui-selected:bg-white ui-selected:text-pink-900 max-md:snap-start md:hover:bg-white md:hover:text-pink-900",
+        "transition-color px-6 py-3 duration-200 first:rounded-l-md last:rounded-r-md ui-state-active:bg-white ui-state-active:text-pink-900 max-md:snap-start md:hover:bg-white md:hover:text-pink-900",
         className
       )}
       {...props}

@@ -1,4 +1,5 @@
-import { Disclosure, Tab, Transition } from "@headlessui/react"
+import { Disclosure, Transition } from "@headlessui/react"
+import * as Tabs from "@radix-ui/react-tabs"
 import { useRouter } from "next/router"
 import { FC, Fragment, MouseEventHandler, useState } from "react"
 
@@ -157,46 +158,28 @@ export const VaultRow: FC<VaultProps> = (props) => {
 
             {/* Mobile: forms */}
             <div className="border-b border-b-pink/30 lg:hidden">
-              <Tab.Group>
-                <Tab.List
-                  as="div"
-                  className="divide-x divide-pink/30 border-b border-b-pink/30"
-                >
-                  <Tab as={Fragment}>
-                    {({ selected }) => (
-                      <button
-                        className={clsxm(
-                          "transition-color w-1/2 py-3.5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear",
-                          { "bg-pink/10 text-orange-400": selected }
-                        )}
-                      >
-                        Deposit
-                      </button>
-                    )}
-                  </Tab>
-                  <Tab as={Fragment}>
-                    {({ selected }) => (
-                      <button
-                        className={clsxm(
-                          "transition-color w-1/2 py-3.5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear",
-                          { "bg-pink/10 text-orange-400": selected }
-                        )}
-                      >
-                        Withdraw
-                      </button>
-                    )}
-                  </Tab>
-                </Tab.List>
-
-                <Tab.Panels>
-                  <Tab.Panel>
-                    <VaultDepositForm {...props} />
-                  </Tab.Panel>
-                  <Tab.Panel>
-                    <VaultWithdrawForm {...props} />
-                  </Tab.Panel>
-                </Tab.Panels>
-              </Tab.Group>
+              <Tabs.Root defaultValue="deposit">
+                <Tabs.List className="divide-x divide-pink/30 border-b border-b-pink/30">
+                  <Tabs.Trigger
+                    value="deposit"
+                    className="transition-color w-1/2 py-3.5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
+                  >
+                    Deposit
+                  </Tabs.Trigger>
+                  <Tabs.Trigger
+                    value="withdraw"
+                    className="transition-color w-1/2 py-3.5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
+                  >
+                    Withdraw
+                  </Tabs.Trigger>
+                </Tabs.List>
+                <Tabs.Content value="deposit">
+                  <VaultDepositForm {...props} />
+                </Tabs.Content>
+                <Tabs.Content value="withdraw">
+                  <VaultWithdrawForm {...props} />
+                </Tabs.Content>
+              </Tabs.Root>
             </div>
           </Disclosure.Panel>
         </Transition>
