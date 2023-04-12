@@ -16,8 +16,8 @@ import { VaultRow } from "@/components/VaultRow"
 import { VaultTable } from "@/components/VaultRow/lib"
 
 const HoldingsTable: FC<{
-  showEarningsColumn: boolean
-}> = ({ showEarningsColumn }: { showEarningsColumn: boolean }) => {
+  showEarningsColumn?: boolean
+}> = ({ showEarningsColumn }) => {
   const ready = useClientReady()
   const { isConnected } = useAccount()
   const chainId = useActiveChainId()

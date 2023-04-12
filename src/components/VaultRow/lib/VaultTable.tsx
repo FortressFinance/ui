@@ -1,4 +1,3 @@
-import clsx from "clsx"
 import { FC, PropsWithChildren } from "react"
 
 import { Table, TableBody, TableHeader, TableRow } from "@/components/Table"
@@ -6,7 +5,7 @@ import { TxSettingsPopover } from "@/components/TxSettingsPopover"
 
 type VaultTableProps = {
   label: string
-  showEarningsColumn: boolean
+  showEarningsColumn?: boolean
 }
 
 export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
@@ -18,10 +17,8 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
     <Table>
       <div className="relative z-[1] max-lg:hidden" role="rowgroup">
         <TableRow
-          className={clsx(
-            "overflow-visible rounded-b-none border-b border-b-pink/30",
-            showEarningsColumn ? "" : "lg:grid-cols-[4fr,1fr,1fr,1fr,3.5rem]"
-          )}
+          className="overflow-visible rounded-b-none border-b border-b-pink/30"
+          numberCols={showEarningsColumn ? 6 : 5}
         >
           <TableHeader className="text-sm">{label}</TableHeader>
           <TableHeader className="text-center text-sm">APY</TableHeader>

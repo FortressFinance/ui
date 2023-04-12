@@ -14,12 +14,14 @@ type TableChildProps = {
 type TableRowProps = TableChildProps & {
   disabled?: boolean
   onClick?: MouseEventHandler<HTMLDivElement>
+  numberCols?: number
 }
 
 export const TableRow: FC<PropsWithChildren<TableRowProps>> = ({
   children,
   className,
   disabled,
+  numberCols,
   onClick,
 }) => {
   const clickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
@@ -29,8 +31,9 @@ export const TableRow: FC<PropsWithChildren<TableRowProps>> = ({
   return (
     <div
       className={clsx(
-        "relative items-center gap-x-2 overflow-hidden rounded-lg bg-pink-900/80 p-3 backdrop-blur-md lg:grid lg:grid-cols-[4fr,1fr,1fr,1fr,1fr,3.5rem] lg:px-6",
-        className
+        "relative items-center gap-x-2 overflow-hidden rounded-lg bg-pink-900/80 p-3 backdrop-blur-md lg:grid lg:px-6",
+        className,
+        generateGridColumns(numberCols)
       )}
       role="row"
     >
@@ -49,6 +52,18 @@ export const TableRow: FC<PropsWithChildren<TableRowProps>> = ({
       )}
     </div>
   )
+}
+
+const FIRST_COLUMN_WIDTH = "4fr"
+const MIDDLE_COLUMN_WIDTH = "1fr"
+const LAST_COLUMN_WIDTH = "3.5rem"
+
+function generateGridColumns(numColumns?: number): string {
+  const nbColumns = numColumns === undefined || numColumns < 3 ? 6 : numColumns
+  const middleColumnsWidths = Array(nbColumns - 2)
+    .fill(MIDDLE_COLUMN_WIDTH)
+    .join(",")
+  return `lg:grid-cols-[${FIRST_COLUMN_WIDTH},${middleColumnsWidths},${LAST_COLUMN_WIDTH}]`
 }
 
 export const TableBody: FC<PropsWithChildren<TableChildProps>> = ({

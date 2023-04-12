@@ -97,7 +97,7 @@ const ConcentratorVaults: FC = () => {
             ))}
 
             <Tab.Panel>
-              <HoldingsTable showEarningsColumn={false} />
+              <HoldingsTable />
             </Tab.Panel>
           </Tab.Panels>
         </div>
