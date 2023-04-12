@@ -3,15 +3,24 @@ import { Address } from "wagmi"
 import { PreviewData } from "@/lib/api/vaults"
 import { VaultType } from "@/lib/types"
 
-export type PreviewTransactionArgs = {
+type PreviewTransactionBaseArgs = {
   chainId: number
-  id?: number
   token?: Address
   amount: string
-  type: VaultType
   enabled?: boolean
   onSuccess?: (data: PreviewData) => void
   onError?: (err: unknown) => void
+}
+
+export type PreviewTransactionArgs = PreviewTransactionBaseArgs & {
+  id?: number
+  type: VaultType
+}
+
+export type ConcentratorPreviewTransactionArgs = PreviewTransactionBaseArgs & {
+  targetAssetId: number
+  concentratorId: number
+  isCurve: boolean
 }
 
 export type PreviewVaultSpecificTransactionArgs = Omit<
@@ -27,3 +36,13 @@ export type PreviewTransactionGetterArgs = Omit<
 > & {
   isCurve?: boolean
 }
+
+export type ConcentratorPreviewVaultSpecificTransactionArgs =
+  ConcentratorPreviewTransactionArgs & {
+    slippage: number
+  }
+
+export type ConcentratorPreviewTransactionGetterArgs = Omit<
+  ConcentratorPreviewVaultSpecificTransactionArgs,
+  "onSuccess" | "onError" | "enabled"
+>

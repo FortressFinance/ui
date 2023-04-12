@@ -1,7 +1,10 @@
 import { createQueryKeyStore } from "@lukemorales/query-key-factory"
 import { Address } from "wagmi"
 
-import { PreviewTransactionGetterArgs } from "@/hooks/lib/api/types"
+import {
+  ConcentratorPreviewTransactionGetterArgs,
+  PreviewTransactionGetterArgs,
+} from "@/hooks/lib/api/types"
 
 export const queryKeys = createQueryKeyStore({
   vaults: {
@@ -40,6 +43,7 @@ export const queryKeys = createQueryKeyStore({
       user: Address | undefined
       type: string
     }) => [chainId, type, targetAssetId, concentratorId, user ?? "0x"],
+    previewDeposit: (args: ConcentratorPreviewTransactionGetterArgs) => [args],
   },
   holdings: {
     list: ({
