@@ -8,7 +8,7 @@ import { Toaster } from "react-hot-toast"
 import { useMediaQuery } from "react-responsive"
 
 import clsxm from "@/lib/clsxm"
-import { appLink } from "@/lib/helpers"
+import { resolvedRoute } from "@/lib/helpers"
 import { useClientReady } from "@/hooks"
 
 import AppProviders from "@/components/AppProviders"
@@ -49,8 +49,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
           <div className="layout flex items-center justify-between">
             <div className="flex items-center space-x-10 max-sm:pl-1">
               <Link
+                {...resolvedRoute("/app/yield")}
                 className="group my-3 h-11 px-1 py-2 md:my-4"
-                href={appLink("/yield")}
               >
                 <FortressLogo
                   className="h-full w-auto fill-white md:group-hover:hidden"
@@ -79,7 +79,9 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                     <NavigationMenu.Content asChild>
                       <DropdownMenuItems>
                         <NavigationMenu.Link asChild>
-                          <DropdownMenuItemLink href={appLink("/yield")}>
+                          <DropdownMenuItemLink
+                            {...resolvedRoute("/app/yield")}
+                          >
                             Compounders
                           </DropdownMenuItemLink>
                         </NavigationMenu.Link>
@@ -93,7 +95,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                         ) : (
                           <NavigationMenu.Link asChild>
                             <DropdownMenuItemLink
-                              href={appLink("/yield/concentrators")}
+                              {...resolvedRoute("/app/yield/concentrators")}
                             >
                               Concentrators
                             </DropdownMenuItemLink>
@@ -157,8 +159,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                         Yield
                       </h1>
                       <div className="space-y-2 pt-2">
-                        <a
-                          href={appLink("/yield")}
+                        <Link
+                          {...resolvedRoute("/app/yield")}
                           className={clsxm(
                             "block rounded px-3 py-2.5 text-lg font-medium text-white/80",
                             {
@@ -168,7 +170,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                           )}
                         >
                           Compounders
-                        </a>
+                        </Link>
                         {DISABLE_CONCENTRATORS ? (
                           <span className="flex items-center gap-1 rounded px-3 py-2.5 text-lg font-medium text-white/20">
                             <span>Concentrators</span>
@@ -177,8 +179,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                             </span>
                           </span>
                         ) : (
-                          <a
-                            href={appLink("/yield/concentrators")}
+                          <Link
+                            {...resolvedRoute("/app/yield/concentrators")}
                             className={clsxm(
                               "block rounded px-3 py-2.5 text-lg font-medium text-white/80",
                               {
@@ -189,7 +191,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                             )}
                           >
                             Concentrators
-                          </a>
+                          </Link>
                         )}
                       </div>
 
@@ -219,14 +221,14 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
         <footer className="layout pb-3 pt-6 md:py-6">
           <div className="grid grid-cols-[1fr,auto,1fr] md:gap-4">
-            <a
+            <Link
               className="col-start-2 items-center rounded-full bg-pink-900/80 px-4 py-2 text-center text-xs font-medium leading-5 text-pink-100"
               href="https://docs.fortress.finance/protocol/risks"
               target="_blank"
               rel="noreferrer"
             >
               <strong>This project is in beta. Use at your own risk.</strong>
-            </a>
+            </Link>
             <div className="max-md:hidden">
               <ExternalLinks showHelp />
             </div>

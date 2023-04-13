@@ -22,3 +22,14 @@ export const shallowRoute = (
     as: { pathname: rewrittenPathname, query: newQuery },
   }
 }
+
+export const resolvedRoute = (pathname: string) => {
+  const rewrittenPathname =
+    process.env.VERCEL_ENV !== "preview"
+      ? pathname.replace("/app", "")
+      : pathname
+  return {
+    href: { pathname },
+    as: { pathname: rewrittenPathname },
+  }
+}
