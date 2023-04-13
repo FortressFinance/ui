@@ -13,23 +13,21 @@ export const shallowRoute = (
   query: Record<string, any>
 ) => {
   const newQuery = minObject(query)
-  const rewrittenPathname =
-    process.env.VERCEL_ENV !== "preview"
-      ? pathname.replace("/app", "")
-      : pathname
   return {
     href: { pathname, query: newQuery },
-    as: { pathname: rewrittenPathname, query: newQuery },
+    as:
+      process.env.VERCEL_ENV === "preview"
+        ? undefined
+        : { pathname: pathname.replace("/app", ""), query: newQuery },
   }
 }
 
 export const resolvedRoute = (pathname: string) => {
-  const rewrittenPathname =
-    process.env.VERCEL_ENV !== "preview"
-      ? pathname.replace("/app", "")
-      : pathname
   return {
     href: { pathname },
-    as: { pathname: rewrittenPathname },
+    as:
+      process.env.VERCEL_ENV === "preview"
+        ? undefined
+        : { pathname: pathname.replace("/app", "") },
   }
 }
