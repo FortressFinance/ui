@@ -1,3 +1,4 @@
+import * as Dialog from "@radix-ui/react-dialog"
 import Link from "next/link"
 import { FC, MouseEventHandler } from "react"
 import { BiInfoCircle } from "react-icons/bi"
@@ -76,10 +77,10 @@ export const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
                 </Link>
               </Tooltip>
             </div>
-            <button className="h-6 w-6 p-[1px]" onClick={onClose}>
+            <Dialog.Close className="h-6 w-6 p-[1px]">
               <FortIconClose className="h-full w-full fill-white" />
               <span className="sr-only">Close</span>
-            </button>
+            </Dialog.Close>
           </PurpleModalHeader>
 
           <PurpleModalContent className="grid grid-cols-1 divide-pink-800 p-0 md:grid-cols-[3fr,2fr] md:divide-x md:p-0 lg:grid-cols-[2fr,1fr]">

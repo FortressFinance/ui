@@ -1,4 +1,4 @@
-import { Dialog } from "@headlessui/react"
+import * as Dialog from "@radix-ui/react-dialog"
 import copy from "copy-to-clipboard"
 import Link from "next/link"
 import { FC, useEffect, useState } from "react"
@@ -52,15 +52,12 @@ export const AccountModal: FC = () => {
   return (
     <ConnectModalBase isOpen={isOpen} onClose={onClose}>
       <div className="grid grid-cols-[1fr,max-content] grid-rows-1 items-center">
-        <Dialog.Title
-          as="h1"
-          className="col-span-2 col-start-1 row-start-1 text-center font-display text-3xl sm:text-4xl"
-        >
+        <Dialog.Title className="col-span-2 col-start-1 row-start-1 text-center font-display text-3xl sm:text-4xl">
           Account
         </Dialog.Title>
-        <button onClick={onClose} className="col-start-2 row-start-1">
+        <Dialog.Close className="col-start-2 row-start-1">
           <FortIconCloseCircle className="h-8 w-8" />
-        </button>
+        </Dialog.Close>
       </div>
 
       <div className="space-y-3 divide-y divide-orange-600">
@@ -72,7 +69,7 @@ export const AccountModal: FC = () => {
           </div>
 
           <Button
-            className="max-sm:w-1/2"
+            className="max-sm:w-full"
             onClick={onClickDisconnect}
             variant="plain-negative"
           >

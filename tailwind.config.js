@@ -50,7 +50,44 @@ module.exports = {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
       },
+      keyframes: {
+        "fade-in": {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
+        "fade-out": {
+          "0%": { opacity: 1 },
+          "100%": { opacity: 0 },
+        },
+        "slide-in-right": {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "slide-out-right": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+        "accordion-open": {
+          "0%": { height: 0, opacity: 0 },
+          "100%": {
+            height: "var(--radix-accordion-content-height)",
+            opacity: 1,
+          },
+        },
+        "accordion-close": {
+          "0%": { height: "var(--radix-accordion-content-height)", opacity: 1 },
+          "100%": { height: 0, opacity: 0 },
+        },
+      },
+      animation: {
+        "fade-in": "fade-in 200ms ease-in-out",
+        "fade-out": "fade-out 200ms ease-in-out",
+        "slide-in-right": "slide-in-right 200ms ease-in-out",
+        "slide-out-right": "slide-out-right 200ms ease-in-out",
+        "accordion-open": "accordion-open 200ms ease-in-out",
+        "accordion-close": "accordion-close 200ms ease-in-out",
+      },
     },
   },
-  plugins: [require("@headlessui/tailwindcss")],
+  plugins: [require("tailwindcss-radix")({ variantPrefix: "ui" })],
 }

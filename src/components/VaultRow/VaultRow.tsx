@@ -1,6 +1,7 @@
-import { Disclosure, Tab, Transition } from "@headlessui/react"
+import * as Accordion from "@radix-ui/react-accordion"
+import * as Tabs from "@radix-ui/react-tabs"
 import { useRouter } from "next/router"
-import { FC, Fragment, MouseEventHandler, useState } from "react"
+import { Dispatch, FC, MouseEventHandler, SetStateAction } from "react"
 
 import clsxm from "@/lib/clsxm"
 import { VaultProps } from "@/lib/types"
@@ -22,12 +23,18 @@ import {
 
 import { FortIconChevronDownCircle } from "@/icons"
 
-export const VaultRow: FC<VaultProps & { showEarningsColumn?: boolean }> = ({
-  showEarningsColumn,
+export type VaultTableRowProps = VaultProps & {
+  activeVault?: string | undefined
+  setActiveVault?: Dispatch<SetStateAction<string | undefined>>
+  showEarningsColumn?: boolean
+}
+
+export const VaultRow: FC<VaultTableRowProps> = ({
+  activeVault,
+  setActiveVault,
+  showEarningsColumn = false,
   ...props
 }) => {
-  const [isVaultOpen, setIsVaultOpen] = useState(false)
-
   const router = useRouter()
   const { isLoading } = useVault(props)
 
@@ -38,13 +45,13 @@ export const VaultRow: FC<VaultProps & { showEarningsColumn?: boolean }> = ({
   > = (e) => {
     e.preventDefault()
     e.stopPropagation()
-    setIsVaultOpen((v) => !v)
+    setActiveVault?.(activeVault === props.asset ? undefined : props.asset)
   }
 
   return (
-    <Disclosure as={Fragment} key={props.asset}>
+    <Accordion.Item value={props.asset} asChild>
       <TableRow
-        className="lg:py-6 lg:first:rounded-t-none"
+        className="group lg:py-6 lg:first:rounded-t-none"
         onClick={toggleVaultOpen}
         disabled={isLoading}
         showEarningsColumn={showEarningsColumn}
@@ -81,26 +88,24 @@ export const VaultRow: FC<VaultProps & { showEarningsColumn?: boolean }> = ({
           </ButtonLink>
 
           {/* Mobile: expand/collapse button */}
-          <button
-            className="group absolute inset-0 flex items-center justify-end focus:outline-none lg:hidden"
-            disabled={isLoading}
-            onClick={toggleVaultOpen}
-          >
-            <div
-              className={clsxm(
-                "group mb-3 mr-5 block h-6 w-6 rounded-sm transition-transform duration-200 group-focus-visible:outline-double",
-                {
-                  "cursor-wait": isLoading,
-                  "-rotate-180": isVaultOpen,
-                }
-              )}
+          <Accordion.Trigger asChild>
+            <button
+              className="group absolute inset-0 flex items-center justify-end focus:outline-none lg:hidden"
+              disabled={isLoading}
             >
-              <FortIconChevronDownCircle
-                className="h-full w-full fill-white"
-                aria-label="Open vault"
-              />
-            </div>
-          </button>
+              <div
+                className={clsxm(
+                  "group mb-3 mr-5 block h-6 w-6 rounded-sm transition-transform duration-200 group-focus-visible:outline-double group-ui-state-open:-rotate-180",
+                  { "cursor-wait": isLoading }
+                )}
+              >
+                <FortIconChevronDownCircle
+                  className="h-full w-full fill-white"
+                  aria-label="Open vault"
+                />
+              </div>
+            </button>
+          </Accordion.Trigger>
         </TableCell>
 
         {/* Desktop: APY, TVL, Balance */}
@@ -119,91 +124,60 @@ export const VaultRow: FC<VaultProps & { showEarningsColumn?: boolean }> = ({
 
         {/* Desktop: Action buttons */}
         <TableCell className="relative flex items-center max-lg:hidden">
-          <button
-            className="group absolute inset-0 flex items-center justify-end focus:outline-none"
-            disabled={isLoading}
-            onClick={toggleVaultOpen}
-          >
-            <div
-              className={clsxm(
-                "group z-[1] block h-5 w-5 rounded-sm transition-transform duration-200 group-focus-visible:outline-double",
-                {
-                  "cursor-wait": isLoading,
-                  "-rotate-180": isVaultOpen,
-                }
-              )}
+          <Accordion.Trigger asChild>
+            <button
+              className="group absolute inset-0 flex items-center justify-end focus:outline-none"
+              disabled={isLoading}
+              onClick={toggleVaultOpen}
             >
-              <FortIconChevronDownCircle
-                className="h-5 w-5 fill-white"
-                aria-label="Open vault"
-              />
-            </div>
-          </button>
+              <div
+                className={clsxm(
+                  "group z-[1] block h-5 w-5 rounded-sm transition-transform duration-200 group-focus-visible:outline-double group-ui-state-open:-rotate-180",
+                  { "cursor-wait": isLoading }
+                )}
+              >
+                <FortIconChevronDownCircle
+                  className="h-5 w-5 fill-white"
+                  aria-label="Open vault"
+                />
+              </div>
+            </button>
+          </Accordion.Trigger>
         </TableCell>
 
-        {/* Forms */}
-        <Transition
-          show={isVaultOpen}
-          className="col-span-full overflow-hidden max-lg:-mx-3"
-          enter="transition-all duration-200"
-          enterFrom="transform opacity-0 max-h-0"
-          enterTo="transform opacity-100 max-h-80"
-          leave="transition-all duration-200"
-          leaveFrom="transform opacity-100 max-h-80"
-          leaveTo="transform opacity-0 max-h-0"
-        >
-          <Disclosure.Panel static>
-            {/* Desktop: forms */}
-            <div className="mt-6 grid grid-cols-2 gap-4 max-lg:hidden">
-              <VaultDepositForm {...props} />
-              <VaultWithdrawForm {...props} />
-            </div>
+        <Accordion.Content className="col-span-full overflow-hidden ui-state-closed:animate-accordion-close ui-state-open:animate-accordion-open max-lg:-mx-3">
+          {/* Desktop: forms */}
+          <div className="mt-6 grid grid-cols-2 gap-4 max-lg:hidden">
+            <VaultDepositForm {...props} />
+            <VaultWithdrawForm {...props} />
+          </div>
 
-            {/* Mobile: forms */}
-            <div className="border-b border-b-pink/30 lg:hidden">
-              <Tab.Group>
-                <Tab.List
-                  as="div"
-                  className="divide-x divide-pink/30 border-b border-b-pink/30"
+          {/* Mobile: forms */}
+          <div className="border-b border-b-pink/30 lg:hidden">
+            <Tabs.Root defaultValue="deposit">
+              <Tabs.List className="divide-x divide-pink/30 border-b border-b-pink/30">
+                <Tabs.Trigger
+                  value="deposit"
+                  className="transition-color w-1/2 py-3.5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
                 >
-                  <Tab as={Fragment}>
-                    {({ selected }) => (
-                      <button
-                        className={clsxm(
-                          "transition-color w-1/2 py-3.5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear",
-                          { "bg-pink/10 text-orange-400": selected }
-                        )}
-                      >
-                        Deposit
-                      </button>
-                    )}
-                  </Tab>
-                  <Tab as={Fragment}>
-                    {({ selected }) => (
-                      <button
-                        className={clsxm(
-                          "transition-color w-1/2 py-3.5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear",
-                          { "bg-pink/10 text-orange-400": selected }
-                        )}
-                      >
-                        Withdraw
-                      </button>
-                    )}
-                  </Tab>
-                </Tab.List>
-
-                <Tab.Panels>
-                  <Tab.Panel>
-                    <VaultDepositForm {...props} />
-                  </Tab.Panel>
-                  <Tab.Panel>
-                    <VaultWithdrawForm {...props} />
-                  </Tab.Panel>
-                </Tab.Panels>
-              </Tab.Group>
-            </div>
-          </Disclosure.Panel>
-        </Transition>
+                  Deposit
+                </Tabs.Trigger>
+                <Tabs.Trigger
+                  value="withdraw"
+                  className="transition-color w-1/2 py-3.5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
+                >
+                  Withdraw
+                </Tabs.Trigger>
+              </Tabs.List>
+              <Tabs.Content value="deposit">
+                <VaultDepositForm {...props} />
+              </Tabs.Content>
+              <Tabs.Content value="withdraw">
+                <VaultWithdrawForm {...props} />
+              </Tabs.Content>
+            </Tabs.Root>
+          </div>
+        </Accordion.Content>
 
         {/* Mobile: APY, TVL, Balance */}
         <TableCell className="-mx-3 border-b border-b-pink/30 px-3 py-3 lg:hidden">
@@ -239,6 +213,6 @@ export const VaultRow: FC<VaultProps & { showEarningsColumn?: boolean }> = ({
           </ButtonLink>
         </TableCell>
       </TableRow>
-    </Disclosure>
+    </Accordion.Item>
   )
 }

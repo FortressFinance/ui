@@ -1,4 +1,4 @@
-import { FC, MouseEventHandler, PropsWithChildren } from "react"
+import { FC, forwardRef, MouseEventHandler, PropsWithChildren } from "react"
 
 import clsxm from "@/lib/clsxm"
 
@@ -16,13 +16,10 @@ type TableRowProps = TableChildProps & {
   showEarningsColumn?: boolean
 }
 
-export const TableRow: FC<PropsWithChildren<TableRowProps>> = ({
-  children,
-  className,
-  disabled,
-  onClick,
-  showEarningsColumn = false,
-}) => {
+export const TableRow = forwardRef<
+  HTMLDivElement,
+  PropsWithChildren<TableRowProps>
+>(({ children, className, disabled, showEarningsColumn, onClick }, ref) => {
   const clickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     if (!disabled && onClick) onClick(e)
   }
@@ -34,6 +31,7 @@ export const TableRow: FC<PropsWithChildren<TableRowProps>> = ({
         { "lg:grid-cols-[4fr,1fr,1fr,1fr,1fr,3.5rem]": showEarningsColumn },
         className
       )}
+      ref={ref}
       role="row"
     >
       {children}
@@ -51,17 +49,18 @@ export const TableRow: FC<PropsWithChildren<TableRowProps>> = ({
       )}
     </div>
   )
-}
+})
 
-export const TableBody: FC<PropsWithChildren<TableChildProps>> = ({
-  children,
-}) => {
+export const TableBody = forwardRef<
+  HTMLDivElement,
+  PropsWithChildren<TableChildProps>
+>(({ children }, ref) => {
   return (
-    <div role="rowgroup" className="space-y-2">
+    <div ref={ref} role="rowgroup" className="space-y-2">
       {children}
     </div>
   )
-}
+})
 
 export const TableHeader: FC<PropsWithChildren<TableChildProps>> = ({
   children,

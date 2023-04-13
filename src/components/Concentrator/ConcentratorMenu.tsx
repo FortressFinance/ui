@@ -1,11 +1,10 @@
-import { Menu } from "@headlessui/react"
+import * as Collapsible from "@radix-ui/react-collapsible"
 import { Dispatch, FC, SetStateAction } from "react"
 import { Address } from "wagmi"
 
 import { useClientReady, useConcentratorTargetAssets } from "@/hooks"
 
 import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"
-import { DropdownMenu } from "@/components/DropdownMenu"
 import { TabButton } from "@/components/Tabs"
 
 import { FortIconChevronDown } from "@/icons"
@@ -35,34 +34,40 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
     concentratorTargetAssets.isLoading
 
   return (
-    <Menu as={DropdownMenu}>
-      <Menu.Button
-        as={TabButton}
-        className="pink-900 group flex w-full items-center gap-3 rounded-lg border border-pink/30 bg-pink-900/80 text-white backdrop-blur-md focus-visible:bg-white focus-visible:text-pink-900 ui-open:rounded-b-none ui-open:border-b-0 ui-open:bg-pink-900 ui-open:hover:bg-pink-900 ui-open:hover:text-white ui-not-open:hover:text-pink-900 md:px-4"
-        disabled={isLoading}
-      >
-        <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-left">
-          <ConcentratorTargetAssetSymbol
-            concentratorTargetAsset={concentratorTargetAsset}
-          />
-        </div>
-        <FortIconChevronDown className="w-3.5 shrink-0 stroke-white group-focus-visible:stroke-pink-900 ui-open:rotate-180 ui-not-open:group-hover:stroke-pink-900" />
-      </Menu.Button>
-      <Menu.Items className="divide-y divide-pink/30 overflow-hidden rounded-b-md border-b border-l border-r border-pink/30 bg-pink-900/80 backdrop-blur-md focus-visible:outline-none">
-        {clientReady &&
-          concentratorTargetAssets.data?.map((targetAsset, index) => (
-            <Menu.Item
-              as="button"
+    <Collapsible.Root>
+      <Collapsible.Trigger asChild>
+        <TabButton
+          className="pink-900 group flex w-full items-center gap-3 rounded-lg border border-pink/30 bg-pink-900/80 text-white backdrop-blur-md focus-visible:bg-white focus-visible:text-pink-900 ui-state-closed:hover:text-pink-900 ui-state-open:rounded-b-none ui-state-open:bg-pink-900 ui-state-open:hover:bg-pink-900 ui-state-open:hover:text-white md:px-4"
+          disabled={isLoading}
+        >
+          <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-left">
+            <ConcentratorTargetAssetSymbol
+              concentratorTargetAsset={concentratorTargetAsset}
+            />
+          </div>
+          <FortIconChevronDown className="w-3.5 shrink-0 stroke-current group-ui-state-open:rotate-180" />
+        </TabButton>
+      </Collapsible.Trigger>
+      <Collapsible.Content asChild>
+        <div className="divide-y divide-pink-700 overflow-hidden rounded-md border border-pink-800 bg-pink-900/80 backdrop-blur-md first-of-type:rounded-t-none focus-visible:outline-none">
+          {concentratorTargetAssets.data?.map((targetAsset, index) => (
+            <Collapsible.Trigger
               key={`concentrator-menu-item-${index}`}
-              className="block w-full overflow-hidden text-ellipsis whitespace-nowrap px-4 py-3 text-left ui-active:bg-white ui-active:text-pink-900"
-              onClick={() => setConcentratorTargetAsset(targetAsset)}
+              asChild
             >
-              <ConcentratorTargetAssetSymbol
-                concentratorTargetAsset={targetAsset}
-              />
-            </Menu.Item>
+              <button
+                className="block w-full overflow-hidden text-ellipsis whitespace-nowrap px-4 py-3 text-left focus:outline-none focus-visible:bg-white focus-visible:text-pink-900"
+                onClick={() => setConcentratorTargetAsset(targetAsset)}
+              >
+                {" "}
+                <ConcentratorTargetAssetSymbol
+                  concentratorTargetAsset={targetAsset}
+                />
+              </button>
+            </Collapsible.Trigger>
           ))}
-      </Menu.Items>
-    </Menu>
+        </div>
+      </Collapsible.Content>
+    </Collapsible.Root>
   )
 }

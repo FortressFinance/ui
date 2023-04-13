@@ -1,5 +1,5 @@
-import { Disclosure } from "@headlessui/react"
-import { FC, Fragment, MouseEventHandler, useState } from "react"
+import * as Accordion from "@radix-ui/react-accordion"
+import { FC, MouseEventHandler, useState } from "react"
 
 import clsxm from "@/lib/clsxm"
 import { ConcentratorVaultProps } from "@/lib/types"
@@ -38,7 +38,7 @@ export const ConcentratorVaultRow: FC<ConcentratorVaultProps> = (props) => {
   }
 
   return (
-    <Disclosure as={Fragment} key={props.primaryAsset}>
+    <Accordion.Item value={props.primaryAsset} asChild>
       <TableRow
         className="lg:grid-cols-[4fr,1fr,1fr,1fr,3.5rem] lg:py-6 lg:first:rounded-t-none"
         onClick={toggleVaultOpen}
@@ -92,6 +92,6 @@ export const ConcentratorVaultRow: FC<ConcentratorVaultProps> = (props) => {
           <ConcentratorVaultUserBalance {...props} />
         </TableCell>
       </TableRow>
-    </Disclosure>
+    </Accordion.Item>
   )
 }

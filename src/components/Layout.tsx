@@ -1,19 +1,20 @@
-import { Dialog, Menu, Transition } from "@headlessui/react"
+import * as Dialog from "@radix-ui/react-dialog"
+import * as NavigationMenu from "@radix-ui/react-navigation-menu"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { FC, Fragment, PropsWithChildren, useState } from "react"
+import { FC, PropsWithChildren, useState } from "react"
 import { Toaster } from "react-hot-toast"
 import { useMediaQuery } from "react-responsive"
 
 import clsxm from "@/lib/clsxm"
 import { appLink } from "@/lib/helpers"
+import { useClientReady } from "@/hooks"
 
 import AppProviders from "@/components/AppProviders"
 import Button from "@/components/Button"
 import { ConnectButton } from "@/components/ConnectButton"
 import {
-  DropdownMenu,
   DropdownMenuButton,
   DropdownMenuItemLink,
   DropdownMenuItems,
@@ -34,13 +35,14 @@ import FortressLogo from "~/svg/fortress-logo.svg"
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const router = useRouter()
+  const isClientReady = useClientReady()
   const mdScreen = useMediaQuery({ query: "(max-width: 768px)" })
 
   return (
     <AppProviders>
       <Toaster
-        containerClassName={mdScreen ? "" : "layout mt-[70px]"}
-        position={mdScreen ? "bottom-center" : "top-right"}
+        containerClassName={isClientReady && mdScreen ? "" : "layout mt-[70px]"}
+        position={isClientReady && mdScreen ? "bottom-center" : "top-right"}
       />
       <div className="min-h-screen-small relative z-[1] grid grid-cols-1 grid-rows-[auto,1fr]">
         <header className="sticky top-0 z-10 border-b border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
@@ -63,44 +65,53 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               </Link>
 
               {/* Desktop navigation */}
-              <nav className="hidden space-x-10 md:flex" aria-label="Global">
-                <Menu as={DropdownMenu}>
-                  <Menu.Button as={DropdownMenuButton}>Yield</Menu.Button>
-                  <Menu.Items as={DropdownMenuItems}>
-                    <Menu.Item
-                      as={DropdownMenuItemLink}
-                      href={appLink("/yield")}
+              <NavigationMenu.Root>
+                <NavigationMenu.List className="hidden space-x-10 md:flex">
+                  <NavigationMenu.Item>
+                    <NavigationMenu.Trigger
+                      // we must override these to disable showing menu on hover
+                      onPointerMove={(e) => e.preventDefault()}
+                      onPointerLeave={(e) => e.preventDefault()}
+                      asChild
                     >
-                      Compounders
-                    </Menu.Item>
-                    {DISABLE_CONCENTRATORS ? (
-                      <Menu.Item
-                        as="span"
-                        className="flex cursor-not-allowed items-center px-3 py-2.5 ui-active:bg-white ui-active:text-pink-900"
-                        disabled
-                      >
-                        <span className="opacity-50">Concentrators</span>
-                        <span className="ml-1 grow-0 whitespace-nowrap rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
-                          Coming soon
-                        </span>
-                      </Menu.Item>
-                    ) : (
-                      <Menu.Item
-                        as={DropdownMenuItemLink}
-                        href={appLink("/yield/concentrators")}
-                      >
-                        Concentrators
-                      </Menu.Item>
-                    )}
-                  </Menu.Items>
-                </Menu>
-                <span className="flex cursor-not-allowed items-center">
-                  <span className="opacity-50">Lend</span>
-                  <span className="ml-1 grow-0 rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
-                    Coming soon
-                  </span>
-                </span>
-              </nav>
+                      <DropdownMenuButton>Yield</DropdownMenuButton>
+                    </NavigationMenu.Trigger>
+                    <NavigationMenu.Content asChild>
+                      <DropdownMenuItems>
+                        <NavigationMenu.Link asChild>
+                          <DropdownMenuItemLink href={appLink("/yield")}>
+                            Compounders
+                          </DropdownMenuItemLink>
+                        </NavigationMenu.Link>
+                        {DISABLE_CONCENTRATORS ? (
+                          <span className="flex cursor-not-allowed items-center px-3 py-2.5">
+                            <span className="opacity-50">Concentrators</span>
+                            <span className="ml-1 grow-0 whitespace-nowrap rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
+                              Coming soon
+                            </span>
+                          </span>
+                        ) : (
+                          <NavigationMenu.Link asChild>
+                            <DropdownMenuItemLink
+                              href={appLink("/yield/concentrators")}
+                            >
+                              Concentrators
+                            </DropdownMenuItemLink>
+                          </NavigationMenu.Link>
+                        )}
+                      </DropdownMenuItems>
+                    </NavigationMenu.Content>
+                  </NavigationMenu.Item>
+                  <NavigationMenu.Item asChild>
+                    <span className="flex cursor-not-allowed items-center">
+                      <span className="opacity-50">Lend</span>
+                      <span className="ml-1 grow-0 rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
+                        Coming soon
+                      </span>
+                    </span>
+                  </NavigationMenu.Item>
+                </NavigationMenu.List>
+              </NavigationMenu.Root>
             </div>
 
             <div className="flex items-center gap-2 md:gap-4">
@@ -124,117 +135,85 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         </header>
 
         {/* Mobile sidebar nav */}
-        <Transition.Root show={sidebarOpen} as={Fragment}>
-          <Dialog
-            as="div"
-            className="relative z-40 md:hidden"
-            onClose={setSidebarOpen}
-          >
-            <Transition.Child
-              as={Fragment}
-              enter="transition-opacity ease-linear duration-200"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="transition-opacity ease-linear duration-200"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <div
-                className="fixed inset-0 z-0 bg-pink-900/90 backdrop-blur"
-                aria-hidden="true"
-              />
-            </Transition.Child>
+        <Dialog.Root open={sidebarOpen} onOpenChange={setSidebarOpen}>
+          <Dialog.Portal>
+            <Dialog.Overlay className="fixed inset-0 z-50 bg-pink-900/90 backdrop-blur ui-state-closed:animate-fade-out ui-state-open:animate-fade-in" />
+            <Dialog.Content className="fixed inset-y-0 right-0 z-50 ui-state-closed:animate-slide-out-right ui-state-open:animate-slide-in-right">
+              <div className="relative h-full w-full max-w-xs overflow-y-auto border-l border-pink/10 bg-gradient-to-tr from-pink-600/40 to-orange-600/40 shadow-xl">
+                <div className="grid h-full grid-cols-1 grid-rows-[1fr,auto] gap-16 p-3">
+                  <div>
+                    <div className="relative grid grid-cols-[auto,min-content,min-content] grid-rows-1 gap-x-2">
+                      <NetworkSelector isMobile />
 
-            <div className="fixed inset-0 flex justify-end">
-              <Transition.Child
-                as={Fragment}
-                enter="transition ease-in-out duration-200 transform"
-                enterFrom="translate-x-full"
-                enterTo="translate-x-0"
-                leave="transition ease-in-out duration-200 transform"
-                leaveFrom="translate-x-0"
-                leaveTo="translate-x-full"
-              >
-                <Dialog.Panel className="relative h-full w-full max-w-xs overflow-y-auto border-l border-pink/10 bg-gradient-to-tr from-pink-600/40 to-orange-600/40 shadow-xl backdrop-blur-xl focus:outline-none">
-                  <div className="grid h-full grid-cols-1 grid-rows-[1fr,auto] gap-16 p-3">
-                    <div>
-                      <div className="relative grid grid-cols-[auto,min-content,min-content] grid-rows-1 gap-x-2">
-                        <NetworkSelector />
+                      <TxSettingsPopover isMobile />
 
-                        <TxSettingsPopover />
+                      <Dialog.Close className="h-12 w-12 shrink-0 rounded bg-pink-900/40 p-3.5">
+                        <FortIconClose className="h-full w-full fill-white" />
+                      </Dialog.Close>
+                    </div>
 
-                        <button
-                          className="h-12 w-12 shrink-0 rounded bg-pink-900/40 p-3.5"
-                          onClick={() => setSidebarOpen(false)}
-                          type="button"
+                    <nav className="mt-3">
+                      <h1 className="px-3 pt-3 text-xs font-medium uppercase tracking-wider text-orange-400">
+                        Yield
+                      </h1>
+                      <div className="space-y-2 pt-2">
+                        <a
+                          href={appLink("/yield")}
+                          className={clsxm(
+                            "block rounded px-3 py-2.5 text-lg font-medium text-white/80",
+                            {
+                              "bg-gradient-to-r from-orange-400/20 to-orange-400/5 text-white ring-1 ring-inset ring-orange-400/20":
+                                router.pathname === "/app/yield",
+                            }
+                          )}
                         >
-                          <FortIconClose className="h-full w-full fill-white" />
-                        </button>
-                      </div>
-
-                      <nav className="mt-3">
-                        <h1 className="px-3 pt-3 text-xs font-medium uppercase tracking-wider text-orange-400">
-                          Yield
-                        </h1>
-                        <div className="space-y-2 pt-2">
+                          Compounders
+                        </a>
+                        {DISABLE_CONCENTRATORS ? (
+                          <span className="flex items-center gap-1 rounded px-3 py-2.5 text-lg font-medium text-white/20">
+                            <span>Concentrators</span>
+                            <span className="ml-1 grow-0 whitespace-nowrap rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/60">
+                              Coming soon
+                            </span>
+                          </span>
+                        ) : (
                           <a
-                            href={appLink("/yield")}
+                            href={appLink("/yield/concentrators")}
                             className={clsxm(
                               "block rounded px-3 py-2.5 text-lg font-medium text-white/80",
                               {
                                 "bg-gradient-to-r from-orange-400/20 to-orange-400/5 text-white ring-1 ring-inset ring-orange-400/20":
-                                  router.pathname === "/app/yield",
+                                  router.pathname ===
+                                  "/app/yield/concentrators",
                               }
                             )}
                           >
-                            Compounders
+                            Concentrators
                           </a>
-                          {DISABLE_CONCENTRATORS ? (
-                            <span className="flex items-center gap-1 rounded px-3 py-2.5 text-lg font-medium text-white/20">
-                              <span>Concentrators</span>
-                              <span className="ml-1 grow-0 whitespace-nowrap rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/60">
-                                Coming soon
-                              </span>
-                            </span>
-                          ) : (
-                            <a
-                              href={appLink("/yield/concentrators")}
-                              className={clsxm(
-                                "block rounded px-3 py-2.5 text-lg font-medium text-white/80",
-                                {
-                                  "bg-gradient-to-r from-orange-400/20 to-orange-400/5 text-white ring-1 ring-inset ring-orange-400/20":
-                                    router.pathname ===
-                                    "/app/yield/concentrators",
-                                }
-                              )}
-                            >
-                              Concentrators
-                            </a>
-                          )}
-                        </div>
+                        )}
+                      </div>
 
-                        <h1 className="mt-3 px-3 pt-3 text-xs font-medium uppercase tracking-wider text-orange-400/20">
-                          Lend
-                        </h1>
-                        <div className="space-y-2 pt-2">
-                          <span className="px-3 py-2.5 text-lg text-white/20">
-                            Coming soon
-                          </span>
-                        </div>
-                      </nav>
-                    </div>
-
-                    <ExternalLinks
-                      className="flex-col justify-center gap-4 px-3 pb-6 text-sm text-orange-400"
-                      showHelp
-                      showLabels
-                    />
+                      <h1 className="mt-3 px-3 pt-3 text-xs font-medium uppercase tracking-wider text-orange-400/20">
+                        Lend
+                      </h1>
+                      <div className="space-y-2 pt-2">
+                        <span className="px-3 py-2.5 text-lg text-white/20">
+                          Coming soon
+                        </span>
+                      </div>
+                    </nav>
                   </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </Dialog>
-        </Transition.Root>
+
+                  <ExternalLinks
+                    className="flex-col justify-center gap-4 px-3 pb-6 text-sm text-orange-400"
+                    showHelp
+                    showLabels
+                  />
+                </div>
+              </div>
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog.Root>
 
         <div className="layout py-4 md:py-8">{children}</div>
 

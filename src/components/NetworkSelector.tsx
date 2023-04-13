@@ -1,4 +1,4 @@
-import { Menu, Transition } from "@headlessui/react"
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { FC, Fragment } from "react"
 import { useNetwork, useSwitchNetwork } from "wagmi"
 
@@ -11,10 +11,10 @@ import { FortIconChevronDown, NetIconArbitrum, NetIconEthereum } from "@/icons"
 import { useGlobalStore } from "@/store"
 
 type NetworkSelectorProps = {
-  className?: string
+  isMobile?: boolean
 }
 
-const NetworkSelector: FC<NetworkSelectorProps> = () => {
+const NetworkSelector: FC<NetworkSelectorProps> = ({ isMobile }) => {
   const isReady = useClientReady()
   const { chain: connectedChain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
@@ -26,7 +26,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
     (c) => c.id === activeChainId
   )
 
-  const chain = isReady
+  const activeChain = isReady
     ? connectedChain ?? { ...fallbackChain, unsupported: false }
     : { ...enabledNetworks.chains[0], unsupported: false }
 
@@ -40,91 +40,77 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
   }
 
   return (
-    <>
-      <Menu as="div" className="flex h-full md:relative">
-        <Menu.Button
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button
           className={clsxm(
             "flex w-full items-center justify-between gap-2 rounded bg-pink-900/40 px-2 font-semibold text-white md:px-4 md:py-3 md:font-medium md:hover:bg-black/30",
             {
               "text-orange-400 ring-1 ring-inset ring-orange-400":
-                chain.unsupported,
+                activeChain.unsupported,
             }
           )}
         >
           <div className="flex items-center gap-3 md:gap-2">
-            {chain.unsupported ? (
+            {activeChain.unsupported ? (
               "Unsupported Network"
             ) : (
               <>
-                {chain.id === mainnetFork.id ? (
-                  <NetIconEthereum
-                    className="h-6 w-6"
-                    aria-hidden="true"
-                    aria-label="Ethereum"
-                  />
+                {activeChain.id === mainnetFork.id ? (
+                  <NetIconEthereum className="h-6 w-6" />
                 ) : (
-                  <NetIconArbitrum
-                    className="h-6 w-6"
-                    aria-hidden="true"
-                    aria-label="Arbitrum one"
-                  />
+                  <NetIconArbitrum className="h-6 w-6" />
                 )}
-                <span className="max-md:text-sm">{chain.name}</span>
+                <span className="max-md:text-sm">{activeChain.name}</span>
               </>
             )}
           </div>
 
           <FortIconChevronDown
             className={clsxm("mr-2 w-4 md:w-3.5", {
-              "stroke-orange-400": chain.unsupported,
-              "stroke-white": !chain.unsupported,
+              "stroke-orange-400": activeChain.unsupported,
+              "stroke-white": !activeChain.unsupported,
             })}
             aria-label="Switch network"
           />
-        </Menu.Button>
+        </button>
+      </DropdownMenu.Trigger>
 
-        <Transition
-          as={Fragment}
-          enter="transition ease-linear duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
-          <Menu.Items className="absolute bottom-0 left-1/2 w-56 min-w-full -translate-x-1/2 translate-y-[calc(100%+0.5rem)] rounded border border-black/60 bg-orange-400 text-white shadow-lg focus:outline-none md:rounded-md">
-            <div className="space-y-1 px-1 py-1">
-              {enabledNetworks.chains.map((curChain, index) => (
-                <Menu.Item key={index} as={Fragment}>
-                  <button
-                    onClick={() => onClickChain(curChain.id)}
-                    data-connected={chain.id === curChain.id}
-                    className={clsxm(
-                      "group flex w-full items-center gap-2 rounded-sm p-3 font-medium disabled:bg-black/10 data-[connected=true]:bg-black/10 ui-active:bg-black/30 md:rounded md:py-2"
-                    )}
-                  >
-                    {curChain?.id === mainnetFork.id ? (
-                      <NetIconEthereum
-                        className="h-5 w-5 stroke-white"
-                        aria-hidden="true"
-                        aria-label="Ethereum"
-                      />
-                    ) : (
-                      <NetIconArbitrum
-                        className="h-5 w-5"
-                        aria-hidden="true"
-                        aria-label="Arbitrum one"
-                      />
-                    )}
-                    <span>{curChain.name}</span>
-                  </button>
-                </Menu.Item>
-              ))}
-            </div>
-          </Menu.Items>
-        </Transition>
-      </Menu>
-    </>
+      <DropdownMenu.Content align={isMobile ? "start" : "center"} asChild>
+        <div className="w-[283px] min-w-full translate-y-3 rounded border border-black/60 bg-orange-400 text-white shadow-lg ui-state-closed:animate-fade-out ui-state-open:animate-fade-in md:absolute md:bottom-0 md:left-1/2 md:w-56 md:-translate-x-1/2 md:translate-y-[calc(100%+0.5rem)] md:rounded-md">
+          <DropdownMenu.RadioGroup
+            className="space-y-1 px-1 py-1"
+            onValueChange={(chainIdStr) => onClickChain(Number(chainIdStr))}
+          >
+            {enabledNetworks.chains.map((chain) => (
+              <DropdownMenu.RadioItem
+                key={chain.id}
+                value={String(chain.id)}
+                className={clsxm(
+                  "group flex w-full cursor-pointer items-center gap-2 rounded-sm p-3 font-medium hover:bg-black/30 focus:outline-none focus-visible:bg-black/30 disabled:bg-black/10 md:rounded md:py-2",
+                  { "bg-black/10": chain.id === activeChain.id }
+                )}
+              >
+                {chain?.id === mainnetFork.id ? (
+                  <NetIconEthereum
+                    className="h-5 w-5 stroke-white"
+                    aria-hidden="true"
+                    aria-label="Ethereum"
+                  />
+                ) : (
+                  <NetIconArbitrum
+                    className="h-5 w-5"
+                    aria-hidden="true"
+                    aria-label="Arbitrum one"
+                  />
+                )}
+                <span>{chain.name}</span>
+              </DropdownMenu.RadioItem>
+            ))}
+          </DropdownMenu.RadioGroup>
+        </div>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
   )
 }
 

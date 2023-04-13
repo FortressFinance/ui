@@ -1,5 +1,5 @@
-import { Dialog, Transition } from "@headlessui/react"
-import { FC, Fragment, PropsWithChildren } from "react"
+import * as Dialog from "@radix-ui/react-dialog"
+import { FC, PropsWithChildren } from "react"
 
 export type ModalBaseProps = {
   isOpen: boolean
@@ -16,40 +16,15 @@ const ModalBase: FC<PropsWithChildren<ModalBaseProps>> = ({
   onClose,
 }) => {
   return (
-    <Transition show={isOpen}>
-      <Dialog onClose={onClose} open={isOpen} static>
-        {/* Backdrop */}
-        <Transition.Child
-          as={Fragment}
-          enter="transition-all duration-200"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="transition-all duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 z-10 bg-pink-900 bg-opacity-60" />
-        </Transition.Child>
-
-        {/* Scrollable container for modal dialog */}
-        <Transition.Child
-          as={Fragment}
-          enter="transition-all duration-200"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="transition-all duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 z-10 overflow-y-auto backdrop-blur">
-            {/* Inner scrollarea */}
-            <div className="flex min-h-full items-center justify-center p-3 sm:p-4">
-              {children}
-            </div>
+    <Dialog.Root open={isOpen} onOpenChange={onClose}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-50 h-screen overflow-y-auto bg-pink-900 bg-opacity-60 backdrop-blur ui-state-closed:animate-fade-out ui-state-open:animate-fade-in">
+          <div className="flex min-h-full w-full items-center justify-center p-3 sm:p-4">
+            <Dialog.Content asChild>{children}</Dialog.Content>
           </div>
-        </Transition.Child>
-      </Dialog>
-    </Transition>
+        </Dialog.Overlay>
+      </Dialog.Portal>
+    </Dialog.Root>
   )
 }
 
