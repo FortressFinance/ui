@@ -85,6 +85,7 @@ const CompounderVaultRow: FC<CompounderVaultRowProps> = (props) => {
       asset={props.vaultAssetAddress}
       type={props.vaultType}
       vaultAddress={vaultAddress.data?.ybTokenAddress}
+      showEarningsColumn
     />
   )
 }

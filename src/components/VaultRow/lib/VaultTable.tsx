@@ -18,7 +18,7 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
       <div className="relative z-[1] max-lg:hidden" role="rowgroup">
         <TableRow
           className="overflow-visible rounded-b-none border-b border-b-pink/30"
-          numberCols={showEarningsColumn ? 6 : 5}
+          showEarningsColumn={showEarningsColumn}
         >
           <TableHeader className="text-sm">{label}</TableHeader>
           <TableHeader className="text-center text-sm">APY</TableHeader>

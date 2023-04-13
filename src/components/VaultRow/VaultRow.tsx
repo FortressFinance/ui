@@ -22,7 +22,10 @@ import {
 
 import { FortIconChevronDownCircle } from "@/icons"
 
-export const VaultRow: FC<VaultProps> = (props) => {
+export const VaultRow: FC<VaultProps & { showEarningsColumn?: boolean }> = ({
+  showEarningsColumn,
+  ...props
+}) => {
   const [isVaultOpen, setIsVaultOpen] = useState(false)
 
   const router = useRouter()
@@ -44,6 +47,7 @@ export const VaultRow: FC<VaultProps> = (props) => {
         className="lg:py-6 lg:first:rounded-t-none"
         onClick={toggleVaultOpen}
         disabled={isLoading}
+        showEarningsColumn={showEarningsColumn}
       >
         {/* Row of vault info */}
         <TableCell className="relative grid grid-cols-[max-content,auto,max-content] items-center gap-x-3 max-lg:-mx-3 max-lg:border-b max-lg:border-b-pink/30 max-lg:px-3 max-lg:pb-3.5 lg:pointer-events-none">
