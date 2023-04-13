@@ -16,7 +16,7 @@ export const shallowRoute = (
   return {
     href: { pathname, query: newQuery },
     as:
-      process.env.VERCEL_ENV === "preview"
+      process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
         ? undefined
         : { pathname: pathname.replace("/app", ""), query: newQuery },
   }
@@ -26,7 +26,7 @@ export const resolvedRoute = (pathname: string) => {
   return {
     href: { pathname },
     as:
-      process.env.VERCEL_ENV === "preview"
+      process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
         ? undefined
         : { pathname: pathname.replace("/app", "") },
   }
