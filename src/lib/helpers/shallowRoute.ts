@@ -9,11 +9,14 @@ const minObject = (obj: Record<string, any>) => {
 
 export const shallowRoute = (
   pathname: string,
-  rewrittenPathname: string,
   // eslint-disable-next-line
   query: Record<string, any>
 ) => {
   const newQuery = minObject(query)
+  const rewrittenPathname =
+    process.env.VERCEL_ENV !== "preview"
+      ? pathname.replace("/app", "")
+      : pathname
   return {
     href: { pathname, query: newQuery },
     as: { pathname: rewrittenPathname, query: newQuery },

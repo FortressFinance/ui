@@ -40,7 +40,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
   const { pathname, query } = router
   const { isLoading } = useVault(props)
 
-  const vaultStrategyLink = shallowRoute(pathname, "/yield", {
+  const vaultStrategyLink = shallowRoute(pathname, {
     category: query.category,
     asset: props.asset,
     type: props.type,

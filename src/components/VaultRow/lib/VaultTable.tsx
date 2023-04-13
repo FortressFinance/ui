@@ -33,7 +33,7 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
   const activeVault =
     vaultAddress && typeof vaultAddress === "string" ? vaultAddress : undefined
   const setActiveVault = (vaultAddress?: string) => {
-    const link = shallowRoute(pathname, "/yield", {
+    const link = shallowRoute(pathname, {
       category,
       vaultAddress,
     })

@@ -33,7 +33,7 @@ const Yield: NextPage = () => {
             category && typeof category === "string" ? category : "featured"
           }
           onValueChange={(category) => {
-            const link = shallowRoute(pathname, "/yield", { category })
+            const link = shallowRoute(pathname, { category })
             router.push(link.href, link.as, { shallow: true })
           }}
         >
@@ -95,7 +95,7 @@ const Yield: NextPage = () => {
       <VaultStrategyModal
         isOpen={!!router.query.asset}
         onClose={() => {
-          const link = shallowRoute(pathname, "/yield", {
+          const link = shallowRoute(pathname, {
             category,
             vaultAddress,
           })
