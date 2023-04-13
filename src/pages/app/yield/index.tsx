@@ -34,7 +34,7 @@ const Yield: NextPage = () => {
           }
           onValueChange={(category) => {
             const link = resolvedRoute(pathname, { category })
-            router.push(link.href, link.as, { shallow: true })
+            router.push(link.href, link.as, { shallow: true, scroll: false })
           }}
         >
           <Tabs.List className="mb-4 lg:mb-6">
@@ -110,7 +110,7 @@ const Yield: NextPage = () => {
         isOpen={!!router.query.asset}
         onClose={() => {
           const link = resolvedRoute(pathname, { category, vaultAddress })
-          router.push(link.href, link.as, { shallow: true })
+          router.push(link.href, link.as, { shallow: true, scroll: false })
         }}
         asset={asset as Address}
         type={type as VaultType}
