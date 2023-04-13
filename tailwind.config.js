@@ -89,8 +89,5 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    require("@tailwindcss/line-clamp"),
-    require("tailwindcss-radix")({ variantPrefix: "ui" }),
-  ],
+  plugins: [require("tailwindcss-radix")({ variantPrefix: "ui" })],
 }

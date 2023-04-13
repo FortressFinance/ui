@@ -16,6 +16,7 @@ export const fraxBpTokenAddress: Address =
 export const fraxBpPoolAddress = fraxBpTokenAddress
 export const ethTokenAddress: Address =
   "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+export const AddressZero: Address = "0x0000000000000000000000000000000000000000"
 export const glpManagerAddress: Address =
   "0x3963FfC9dff443c2A94f21b129D429891E32ec18"
 export const glpRewardsDistributorAddress: Address =

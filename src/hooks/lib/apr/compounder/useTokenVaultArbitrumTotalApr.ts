@@ -1,4 +1,5 @@
-import { VaultDynamicProps } from "@/lib/types"
+import { Address } from "wagmi"
+
 import useTokenGlpVault from "@/hooks/lib/apr/useTokenGlpVault"
 import { useTokenVaultSymbol } from "@/hooks/useTokenVaultSymbol"
 
@@ -6,7 +7,7 @@ export default function useTokenVaultArbitrumTotalApr({
   asset,
   enabled,
 }: {
-  asset: VaultDynamicProps["asset"]
+  asset: Address
   enabled: boolean
 }) {
   const tokenVaultSymbol = useTokenVaultSymbol({ asset, enabled })

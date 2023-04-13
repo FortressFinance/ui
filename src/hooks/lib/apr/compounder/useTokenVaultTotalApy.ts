@@ -1,8 +1,8 @@
 import { convertToApy } from "@/lib/api/vaults/convertToApy"
 import { VaultDynamicProps } from "@/lib/types"
 import { useActiveChainId } from "@/hooks"
-import useTokenVaultArbitrumTotalApr from "@/hooks/lib/apr/useTokenVaultArbitrumTotalApr"
-import useTokenVaultMainnetTotalApr from "@/hooks/lib/apr/useTokenVaultMainnetTotalApr"
+import useTokenVaultArbitrumTotalApr from "@/hooks/lib/apr/compounder/useTokenVaultArbitrumTotalApr"
+import useTokenVaultMainnetTotalApr from "@/hooks/lib/apr/compounder/useTokenVaultMainnetTotalApr"
 
 export default function useTokenVaultTotalApy({
   asset,

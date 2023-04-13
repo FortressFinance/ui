@@ -15,7 +15,9 @@ import { TableDisconnected, TableEmpty, TableLoading } from "@/components/Table"
 import { VaultRow } from "@/components/VaultRow"
 import { VaultTable } from "@/components/VaultRow/lib"
 
-const HoldingsTable: FC = () => {
+const HoldingsTable: FC<{
+  showEarningsColumn?: boolean
+}> = ({ showEarningsColumn }) => {
   const ready = useClientReady()
   const { isConnected } = useAccount()
   const chainId = useActiveChainId()
@@ -29,7 +31,7 @@ const HoldingsTable: FC = () => {
   const showLoadingState = isLoading || isLoadingHoldingsVault || !ready
 
   return (
-    <VaultTable label="Holdings">
+    <VaultTable label="Holdings" showEarningsColumn={showEarningsColumn}>
       {/* Table body */}
       {!isConnected ? (
         <TableDisconnected heading="Oops! It looks like you are not connected...">
@@ -79,6 +81,10 @@ export const HoldingsRow: FC<HoldingsRowProps> = (props) => {
   return holdingsVaults.data?.vaults?.includes(
     vaultAddress.data.ybTokenAddress
   ) ? (
-    <VaultRow {...props} vaultAddress={vaultAddress.data.ybTokenAddress} />
+    <VaultRow
+      {...props}
+      vaultAddress={vaultAddress.data.ybTokenAddress}
+      showEarningsColumn
+    />
   ) : null
 }

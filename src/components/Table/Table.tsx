@@ -1,4 +1,3 @@
-import clsx from "clsx"
 import { FC, forwardRef, MouseEventHandler, PropsWithChildren } from "react"
 
 import clsxm from "@/lib/clsxm"
@@ -14,20 +13,22 @@ type TableChildProps = {
 type TableRowProps = TableChildProps & {
   disabled?: boolean
   onClick?: MouseEventHandler<HTMLDivElement>
+  showEarningsColumn?: boolean
 }
 
 export const TableRow = forwardRef<
   HTMLDivElement,
   PropsWithChildren<TableRowProps>
->(({ children, className, disabled, onClick }, ref) => {
+>(({ children, className, disabled, showEarningsColumn, onClick }, ref) => {
   const clickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
     if (!disabled && onClick) onClick(e)
   }
 
   return (
     <div
-      className={clsx(
-        "relative items-center gap-x-2 overflow-hidden rounded-lg bg-pink-900/80 p-3 backdrop-blur-md lg:grid lg:grid-cols-[4fr,1fr,1fr,1fr,1fr,3.5rem] lg:px-6",
+      className={clsxm(
+        "relative items-center gap-x-2 overflow-hidden rounded-lg bg-pink-900/80 p-3 backdrop-blur-md lg:grid lg:grid-cols-[4fr,1fr,1fr,1fr,3.5rem] lg:px-6",
+        { "lg:grid-cols-[4fr,1fr,1fr,1fr,1fr,3.5rem]": showEarningsColumn },
         className
       )}
       ref={ref}

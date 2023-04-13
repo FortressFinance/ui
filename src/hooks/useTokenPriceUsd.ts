@@ -10,6 +10,7 @@ import { glpTokenAddress } from "@/constant/addresses"
 
 const customPricers: Record<Address, () => Promise<number>> = {
   [glpTokenAddress]: getGlpPrice,
+  ["0xBDF9001c5d3fFc03AB6564CA28E530665594dfF7"]: getGlpPrice,
 }
 
 export function useTokenPriceUsd({
@@ -20,11 +21,19 @@ export function useTokenPriceUsd({
   enabled?: boolean
 }) {
   const chainId = useActiveChainId()
-  return useQuery({
+  const priceRequest = useQuery({
     ...queryKeys.tokens.priceUsd({ asset }),
     queryFn: customPricers[asset]
       ? customPricers[asset]
       : () => getLlamaPrice({ asset, chainId }),
     enabled: enabled && asset !== "0x",
   })
+
+  if (asset === "0x") {
+    return {
+      isLoading: false,
+      data: 0,
+    }
+  }
+  return priceRequest
 }

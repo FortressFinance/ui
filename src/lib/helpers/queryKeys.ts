@@ -28,12 +28,18 @@ export const queryKeys = createQueryKeyStore({
   concentrators: {
     list: ({ chainId }: { chainId: number }) => [chainId],
     detail: ({
+      targetAssetId,
+      concentratorId,
       chainId,
-      compounderType,
+      user,
+      type,
     }: {
+      targetAssetId: number
+      concentratorId: number
       chainId: number
-      compounderType: string
-    }) => [chainId, compounderType],
+      user: Address | undefined
+      type: string
+    }) => [chainId, type, targetAssetId, concentratorId, user ?? "0x"],
   },
   holdings: {
     list: ({

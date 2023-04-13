@@ -2,20 +2,19 @@ import { FC } from "react"
 import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
-import { FilterCategory, VaultType } from "@/lib/types"
+import { FilterCategory } from "@/lib/types"
 import { enabledNetworks } from "@/lib/wagmi"
 import {
   useActiveChainId,
   useClientReady,
   useConcentratorTargetAssets,
-  useConcentratorVault,
   useFilteredConcentrators,
   useListConcentrators,
 } from "@/hooks"
 
 import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"
+import { ConcentratorVaultRow } from "@/components/Concentrator/ConcentratorVaultRow"
 import { TableEmpty, TableLoading } from "@/components/Table"
-import { VaultRow } from "@/components/VaultRow"
 import { VaultTable } from "@/components/VaultRow/lib"
 
 type ConcentratorVaultTableProps = {
@@ -28,7 +27,10 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
   filterCategory,
 }) => {
   const clientReady = useClientReady()
-  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const {
+    data: concentratorTargetAssets,
+    isLoading: concentratorTargetAssetsIsLoading,
+  } = useConcentratorTargetAssets()
   const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const filteredConcentratorVaults = useFilteredConcentrators({
     concentratorsList,
@@ -39,7 +41,7 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
   // TODO: should handle failure
   const showLoadingState =
     !clientReady ||
-    concentratorTargetAssets.isLoading ||
+    concentratorTargetAssetsIsLoading ||
     concentratorsList.isLoading ||
     !concentratorTargetAsset
   const label = capitalizeFirstLetter(filterCategory)
@@ -49,7 +51,7 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
   const supportedChain = availableChains?.[0]
 
   return (
-    <VaultTable label={`${label} Vaults`}>
+    <VaultTable label={`${label} Vaults`} showEarningsColumn={false}>
       {showLoadingState ? (
         <TableLoading>Loading concentrators...</TableLoading>
       ) : !supportedChain ? (
@@ -69,32 +71,13 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
           ({ concentratorTargetAsset, vaultAssetAddress, vaultType }, i) => (
             <ConcentratorVaultRow
               key={`pool-${i}`}
-              concentratorTargetAsset={concentratorTargetAsset}
-              vaultAssetAddress={vaultAssetAddress}
-              vaultType={vaultType}
+              targetAsset={concentratorTargetAsset}
+              primaryAsset={vaultAssetAddress}
+              type={vaultType}
             />
           )
         )
       )}
     </VaultTable>
-  )
-}
-
-type ConcentratorVaultRowProps = {
-  concentratorTargetAsset?: Address
-  vaultAssetAddress: Address
-  vaultType: VaultType
-}
-
-const ConcentratorVaultRow: FC<ConcentratorVaultRowProps> = (props) => {
-  const concentrator = useConcentratorVault(props)
-  if (!concentrator.data)
-    return <TableLoading>Loading concentrators...</TableLoading>
-  return (
-    <VaultRow
-      asset={concentrator.data.rewardTokenAddress}
-      type={props.vaultType}
-      vaultAddress={concentrator.data.ybTokenAddress}
-    />
   )
 }

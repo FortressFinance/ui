@@ -2,8 +2,7 @@ import * as Collapsible from "@radix-ui/react-collapsible"
 import { Dispatch, FC, SetStateAction } from "react"
 import { Address } from "wagmi"
 
-import { useClientReady } from "@/hooks"
-import { useConcentratorTargetAssets } from "@/hooks/useConcentratorTargetAssets"
+import { useClientReady, useConcentratorTargetAssets } from "@/hooks"
 
 import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"
 import { TabButton } from "@/components/Tabs"
@@ -22,8 +21,9 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
   const clientReady = useClientReady()
   const concentratorTargetAssets = useConcentratorTargetAssets({
     onSuccess: (data) => {
-      if (concentratorTargetAsset === "0x" && data?.length)
+      if (concentratorTargetAsset === "0x" && data?.length) {
         setConcentratorTargetAsset(data[0])
+      }
     },
   })
 
@@ -37,7 +37,7 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
     <Collapsible.Root>
       <Collapsible.Trigger asChild>
         <TabButton
-          className="pink-900 group flex w-full items-center gap-3 rounded-lg border border-pink/30 bg-pink-900/80 text-white backdrop-blur-md focus-visible:bg-white focus-visible:text-pink-900 ui-state-closed:hover:text-pink-900 ui-state-open:rounded-b-none ui-state-open:border-b-0 ui-state-open:bg-pink-900 ui-state-open:hover:bg-pink-900 ui-state-open:hover:text-white md:px-4"
+          className="pink-900 group flex w-full items-center gap-3 rounded-lg border border-pink/30 bg-pink-900/80 text-white backdrop-blur-md focus-visible:bg-white focus-visible:text-pink-900 ui-state-closed:hover:text-pink-900 ui-state-open:rounded-b-none ui-state-open:bg-pink-900 ui-state-open:hover:bg-pink-900 ui-state-open:hover:text-white md:px-4"
           disabled={isLoading}
         >
           <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-left">

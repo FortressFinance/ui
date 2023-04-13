@@ -64,7 +64,7 @@ export const AssetBalance: FC<AssetBalanceProps> = ({
 }
 
 type AssetBalanceUsdProps = AssetBalanceProps & {
-  asset?: Address | undefined
+  asset?: Address
 }
 
 export const AssetBalanceUsd: FC<AssetBalanceUsdProps> = ({

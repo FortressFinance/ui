@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query"
+import { Address } from "wagmi"
 
 import { getVaultAprFallback } from "@/lib/api/vaults"
-import { VaultDynamicProps } from "@/lib/types"
 import { useActiveChainId } from "@/hooks"
 
 export default function useCurveVaultMainnetTotalApr({
   asset,
   enabled,
 }: {
-  asset: VaultDynamicProps["asset"]
+  asset: Address
   enabled: boolean
 }) {
   const chainId = useActiveChainId()

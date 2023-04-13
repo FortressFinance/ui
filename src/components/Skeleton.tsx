@@ -1,6 +1,6 @@
-import clsx from "clsx"
 import { FC, PropsWithChildren } from "react"
 
+import clsxm from "@/lib/clsxm"
 import { useClientReady } from "@/hooks"
 
 type SkeletonProps = {
@@ -18,7 +18,7 @@ const Skeleton: FC<PropsWithChildren<SkeletonProps>> = ({
   const isClientReady = useClientReady()
   return (
     <span
-      className={clsx(
+      className={clsxm(
         {
           "animate-pulse bg-white/20 text-transparent":
             !isClientReady || isLoading,

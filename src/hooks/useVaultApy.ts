@@ -1,23 +1,20 @@
 import { VaultDynamicProps } from "@/lib/types"
 import { useApiVaultDynamic } from "@/hooks/lib/api/useApiVaultDynamic"
+import useTokenVaultMainnetTotalApr from "@/hooks/lib/apr/compounder/useTokenVaultMainnetTotalApr"
+import useTokenVaultTotalApy from "@/hooks/lib/apr/compounder/useTokenVaultTotalApy"
 import useBalancerVaultMainnetTotalApr from "@/hooks/lib/apr/useBalancerVaultMainnetTotalApr"
 import useBalancerVaultTotalApy from "@/hooks/lib/apr/useBalancerVaultTotalApy"
 import useCurveVaultMainnetTotalApr from "@/hooks/lib/apr/useCurveVaultMainnetTotalApr"
 import useCurveVaultTotalApy from "@/hooks/lib/apr/useCurveVaultTotalApy"
 import useTokenAuraBalVault from "@/hooks/lib/apr/useTokenAuraBalVault"
 import useTokenGlpVault from "@/hooks/lib/apr/useTokenGlpVault"
-import useTokenVaultMainnetTotalApr from "@/hooks/lib/apr/useTokenVaultMainnetTotalApr"
-import useTokenVaultTotalApy from "@/hooks/lib/apr/useTokenVaultTotalApy"
 import { useVaultAprFallback } from "@/hooks/lib/apr/useVaultAprFallback"
 import { useTokenVaultSymbol } from "@/hooks/useTokenVaultSymbol"
-import {
-  useIsCurveCompounder,
-  useIsTokenCompounder,
-} from "@/hooks/useVaultTypes"
+import { useIsCurveVault, useIsTokenVault } from "@/hooks/useVaultTypes"
 
 export function useVaultApy({ asset, poolId, type }: VaultDynamicProps) {
-  const isCurve = useIsCurveCompounder(type)
-  const isToken = useIsTokenCompounder(type)
+  const isCurve = useIsCurveVault(type)
+  const isToken = useIsTokenVault(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
@@ -160,8 +157,8 @@ export function useVaultExtraApr({ asset, poolId, type }: VaultDynamicProps) {
 }
 
 export function useVaultTotalApr({ asset, poolId, type }: VaultDynamicProps) {
-  const isCurve = useIsCurveCompounder(type)
-  const isToken = useIsTokenCompounder(type)
+  const isCurve = useIsCurveVault(type)
+  const isToken = useIsTokenVault(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
@@ -201,7 +198,7 @@ export function useVaultTotalApr({ asset, poolId, type }: VaultDynamicProps) {
 }
 
 export function useVaultBalApr({ asset, poolId, type }: VaultDynamicProps) {
-  const isToken = useIsTokenCompounder(type)
+  const isToken = useIsTokenVault(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
@@ -236,7 +233,7 @@ export function useVaultBalApr({ asset, poolId, type }: VaultDynamicProps) {
 }
 
 export function useVaultAuraApr({ asset, poolId, type }: VaultDynamicProps) {
-  const isToken = useIsTokenCompounder(type)
+  const isToken = useIsTokenVault(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
@@ -270,7 +267,7 @@ export function useVaultAuraApr({ asset, poolId, type }: VaultDynamicProps) {
 }
 
 export function useVaultGmxApr({ asset, poolId, type }: VaultDynamicProps) {
-  const isToken = useIsTokenCompounder(type)
+  const isToken = useIsTokenVault(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 
@@ -303,7 +300,7 @@ export function useVaultGmxApr({ asset, poolId, type }: VaultDynamicProps) {
 }
 
 export function useVaultEthApr({ asset, poolId, type }: VaultDynamicProps) {
-  const isToken = useIsTokenCompounder(type)
+  const isToken = useIsTokenVault(type)
   // Preferred: API request
   const apiQuery = useApiVaultDynamic({ poolId, type })
 

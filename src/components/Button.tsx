@@ -1,4 +1,3 @@
-import clsx from "clsx"
 import Link, { LinkProps } from "next/link"
 import {
   ButtonHTMLAttributes,
@@ -63,7 +62,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         <span
-          className={clsx(
+          className={clsxm(
             "col-start-1 row-start-1 overflow-hidden text-ellipsis whitespace-nowrap",
             { "opacity-25": isLoading }
           )}

@@ -1,7 +1,8 @@
 import { Address } from "wagmi"
 
 import { VaultType } from "@/lib/types"
-import { useFallbackReads } from "@/hooks/lib/useFallbackRequest"
+import { useApiConcentratorVault } from "@/hooks/lib/api/useApiConcentratorVault"
+import { useFallbackRead } from "@/hooks/lib/useFallbackRequest"
 import { useRegistryContract } from "@/hooks/lib/useRegistryContract"
 
 export function useConcentratorVault({
@@ -13,40 +14,36 @@ export function useConcentratorVault({
   vaultAssetAddress?: Address
   vaultType?: VaultType
 }) {
-  // TODO: Preferred: API request
+  const apiQuery = useApiConcentratorVault({
+    concentratorTargetAsset,
+    vaultAssetAddress,
+  })
 
   // Fallback: contract requests
-  const registryContract = useRegistryContract()
-  const fallbackRequest = useFallbackReads(
+  const fallbackRequest = useFallbackRead(
     {
-      contracts: [
-        {
-          ...registryContract,
-          functionName: "getConcentrator",
-          args: [
-            vaultType === "curve",
-            concentratorTargetAsset ?? "0x",
-            vaultAssetAddress ?? "0x",
-          ],
-        },
-        {
-          ...registryContract,
-          functionName: "getConcentratorTargetVault",
-          args: [
-            vaultType === "curve",
-            concentratorTargetAsset ?? "0x",
-            vaultAssetAddress ?? "0x",
-          ],
-        },
+      ...useRegistryContract(),
+      functionName: "getConcentrator",
+      enabled: apiQuery.isError,
+      args: [
+        vaultType === "curve",
+        concentratorTargetAsset ?? "0x",
+        vaultAssetAddress ?? "0x",
       ],
-      enabled: !!vaultType && !!concentratorTargetAsset && !!vaultAssetAddress,
       select: (data) => ({
-        ybTokenAddress: data[0],
-        rewardTokenAddress: data[1],
+        ybTokenAddress: data,
+        rewardTokenAddress: vaultAssetAddress ?? "0x",
       }),
     },
     []
   )
 
-  return fallbackRequest
+  if (apiQuery.isError) {
+    return {
+      ...fallbackRequest,
+      data: fallbackRequest.data,
+    }
+  }
+
+  return apiQuery
 }

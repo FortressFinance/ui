@@ -9,10 +9,10 @@ import { useVault } from "@/hooks"
 
 import { AssetLogo } from "@/components/Asset"
 import { ButtonLink } from "@/components/Button"
+import { CompounderVaultApy } from "@/components/Compounder/CompounderVaultApy"
 import { TableCell, TableRow } from "@/components/Table"
 import { GradientText } from "@/components/Typography"
 import {
-  VaultApy,
   VaultDepositForm,
   VaultName,
   VaultTvl,
@@ -26,11 +26,13 @@ import { FortIconChevronDownCircle } from "@/icons"
 export type VaultTableRowProps = VaultProps & {
   activeVault?: string | undefined
   setActiveVault?: Dispatch<SetStateAction<string | undefined>>
+  showEarningsColumn?: boolean
 }
 
 export const VaultRow: FC<VaultTableRowProps> = ({
   activeVault,
   setActiveVault,
+  showEarningsColumn = false,
   ...props
 }) => {
   const router = useRouter()
@@ -52,6 +54,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
         className="group lg:py-6 lg:first:rounded-t-none"
         onClick={toggleVaultOpen}
         disabled={isLoading}
+        showEarningsColumn={showEarningsColumn}
       >
         {/* Row of vault info */}
         <TableCell className="relative grid grid-cols-[max-content,auto,max-content] items-center gap-x-3 max-lg:-mx-3 max-lg:border-b max-lg:border-b-pink/30 max-lg:px-3 max-lg:pb-3.5 lg:pointer-events-none">
@@ -107,7 +110,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
 
         {/* Desktop: APY, TVL, Balance */}
         <TableCell className="pointer-events-none text-center max-lg:hidden">
-          <VaultApy {...props} />
+          <CompounderVaultApy {...props} />
         </TableCell>
         <TableCell className="pointer-events-none text-center max-lg:hidden">
           <VaultTvl {...props} />
@@ -181,7 +184,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
           <dl className="grid grid-cols-4 gap-x-3 text-center">
             <dt className="row-start-2 text-xs text-pink-100/60">APY</dt>
             <dd className="text-sm font-medium text-pink-100">
-              <VaultApy {...props} />
+              <CompounderVaultApy {...props} />
             </dd>
             <dt className="row-start-2 text-xs text-pink-100/60">TVL</dt>
             <dd className="text-sm font-medium text-pink-100">

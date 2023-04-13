@@ -2,9 +2,12 @@ import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
 import { Address } from "wagmi"
 
+import { formatPercentage, formatUsd } from "@/lib/helpers"
 import { FilterCategory } from "@/lib/types"
 import {
   useClientReady,
+  useConcentratorApy,
+  useConcentratorAum,
   useConcentratorClaim,
   useConcentratorPendingReward,
   useConcentratorTargetAssets,
@@ -54,7 +57,12 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
           <dl className="text-right">
             <dt className="text-sm">APY</dt>
             <dd className="font-semibold">
-              <GradientText>23.35%</GradientText>
+              <GradientText>
+                <ConcentratorRewardsApy
+                  concentratorTargetAsset={concentratorTargetAsset}
+                  filterCategory={filterCategory}
+                />
+              </GradientText>
             </dd>
           </dl>
         </div>
@@ -63,7 +71,10 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
         <dl className="grid grid-cols-[1fr,auto] gap-y-2">
           <dt className="text-xs font-medium text-white/80">AUM</dt>
           <dd className="text-right text-xs font-medium text-white/80">
-            $3,067,000
+            <ConcentratorRewardsAum
+              concentratorTargetAsset={concentratorTargetAsset}
+              filterCategory={filterCategory}
+            />
           </dd>
           <dt className="text-xs font-medium text-white/80">Balance</dt>
           <dd className="text-right text-xs font-medium text-white/80">
@@ -99,12 +110,93 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
   )
 }
 
+const ConcentratorRewardsAum: FC<ConcentratorRewardsProps> = ({
+  concentratorTargetAsset,
+  filterCategory,
+}) => {
+  const isReady = useClientReady()
+  const {
+    data: concentratorTargetAssets,
+    isLoading: concentratorTargetAssetsIsLoading,
+  } = useConcentratorTargetAssets()
+  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
+  const firstConcentrator = useFirstConcentrator({
+    concentratorsList,
+    concentratorTargetAsset,
+    filterCategory,
+  })
+  const concentrator = useConcentratorVault({
+    concentratorTargetAsset,
+    vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
+    vaultType: firstConcentrator?.vaultType,
+  })
+
+  const tvl = useConcentratorAum({
+    targetAsset: concentratorTargetAsset,
+    primaryAsset: firstConcentrator?.vaultAssetAddress ?? "0x",
+    ybToken: concentrator.data?.ybTokenAddress ?? "0x",
+    type: firstConcentrator?.vaultType ?? "balancer",
+  })
+
+  return (
+    <Skeleton
+      isLoading={
+        !isReady ||
+        concentratorTargetAssetsIsLoading ||
+        concentratorsList.isLoading ||
+        concentrator.isLoading ||
+        tvl.isLoading
+      }
+    >
+      {formatUsd({ abbreviate: true, amount: tvl.data })}
+    </Skeleton>
+  )
+}
+
+const ConcentratorRewardsApy: FC<ConcentratorRewardsProps> = ({
+  concentratorTargetAsset,
+  filterCategory,
+}) => {
+  const isReady = useClientReady()
+  const {
+    data: concentratorTargetAssets,
+    isLoading: concentratorTargetAssetsIsLoading,
+  } = useConcentratorTargetAssets()
+  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
+  const firstConcentrator = useFirstConcentrator({
+    concentratorsList,
+    concentratorTargetAsset,
+    filterCategory,
+  })
+  const totalApy = useConcentratorApy({
+    targetAsset: concentratorTargetAsset,
+    primaryAsset: firstConcentrator?.vaultAssetAddress ?? "0x",
+    type: firstConcentrator?.vaultType ?? "balancer",
+  })
+
+  return (
+    <Skeleton
+      isLoading={
+        !isReady ||
+        concentratorTargetAssetsIsLoading ||
+        concentratorsList.isLoading ||
+        totalApy.isLoading
+      }
+    >
+      {formatPercentage(totalApy.data)}
+    </Skeleton>
+  )
+}
+
 const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
   concentratorTargetAsset,
   filterCategory,
 }) => {
   const isReady = useClientReady()
-  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const {
+    data: concentratorTargetAssets,
+    isLoading: concentratorTargetAssetsIsLoading,
+  } = useConcentratorTargetAssets()
   const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
@@ -129,7 +221,7 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
   return (
     <Skeleton
       isLoading={
-        concentratorTargetAssets.isLoading ||
+        concentratorTargetAssetsIsLoading ||
         concentratorsList.isLoading ||
         concentrator.isLoading ||
         rewardsBalance.isLoading ||
@@ -147,7 +239,10 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
   filterCategory,
 }) => {
   const isReady = useClientReady()
-  const concentratorTargetAssets = useConcentratorTargetAssets()
+  const {
+    data: concentratorTargetAssets,
+    isLoading: concentratorTargetAssetsIsLoading,
+  } = useConcentratorTargetAssets()
   const concentratorsList = useListConcentrators({ concentratorTargetAssets })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
@@ -170,7 +265,7 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
       className="mt-4 w-full py-2"
       disabled={rewardsBalance.data?.eq(0) || !isReady}
       isLoading={
-        concentratorTargetAssets.isLoading ||
+        concentratorTargetAssetsIsLoading ||
         concentratorsList.isLoading ||
         concentrator.isLoading ||
         rewardsBalance.isLoading ||

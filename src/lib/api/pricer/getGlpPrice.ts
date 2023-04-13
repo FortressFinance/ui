@@ -41,6 +41,7 @@ export async function getGlpPrice() {
       }
     }
   `
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = await request<any>(gmxGraphUrl, graphqlQuery)
   let aum = 0

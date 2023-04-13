@@ -180,11 +180,12 @@ export async function getBalancerTotalAprFallback(
     aprTokens += apr
   })
 
-  const BalYearlyRewards = (Number(rewardRates["BAL"]) / 1e18) * 86_400 * 365
+  const BalYearlyRewards =
+    (Number(rewardRates["BAL"] ?? 0) / 1e18) * 86_400 * 365
   const AuraRewardYearly = calculateAuraMintAmount(auraMint, BalYearlyRewards)
   const AuraRewardAnnualUsd =
     AuraRewardYearly * (await getLlamaPrice({ asset: auraTokenAddress }))
-  const aprAura = AuraRewardAnnualUsd / tvl
+  const aprAura = tvl === 0 ? 0 : AuraRewardAnnualUsd / tvl
 
   const aprTotal =
     aprTokens + aprAura + (swapFee ?? 0) + (extraTokenAwards ?? 0)

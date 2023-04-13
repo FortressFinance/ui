@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { FC, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import { BiErrorCircle } from "react-icons/bi"
 import { Address } from "wagmi"
 
@@ -13,7 +13,6 @@ export type AssetLogoProps = {
   className?: string
   tokenAddress?: Address
 }
-
 const TOKEN_LOGOS_API_URL =
   "https://raw.githubusercontent.com/FortressFinance/assets/master/blockchains"
 
@@ -26,6 +25,12 @@ const LOGOS_NETWORK_NAME: Record<string, string> = {
 
 export const AssetLogo: FC<AssetLogoProps> = ({ className, tokenAddress }) => {
   const [isError, setIsError] = useState(false)
+
+  useEffect(() => {
+    if (isError) {
+      setIsError(tokenAddress === "0x" || tokenAddress === undefined)
+    }
+  }, [isError, tokenAddress])
 
   const chainId = useActiveChainId()
   const [supportedChain] = enabledNetworks.chains.filter(

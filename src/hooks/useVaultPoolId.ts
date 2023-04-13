@@ -8,10 +8,10 @@ import { VaultProps } from "@/lib/types"
 import { useApiCompounderVaults } from "@/hooks/lib/api/useApiCompounderVaults"
 import { useApiTokenVaults } from "@/hooks/lib/api/useApiTokenVaults"
 import { useListCompounders } from "@/hooks/useListCompounders"
-import { useIsTokenCompounder } from "@/hooks/useVaultTypes"
+import { useIsTokenVault } from "@/hooks/useVaultTypes"
 
 export function useVaultPoolId({ asset, type }: VaultProps) {
-  const isToken = useIsTokenCompounder(type)
+  const isToken = useIsTokenVault(type)
 
   // Preferred: API request
   const apiCompounderQuery = useApiCompounderVaults({ type })
