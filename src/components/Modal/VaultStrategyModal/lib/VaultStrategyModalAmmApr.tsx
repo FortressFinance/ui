@@ -1,6 +1,6 @@
 import { FC } from "react"
 
-import { VaultProps } from "@/lib/types"
+import { CompounderVaultProps } from "@/lib/types"
 import {
   useVaultApy,
   useVaultBaseApr,
@@ -13,7 +13,7 @@ import {
 
 import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalDefinitionList"
 
-export const VaultStrategyModalAmmApr: FC<VaultProps> = (props) => {
+export const VaultStrategyModalAmmApr: FC<CompounderVaultProps> = (props) => {
   const { data: poolId, ...poolIdQuery } = useVaultPoolId(props)
   const totalApy = useVaultApy({ ...props, poolId })
   const totalApr = useVaultTotalApr({ ...props, poolId })

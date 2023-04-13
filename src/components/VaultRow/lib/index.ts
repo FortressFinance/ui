@@ -1,3 +1,4 @@
+export * from "./VaultApy"
 export * from "./VaultDepositForm"
 export * from "./VaultName"
 export * from "./VaultTable"

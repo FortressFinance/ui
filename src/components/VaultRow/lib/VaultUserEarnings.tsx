@@ -2,12 +2,12 @@ import { FC } from "react"
 import { useAccount } from "wagmi"
 
 import { formatCurrencyUnits, formatUsd } from "@/lib/helpers/formatCurrency"
-import { VaultProps } from "@/lib/types"
+import { CompounderVaultProps } from "@/lib/types"
 import { useTokenOrNative, useVaultPoolId, useVaultUserEarnings } from "@/hooks"
 
 import Skeleton from "@/components/Skeleton"
 
-export const VaultUserEarnings: FC<VaultProps> = (props) => {
+export const VaultUserEarnings: FC<CompounderVaultProps> = (props) => {
   const poolId = useVaultPoolId(props)
   const earnings = useVaultUserEarnings({
     poolId: poolId.data,

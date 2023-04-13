@@ -1,19 +1,29 @@
 import { FC } from "react"
-import { Address } from "wagmi"
 
-import { useVault } from "@/hooks"
+import { CompounderVaultProps, ConcentratorVaultProps } from "@/lib/types"
+import { useIsCompounderProduct } from "@/hooks/useVaultProduct"
 
-import Skeleton from "@/components/Skeleton"
+import { CompounderVaultName } from "@/components/Compounder"
+import { ConcentratorVaultName } from "@/components/Concentrator"
+import { VaultRowPropsWithProduct } from "@/components/VaultRow/VaultRow"
 
-export const VaultName: FC<{
-  asset: Address
-  vaultAddress: Address
-}> = (props) => {
-  const vault = useVault(props)
+export const VaultName: FC<VaultRowPropsWithProduct> = ({
+  productType,
+  ...props
+}) => {
+  const isCompounderProduct = useIsCompounderProduct(
+    productType ?? "compounder"
+  )
+  const compounderProps = props as CompounderVaultProps
+  const concentratorProps = props as ConcentratorVaultProps
 
   return (
-    <Skeleton isLoading={vault.isLoading} loadingText="Loading vault">
-      {vault.data?.name}
-    </Skeleton>
+    <>
+      {isCompounderProduct ? (
+        <CompounderVaultName {...compounderProps} />
+      ) : (
+        <ConcentratorVaultName {...concentratorProps} />
+      )}
+    </>
   )
 }

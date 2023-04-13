@@ -4,7 +4,7 @@ import {
   findApiCompounderVaultForAsset,
   findApiTokenVaultForAsset,
 } from "@/lib/findApiVaultForAsset"
-import { VaultProps } from "@/lib/types"
+import { CompounderVaultProps } from "@/lib/types"
 import { useApiCompounderVaults } from "@/hooks/lib/api/useApiCompounderVaults"
 import { useApiTokenVaults } from "@/hooks/lib/api/useApiTokenVaults"
 import { useFallbackRead } from "@/hooks/lib/useFallbackRequest"
@@ -13,7 +13,11 @@ import { useVaultContract } from "@/hooks/lib/useVaultContract"
 // TODO: Implement full fees support
 const HARDCODED_FEES = { depositFee: "0", managementFee: "0" }
 
-export function useVaultFees({ asset, type, vaultAddress }: VaultProps) {
+export function useVaultFees({
+  asset,
+  type,
+  vaultAddress,
+}: CompounderVaultProps) {
   // Preferred: API request
   const apiCompounderFees = useApiCompounderVaultFees({ asset, type })
   const apiTokenCompounderFees = useApiTokenCompounderVaultFees({ asset, type })
@@ -48,7 +52,7 @@ export function useVaultFees({ asset, type, vaultAddress }: VaultProps) {
 function useApiCompounderVaultFees({
   asset,
   type,
-}: Pick<VaultProps, "asset" | "type">) {
+}: Pick<CompounderVaultProps, "asset" | "type">) {
   const apiCompounderVault = useApiCompounderVaults({ type })
   const matchedVault = findApiCompounderVaultForAsset(
     apiCompounderVault.data,
@@ -71,7 +75,7 @@ function useApiCompounderVaultFees({
 function useApiTokenCompounderVaultFees({
   asset,
   type,
-}: Pick<VaultProps, "asset" | "type">) {
+}: Pick<CompounderVaultProps, "asset" | "type">) {
   const apiTokenVault = useApiTokenVaults({ type })
   const matchedVault = findApiTokenVaultForAsset(apiTokenVault.data, asset)
   return {

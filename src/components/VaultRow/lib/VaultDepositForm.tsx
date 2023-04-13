@@ -15,7 +15,7 @@ import {
 import { fortLog } from "@/lib/fortLog"
 import { parseCurrencyUnits } from "@/lib/helpers"
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
-import { VaultProps } from "@/lib/types"
+import { CompounderVaultProps } from "@/lib/types"
 import {
   useActiveChainId,
   useInvalidateHoldingsVaults,
@@ -37,7 +37,7 @@ import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
 import { useGlobalStore } from "@/store"
 
-export const VaultDepositForm: FC<VaultProps> = (props) => {
+export const VaultDepositForm: FC<CompounderVaultProps> = (props) => {
   const [showConfirmDepositModal, setShowConfirmDepositModal] = useState(false)
   const [showInvalidMinAmountModal, setShowInvalidMinAmountModal] =
     useState(false)

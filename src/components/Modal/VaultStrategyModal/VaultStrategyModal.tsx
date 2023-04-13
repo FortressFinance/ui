@@ -1,10 +1,11 @@
+import * as Dialog from "@radix-ui/react-dialog"
 import Link from "next/link"
 import { FC, MouseEventHandler } from "react"
 import { BiInfoCircle } from "react-icons/bi"
 import { useAccount } from "wagmi"
 
 import { formatPercentage } from "@/lib/helpers/formatPercentage"
-import { VaultProps } from "@/lib/types"
+import { CompounderVaultProps } from "@/lib/types"
 import { useIsTokenVault, useTokenOrNative, useVaultFees } from "@/hooks"
 
 import { ModalBaseProps } from "@/components/Modal/lib/ModalBase"
@@ -25,7 +26,7 @@ import {
 
 import strategyText from "@/constant/strategyText"
 
-export const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
+export const VaultStrategyModal: FC<CompounderVaultProps & ModalBaseProps> = ({
   isOpen,
   onClose,
   ...vaultProps
@@ -76,10 +77,10 @@ export const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
                 </Link>
               </Tooltip>
             </div>
-            <button className="h-6 w-6 p-[1px]" onClick={onClose}>
+            <Dialog.Close className="h-6 w-6 p-[1px]">
               <FortIconClose className="h-full w-full fill-white" />
               <span className="sr-only">Close</span>
-            </button>
+            </Dialog.Close>
           </PurpleModalHeader>
 
           <PurpleModalContent className="grid grid-cols-1 divide-pink-800 p-0 md:grid-cols-[3fr,2fr] md:divide-x md:p-0 lg:grid-cols-[2fr,1fr]">

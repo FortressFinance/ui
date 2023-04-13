@@ -1,4 +1,4 @@
-import { Dialog } from "@headlessui/react"
+import * as Dialog from "@radix-ui/react-dialog"
 import { FC, useEffect, useState } from "react"
 import { Address } from "wagmi"
 
@@ -63,13 +63,13 @@ export const ConfirmTransactionModal: FC<ConfirmTransactionModalProps> = ({
   return (
     <PurpleModal className="max-w-sm" {...modalProps}>
       <PurpleModalHeader className="flex justify-between space-x-4">
-        <Dialog.Title as="h1" className="text-xl">
+        <Dialog.Title className="text-xl">
           {outputAmountMin ? `Confirm ${type}` : `Unable to ${type}`}
         </Dialog.Title>
-        <button onClick={modalProps.onClose} tabIndex={-1}>
+        <Dialog.Close>
           <FortIconCloseCircle className="h-7 w-7" />
           <span className="sr-only">Close</span>
-        </button>
+        </Dialog.Close>
       </PurpleModalHeader>
 
       <PurpleModalContent className="grid grid-cols-1 space-y-4 divide-pink-800">

@@ -81,6 +81,10 @@ export const HoldingsRow: FC<HoldingsRowProps> = (props) => {
   return holdingsVaults.data?.vaults?.includes(
     vaultAddress.data.ybTokenAddress
   ) ? (
-    <VaultRow {...props} vaultAddress={vaultAddress.data.ybTokenAddress} />
+    <VaultRow
+      {...props}
+      vaultAddress={vaultAddress.data.ybTokenAddress}
+      showEarningsColumn
+    />
   ) : null
 }

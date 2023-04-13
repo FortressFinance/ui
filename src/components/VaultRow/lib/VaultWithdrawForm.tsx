@@ -12,7 +12,7 @@ import {
 
 import { fortLog } from "@/lib/fortLog"
 import { parseCurrencyUnits } from "@/lib/helpers"
-import { VaultProps } from "@/lib/types"
+import { CompounderVaultProps } from "@/lib/types"
 import {
   useActiveChainId,
   useInvalidateHoldingsVaults,
@@ -34,7 +34,7 @@ import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
 import { useGlobalStore } from "@/store"
 
-export const VaultWithdrawForm: FC<VaultProps> = (props) => {
+export const VaultWithdrawForm: FC<CompounderVaultProps> = (props) => {
   const [showConfirmWithdrawModal, setShowConfirmWithdraw] = useState(false)
   const [showInvalidMinAmountModal, setShowInvalidMinAmountModal] =
     useState(false)

@@ -5,7 +5,7 @@ import { Address } from "wagmi"
 
 import { getGmxPriceData } from "@/lib/api/pricer/getGlpPrice"
 import { getLlamaPrice } from "@/lib/api/pricer/getLlamaPrice"
-import { VaultProps } from "@/lib/types"
+import { CompounderVaultProps } from "@/lib/types"
 
 import {
   auraBalTokenAddress,
@@ -22,7 +22,9 @@ import {
 // TODO: These should use types
 // await request<Response, Variables>(...)
 
-export async function getVaultAprFallback(asset: VaultProps["asset"]) {
+export async function getVaultAprFallback(
+  asset: CompounderVaultProps["asset"]
+) {
   const graphqlQuery = gql`
     query Pool($lpToken: String!) {
       pools(where: { lpToken: $lpToken }) {
@@ -164,7 +166,7 @@ async function getAuraBalRewardData() {
 }
 
 export async function getBalancerTotalAprFallback(
-  asset: VaultProps["asset"],
+  asset: CompounderVaultProps["asset"],
   extraTokenAwards: number | undefined,
   swapFee: number | undefined,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -233,7 +235,9 @@ async function getTokenAPR(rewardRate: number, token: Address, tvl: number) {
   return tokenApr
 }
 
-export async function fetchApiAuraFinance(asset: VaultProps["asset"]) {
+export async function fetchApiAuraFinance(
+  asset: CompounderVaultProps["asset"]
+) {
   const resp = await axios.get(auraFinanceUrl)
   const pools = resp?.data?.pools
   const relevantAsset = pools.find((pool: { id: string }) => {
@@ -267,7 +271,7 @@ export async function getAuraMint() {
   return data?.global
 }
 
-async function getAuraRewardDataByAsset(asset: VaultProps["asset"]) {
+async function getAuraRewardDataByAsset(asset: CompounderVaultProps["asset"]) {
   const graphqlQuery = gql`
     query Pool($lpToken: Bytes!) {
       pools(where: { lpToken: $lpToken }) {

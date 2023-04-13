@@ -1,18 +1,27 @@
 import { FC } from "react"
 
-import { formatUsd } from "@/lib/helpers/formatCurrency"
-import { VaultProps } from "@/lib/types"
-import { useVaultPoolId, useVaultTvl } from "@/hooks"
+import { CompounderVaultProps, ConcentratorVaultProps } from "@/lib/types"
+import { useIsCompounderProduct } from "@/hooks/useVaultProduct"
 
-import Skeleton from "@/components/Skeleton"
+import { CompounderVaultTvl } from "@/components/Compounder"
+import { ConcentratorVaultTvl } from "@/components/Concentrator"
+import { VaultRowPropsWithProduct } from "@/components/VaultRow/VaultRow"
 
-export const VaultTvl: FC<VaultProps> = (props) => {
-  const poolId = useVaultPoolId(props)
-  const tvl = useVaultTvl({ ...props, poolId: poolId.data })
+export const VaultTvl: FC<VaultRowPropsWithProduct> = ({
+  productType = "compounder",
+  ...props
+}) => {
+  const isCompounderProduct = useIsCompounderProduct(productType)
+  const compounderProps = props as CompounderVaultProps
+  const concentratorProps = props as ConcentratorVaultProps
 
   return (
-    <Skeleton isLoading={poolId.isLoading || tvl.isLoading}>
-      {formatUsd({ abbreviate: true, amount: tvl.data })}
-    </Skeleton>
+    <>
+      {isCompounderProduct ? (
+        <CompounderVaultTvl {...compounderProps} />
+      ) : (
+        <ConcentratorVaultTvl {...concentratorProps} />
+      )}
+    </>
   )
 }

@@ -1,4 +1,4 @@
-import { Dialog } from "@headlessui/react"
+import * as Dialog from "@radix-ui/react-dialog"
 import { FC } from "react"
 
 import Button from "@/components/Button"
@@ -21,13 +21,11 @@ export const InvalidMinAmountModal: FC<InvalidMinAmountModalProps> = ({
   return (
     <PurpleModal className="max-w-sm" {...modalProps}>
       <PurpleModalHeader className="flex justify-between space-x-4">
-        <Dialog.Title as="h1" className="text-xl">
-          Unable to {type}
-        </Dialog.Title>
-        <button onClick={modalProps.onClose} tabIndex={-1}>
+        <Dialog.Title className="text-xl">Unable to {type}</Dialog.Title>
+        <Dialog.Close>
           <FortIconCloseCircle className="h-7 w-7" />
           <span className="sr-only">Close</span>
-        </button>
+        </Dialog.Close>
       </PurpleModalHeader>
 
       <PurpleModalContent className="grid grid-cols-1 space-y-4 divide-pink-800">

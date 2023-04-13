@@ -3,11 +3,11 @@ import { FC } from "react"
 import { CompounderVaultProps, ConcentratorVaultProps } from "@/lib/types"
 import { useIsCompounderProduct } from "@/hooks/useVaultProduct"
 
-import { CompounderVaultUserBalance } from "@/components/Compounder"
-import { ConcentratorVaultUserBalance } from "@/components/Concentrator"
+import { CompounderVaultApy } from "@/components/Compounder"
+import { ConcentratorVaultApy } from "@/components/Concentrator"
 import { VaultRowPropsWithProduct } from "@/components/VaultRow"
 
-export const VaultUserBalance: FC<VaultRowPropsWithProduct> = ({
+export const VaultApy: FC<VaultRowPropsWithProduct> = ({
   productType = "compounder",
   ...props
 }) => {
@@ -18,9 +18,9 @@ export const VaultUserBalance: FC<VaultRowPropsWithProduct> = ({
   return (
     <>
       {isCompounderProduct ? (
-        <CompounderVaultUserBalance {...compounderProps} />
+        <CompounderVaultApy {...compounderProps} />
       ) : (
-        <ConcentratorVaultUserBalance {...concentratorProps} />
+        <ConcentratorVaultApy {...concentratorProps} />
       )}
     </>
   )

@@ -1,56 +1,117 @@
-import { Disclosure, Tab, Transition } from "@headlessui/react"
+import * as Accordion from "@radix-ui/react-accordion"
+import * as Tabs from "@radix-ui/react-tabs"
 import { useRouter } from "next/router"
-import { FC, Fragment, MouseEventHandler, useState } from "react"
+import { FC, MouseEventHandler } from "react"
 
 import clsxm from "@/lib/clsxm"
-import { VaultProps } from "@/lib/types"
+import { resolvedRoute } from "@/lib/helpers"
+import {
+  CompounderVaultProps,
+  ConcentratorVaultProps,
+  ProductType,
+} from "@/lib/types"
 import { useVault } from "@/hooks"
+import { useIsCompounderProduct } from "@/hooks/useVaultProduct"
 
 import { AssetLogo } from "@/components/Asset"
 import { ButtonLink } from "@/components/Button"
-import { CompounderVaultApy } from "@/components/Compounder/CompounderVaultApy"
 import { TableCell, TableRow } from "@/components/Table"
 import { GradientText } from "@/components/Typography"
 import {
-  VaultDepositForm,
+  VaultApy,
   VaultName,
   VaultTvl,
   VaultUserBalance,
   VaultUserEarnings,
-  VaultWithdrawForm,
 } from "@/components/VaultRow/lib"
 
 import { FortIconChevronDownCircle } from "@/icons"
 
-export const VaultRow: FC<VaultProps> = (props) => {
-  const [isVaultOpen, setIsVaultOpen] = useState(false)
+type VaultRowProps = CompounderVaultProps | ConcentratorVaultProps
+export type VaultRowPropsWithProduct = VaultRowProps & {
+  productType?: ProductType
+}
 
+export type VaultTableRowProps = VaultRowPropsWithProduct & {
+  activeVault?: string
+  setActiveVault?: (activeVault: string | undefined) => void
+  showEarningsColumn?: boolean
+}
+
+export const VaultRow: FC<VaultTableRowProps> = ({
+  activeVault,
+  setActiveVault,
+  showEarningsColumn = false,
+  ...props
+}) => {
+  const isCompounderProduct = useIsCompounderProduct(
+    props.productType ?? "compounder"
+  )
+  const compounderProps = props as CompounderVaultProps
+  const concentratorProps = props as ConcentratorVaultProps
   const router = useRouter()
-  const { isLoading } = useVault(props)
+  const { pathname, query } = router
+  const { isLoading } = useVault(
+    isCompounderProduct
+      ? compounderProps
+      : {
+          asset: concentratorProps.primaryAsset,
+          vaultAddress: concentratorProps.targetAsset,
+        }
+  )
 
-  const vaultStrategyUrl = `${router.asPath}?asset=${props.asset}&type=${props.type}&vaultAddress=${props.vaultAddress}`
+  const vaultStrategyLink = resolvedRoute(
+    pathname,
+    isCompounderProduct
+      ? {
+          category: query.category,
+          asset: compounderProps.asset,
+          type: compounderProps.type,
+          vaultAddress: compounderProps.vaultAddress,
+        }
+      : {
+          category: query.category,
+          primaryAsset: concentratorProps.primaryAsset,
+          type: concentratorProps.type,
+          targetAsset: concentratorProps.targetAsset,
+        }
+  )
 
   const toggleVaultOpen: MouseEventHandler<
     HTMLButtonElement | HTMLDivElement
   > = (e) => {
     e.preventDefault()
     e.stopPropagation()
-    setIsVaultOpen((v) => !v)
+    if (isCompounderProduct) {
+      setActiveVault?.(
+        activeVault === compounderProps.vaultAddress
+          ? undefined
+          : compounderProps.vaultAddress
+      )
+    } else {
+      setActiveVault?.(
+        activeVault === concentratorProps.targetAsset
+          ? undefined
+          : concentratorProps.targetAsset
+      )
+    }
   }
 
+  const vaultAddress = isCompounderProduct
+    ? compounderProps.vaultAddress
+    : concentratorProps.targetAsset
+
   return (
-    <Disclosure as={Fragment} key={props.asset}>
+    <Accordion.Item value={vaultAddress} asChild>
       <TableRow
-        className="lg:py-6 lg:first:rounded-t-none"
+        className="group lg:py-6 lg:first:rounded-t-none"
         onClick={toggleVaultOpen}
         disabled={isLoading}
+        showEarningsColumn={showEarningsColumn}
       >
         {/* Row of vault info */}
         <TableCell className="relative grid grid-cols-[max-content,auto,max-content] items-center gap-x-3 max-lg:-mx-3 max-lg:border-b max-lg:border-b-pink/30 max-lg:px-3 max-lg:pb-3.5 lg:pointer-events-none">
-          <AssetLogo
-            className="flex h-12 w-12"
-            tokenAddress={props.vaultAddress}
-          />
+          <AssetLogo className="flex h-12 w-12" tokenAddress={vaultAddress} />
 
           <span className="line-clamp-2 max-lg:mr-8">
             <VaultName {...props} />
@@ -58,7 +119,7 @@ export const VaultRow: FC<VaultProps> = (props) => {
 
           {/* Large: strategy button */}
           <ButtonLink
-            href={vaultStrategyUrl}
+            {...vaultStrategyLink}
             className="focus-visible-outline-1 pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 hover:-translate-y-0.5 hover:contrast-150 hover:after:opacity-100 focus:outline-none focus-visible:-translate-y-0.5 focus-visible:outline focus-visible:outline-orange focus-visible:contrast-150 focus-visible:after:opacity-100 active:translate-y-0 max-lg:hidden"
             size="base"
             variant="outline"
@@ -68,7 +129,7 @@ export const VaultRow: FC<VaultProps> = (props) => {
 
           {/* Medium: strategy button */}
           <ButtonLink
-            href={vaultStrategyUrl}
+            {...vaultStrategyLink}
             className="focus-visible-outline-1 pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 focus:outline-none focus-visible:-translate-y-0.5 focus-visible:outline focus-visible:outline-orange focus-visible:contrast-150 focus-visible:after:opacity-100 active:translate-y-0 max-lg:hidden lg:hidden lg:enabled:hover:-translate-y-0.5 lg:enabled:hover:contrast-150 lg:enabled:hover:after:opacity-100"
             size="small"
             variant="outline"
@@ -77,31 +138,29 @@ export const VaultRow: FC<VaultProps> = (props) => {
           </ButtonLink>
 
           {/* Mobile: expand/collapse button */}
-          <button
-            className="group absolute inset-0 flex items-center justify-end focus:outline-none lg:hidden"
-            disabled={isLoading}
-            onClick={toggleVaultOpen}
-          >
-            <div
-              className={clsxm(
-                "group mb-3 mr-5 block h-6 w-6 rounded-sm transition-transform duration-200 group-focus-visible:outline-double",
-                {
-                  "cursor-wait": isLoading,
-                  "-rotate-180": isVaultOpen,
-                }
-              )}
+          <Accordion.Trigger asChild>
+            <button
+              className="group absolute inset-0 flex items-center justify-end focus:outline-none lg:hidden"
+              disabled={isLoading}
             >
-              <FortIconChevronDownCircle
-                className="h-full w-full fill-white"
-                aria-label="Open vault"
-              />
-            </div>
-          </button>
+              <div
+                className={clsxm(
+                  "group mb-3 mr-5 block h-6 w-6 rounded-sm transition-transform duration-200 group-focus-visible:outline-double group-ui-state-open:-rotate-180",
+                  { "cursor-wait": isLoading }
+                )}
+              >
+                <FortIconChevronDownCircle
+                  className="h-full w-full fill-white"
+                  aria-label="Open vault"
+                />
+              </div>
+            </button>
+          </Accordion.Trigger>
         </TableCell>
 
         {/* Desktop: APY, TVL, Balance */}
         <TableCell className="pointer-events-none text-center max-lg:hidden">
-          <CompounderVaultApy {...props} />
+          <VaultApy {...props} />
         </TableCell>
         <TableCell className="pointer-events-none text-center max-lg:hidden">
           <VaultTvl {...props} />
@@ -109,104 +168,75 @@ export const VaultRow: FC<VaultProps> = (props) => {
         <TableCell className="pointer-events-none text-center max-lg:hidden">
           <VaultUserBalance {...props} />
         </TableCell>
-        <TableCell className="pointer-events-none text-center max-lg:hidden">
-          <VaultUserEarnings {...props} />
-        </TableCell>
+        {isCompounderProduct && (
+          <TableCell className="pointer-events-none text-center max-lg:hidden">
+            <VaultUserEarnings {...compounderProps} />
+          </TableCell>
+        )}
 
         {/* Desktop: Action buttons */}
         <TableCell className="relative flex items-center max-lg:hidden">
-          <button
-            className="group absolute inset-0 flex items-center justify-end focus:outline-none"
-            disabled={isLoading}
-            onClick={toggleVaultOpen}
-          >
-            <div
-              className={clsxm(
-                "group z-[1] block h-5 w-5 rounded-sm transition-transform duration-200 group-focus-visible:outline-double",
-                {
-                  "cursor-wait": isLoading,
-                  "-rotate-180": isVaultOpen,
-                }
-              )}
+          <Accordion.Trigger asChild>
+            <button
+              className="group absolute inset-0 flex items-center justify-end focus:outline-none"
+              disabled={isLoading}
+              onClick={toggleVaultOpen}
             >
-              <FortIconChevronDownCircle
-                className="h-5 w-5 fill-white"
-                aria-label="Open vault"
-              />
-            </div>
-          </button>
+              <div
+                className={clsxm(
+                  "group z-[1] block h-5 w-5 rounded-sm transition-transform duration-200 group-focus-visible:outline-double group-ui-state-open:-rotate-180",
+                  { "cursor-wait": isLoading }
+                )}
+              >
+                <FortIconChevronDownCircle
+                  className="h-5 w-5 fill-white"
+                  aria-label="Open vault"
+                />
+              </div>
+            </button>
+          </Accordion.Trigger>
         </TableCell>
 
-        {/* Forms */}
-        <Transition
-          show={isVaultOpen}
-          className="col-span-full overflow-hidden max-lg:-mx-3"
-          enter="transition-all duration-200"
-          enterFrom="transform opacity-0 max-h-0"
-          enterTo="transform opacity-100 max-h-80"
-          leave="transition-all duration-200"
-          leaveFrom="transform opacity-100 max-h-80"
-          leaveTo="transform opacity-0 max-h-0"
-        >
-          <Disclosure.Panel static>
-            {/* Desktop: forms */}
-            <div className="mt-6 grid grid-cols-2 gap-4 max-lg:hidden">
-              <VaultDepositForm {...props} />
-              <VaultWithdrawForm {...props} />
-            </div>
+        <Accordion.Content className="col-span-full overflow-hidden ui-state-closed:animate-accordion-close ui-state-open:animate-accordion-open max-lg:-mx-3">
+          {/* Desktop: forms */}
+          <div className="mt-6 grid grid-cols-2 gap-4 max-lg:hidden">
+            {/* <VaultDepositForm {...props} />
+            <VaultWithdrawForm {...props} /> */}
+          </div>
 
-            {/* Mobile: forms */}
-            <div className="border-b border-b-pink/30 lg:hidden">
-              <Tab.Group>
-                <Tab.List
-                  as="div"
-                  className="divide-x divide-pink/30 border-b border-b-pink/30"
+          {/* Mobile: forms */}
+          <div className="border-b border-b-pink/30 lg:hidden">
+            <Tabs.Root defaultValue="deposit">
+              <Tabs.List className="divide-x divide-pink/30 border-b border-b-pink/30">
+                <Tabs.Trigger
+                  value="deposit"
+                  className="transition-color w-1/2 py-3.5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
                 >
-                  <Tab as={Fragment}>
-                    {({ selected }) => (
-                      <button
-                        className={clsxm(
-                          "transition-color w-1/2 py-3.5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear",
-                          { "bg-pink/10 text-orange-400": selected }
-                        )}
-                      >
-                        Deposit
-                      </button>
-                    )}
-                  </Tab>
-                  <Tab as={Fragment}>
-                    {({ selected }) => (
-                      <button
-                        className={clsxm(
-                          "transition-color w-1/2 py-3.5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear",
-                          { "bg-pink/10 text-orange-400": selected }
-                        )}
-                      >
-                        Withdraw
-                      </button>
-                    )}
-                  </Tab>
-                </Tab.List>
-
-                <Tab.Panels>
-                  <Tab.Panel>
-                    <VaultDepositForm {...props} />
-                  </Tab.Panel>
-                  <Tab.Panel>
-                    <VaultWithdrawForm {...props} />
-                  </Tab.Panel>
-                </Tab.Panels>
-              </Tab.Group>
-            </div>
-          </Disclosure.Panel>
-        </Transition>
+                  Deposit
+                </Tabs.Trigger>
+                <Tabs.Trigger
+                  value="withdraw"
+                  className="transition-color w-1/2 py-3.5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
+                >
+                  Withdraw
+                </Tabs.Trigger>
+              </Tabs.List>
+              <Tabs.Content value="deposit">
+                {/* <VaultDepositForm {...props} /> */}
+              </Tabs.Content>
+              <Tabs.Content value="withdraw">
+                {/* <VaultWithdrawForm {...props} /> */}
+              </Tabs.Content>
+            </Tabs.Root>
+          </div>
+        </Accordion.Content>
 
         {/* Mobile: APY, TVL, Balance */}
         <TableCell className="-mx-3 border-b border-b-pink/30 px-3 py-3 lg:hidden">
           <dl className="grid grid-cols-4 gap-x-3 text-center">
             <dt className="row-start-2 text-xs text-pink-100/60">APY</dt>
             <dd className="text-sm font-medium text-pink-100">
-              <CompounderVaultApy {...props} />
+              <VaultApy {...props} />
             </dd>
             <dt className="row-start-2 text-xs text-pink-100/60">TVL</dt>
             <dd className="text-sm font-medium text-pink-100">
@@ -216,17 +246,23 @@ export const VaultRow: FC<VaultProps> = (props) => {
             <dd className="text-sm font-medium text-pink-100">
               <VaultUserBalance {...props} />
             </dd>
-            <dt className="row-start-2 text-xs text-pink-100/60">Earnings</dt>
-            <dd className="text-sm font-medium text-pink-100">
-              <VaultUserEarnings {...props} />
-            </dd>
+            {isCompounderProduct && (
+              <>
+                <dt className="row-start-2 text-xs text-pink-100/60">
+                  Earnings
+                </dt>
+                <dd className="text-sm font-medium text-pink-100">
+                  <VaultUserEarnings {...compounderProps} />
+                </dd>
+              </>
+            )}
           </dl>
         </TableCell>
 
         {/* Mobile: Action buttons */}
         <TableCell className="mb-0.5 pt-3.5 lg:hidden">
           <ButtonLink
-            href={vaultStrategyUrl}
+            {...vaultStrategyLink}
             className="w-full text-center"
             variant="outline"
             size="small"
@@ -235,6 +271,6 @@ export const VaultRow: FC<VaultProps> = (props) => {
           </ButtonLink>
         </TableCell>
       </TableRow>
-    </Disclosure>
+    </Accordion.Item>
   )
 }

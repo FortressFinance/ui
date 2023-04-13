@@ -2,7 +2,7 @@ import { FC } from "react"
 import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
-import { FilterCategory } from "@/lib/types"
+import { ConcentratorVaultProps, FilterCategory } from "@/lib/types"
 import { enabledNetworks } from "@/lib/wagmi"
 import {
   useActiveChainId,
@@ -13,8 +13,8 @@ import {
 } from "@/hooks"
 
 import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"
-import { ConcentratorVaultRow } from "@/components/Concentrator/ConcentratorVaultRow"
 import { TableEmpty, TableLoading } from "@/components/Table"
+import { VaultRow } from "@/components/VaultRow"
 import { VaultTable } from "@/components/VaultRow/lib"
 
 type ConcentratorVaultTableProps = {
@@ -51,7 +51,7 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
   const supportedChain = availableChains?.[0]
 
   return (
-    <VaultTable label={`${label} Vaults`} showEarningsColumn={false}>
+    <VaultTable label={`${label} Vaults`}>
       {showLoadingState ? (
         <TableLoading>Loading concentrators...</TableLoading>
       ) : !supportedChain ? (
@@ -79,5 +79,17 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
         )
       )}
     </VaultTable>
+  )
+}
+
+const ConcentratorVaultRow: FC<ConcentratorVaultProps> = (props) => {
+  return (
+    <VaultRow
+      {...props}
+      primaryAsset={props.primaryAsset}
+      type={props.type}
+      targetAsset={props.targetAsset}
+      productType="concentrator"
+    />
   )
 }
