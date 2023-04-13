@@ -3,7 +3,7 @@ import { NextPage } from "next"
 import { useRouter } from "next/router"
 import { Address } from "wagmi"
 
-import { appLink } from "@/lib/helpers"
+import { shallowRoute } from "@/lib/helpers"
 import { VaultType } from "@/lib/types"
 
 import { CompounderVaultTable } from "@/components/Compounder"
@@ -15,7 +15,10 @@ import { TabButton, TabListGroup } from "@/components/Tabs"
 
 const Yield: NextPage = () => {
   const router = useRouter()
-  const { asset, type, vaultAddress } = router.query
+  const {
+    pathname,
+    query: { asset, category, type, vaultAddress },
+  } = router
 
   return (
     <Layout>
@@ -25,7 +28,15 @@ const Yield: NextPage = () => {
       />
 
       <main>
-        <Tabs.Root defaultValue="featured">
+        <Tabs.Root
+          value={
+            category && typeof category === "string" ? category : "featured"
+          }
+          onValueChange={(category) => {
+            const link = shallowRoute(pathname, "/yield", { category })
+            router.push(link.href, link.as, { shallow: true })
+          }}
+        >
           <Tabs.List className="mb-4 lg:mb-6">
             <div className="grid grid-rows-[auto,auto] items-center gap-4 md:grid-cols-[min-content,auto] xl:gap-6">
               <h1 className="font-display text-4xl md:col-span-full">
@@ -83,7 +94,13 @@ const Yield: NextPage = () => {
 
       <VaultStrategyModal
         isOpen={!!router.query.asset}
-        onClose={() => router.push(appLink("/yield"))}
+        onClose={() => {
+          const link = shallowRoute(pathname, "/yield", {
+            category,
+            vaultAddress,
+          })
+          router.push(link.href, link.as, { shallow: true })
+        }}
         asset={asset as Address}
         type={type as VaultType}
         vaultAddress={vaultAddress as Address}

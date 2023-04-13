@@ -1,12 +1,14 @@
 import * as Accordion from "@radix-ui/react-accordion"
+import { useRouter } from "next/router"
 import {
   Children,
   cloneElement,
   FC,
   isValidElement,
   PropsWithChildren,
-  useState,
 } from "react"
+
+import { shallowRoute } from "@/lib/helpers"
 
 import { Table, TableBody, TableHeader, TableRow } from "@/components/Table"
 import { TxSettingsPopover } from "@/components/TxSettingsPopover"
@@ -22,7 +24,22 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
   label,
   showEarningsColumn,
 }) => {
-  const [activeVault, setActiveVault] = useState<string | undefined>()
+  const router = useRouter()
+  const {
+    pathname,
+    query: { category, vaultAddress },
+  } = router
+
+  const activeVault =
+    vaultAddress && typeof vaultAddress === "string" ? vaultAddress : undefined
+  const setActiveVault = (vaultAddress?: string) => {
+    const link = shallowRoute(pathname, "/yield", {
+      category,
+      vaultAddress,
+    })
+    // Expanding and collapsing vaults should not be written to browser history
+    router.replace(link.href, link.as, { shallow: true })
+  }
 
   return (
     <Table>

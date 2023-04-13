@@ -1,9 +1,10 @@
 import * as Accordion from "@radix-ui/react-accordion"
 import * as Tabs from "@radix-ui/react-tabs"
 import { useRouter } from "next/router"
-import { Dispatch, FC, MouseEventHandler, SetStateAction } from "react"
+import { FC, MouseEventHandler } from "react"
 
 import clsxm from "@/lib/clsxm"
+import { shallowRoute } from "@/lib/helpers"
 import { VaultProps } from "@/lib/types"
 import { useVault } from "@/hooks"
 
@@ -24,8 +25,8 @@ import {
 import { FortIconChevronDownCircle } from "@/icons"
 
 export type VaultTableRowProps = VaultProps & {
-  activeVault?: string | undefined
-  setActiveVault?: Dispatch<SetStateAction<string | undefined>>
+  activeVault?: string
+  setActiveVault?: (activeVault: string | undefined) => void
   showEarningsColumn?: boolean
 }
 
@@ -36,20 +37,28 @@ export const VaultRow: FC<VaultTableRowProps> = ({
   ...props
 }) => {
   const router = useRouter()
+  const { pathname, query } = router
   const { isLoading } = useVault(props)
 
-  const vaultStrategyUrl = `${router.asPath}?asset=${props.asset}&type=${props.type}&vaultAddress=${props.vaultAddress}`
+  const vaultStrategyLink = shallowRoute(pathname, "/yield", {
+    category: query.category,
+    asset: props.asset,
+    type: props.type,
+    vaultAddress: props.vaultAddress,
+  })
 
   const toggleVaultOpen: MouseEventHandler<
     HTMLButtonElement | HTMLDivElement
   > = (e) => {
     e.preventDefault()
     e.stopPropagation()
-    setActiveVault?.(activeVault === props.asset ? undefined : props.asset)
+    setActiveVault?.(
+      activeVault === props.vaultAddress ? undefined : props.vaultAddress
+    )
   }
 
   return (
-    <Accordion.Item value={props.asset} asChild>
+    <Accordion.Item value={props.vaultAddress} asChild>
       <TableRow
         className="group lg:py-6 lg:first:rounded-t-none"
         onClick={toggleVaultOpen}
@@ -69,7 +78,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
 
           {/* Large: strategy button */}
           <ButtonLink
-            href={vaultStrategyUrl}
+            {...vaultStrategyLink}
             className="focus-visible-outline-1 pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 hover:-translate-y-0.5 hover:contrast-150 hover:after:opacity-100 focus:outline-none focus-visible:-translate-y-0.5 focus-visible:outline focus-visible:outline-orange focus-visible:contrast-150 focus-visible:after:opacity-100 active:translate-y-0 max-lg:hidden"
             size="base"
             variant="outline"
@@ -79,7 +88,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
 
           {/* Medium: strategy button */}
           <ButtonLink
-            href={vaultStrategyUrl}
+            {...vaultStrategyLink}
             className="focus-visible-outline-1 pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 focus:outline-none focus-visible:-translate-y-0.5 focus-visible:outline focus-visible:outline-orange focus-visible:contrast-150 focus-visible:after:opacity-100 active:translate-y-0 max-lg:hidden lg:hidden lg:enabled:hover:-translate-y-0.5 lg:enabled:hover:contrast-150 lg:enabled:hover:after:opacity-100"
             size="small"
             variant="outline"
@@ -204,7 +213,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
         {/* Mobile: Action buttons */}
         <TableCell className="mb-0.5 pt-3.5 lg:hidden">
           <ButtonLink
-            href={vaultStrategyUrl}
+            {...vaultStrategyLink}
             className="w-full text-center"
             variant="outline"
             size="small"
