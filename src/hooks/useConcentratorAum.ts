@@ -22,7 +22,6 @@ export function useConcentratorAum({
   const { data: concentratorId } = useConcentratorId({
     targetAsset,
     primaryAsset,
-    type,
   })
 
   const apiQuery = useApiConcentratorDynamic({

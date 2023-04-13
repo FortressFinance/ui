@@ -31,7 +31,6 @@ export function useConcentratorApy({
     useConcentratorId({
       targetAsset,
       primaryAsset,
-      type,
     })
 
   const apiQuery = useApiConcentratorDynamic({
