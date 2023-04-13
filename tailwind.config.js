@@ -52,8 +52,5 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    require("@headlessui/tailwindcss"),
-    require("@tailwindcss/line-clamp"),
-  ],
+  plugins: [require("@headlessui/tailwindcss")],
 }
