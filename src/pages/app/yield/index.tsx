@@ -3,7 +3,7 @@ import { NextPage } from "next"
 import { useRouter } from "next/router"
 import { Address } from "wagmi"
 
-import { shallowRoute } from "@/lib/helpers"
+import { resolvedRoute } from "@/lib/helpers"
 import { VaultType } from "@/lib/types"
 
 import { CompounderVaultTable } from "@/components/Compounder"
@@ -33,7 +33,7 @@ const Yield: NextPage = () => {
             category && typeof category === "string" ? category : "featured"
           }
           onValueChange={(category) => {
-            const link = shallowRoute(pathname, { category })
+            const link = resolvedRoute(pathname, { category })
             router.push(link.href, link.as, { shallow: true })
           }}
         >
@@ -95,10 +95,7 @@ const Yield: NextPage = () => {
       <VaultStrategyModal
         isOpen={!!router.query.asset}
         onClose={() => {
-          const link = shallowRoute(pathname, {
-            category,
-            vaultAddress,
-          })
+          const link = resolvedRoute(pathname, { category, vaultAddress })
           router.push(link.href, link.as, { shallow: true })
         }}
         asset={asset as Address}

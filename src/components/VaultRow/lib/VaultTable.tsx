@@ -8,7 +8,7 @@ import {
   PropsWithChildren,
 } from "react"
 
-import { shallowRoute } from "@/lib/helpers"
+import { resolvedRoute } from "@/lib/helpers"
 
 import { Table, TableBody, TableHeader, TableRow } from "@/components/Table"
 import { TxSettingsPopover } from "@/components/TxSettingsPopover"
@@ -33,11 +33,9 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
   const activeVault =
     vaultAddress && typeof vaultAddress === "string" ? vaultAddress : undefined
   const setActiveVault = (vaultAddress?: string) => {
-    const link = shallowRoute(pathname, {
-      category,
-      vaultAddress,
-    })
-    // Expanding and collapsing vaults should not be written to browser history
+    const link = resolvedRoute(pathname, { category, vaultAddress })
+    // Replace the current history entry instead of pushing a new one
+    // Expanding/collapse a vault should not create a new history entry
     router.replace(link.href, link.as, { shallow: true })
   }
 

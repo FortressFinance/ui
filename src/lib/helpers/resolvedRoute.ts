@@ -1,4 +1,6 @@
-// eslint-disable-next-line
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+// Removes undefined values from an object
 const minObject = (obj: Record<string, any>) => {
   const cloned = { ...obj }
   Object.keys(cloned).forEach(
@@ -7,10 +9,10 @@ const minObject = (obj: Record<string, any>) => {
   return cloned
 }
 
-export const shallowRoute = (
+// Returns a route object for use with Next.js Link or Router.push
+export const resolvedRoute = (
   pathname: string,
-  // eslint-disable-next-line
-  query: Record<string, any>
+  query: Record<string, any> = {}
 ) => {
   const newQuery = minObject(query)
   return {
@@ -19,15 +21,5 @@ export const shallowRoute = (
       process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
         ? undefined
         : { pathname: pathname.replace("/app", ""), query: newQuery },
-  }
-}
-
-export const resolvedRoute = (pathname: string) => {
-  return {
-    href: { pathname },
-    as:
-      process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
-        ? undefined
-        : { pathname: pathname.replace("/app", "") },
   }
 }

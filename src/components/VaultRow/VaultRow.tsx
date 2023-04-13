@@ -4,7 +4,7 @@ import { useRouter } from "next/router"
 import { FC, MouseEventHandler } from "react"
 
 import clsxm from "@/lib/clsxm"
-import { shallowRoute } from "@/lib/helpers"
+import { resolvedRoute } from "@/lib/helpers"
 import { VaultProps } from "@/lib/types"
 import { useVault } from "@/hooks"
 
@@ -40,7 +40,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
   const { pathname, query } = router
   const { isLoading } = useVault(props)
 
-  const vaultStrategyLink = shallowRoute(pathname, {
+  const vaultStrategyLink = resolvedRoute(pathname, {
     category: query.category,
     asset: props.asset,
     type: props.type,
