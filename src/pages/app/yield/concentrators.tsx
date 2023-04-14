@@ -14,7 +14,7 @@ import {
 import HoldingsTable from "@/components/HoldingsTable"
 import Layout from "@/components/Layout"
 import Seo from "@/components/Seo"
-import { TabButton, TabListGroup } from "@/components/Tabs"
+import { TabButton, TabContent, TabListGroup } from "@/components/Tabs"
 
 const Concentrators: NextPage = () => {
   return (
@@ -92,17 +92,25 @@ const ConcentratorVaults: FC = () => {
           </div>
         </div>
 
-        <div className="col-span-full lg:col-span-2">
+        <div className="relative col-span-full lg:col-span-2">
           {filterCategories.map((filterCategory, index) => (
-            <Tabs.Content key={`tab-content-${index}`} value={filterCategory}>
-              <ConcentratorVaultTable
-                concentratorTargetAsset={concentratorTargetAsset}
-                filterCategory={filterCategory}
-              />
+            <Tabs.Content
+              key={`tab-content-${index}`}
+              value={filterCategory}
+              asChild
+            >
+              <TabContent>
+                <ConcentratorVaultTable
+                  concentratorTargetAsset={concentratorTargetAsset}
+                  filterCategory={filterCategory}
+                />
+              </TabContent>
             </Tabs.Content>
           ))}
-          <Tabs.Content value="holdings">
-            <HoldingsTable />
+          <Tabs.Content value="holdings" asChild>
+            <TabContent>
+              <HoldingsTable />
+            </TabContent>
           </Tabs.Content>
         </div>
       </div>

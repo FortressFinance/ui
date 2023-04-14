@@ -79,6 +79,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
           {/* Large: strategy button */}
           <ButtonLink
             {...vaultStrategyLink}
+            scroll={false}
             className="focus-visible-outline-1 pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 hover:-translate-y-0.5 hover:contrast-150 hover:after:opacity-100 focus:outline-none focus-visible:-translate-y-0.5 focus-visible:outline focus-visible:outline-orange focus-visible:contrast-150 focus-visible:after:opacity-100 active:translate-y-0 max-lg:hidden"
             size="base"
             variant="outline"
@@ -89,6 +90,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
           {/* Medium: strategy button */}
           <ButtonLink
             {...vaultStrategyLink}
+            scroll={false}
             className="focus-visible-outline-1 pointer-events-auto relative ring-orange-400 transition-transform duration-150 after:absolute after:inset-0 after:rounded after:opacity-0 after:shadow-button-glow after:transition-opacity after:duration-300 focus:outline-none focus-visible:-translate-y-0.5 focus-visible:outline focus-visible:outline-orange focus-visible:contrast-150 focus-visible:after:opacity-100 active:translate-y-0 max-lg:hidden lg:hidden lg:enabled:hover:-translate-y-0.5 lg:enabled:hover:contrast-150 lg:enabled:hover:after:opacity-100"
             size="small"
             variant="outline"
@@ -214,6 +216,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
         <TableCell className="mb-0.5 pt-3.5 lg:hidden">
           <ButtonLink
             {...vaultStrategyLink}
+            scroll={false}
             className="w-full text-center"
             variant="outline"
             size="small"
