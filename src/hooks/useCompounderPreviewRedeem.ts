@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
 
 import {
-  getPreviewDepositAmmVault,
-  getPreviewDepositTokenVault,
+  getPreviewRedeemAmmVault,
+  getPreviewRedeemTokenVault,
 } from "@/lib/api/vaults"
 import { queryKeys } from "@/lib/helpers"
 import { CompounderPreviewTransactionBaseArgs } from "@/hooks/lib/api/types"
@@ -10,7 +10,7 @@ import { useVaultPoolId } from "@/hooks/useVaultPoolId"
 
 import { useGlobalStore } from "@/store"
 
-export function useCompounderPreviewDeposit({
+export function useCompounderPreviewRedeem({
   enabled = true,
   type,
   onError,
@@ -30,11 +30,11 @@ export function useCompounderPreviewDeposit({
     slippage: useGlobalStore((store) => store.slippageTolerance) / 100,
   }
   return useQuery({
-    ...queryKeys.vaults.previewDeposit(args),
+    ...queryKeys.vaults.previewRedeem(args),
     queryFn: () =>
       type === "token"
-        ? getPreviewDepositTokenVault(args)
-        : getPreviewDepositAmmVault({ ...args, isCurve: type === "curve" }),
+        ? getPreviewRedeemTokenVault(args)
+        : getPreviewRedeemAmmVault({ ...args, isCurve: type === "curve" }),
     keepPreviousData: args.amount !== "0",
     refetchInterval: args.amount !== "0" ? 20000 : false,
     refetchIntervalInBackground: false,

@@ -27,7 +27,7 @@ export const AssetLogo: FC<AssetLogoProps> = ({ className, tokenAddress }) => {
   const [isError, setIsError] = useState(false)
 
   useEffect(() => {
-    if (isError) {
+    if (!isError) {
       setIsError(tokenAddress === "0x" || tokenAddress === undefined)
     }
   }, [isError, tokenAddress])

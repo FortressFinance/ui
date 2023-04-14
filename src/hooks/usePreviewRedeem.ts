@@ -1,37 +1,32 @@
-import { useQuery } from "@tanstack/react-query"
-
 import {
-  getPreviewRedeemAmmVault,
-  getPreviewRedeemTokenVault,
-} from "@/lib/api/vaults"
-import { queryKeys } from "@/lib/helpers"
-import { CompounderPreviewTransactionArgs } from "@/hooks/lib/api/types"
+  CompounderPreviewTransactionBaseArgs,
+  ConcentratorPreviewTransactionBaseArgs,
+  PreviewTransactionBaseArgs,
+} from "@/hooks/lib/api/types"
+import { useCompounderPreviewRedeem } from "@/hooks/useCompounderPreviewRedeem"
+import { useConcentratorPreviewRedeem } from "@/hooks/useConcentratorPreviewRedeem"
+import { useIsCompounderProduct } from "@/hooks/useVaultProduct"
 
-import { useGlobalStore } from "@/store"
+export function usePreviewRedeem(props: PreviewTransactionBaseArgs) {
+  const isCompounderProduct = useIsCompounderProduct(
+    props.productType ?? "compounder"
+  )
+  const compounderProps = props as CompounderPreviewTransactionBaseArgs
+  const concentratorProps = props as ConcentratorPreviewTransactionBaseArgs
 
-export function usePreviewRedeem({
-  enabled = true,
-  type,
-  onError,
-  onSuccess,
-  ...rest
-}: CompounderPreviewTransactionArgs) {
-  const args = {
-    ...rest,
-    // we store slippage as a fraction of 100; api expects slippage as a fraction of 1
-    slippage: useGlobalStore((store) => store.slippageTolerance) / 100,
-  }
-  return useQuery({
-    ...queryKeys.vaults.previewRedeem(args),
-    queryFn: () =>
-      type === "token"
-        ? getPreviewRedeemTokenVault(args)
-        : getPreviewRedeemAmmVault({ ...args, isCurve: type === "curve" }),
-    keepPreviousData: args.amount !== "0",
-    refetchInterval: args.amount !== "0" ? 20000 : false,
-    refetchIntervalInBackground: false,
-    enabled: args.amount !== "0" && enabled,
-    onError,
-    onSuccess,
+  const compounderRedeemDeposit = useCompounderPreviewRedeem({
+    ...compounderProps,
+    enabled: isCompounderProduct && props.enabled,
   })
+
+  const concentratorRedeemDeposit = useConcentratorPreviewRedeem({
+    ...concentratorProps,
+    enabled: !isCompounderProduct && props.enabled,
+  })
+
+  if (isCompounderProduct) {
+    return compounderRedeemDeposit
+  }
+
+  return concentratorRedeemDeposit
 }

@@ -1,7 +1,7 @@
 import { fortressApi, handledResponse } from "@/lib/api/util"
 import { ConcentratorPreviewTransactionGetterArgs } from "@/hooks/lib/api/types"
 
-export type ConcentratorPreviewData = {
+type ConcentratorPreviewData = {
   targetAssetId: number
   concentratorId: number
   minAmountWei?: string

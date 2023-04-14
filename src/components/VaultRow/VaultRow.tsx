@@ -15,8 +15,14 @@ import { useIsCompounderProduct } from "@/hooks/useVaultProduct"
 
 import { AssetLogo } from "@/components/Asset"
 import { ButtonLink } from "@/components/Button"
-import { CompounderVaultDepositForm } from "@/components/Compounder/CompounderVaultDepositForm"
-import { ConcentratorVaultDepositForm } from "@/components/Concentrator"
+import {
+  CompounderVaultDepositForm,
+  CompounderVaultWithdrawForm,
+} from "@/components/Compounder"
+import {
+  ConcentratorVaultDepositForm,
+  ConcentratorVaultWithdrawForm,
+} from "@/components/Concentrator"
 import { TableCell, TableRow } from "@/components/Table"
 import { GradientText } from "@/components/Typography"
 import {
@@ -203,11 +209,16 @@ export const VaultRow: FC<VaultTableRowProps> = ({
           {/* Desktop: forms */}
           <div className="mt-6 grid grid-cols-2 gap-4 max-lg:hidden">
             {isCompounderProduct ? (
-              <CompounderVaultDepositForm {...compounderProps} />
+              <>
+                <CompounderVaultDepositForm {...compounderProps} />
+                <CompounderVaultWithdrawForm {...compounderProps} />
+              </>
             ) : (
-              <ConcentratorVaultDepositForm {...concentratorProps} />
+              <>
+                <ConcentratorVaultDepositForm {...concentratorProps} />
+                <ConcentratorVaultWithdrawForm {...concentratorProps} />
+              </>
             )}
-            {/* <VaultWithdrawForm {...props} /> */}
           </div>
 
           {/* Mobile: forms */}
@@ -235,7 +246,11 @@ export const VaultRow: FC<VaultTableRowProps> = ({
                 )}
               </Tabs.Content>
               <Tabs.Content value="withdraw">
-                {/* <VaultWithdrawForm {...props} /> */}
+                {isCompounderProduct ? (
+                  <CompounderVaultWithdrawForm {...compounderProps} />
+                ) : (
+                  <ConcentratorVaultWithdrawForm {...concentratorProps} />
+                )}
               </Tabs.Content>
             </Tabs.Root>
           </div>

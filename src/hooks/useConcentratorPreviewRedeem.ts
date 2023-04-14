@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 
-import { getConcentratorPreviewDeposit } from "@/lib/api/concentrators"
+import { getConcentratorPreviewRedeem } from "@/lib/api/concentrators/getConcentratorPreviewRedeem"
 import { queryKeys } from "@/lib/helpers"
 import { ConcentratorPreviewTransactionBaseArgs } from "@/hooks/lib/api/types"
 import { useConcentratorId } from "@/hooks/useConcentratorId"
@@ -9,7 +9,7 @@ import { useIsConcentratorCurveVault } from "@/hooks/useVaultTypes"
 
 import { useGlobalStore } from "@/store"
 
-export function useConcentratorPreviewDeposit({
+export function useConcentratorPreviewRedeem({
   enabled = true,
   onError,
   onSuccess,
@@ -35,8 +35,8 @@ export function useConcentratorPreviewDeposit({
     slippage: useGlobalStore((store) => store.slippageTolerance) / 100,
   }
   return useQuery({
-    ...queryKeys.concentrators.previewDeposit(args),
-    queryFn: () => getConcentratorPreviewDeposit({ ...args }),
+    ...queryKeys.concentrators.previewRedeem(args),
+    queryFn: () => getConcentratorPreviewRedeem(args),
     keepPreviousData: args.amount !== "0",
     refetchInterval: args.amount !== "0" ? 20000 : false,
     refetchIntervalInBackground: false,

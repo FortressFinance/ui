@@ -44,6 +44,7 @@ export const queryKeys = createQueryKeyStore({
       type: string
     }) => [chainId, type, targetAssetId, concentratorId, user ?? "0x"],
     previewDeposit: (args: ConcentratorPreviewTransactionGetterArgs) => [args],
+    previewRedeem: (args: ConcentratorPreviewTransactionGetterArgs) => [args],
   },
   holdings: {
     list: ({

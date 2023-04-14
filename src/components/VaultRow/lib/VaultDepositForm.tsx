@@ -36,13 +36,13 @@ import { VaultRowPropsWithProduct } from "@/components/VaultRow/VaultRow"
 
 import { useGlobalStore } from "@/store"
 
-type VaultDepositProps = VaultRowPropsWithProduct & {
+export type VaultDepositWithdrawProps = VaultRowPropsWithProduct & {
   inputToken: Address
   outputToken: Address
   underlyingAssets: Address[] | readonly Address[] | undefined
 }
 
-export const VaultDepositForm: FC<VaultDepositProps> = ({
+export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
   inputToken,
   outputToken,
   underlyingAssets,
