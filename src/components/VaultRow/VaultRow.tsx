@@ -15,6 +15,8 @@ import { useIsCompounderProduct } from "@/hooks/useVaultProduct"
 
 import { AssetLogo } from "@/components/Asset"
 import { ButtonLink } from "@/components/Button"
+import { CompounderVaultDepositForm } from "@/components/Compounder/CompounderVaultDepositForm"
+import { ConcentratorVaultDepositForm } from "@/components/Concentrator"
 import { TableCell, TableRow } from "@/components/Table"
 import { GradientText } from "@/components/Typography"
 import {
@@ -200,8 +202,12 @@ export const VaultRow: FC<VaultTableRowProps> = ({
         <Accordion.Content className="col-span-full overflow-hidden ui-state-closed:animate-accordion-close ui-state-open:animate-accordion-open max-lg:-mx-3">
           {/* Desktop: forms */}
           <div className="mt-6 grid grid-cols-2 gap-4 max-lg:hidden">
-            {/* <VaultDepositForm {...props} />
-            <VaultWithdrawForm {...props} /> */}
+            {isCompounderProduct ? (
+              <CompounderVaultDepositForm {...compounderProps} />
+            ) : (
+              <ConcentratorVaultDepositForm {...concentratorProps} />
+            )}
+            {/* <VaultWithdrawForm {...props} /> */}
           </div>
 
           {/* Mobile: forms */}
@@ -222,7 +228,11 @@ export const VaultRow: FC<VaultTableRowProps> = ({
                 </Tabs.Trigger>
               </Tabs.List>
               <Tabs.Content value="deposit">
-                {/* <VaultDepositForm {...props} /> */}
+                {isCompounderProduct ? (
+                  <CompounderVaultDepositForm {...compounderProps} />
+                ) : (
+                  <ConcentratorVaultDepositForm {...concentratorProps} />
+                )}
               </Tabs.Content>
               <Tabs.Content value="withdraw">
                 {/* <VaultWithdrawForm {...props} /> */}

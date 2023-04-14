@@ -1,37 +1,32 @@
-import { useQuery } from "@tanstack/react-query"
-
 import {
-  getPreviewDepositAmmVault,
-  getPreviewDepositTokenVault,
-} from "@/lib/api/vaults"
-import { queryKeys } from "@/lib/helpers"
-import { PreviewTransactionArgs } from "@/hooks/lib/api/types"
+  CompounderPreviewTransactionBaseArgs,
+  ConcentratorPreviewTransactionBaseArgs,
+  PreviewTransactionBaseArgs,
+} from "@/hooks/lib/api/types"
+import { useCompounderPreviewDeposit } from "@/hooks/useCompounderPreviewDeposit"
+import { useConcentratorPreviewDeposit } from "@/hooks/useConcentratorPreviewDeposit"
+import { useIsCompounderProduct } from "@/hooks/useVaultProduct"
 
-import { useGlobalStore } from "@/store"
+export function usePreviewDeposit(props: PreviewTransactionBaseArgs) {
+  const isCompounderProduct = useIsCompounderProduct(
+    props.productType ?? "compounder"
+  )
+  const compounderProps = props as CompounderPreviewTransactionBaseArgs
+  const concentratorProps = props as ConcentratorPreviewTransactionBaseArgs
 
-export function usePreviewDeposit({
-  enabled = true,
-  type,
-  onError,
-  onSuccess,
-  ...rest
-}: PreviewTransactionArgs) {
-  const args = {
-    ...rest,
-    // we store slippage as a fraction of 100; api expects slippage as a fraction of 1
-    slippage: useGlobalStore((store) => store.slippageTolerance) / 100,
-  }
-  return useQuery({
-    ...queryKeys.vaults.previewDeposit(args),
-    queryFn: () =>
-      type === "token"
-        ? getPreviewDepositTokenVault(args)
-        : getPreviewDepositAmmVault({ ...args, isCurve: type === "curve" }),
-    keepPreviousData: args.amount !== "0",
-    refetchInterval: args.amount !== "0" ? 20000 : false,
-    refetchIntervalInBackground: false,
-    enabled: args.amount !== "0" && enabled,
-    onError,
-    onSuccess,
+  const compounderPreviewDeposit = useCompounderPreviewDeposit({
+    ...compounderProps,
+    enabled: isCompounderProduct && props.enabled,
   })
+
+  const concentratorPreviewDeposit = useConcentratorPreviewDeposit({
+    ...concentratorProps,
+    enabled: !isCompounderProduct && props.enabled,
+  })
+
+  if (isCompounderProduct) {
+    return compounderPreviewDeposit
+  }
+
+  return concentratorPreviewDeposit
 }

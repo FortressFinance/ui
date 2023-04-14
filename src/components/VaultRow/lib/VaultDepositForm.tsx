@@ -3,6 +3,7 @@ import { FC, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import {
+  Address,
   erc20ABI,
   useAccount,
   useContractRead,
@@ -15,15 +16,12 @@ import {
 import { fortLog } from "@/lib/fortLog"
 import { parseCurrencyUnits } from "@/lib/helpers"
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
-import { CompounderVaultProps } from "@/lib/types"
 import {
   useActiveChainId,
   useInvalidateHoldingsVaults,
   usePreviewDeposit,
   useTokenOrNative,
   useTokenOrNativeBalance,
-  useVault,
-  useVaultPoolId,
 } from "@/hooks"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
 import useDebounce from "@/hooks/useDebounce"
@@ -34,22 +32,30 @@ import {
   InvalidMinAmountModal,
 } from "@/components/Modal"
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
+import { VaultRowPropsWithProduct } from "@/components/VaultRow/VaultRow"
 
 import { useGlobalStore } from "@/store"
 
-export const VaultDepositForm: FC<CompounderVaultProps> = (props) => {
+type VaultDepositProps = VaultRowPropsWithProduct & {
+  inputToken: Address
+  outputToken: Address
+  underlyingAssets: Address[] | readonly Address[] | undefined
+}
+
+export const VaultDepositForm: FC<VaultDepositProps> = ({
+  inputToken,
+  outputToken,
+  underlyingAssets,
+  ...props
+}) => {
   const [showConfirmDepositModal, setShowConfirmDepositModal] = useState(false)
   const [showInvalidMinAmountModal, setShowInvalidMinAmountModal] =
     useState(false)
 
-  const { data: poolId } = useVaultPoolId(props)
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
-  const vault = useVault(props)
   const toastManager = useToast()
   const expertMode = useGlobalStore((store) => store.expertMode)
-
-  const underlyingAssets = vault.data?.underlyingAssets
 
   const invalidateHoldingsVaults = useInvalidateHoldingsVaults()
 
@@ -57,8 +63,8 @@ export const VaultDepositForm: FC<CompounderVaultProps> = (props) => {
   const form = useForm<TokenFormValues>({
     defaultValues: {
       amountIn: "",
-      inputToken: props.asset,
-      outputToken: props.vaultAddress,
+      inputToken,
+      outputToken,
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -69,21 +75,23 @@ export const VaultDepositForm: FC<CompounderVaultProps> = (props) => {
   const amountInDebounced = useDebounce(amountIn, 500)
   const inputTokenAddress = form.watch("inputToken")
   // Calculate + fetch information on selected tokens
-  const inputIsLp = inputTokenAddress === props.asset
+  const inputIsLp = inputTokenAddress === inputToken
   const inputIsEth = isEthTokenAddress(inputTokenAddress)
-  const { data: inputToken } = useTokenOrNative({ address: inputTokenAddress })
+  const { data: inputCurrency } = useTokenOrNative({
+    address: inputTokenAddress,
+  })
 
   const inputTokenBalance = useTokenOrNativeBalance({
     address: inputTokenAddress,
   })
   const outputTokenBalance = useTokenOrNativeBalance({
-    address: props.vaultAddress,
+    address: outputToken,
   })
 
   // preview redeem currently returns a value with slippage accounted for; no math is required here
   const value = parseCurrencyUnits({
     amountFormatted: amountInDebounced,
-    decimals: inputToken?.decimals,
+    decimals: inputCurrency?.decimals,
   })
 
   // Check token approval if necessary
@@ -92,7 +100,7 @@ export const VaultDepositForm: FC<CompounderVaultProps> = (props) => {
     abi: erc20ABI,
     address: inputTokenAddress,
     functionName: "allowance",
-    args: [userAddress ?? "0x", props.vaultAddress],
+    args: [userAddress ?? "0x", outputToken],
     enabled: !!userAddress && !inputIsEth,
   })
   const requiresApproval = inputIsEth ? false : allowance.data?.lt(value)
@@ -110,7 +118,7 @@ export const VaultDepositForm: FC<CompounderVaultProps> = (props) => {
     abi: erc20ABI,
     address: inputTokenAddress,
     functionName: "approve",
-    args: [props.vaultAddress, ethers.constants.MaxUint256],
+    args: [outputToken, ethers.constants.MaxUint256],
     enabled: requiresApproval,
   })
   const approve = useContractWrite(prepareApprove.config)
@@ -130,15 +138,14 @@ export const VaultDepositForm: FC<CompounderVaultProps> = (props) => {
   })
 
   const previewDeposit = usePreviewDeposit({
+    ...props,
     chainId,
-    id: poolId,
     token: inputTokenAddress,
     amount: value.toString(),
-    type: props.type,
     enabled: value.gt(0),
   })
 
-  const vaultContract = useVaultContract(props.vaultAddress)
+  const vaultContract = useVaultContract(outputToken)
   // Enable prepare hooks accordingly
   const enablePrepareTx =
     !form.formState.isValidating &&
@@ -312,7 +319,7 @@ export const VaultDepositForm: FC<CompounderVaultProps> = (props) => {
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
           previewResultWei={previewDeposit.data?.resultWei}
-          asset={props.asset}
+          asset={inputToken}
           tokenAddresses={underlyingAssets}
         />
       </FormProvider>
@@ -329,7 +336,7 @@ export const VaultDepositForm: FC<CompounderVaultProps> = (props) => {
             ? previewDeposit.data?.resultWei
             : previewDeposit.data?.minAmountWei
         }
-        outputTokenAddress={props.vaultAddress}
+        outputTokenAddress={outputToken}
         isLoading={previewDeposit.isFetching}
         isPreparing={prepareDeposit.isFetching}
         isWaitingForSignature={deposit.isLoading || depositUnderlying.isLoading}

@@ -8,7 +8,7 @@ export type ConcentratorPreviewData = {
   resultWei: string
 }
 
-export async function getConcentratorPreviewDepositAmmVault(
+export async function getConcentratorPreviewDeposit(
   args: ConcentratorPreviewTransactionGetterArgs
 ) {
   const resp = await fortressApi.post<ConcentratorPreviewData>(

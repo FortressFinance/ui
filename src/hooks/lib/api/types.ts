@@ -1,9 +1,11 @@
 import { Address } from "wagmi"
 
 import { PreviewData } from "@/lib/api/vaults"
-import { VaultType } from "@/lib/types"
+import { CompounderVaultProps, ConcentratorVaultProps } from "@/lib/types"
 
-type PreviewTransactionBaseArgs = {
+import { VaultRowPropsWithProduct } from "@/components/VaultRow"
+
+type PreviewTransactionArgs = {
   chainId: number
   token?: Address
   amount: string
@@ -12,35 +14,43 @@ type PreviewTransactionBaseArgs = {
   onError?: (err: unknown) => void
 }
 
-export type PreviewTransactionArgs = PreviewTransactionBaseArgs & {
-  id?: number
-  type: VaultType
-}
+export type PreviewTransactionBaseArgs = VaultRowPropsWithProduct &
+  PreviewTransactionArgs
+export type CompounderPreviewTransactionBaseArgs = CompounderVaultProps &
+  PreviewTransactionArgs
+export type ConcentratorPreviewTransactionBaseArgs = ConcentratorVaultProps &
+  PreviewTransactionArgs
 
-export type ConcentratorPreviewTransactionArgs = PreviewTransactionBaseArgs & {
-  targetAssetId: number
-  concentratorId: number
-  isCurve: boolean
-}
+export type CompounderPreviewTransactionArgs =
+  CompounderPreviewTransactionBaseArgs & {
+    id?: number
+  }
 
-export type PreviewVaultSpecificTransactionArgs = Omit<
-  PreviewTransactionArgs,
-  "type"
+export type ConcentratorPreviewTransactionArgs =
+  ConcentratorPreviewTransactionBaseArgs & {
+    isCurve: boolean
+  }
+
+export type CompounderPreviewVaultSpecificTransactionArgs = Omit<
+  CompounderPreviewTransactionArgs,
+  "type" | "asset" | "vaultAddress"
 > & {
   slippage: number
 }
 
-export type PreviewTransactionGetterArgs = Omit<
-  PreviewVaultSpecificTransactionArgs,
+export type CompounderPreviewTransactionGetterArgs = Omit<
+  CompounderPreviewVaultSpecificTransactionArgs,
   "onSuccess" | "onError" | "enabled"
 > & {
   isCurve?: boolean
 }
 
-export type ConcentratorPreviewVaultSpecificTransactionArgs =
-  ConcentratorPreviewTransactionArgs & {
-    slippage: number
-  }
+export type ConcentratorPreviewVaultSpecificTransactionArgs = Omit<
+  ConcentratorPreviewTransactionArgs,
+  "type" | "primaryAsset" | "targetAsset"
+> & {
+  slippage: number
+}
 
 export type ConcentratorPreviewTransactionGetterArgs = Omit<
   ConcentratorPreviewVaultSpecificTransactionArgs,
