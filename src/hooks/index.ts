@@ -1,3 +1,4 @@
+export * from "./useActiveChainConfig"
 export * from "./useActiveChainId"
 export * from "./useCategoriesByPrimaryAsset"
 export * from "./useClientEffect"
