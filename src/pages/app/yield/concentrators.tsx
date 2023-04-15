@@ -102,7 +102,7 @@ const ConcentratorVaults: FC = () => {
             </Tabs.Content>
           ))}
           <Tabs.Content value="holdings">
-            <HoldingsTable />
+            <HoldingsTable productType="concentrator" />
           </Tabs.Content>
         </div>
       </div>
