@@ -6,16 +6,16 @@ import Seo from "@/components/Seo"
 
 import { DISABLE_LENDING } from "@/constant/env"
 
-const Lend: NextPage = () => {
+const Lever: NextPage = () => {
   return (
     <DisabledPage isDisabled={DISABLE_LENDING}>
       <Layout>
-        <Seo templateTitle="Lend" />
+        <Seo templateTitle="Lever" />
 
-        <main>Lend</main>
+        <main>Lever</main>
       </Layout>
     </DisabledPage>
   )
 }
 
-export default Lend
+export default Lever

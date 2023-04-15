@@ -6,6 +6,7 @@ import { Address } from "wagmi"
 import { capitalizeFirstLetter } from "@/lib/helpers"
 import { FilterCategory } from "@/lib/types"
 
+import { DisabledPage } from "@/components"
 import {
   ConcentratorMenu,
   ConcentratorRewards,
@@ -16,19 +17,23 @@ import Layout from "@/components/Layout"
 import Seo from "@/components/Seo"
 import { TabButton, TabContent, TabListGroup } from "@/components/Tabs"
 
+import { DISABLE_CONCENTRATORS } from "@/constant/env"
+
 const Concentrators: NextPage = () => {
   return (
-    <Layout>
-      <Seo
-        templateTitle="Concentrators"
-        description="Concentrators automatically re-invest earnings into specific target assets"
-      />
+    <DisabledPage isDisabled={DISABLE_CONCENTRATORS}>
+      <Layout>
+        <Seo
+          templateTitle="Concentrators"
+          description="Concentrators automatically re-invest earnings into specific target assets"
+        />
 
-      <main>
-        {/* Child component because we need queryClient to retrieve vaults */}
-        <ConcentratorVaults />
-      </main>
-    </Layout>
+        <main>
+          {/* Child component because we need queryClient to retrieve vaults */}
+          <ConcentratorVaults />
+        </main>
+      </Layout>
+    </DisabledPage>
   )
 }
 
