@@ -42,7 +42,7 @@ export type CompounderPreviewTransactionGetterArgs = Omit<
 
 export type ConcentratorPreviewVaultSpecificTransactionArgs = Omit<
   ConcentratorPreviewTransactionArgs,
-  "type" | "primaryAsset" | "targetAsset"
+  "type" | "asset" | "vaultAddress"
 > & {
   slippage: number
 }

@@ -115,6 +115,7 @@ const Yield: NextPage = () => {
         asset={asset as Address}
         type={type as VaultType}
         vaultAddress={vaultAddress as Address}
+        productType="compounder"
       />
     </Layout>
   )
