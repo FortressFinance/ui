@@ -1,3 +1,4 @@
+import { ethers } from "ethers"
 import { FC } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
@@ -75,7 +76,7 @@ const LendingPairDeposit: FC<LendingPairInteractionProps> = ({
   })
 
   const approval = useTokenApproval({
-    amount: depositValue,
+    amount: ethers.constants.MaxUint256,
     spender: pairAddress,
     token: assetAddress,
     enabled: form.formState.isValid,
