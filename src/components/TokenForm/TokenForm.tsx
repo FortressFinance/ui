@@ -10,7 +10,11 @@ import { Address, useAccount } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
-import { useTokenOrNative, useTokenOrNativeBalance } from "@/hooks"
+import {
+  useClientReady,
+  useTokenOrNative,
+  useTokenOrNativeBalance,
+} from "@/hooks"
 
 import { AssetBalance } from "@/components/Asset"
 import Button from "@/components/Button"
@@ -19,9 +23,9 @@ import TokenSelectModal from "@/components/Modal/TokenSelectModal"
 import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
 
 type TokenFormProps = {
-  asset: Address | undefined
+  asset?: Address
   submitText: string
-  tokenAddresses: Address[] | readonly Address[] | undefined
+  tokenAddresses?: Address[] | readonly Address[]
   isDebouncing: boolean
   isError: boolean
   isLoadingPreview: boolean
@@ -42,7 +46,7 @@ export type TokenFormValues = {
 const TokenForm: FC<TokenFormProps> = ({
   asset,
   submitText,
-  tokenAddresses,
+  tokenAddresses = [],
   isDebouncing,
   isError,
   isLoadingPreview,
@@ -51,6 +55,8 @@ const TokenForm: FC<TokenFormProps> = ({
   previewResultWei,
   onSubmit,
 }) => {
+  const clientReady = useClientReady()
+
   const [tokenSelectMode, setTokenSelectMode] = useState<TokenSelectMode>(null)
 
   const form = useFormContext<TokenFormValues>()
@@ -91,6 +97,7 @@ const TokenForm: FC<TokenFormProps> = ({
   })
 
   const showMaxBtn =
+    clientReady &&
     inputTokenBalanceOrShare?.value?.gt(0) &&
     inputTokenBalanceOrShare?.formatted !== amountIn
 
@@ -152,9 +159,7 @@ const TokenForm: FC<TokenFormProps> = ({
         {/* inputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-1 flex items-start justify-self-end pr-4 pt-4">
           <TokenSelectButton
-            canChange={
-              !isWithdraw && !!tokenAddresses && tokenAddresses.length > 1
-            }
+            canChange={!isWithdraw && tokenAddresses.length > 1}
             tokenAddress={inputTokenAddress}
             onClick={() => setTokenSelectMode("inputToken")}
           />
@@ -164,7 +169,7 @@ const TokenForm: FC<TokenFormProps> = ({
         <div
           className={clsxm(
             "peer relative z-[2] col-start-1 row-start-2 block w-full overflow-hidden text-ellipsis bg-transparent px-4 pb-4 pt-1 text-xl text-pink-100/60 placeholder-pink-100/60 focus:outline-none",
-            { "animate-pulse": isLoadingPreview }
+            { "animate-pulse": clientReady && isLoadingPreview }
           )}
         >
           <span>
@@ -177,9 +182,7 @@ const TokenForm: FC<TokenFormProps> = ({
         {/* outputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-2 flex items-start space-x-1 justify-self-end pb-4 pr-4">
           <TokenSelectButton
-            canChange={
-              isWithdraw && !!tokenAddresses && tokenAddresses.length > 1
-            }
+            canChange={isWithdraw && tokenAddresses.length > 1}
             tokenAddress={outputTokenAddress}
             onClick={() => setTokenSelectMode("outputToken")}
           />
@@ -207,7 +210,7 @@ const TokenForm: FC<TokenFormProps> = ({
         />
 
         {/* Submit button (or Connect Wallet if not connected) */}
-        {isConnected ? (
+        {clientReady && isConnected ? (
           <Button
             className="col-span-full mt-3 grid"
             disabled={!form.formState.isValid || isError}
