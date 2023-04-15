@@ -47,7 +47,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
       <div className="min-h-screen-small relative z-[1] grid grid-cols-1 grid-rows-[auto,1fr]">
         <header className="sticky top-0 z-10 border-b border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
-            <div className="flex items-center space-x-10 max-sm:pl-1">
+            <div className="flex items-center space-x-10 max-md:pl-1">
               <Link
                 {...resolvedRoute("/app/yield")}
                 className="group my-3 h-11 px-1 py-2 md:my-4"
@@ -66,7 +66,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
               {/* Desktop navigation */}
               <NavigationMenu.Root>
-                <NavigationMenu.List className="hidden space-x-10 md:flex">
+                <NavigationMenu.List className="hidden space-x-6 md:flex lg:space-x-10">
                   <NavigationMenu.Item>
                     <NavigationMenu.Trigger
                       // we must override these to disable showing menu on hover
@@ -108,7 +108,15 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                     <span className="flex cursor-not-allowed items-center">
                       <span className="opacity-50">Lend</span>
                       <span className="ml-1 grow-0 rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
-                        Coming soon
+                        <span className="max-lg:hidden">Coming</span> soon
+                      </span>
+                    </span>
+                  </NavigationMenu.Item>
+                  <NavigationMenu.Item asChild>
+                    <span className="flex cursor-not-allowed items-center">
+                      <span className="opacity-50">Lever</span>
+                      <span className="ml-1 grow-0 rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
+                        <span className="max-lg:hidden">Coming</span> soon
                       </span>
                     </span>
                   </NavigationMenu.Item>
@@ -197,6 +205,15 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
                       <h1 className="mt-3 px-3 pt-3 text-xs font-medium uppercase tracking-wider text-orange-400/20">
                         Lend
+                      </h1>
+                      <div className="space-y-2 pt-2">
+                        <span className="px-3 py-2.5 text-lg text-white/20">
+                          Coming soon
+                        </span>
+                      </div>
+
+                      <h1 className="mt-3 px-3 pt-3 text-xs font-medium uppercase tracking-wider text-orange-400/20">
+                        Lever
                       </h1>
                       <div className="space-y-2 pt-2">
                         <span className="px-3 py-2.5 text-lg text-white/20">
