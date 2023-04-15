@@ -3,23 +3,22 @@ import { Address } from "wagmi"
 import { useApiConcentratorStaticData } from "@/hooks/lib/api/useApiConcentratorStaticData"
 
 export function useApiConcentratorVault({
-  concentratorTargetAsset,
-  vaultAssetAddress,
+  targetAsset,
+  primaryAsset,
 }: {
-  concentratorTargetAsset?: Address
-  vaultAssetAddress?: Address
+  targetAsset?: Address
+  primaryAsset?: Address
 }) {
   const apiQuery = useApiConcentratorStaticData()
   const targetAssetToYbToken: Record<Address, Address> = {} // target to primaryKey
   apiQuery.data?.map((data) => {
-    const targetAsset = data?.target_asset?.address
+    const targetAssetAddress = data?.target_asset?.address
     if (
       targetAssetToYbToken !== undefined &&
-      concentratorTargetAsset !== undefined &&
-      concentratorTargetAsset.toLocaleUpperCase() ===
-        targetAsset.toLocaleUpperCase()
+      targetAsset !== undefined &&
+      targetAsset.toLocaleUpperCase() === targetAssetAddress.toLocaleUpperCase()
     ) {
-      targetAssetToYbToken[data?.target_asset?.address] =
+      targetAssetToYbToken[targetAssetAddress] =
         data?.concentrator?.ybToken?.address
     }
   })
@@ -30,7 +29,7 @@ export function useApiConcentratorVault({
     const ybToken = targetAssetToYbToken[targetAsset as Address]
     ybTokens.push({
       ybTokenAddress: ybToken,
-      rewardTokenAddress: vaultAssetAddress ?? "0x",
+      rewardTokenAddress: primaryAsset ?? "0x",
     })
   }
   return {

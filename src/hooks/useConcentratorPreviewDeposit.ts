@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { getConcentratorPreviewDeposit } from "@/lib/api/concentrators"
 import { queryKeys } from "@/lib/helpers"
-import { ConcentratorPreviewTransactionBaseArgs } from "@/hooks/lib/api/types"
+import { VaultPreviewTransactionArgs } from "@/hooks/lib/api/types"
 import { useConcentratorId } from "@/hooks/useConcentratorId"
 import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAssetId"
 import { useIsConcentratorCurveVault } from "@/hooks/useVaultTypes"
@@ -14,15 +14,15 @@ export function useConcentratorPreviewDeposit({
   onError,
   onSuccess,
   ...rest
-}: ConcentratorPreviewTransactionBaseArgs) {
+}: VaultPreviewTransactionArgs) {
   const { data: targetAssetId } = useConcentratorTargetAssetId({
-    targetAsset: rest.targetAsset,
+    targetAsset: rest.vaultAddress,
   })
   const { data: concentratorId } = useConcentratorId({
-    primaryAsset: rest.primaryAsset,
-    targetAsset: rest.targetAsset,
+    primaryAsset: rest.asset,
+    targetAsset: rest.vaultAddress,
   })
-  const isCurve = useIsConcentratorCurveVault(rest.targetAsset)
+  const isCurve = useIsConcentratorCurveVault(rest.vaultAddress)
 
   const args = {
     amount: rest.amount,

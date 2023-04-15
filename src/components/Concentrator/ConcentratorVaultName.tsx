@@ -1,14 +1,14 @@
 import { FC } from "react"
 
-import { ConcentratorVaultProps } from "@/lib/types"
+import { VaultProps } from "@/lib/types"
 import { useVault } from "@/hooks"
 
 import Skeleton from "@/components/Skeleton"
 
-export const ConcentratorVaultName: FC<ConcentratorVaultProps> = (props) => {
+export const ConcentratorVaultName: FC<VaultProps> = (props) => {
   const vault = useVault({
-    asset: props.primaryAsset,
-    vaultAddress: props.targetAsset,
+    asset: props.asset,
+    vaultAddress: props.vaultAddress,
   })
 
   return (

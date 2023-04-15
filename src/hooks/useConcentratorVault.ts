@@ -6,17 +6,17 @@ import { useFallbackRead } from "@/hooks/lib/useFallbackRequest"
 import { useRegistryContract } from "@/hooks/lib/useRegistryContract"
 
 export function useConcentratorVault({
-  concentratorTargetAsset,
-  vaultAssetAddress,
-  vaultType,
+  targetAsset,
+  primaryAsset,
+  type,
 }: {
-  concentratorTargetAsset?: Address
-  vaultAssetAddress?: Address
-  vaultType?: VaultType
+  targetAsset?: Address
+  primaryAsset?: Address
+  type?: VaultType
 }) {
   const apiQuery = useApiConcentratorVault({
-    concentratorTargetAsset,
-    vaultAssetAddress,
+    targetAsset,
+    primaryAsset,
   })
 
   // Fallback: contract requests
@@ -25,14 +25,10 @@ export function useConcentratorVault({
       ...useRegistryContract(),
       functionName: "getConcentrator",
       enabled: apiQuery.isError,
-      args: [
-        vaultType === "curve",
-        concentratorTargetAsset ?? "0x",
-        vaultAssetAddress ?? "0x",
-      ],
+      args: [type === "curve", targetAsset ?? "0x", primaryAsset ?? "0x"],
       select: (data) => ({
         ybTokenAddress: data,
-        rewardTokenAddress: vaultAssetAddress ?? "0x",
+        rewardTokenAddress: primaryAsset ?? "0x",
       }),
     },
     []

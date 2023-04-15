@@ -1,12 +1,12 @@
 import { FC } from "react"
 
 import { formatPercentage } from "@/lib/helpers/formatPercentage"
-import { CompounderVaultProps } from "@/lib/types"
+import { VaultProps } from "@/lib/types"
 import { useVaultApy, useVaultPoolId } from "@/hooks"
 
 import Skeleton from "@/components/Skeleton"
 
-export const CompounderVaultApy: FC<CompounderVaultProps> = (props) => {
+export const CompounderVaultApy: FC<VaultProps> = (props) => {
   const poolId = useVaultPoolId(props)
   const totalApy = useVaultApy({ ...props, poolId: poolId.data })
 

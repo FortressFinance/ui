@@ -1,26 +1,17 @@
-import {
-  CompounderPreviewTransactionBaseArgs,
-  ConcentratorPreviewTransactionBaseArgs,
-  PreviewTransactionBaseArgs,
-} from "@/hooks/lib/api/types"
+import { PreviewTransactionBaseArgs } from "@/hooks/lib/api/types"
 import { useCompounderPreviewRedeem } from "@/hooks/useCompounderPreviewRedeem"
 import { useConcentratorPreviewRedeem } from "@/hooks/useConcentratorPreviewRedeem"
-import { useIsCompounderProduct } from "@/hooks/useVaultProduct"
 
 export function usePreviewRedeem(props: PreviewTransactionBaseArgs) {
-  const isCompounderProduct = useIsCompounderProduct(
-    props.productType ?? "compounder"
-  )
-  const compounderProps = props as CompounderPreviewTransactionBaseArgs
-  const concentratorProps = props as ConcentratorPreviewTransactionBaseArgs
+  const isCompounderProduct = props.productType == "compounder"
 
   const compounderRedeemDeposit = useCompounderPreviewRedeem({
-    ...compounderProps,
+    ...props,
     enabled: isCompounderProduct && props.enabled,
   })
 
   const concentratorRedeemDeposit = useConcentratorPreviewRedeem({
-    ...concentratorProps,
+    ...props,
     enabled: !isCompounderProduct && props.enabled,
   })
 

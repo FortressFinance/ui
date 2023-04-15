@@ -1,9 +1,9 @@
 // TODO: Support Concentrator vaults
 
-import { CompounderVaultProps } from "@/lib/types"
+import { VaultProps } from "@/lib/types"
 import useVaultTvlFallback from "@/hooks/lib/tvl/compounder/useVaultTvlFallback"
 
-type UseVaultTvlParams = CompounderVaultProps & {
+type UseVaultTvlParams = VaultProps & {
   poolId: number | undefined
 }
 

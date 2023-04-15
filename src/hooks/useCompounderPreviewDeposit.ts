@@ -5,7 +5,7 @@ import {
   getPreviewDepositTokenVault,
 } from "@/lib/api/vaults"
 import { queryKeys } from "@/lib/helpers"
-import { CompounderPreviewTransactionBaseArgs } from "@/hooks/lib/api/types"
+import { VaultPreviewTransactionArgs } from "@/hooks/lib/api/types"
 import { useVaultPoolId } from "@/hooks/useVaultPoolId"
 
 import { useGlobalStore } from "@/store"
@@ -16,7 +16,7 @@ export function useCompounderPreviewDeposit({
   onError,
   onSuccess,
   ...rest
-}: CompounderPreviewTransactionBaseArgs) {
+}: VaultPreviewTransactionArgs) {
   const { data: poolId } = useVaultPoolId({
     asset: rest.asset ?? "0x",
     type: type ?? "curve",

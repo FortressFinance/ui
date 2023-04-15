@@ -1,7 +1,7 @@
 import { Address } from "wagmi"
 
 import { fortressApi, handledResponse } from "@/lib/api/util"
-import { CompounderPreviewTransactionGetterArgs } from "@/hooks/lib/api/types"
+import { PreviewTransactionGetterArgs } from "@/hooks/lib/api/types"
 
 type PreviewRedeemData = {
   id: number
@@ -16,7 +16,7 @@ type PreviewRedeemData = {
 export async function getPreviewRedeemAmmVault({
   amount: ybTokenAmount,
   ...args
-}: CompounderPreviewTransactionGetterArgs) {
+}: PreviewTransactionGetterArgs) {
   const resp = await fortressApi.post<PreviewRedeemData>(
     "AMM_Compounder/previewRedeem",
     { ...args, ybTokenAmount }
@@ -25,7 +25,7 @@ export async function getPreviewRedeemAmmVault({
 }
 
 export async function getPreviewRedeemTokenVault(
-  args: CompounderPreviewTransactionGetterArgs
+  args: PreviewTransactionGetterArgs
 ) {
   const resp = await fortressApi.post<PreviewRedeemData>(
     "Token_Compounder/previewRedeem",

@@ -1,7 +1,7 @@
 import { Address } from "wagmi"
 
 import { PreviewData } from "@/lib/api/vaults"
-import { CompounderVaultProps, ConcentratorVaultProps } from "@/lib/types"
+import { VaultProps } from "@/lib/types"
 
 import { VaultRowPropsWithProduct } from "@/components/VaultRow"
 
@@ -16,20 +16,15 @@ type PreviewTransactionArgs = {
 
 export type PreviewTransactionBaseArgs = VaultRowPropsWithProduct &
   PreviewTransactionArgs
-export type CompounderPreviewTransactionBaseArgs = CompounderVaultProps &
-  PreviewTransactionArgs
-export type ConcentratorPreviewTransactionBaseArgs = ConcentratorVaultProps &
-  PreviewTransactionArgs
+export type VaultPreviewTransactionArgs = VaultProps & PreviewTransactionArgs
 
-export type CompounderPreviewTransactionArgs =
-  CompounderPreviewTransactionBaseArgs & {
-    id?: number
-  }
+export type CompounderPreviewTransactionArgs = VaultPreviewTransactionArgs & {
+  id?: number
+}
 
-export type ConcentratorPreviewTransactionArgs =
-  ConcentratorPreviewTransactionBaseArgs & {
-    isCurve: boolean
-  }
+export type ConcentratorPreviewTransactionArgs = VaultPreviewTransactionArgs & {
+  isCurve: boolean
+}
 
 export type CompounderPreviewVaultSpecificTransactionArgs = Omit<
   CompounderPreviewTransactionArgs,

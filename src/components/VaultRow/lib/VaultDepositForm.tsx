@@ -37,14 +37,14 @@ import { VaultRowPropsWithProduct } from "@/components/VaultRow/VaultRow"
 import { useGlobalStore } from "@/store"
 
 export type VaultDepositWithdrawProps = VaultRowPropsWithProduct & {
-  inputToken: Address
-  outputToken: Address
-  underlyingAssets: Address[] | readonly Address[] | undefined
+  defaultInputToken: Address
+  defaultOutputToken: Address
+  underlyingAssets?: Address[] | readonly Address[]
 }
 
 export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
-  inputToken,
-  outputToken,
+  defaultInputToken,
+  defaultOutputToken,
   underlyingAssets,
   ...props
 }) => {
@@ -63,8 +63,8 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
   const form = useForm<TokenFormValues>({
     defaultValues: {
       amountIn: "",
-      inputToken,
-      outputToken,
+      inputToken: defaultInputToken,
+      outputToken: defaultOutputToken,
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -75,9 +75,9 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
   const amountInDebounced = useDebounce(amountIn, 500)
   const inputTokenAddress = form.watch("inputToken")
   // Calculate + fetch information on selected tokens
-  const inputIsLp = inputTokenAddress === inputToken
+  const inputIsLp = inputTokenAddress === defaultInputToken
   const inputIsEth = isEthTokenAddress(inputTokenAddress)
-  const { data: inputCurrency } = useTokenOrNative({
+  const { data: inputToken } = useTokenOrNative({
     address: inputTokenAddress,
   })
 
@@ -85,13 +85,13 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     address: inputTokenAddress,
   })
   const outputTokenBalance = useTokenOrNativeBalance({
-    address: outputToken,
+    address: defaultOutputToken,
   })
 
   // preview redeem currently returns a value with slippage accounted for; no math is required here
   const value = parseCurrencyUnits({
     amountFormatted: amountInDebounced,
-    decimals: inputCurrency?.decimals,
+    decimals: inputToken?.decimals,
   })
 
   // Check token approval if necessary
@@ -100,7 +100,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     abi: erc20ABI,
     address: inputTokenAddress,
     functionName: "allowance",
-    args: [userAddress ?? "0x", outputToken],
+    args: [userAddress ?? "0x", defaultOutputToken],
     enabled: !!userAddress && !inputIsEth,
   })
   const requiresApproval = inputIsEth ? false : allowance.data?.lt(value)
@@ -118,7 +118,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     abi: erc20ABI,
     address: inputTokenAddress,
     functionName: "approve",
-    args: [outputToken, ethers.constants.MaxUint256],
+    args: [defaultOutputToken, ethers.constants.MaxUint256],
     enabled: requiresApproval,
   })
   const approve = useContractWrite(prepareApprove.config)
@@ -145,7 +145,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     enabled: value.gt(0),
   })
 
-  const vaultContract = useVaultContract(outputToken)
+  const vaultContract = useVaultContract(defaultOutputToken)
   // Enable prepare hooks accordingly
   const enablePrepareTx =
     !form.formState.isValidating &&
@@ -319,7 +319,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
           previewResultWei={previewDeposit.data?.resultWei}
-          asset={inputToken}
+          asset={defaultInputToken}
           tokenAddresses={underlyingAssets}
         />
       </FormProvider>
@@ -336,7 +336,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
             ? previewDeposit.data?.resultWei
             : previewDeposit.data?.minAmountWei
         }
-        outputTokenAddress={outputToken}
+        outputTokenAddress={defaultOutputToken}
         isLoading={previewDeposit.isFetching}
         isPreparing={prepareDeposit.isFetching}
         isWaitingForSignature={deposit.isLoading || depositUnderlying.isLoading}

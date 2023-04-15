@@ -1,4 +1,4 @@
-import { ConcentratorVaultProps } from "@/lib/types"
+import { VaultProps } from "@/lib/types"
 import { useApiConcentratorDynamic } from "@/hooks/lib/api/useApiConcentratorDynamic"
 import useConcentratorTokenVaultTotalApy from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultTotalApy"
 import useBalancerVaultTotalApy from "@/hooks/lib/apr/useBalancerVaultTotalApy"
@@ -11,10 +11,10 @@ import {
 } from "@/hooks/useVaultTypes"
 
 export function useConcentratorVaultApy({
-  primaryAsset,
-  targetAsset,
+  asset: primaryAsset,
+  vaultAddress: targetAsset,
   type,
-}: ConcentratorVaultProps) {
+}: VaultProps) {
   const isCurve = useIsConcentratorCurveVault(targetAsset)
   const isToken = useIsConcentratorTokenVault(targetAsset)
 

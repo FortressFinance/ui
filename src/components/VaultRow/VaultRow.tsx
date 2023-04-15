@@ -5,13 +5,8 @@ import { FC, MouseEventHandler } from "react"
 
 import clsxm from "@/lib/clsxm"
 import { resolvedRoute } from "@/lib/helpers"
-import {
-  CompounderVaultProps,
-  ConcentratorVaultProps,
-  ProductType,
-} from "@/lib/types"
+import { VaultProps } from "@/lib/types"
 import { useVault } from "@/hooks"
-import { useIsCompounderProduct } from "@/hooks/useVaultProduct"
 
 import { AssetLogo } from "@/components/Asset"
 import { ButtonLink } from "@/components/Button"
@@ -35,10 +30,9 @@ import {
 
 import { FortIconChevronDownCircle } from "@/icons"
 
-type VaultRowProps = CompounderVaultProps | ConcentratorVaultProps
-export type VaultRowPropsWithProduct = VaultRowProps & {
-  productType?: ProductType
-}
+export type VaultRowPropsWithProduct =
+  | ({ productType: "compounder" } & VaultProps)
+  | ({ productType: "concentrator" } & VaultProps)
 
 export type VaultTableRowProps = VaultRowPropsWithProduct & {
   activeVault?: string
@@ -52,62 +46,29 @@ export const VaultRow: FC<VaultTableRowProps> = ({
   showEarningsColumn = false,
   ...props
 }) => {
-  const isCompounderProduct = useIsCompounderProduct(
-    props.productType ?? "compounder"
-  )
-  const compounderProps = props as CompounderVaultProps
-  const concentratorProps = props as ConcentratorVaultProps
+  const isCompounderProduct = props.productType === "compounder"
   const router = useRouter()
   const { pathname, query } = router
-  const { isLoading } = useVault(
-    isCompounderProduct
-      ? compounderProps
-      : {
-          asset: concentratorProps.primaryAsset,
-          vaultAddress: concentratorProps.targetAsset,
-        }
-  )
+  const { isLoading } = useVault(props)
 
-  const vaultStrategyLink = resolvedRoute(
-    pathname,
-    isCompounderProduct
-      ? {
-          category: query.category,
-          asset: compounderProps.asset,
-          type: compounderProps.type,
-          vaultAddress: compounderProps.vaultAddress,
-        }
-      : {
-          category: query.category,
-          primaryAsset: concentratorProps.primaryAsset,
-          type: concentratorProps.type,
-          targetAsset: concentratorProps.targetAsset,
-        }
-  )
+  const vaultAddress = props.vaultAddress
+
+  const vaultStrategyLink = resolvedRoute(pathname, {
+    category: query.category,
+    asset: props.asset,
+    type: props.type,
+    vaultAddress: props.vaultAddress,
+  })
 
   const toggleVaultOpen: MouseEventHandler<
     HTMLButtonElement | HTMLDivElement
   > = (e) => {
     e.preventDefault()
     e.stopPropagation()
-    if (isCompounderProduct) {
-      setActiveVault?.(
-        activeVault === compounderProps.vaultAddress
-          ? undefined
-          : compounderProps.vaultAddress
-      )
-    } else {
-      setActiveVault?.(
-        activeVault === concentratorProps.targetAsset
-          ? undefined
-          : concentratorProps.targetAsset
-      )
-    }
+    setActiveVault?.(
+      activeVault === props.vaultAddress ? undefined : props.vaultAddress
+    )
   }
-
-  const vaultAddress = isCompounderProduct
-    ? compounderProps.vaultAddress
-    : concentratorProps.targetAsset
 
   return (
     <Accordion.Item value={vaultAddress} asChild>
@@ -178,7 +139,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
         </TableCell>
         {isCompounderProduct && (
           <TableCell className="pointer-events-none text-center max-lg:hidden">
-            <VaultUserEarnings {...compounderProps} />
+            <VaultUserEarnings {...props} />
           </TableCell>
         )}
 
@@ -210,13 +171,13 @@ export const VaultRow: FC<VaultTableRowProps> = ({
           <div className="mt-6 grid grid-cols-2 gap-4 max-lg:hidden">
             {isCompounderProduct ? (
               <>
-                <CompounderVaultDepositForm {...compounderProps} />
-                <CompounderVaultWithdrawForm {...compounderProps} />
+                <CompounderVaultDepositForm {...props} />
+                <CompounderVaultWithdrawForm {...props} />
               </>
             ) : (
               <>
-                <ConcentratorVaultDepositForm {...concentratorProps} />
-                <ConcentratorVaultWithdrawForm {...concentratorProps} />
+                <ConcentratorVaultDepositForm {...props} />
+                <ConcentratorVaultWithdrawForm {...props} />
               </>
             )}
           </div>
@@ -240,16 +201,16 @@ export const VaultRow: FC<VaultTableRowProps> = ({
               </Tabs.List>
               <Tabs.Content value="deposit">
                 {isCompounderProduct ? (
-                  <CompounderVaultDepositForm {...compounderProps} />
+                  <CompounderVaultDepositForm {...props} />
                 ) : (
-                  <ConcentratorVaultDepositForm {...concentratorProps} />
+                  <ConcentratorVaultDepositForm {...props} />
                 )}
               </Tabs.Content>
               <Tabs.Content value="withdraw">
                 {isCompounderProduct ? (
-                  <CompounderVaultWithdrawForm {...compounderProps} />
+                  <CompounderVaultWithdrawForm {...props} />
                 ) : (
-                  <ConcentratorVaultWithdrawForm {...concentratorProps} />
+                  <ConcentratorVaultWithdrawForm {...props} />
                 )}
               </Tabs.Content>
             </Tabs.Root>
@@ -277,7 +238,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
                   Earnings
                 </dt>
                 <dd className="text-sm font-medium text-pink-100">
-                  <VaultUserEarnings {...compounderProps} />
+                  <VaultUserEarnings {...props} />
                 </dd>
               </>
             )}

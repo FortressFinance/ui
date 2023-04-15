@@ -1,12 +1,12 @@
 import { FC } from "react"
 
 import { formatUsd } from "@/lib/helpers/formatCurrency"
-import { ConcentratorVaultProps } from "@/lib/types"
+import { VaultProps } from "@/lib/types"
 import { useConcentratorVaultTvl } from "@/hooks/useConcentratorVaultTvl"
 
 import Skeleton from "@/components/Skeleton"
 
-export const ConcentratorVaultTvl: FC<ConcentratorVaultProps> = (props) => {
+export const ConcentratorVaultTvl: FC<VaultProps> = (props) => {
   const tvl = useConcentratorVaultTvl(props)
 
   return (

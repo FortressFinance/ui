@@ -2,7 +2,7 @@ import { FC } from "react"
 import { Address } from "wagmi"
 
 import { capitalizeFirstLetter } from "@/lib/helpers"
-import { ConcentratorVaultProps, FilterCategory } from "@/lib/types"
+import { FilterCategory } from "@/lib/types"
 import { enabledNetworks } from "@/lib/wagmi"
 import {
   useActiveChainId,
@@ -69,27 +69,16 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
       ) : (
         filteredConcentratorVaults?.map(
           ({ concentratorTargetAsset, vaultAssetAddress, vaultType }, i) => (
-            <ConcentratorVaultRow
-              key={`pool-${i}`}
-              targetAsset={concentratorTargetAsset}
-              primaryAsset={vaultAssetAddress}
+            <VaultRow
+              key={`concentrator-${i}`}
+              asset={vaultAssetAddress}
               type={vaultType}
+              vaultAddress={concentratorTargetAsset}
+              productType="concentrator"
             />
           )
         )
       )}
     </VaultTable>
-  )
-}
-
-const ConcentratorVaultRow: FC<ConcentratorVaultProps> = (props) => {
-  return (
-    <VaultRow
-      {...props}
-      primaryAsset={props.primaryAsset}
-      type={props.type}
-      targetAsset={props.targetAsset}
-      productType="concentrator"
-    />
   )
 }

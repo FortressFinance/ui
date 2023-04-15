@@ -1,27 +1,29 @@
 import { FC } from "react"
 
-import { ConcentratorVaultProps, ProductType } from "@/lib/types"
+import { VaultProps } from "@/lib/types"
 import { useConcentratorVault } from "@/hooks"
 import { useConcentratorUnderlyingAssets } from "@/hooks/useConcentratorUnderlyingAssets"
 
 import { VaultWithdrawForm } from "@/components/VaultRow/lib"
 
-export const ConcentratorVaultWithdrawForm: FC<ConcentratorVaultProps> = (
-  props
-) => {
+export const ConcentratorVaultWithdrawForm: FC<VaultProps> = (props) => {
   const concentrator = useConcentratorVault({
-    concentratorTargetAsset: props.targetAsset,
-    vaultAssetAddress: props.primaryAsset,
-    vaultType: props.type ?? "balancer",
+    targetAsset: props.vaultAddress,
+    primaryAsset: props.asset,
+    type: props.type ?? "balancer",
   })
 
-  const { data: underlyingAssets } = useConcentratorUnderlyingAssets(props)
-  const args = {
-    ...props,
-    inputToken: concentrator?.data?.ybTokenAddress,
-    outputToken: props.primaryAsset,
-    underlyingAssets,
-    productType: "concentrator" as ProductType,
-  }
-  return <VaultWithdrawForm {...args} />
+  const { data: underlyingAssets } = useConcentratorUnderlyingAssets({
+    targetAsset: props.vaultAddress,
+    primaryAsset: props.asset,
+  })
+  return (
+    <VaultWithdrawForm
+      {...props}
+      defaultInputToken={concentrator?.data?.ybTokenAddress}
+      defaultOutputToken={props.asset}
+      underlyingAssets={underlyingAssets}
+      productType="concentrator"
+    />
+  )
 }

@@ -6,13 +6,13 @@ export type ProductType = "compounder" | "concentrator"
 
 export type VaultType = "balancer" | "curve" | "token"
 
-export type CompounderVaultProps = {
+export type VaultProps = {
   asset: Address
   type: VaultType
   vaultAddress: Address
 }
 
-export type VaultDynamicProps = CompounderVaultProps & {
+export type VaultDynamicProps = VaultProps & {
   poolId: CompounderVaultStaticData["id"] | undefined
 }
 
@@ -22,9 +22,3 @@ export type FilterCategory =
   | "stable"
   | "balancer"
   | "curve"
-
-export type ConcentratorVaultProps = {
-  primaryAsset: Address
-  targetAsset: Address
-  type: VaultType
-}

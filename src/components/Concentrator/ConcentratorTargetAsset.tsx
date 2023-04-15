@@ -27,9 +27,9 @@ export const ConcentratorTargetAssetSymbol: FC<
     concentratorTargetAsset,
   })
   const concentrator = useConcentratorVault({
-    concentratorTargetAsset,
-    vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
-    vaultType: firstConcentrator?.vaultType ?? "balancer",
+    targetAsset: concentratorTargetAsset,
+    primaryAsset: firstConcentrator?.vaultAssetAddress,
+    type: firstConcentrator?.vaultType ?? "balancer",
   })
   return (
     <AssetSymbol
@@ -56,9 +56,9 @@ export const ConcentratorTargetAssetBalance: FC<
     concentratorTargetAsset,
   })
   const concentrator = useConcentratorVault({
-    concentratorTargetAsset,
-    vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
-    vaultType: firstConcentrator?.vaultType ?? "balancer",
+    targetAsset: concentratorTargetAsset,
+    primaryAsset: firstConcentrator?.vaultAssetAddress,
+    type: firstConcentrator?.vaultType ?? "balancer",
   })
   return (
     <AssetBalance
@@ -82,9 +82,9 @@ export const ConcentratorTargetAssetLogo: FC<ConcentratorTargetAssetProps> = ({
     concentratorTargetAsset,
   })
   const concentrator = useConcentratorVault({
-    concentratorTargetAsset,
-    vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
-    vaultType: firstConcentrator?.vaultType ?? "balancer",
+    targetAsset: concentratorTargetAsset,
+    primaryAsset: firstConcentrator?.vaultAssetAddress,
+    type: firstConcentrator?.vaultType ?? "balancer",
   })
   return (
     <AssetLogo tokenAddress={concentrator.data?.rewardTokenAddress ?? "0x"} />

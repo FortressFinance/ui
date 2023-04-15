@@ -1,14 +1,14 @@
-import { ConcentratorVaultProps } from "@/lib/types"
+import { VaultProps } from "@/lib/types"
 import useConcentratorVaultTvlFallback from "@/hooks/lib/tvl/concentrator/useConcentratorVaultTvlFallback"
 
 export function useConcentratorVaultTvl({
-  primaryAsset,
-  targetAsset,
+  asset: primaryAsset,
+  vaultAddress: targetAsset,
   type,
-}: ConcentratorVaultProps) {
+}: VaultProps) {
   return useConcentratorVaultTvlFallback({
-    primaryAsset,
-    targetAsset,
+    asset: primaryAsset,
+    vaultAddress: targetAsset,
     type,
   })
 }

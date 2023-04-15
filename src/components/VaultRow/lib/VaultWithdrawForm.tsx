@@ -33,8 +33,8 @@ import { VaultDepositWithdrawProps } from "@/components/VaultRow/lib"
 import { useGlobalStore } from "@/store"
 
 export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
-  inputToken,
-  outputToken,
+  defaultInputToken,
+  defaultOutputToken,
   underlyingAssets,
   ...props
 }) => {
@@ -53,8 +53,8 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
   const form = useForm<TokenFormValues>({
     defaultValues: {
       amountIn: "",
-      inputToken,
-      outputToken,
+      inputToken: defaultInputToken,
+      outputToken: defaultOutputToken,
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -65,11 +65,11 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
   const amountInDebounced = useDebounce(amountIn)
   const outputTokenAddress = form.watch("outputToken")
   // Calculate + fetch information on selected tokens
-  const outputIsLp = outputTokenAddress === outputToken
-  const { data: inputCurrency } = useTokenOrNative({ address: inputToken })
+  const outputIsLp = outputTokenAddress === defaultOutputToken
+  const { data: inputToken } = useTokenOrNative({ address: defaultInputToken })
 
   const inputTokenBalance = useTokenOrNativeBalance({
-    address: inputToken,
+    address: defaultInputToken,
   })
   const outputTokenBalance = useTokenOrNativeBalance({
     address: outputTokenAddress,
@@ -78,7 +78,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
   // preview redeem currently returns a value with slippage accounted for; no math is required here
   const value = parseCurrencyUnits({
     amountFormatted: amountInDebounced,
-    decimals: inputCurrency?.decimals,
+    decimals: inputToken?.decimals,
   })
 
   const onWithdrawSuccess = () => {
@@ -97,7 +97,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
     enabled: value.gt(0),
   })
 
-  const vaultContract = useVaultContract(inputToken)
+  const vaultContract = useVaultContract(defaultInputToken)
   // Enable/disable prepare hooks based on form state
   const enablePrepareTx =
     !form.formState.isValidating &&
@@ -240,7 +240,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
           onSubmit={onSubmitForm}
           previewResultWei={previewRedeem.data?.resultWei}
           submitText="Withdraw"
-          asset={outputToken}
+          asset={defaultOutputToken}
           tokenAddresses={underlyingAssets}
         />
       </FormProvider>
@@ -250,7 +250,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
         onClose={() => setShowConfirmWithdraw(false)}
         onConfirm={onConfirmTransactionDetails}
         inputAmount={value.toString()}
-        inputTokenAddress={inputToken}
+        inputTokenAddress={defaultInputToken}
         outputAmount={previewRedeem.data?.resultWei}
         outputAmountMin={
           outputIsLp

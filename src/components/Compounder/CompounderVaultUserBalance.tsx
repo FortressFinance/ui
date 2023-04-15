@@ -1,12 +1,12 @@
 import { FC } from "react"
 
 import clsxm from "@/lib/clsxm"
-import { CompounderVaultProps } from "@/lib/types"
+import { VaultProps } from "@/lib/types"
 import { useTokenOrNativeBalance } from "@/hooks"
 
 import { AssetBalance, AssetBalanceUsd } from "@/components/Asset"
 
-export const CompounderVaultUserBalance: FC<CompounderVaultProps> = (props) => {
+export const CompounderVaultUserBalance: FC<VaultProps> = (props) => {
   const { data: balance } = useTokenOrNativeBalance({
     address: props.vaultAddress,
   })

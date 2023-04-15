@@ -1,16 +1,16 @@
-import { ConcentratorVaultProps } from "@/lib/types"
+import { VaultProps } from "@/lib/types"
 import { useConcentratorVault, useTokenPriceUsd } from "@/hooks"
 import useVaultTotalAssets from "@/hooks/lib/tvl/compounder/useVaultTotalAssets"
 
 export default function useConcentratorVaultTvlFallback({
-  primaryAsset,
-  targetAsset,
+  asset: primaryAsset,
+  vaultAddress: targetAsset,
   type,
-}: ConcentratorVaultProps) {
+}: VaultProps) {
   const concentrator = useConcentratorVault({
-    concentratorTargetAsset: targetAsset,
-    vaultAssetAddress: primaryAsset,
-    vaultType: type,
+    targetAsset,
+    primaryAsset,
+    type,
   })
 
   const { data: primaryAssetPriceUsd, isLoading: isLoadingPricer } =

@@ -5,7 +5,7 @@ import {
   getPreviewRedeemTokenVault,
 } from "@/lib/api/vaults"
 import { queryKeys } from "@/lib/helpers"
-import { CompounderPreviewTransactionBaseArgs } from "@/hooks/lib/api/types"
+import { PreviewTransactionBaseArgs } from "@/hooks/lib/api/types"
 import { useVaultPoolId } from "@/hooks/useVaultPoolId"
 
 import { useGlobalStore } from "@/store"
@@ -16,7 +16,7 @@ export function useCompounderPreviewRedeem({
   onError,
   onSuccess,
   ...rest
-}: CompounderPreviewTransactionBaseArgs) {
+}: PreviewTransactionBaseArgs) {
   const { data: poolId } = useVaultPoolId({
     asset: rest.asset ?? "0x",
     type: type ?? "curve",

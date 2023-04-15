@@ -1,12 +1,12 @@
 import { FC } from "react"
 
 import { formatUsd } from "@/lib/helpers/formatCurrency"
-import { CompounderVaultProps } from "@/lib/types"
+import { VaultProps } from "@/lib/types"
 import { useVaultPoolId, useVaultTvl } from "@/hooks"
 
 import Skeleton from "@/components/Skeleton"
 
-export const CompounderVaultTvl: FC<CompounderVaultProps> = (props) => {
+export const CompounderVaultTvl: FC<VaultProps> = (props) => {
   const poolId = useVaultPoolId(props)
   const tvl = useVaultTvl({ ...props, poolId: poolId.data })
 

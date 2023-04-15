@@ -5,7 +5,7 @@ import { BiInfoCircle } from "react-icons/bi"
 import { useAccount } from "wagmi"
 
 import { formatPercentage } from "@/lib/helpers/formatPercentage"
-import { CompounderVaultProps } from "@/lib/types"
+import { VaultProps } from "@/lib/types"
 import { useIsTokenVault, useTokenOrNative, useVaultFees } from "@/hooks"
 
 import { ModalBaseProps } from "@/components/Modal/lib/ModalBase"
@@ -26,7 +26,7 @@ import {
 
 import strategyText from "@/constant/strategyText"
 
-export const VaultStrategyModal: FC<CompounderVaultProps & ModalBaseProps> = ({
+export const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
   isOpen,
   onClose,
   ...vaultProps
