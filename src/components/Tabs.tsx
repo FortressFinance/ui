@@ -45,3 +45,14 @@ export const TabButton = forwardRef<
     </button>
   )
 })
+
+export const TabContent = forwardRef<
+  HTMLDivElement,
+  DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+>((props, ref) => (
+  <div
+    className="ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-x-0 ui-state-inactive:top-0 ui-state-inactive:animate-scale-out"
+    ref={ref}
+    {...props}
+  />
+))

@@ -59,6 +59,14 @@ module.exports = {
           "0%": { opacity: 1 },
           "100%": { opacity: 0 },
         },
+        "scale-in": {
+          from: { opacity: 0, transform: "rotateX(-10deg) scale(0.94)" },
+          to: { opacity: 1, transform: "rotateX(0deg) scale(1)" },
+        },
+        "scale-out": {
+          from: { opacity: 1, transform: "rotateX(0deg) scale(1)" },
+          to: { opacity: 0, transform: "rotateX(-10deg) scale(0.98)" },
+        },
         "slide-in-right": {
           "0%": { transform: "translateX(100%)" },
           "100%": { transform: "translateX(0)" },
@@ -82,6 +90,8 @@ module.exports = {
       animation: {
         "fade-in": "fade-in 200ms ease-in-out",
         "fade-out": "fade-out 200ms ease-in-out",
+        "scale-in": "scale-in 400ms ease-in-out",
+        "scale-out": "scale-out 200ms ease-in-out",
         "slide-in-right": "slide-in-right 200ms ease-in-out",
         "slide-out-right": "slide-out-right 200ms ease-in-out",
         "accordion-open": "accordion-open 200ms ease-in-out",

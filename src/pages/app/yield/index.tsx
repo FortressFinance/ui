@@ -11,7 +11,7 @@ import HoldingsTable from "@/components/HoldingsTable"
 import Layout from "@/components/Layout"
 import { VaultStrategyModal } from "@/components/Modal"
 import Seo from "@/components/Seo"
-import { TabButton, TabListGroup } from "@/components/Tabs"
+import { TabButton, TabContent, TabListGroup } from "@/components/Tabs"
 
 const Yield: NextPage = () => {
   const router = useRouter()
@@ -34,7 +34,7 @@ const Yield: NextPage = () => {
           }
           onValueChange={(category) => {
             const link = resolvedRoute(pathname, { category })
-            router.push(link.href, link.as, { shallow: true })
+            router.push(link.href, link.as, { shallow: true, scroll: false })
           }}
         >
           <Tabs.List className="mb-4 lg:mb-6">
@@ -71,24 +71,38 @@ const Yield: NextPage = () => {
             </div>
           </Tabs.List>
 
-          <Tabs.Content value="featured">
-            <CompounderVaultTable filterCategory="featured" />
-          </Tabs.Content>
-          <Tabs.Content value="crypto">
-            <CompounderVaultTable filterCategory="crypto" />
-          </Tabs.Content>
-          <Tabs.Content value="stable">
-            <CompounderVaultTable filterCategory="stable" />
-          </Tabs.Content>
-          <Tabs.Content value="curve">
-            <CompounderVaultTable vaultType="curve" />
-          </Tabs.Content>
-          <Tabs.Content value="balancer">
-            <CompounderVaultTable vaultType="balancer" />
-          </Tabs.Content>
-          <Tabs.Content value="holdings">
-            <HoldingsTable showEarningsColumn />
-          </Tabs.Content>
+          <div className="relative">
+            <Tabs.Content value="featured" asChild>
+              <TabContent>
+                <CompounderVaultTable filterCategory="featured" />
+              </TabContent>
+            </Tabs.Content>
+            <Tabs.Content value="crypto" asChild>
+              <TabContent>
+                <CompounderVaultTable filterCategory="crypto" />
+              </TabContent>
+            </Tabs.Content>
+            <Tabs.Content value="stable" asChild>
+              <TabContent>
+                <CompounderVaultTable filterCategory="stable" />
+              </TabContent>
+            </Tabs.Content>
+            <Tabs.Content value="curve" asChild>
+              <TabContent>
+                <CompounderVaultTable vaultType="curve" />
+              </TabContent>
+            </Tabs.Content>
+            <Tabs.Content value="balancer" asChild>
+              <TabContent>
+                <CompounderVaultTable vaultType="balancer" />
+              </TabContent>
+            </Tabs.Content>
+            <Tabs.Content value="holdings" asChild>
+              <TabContent>
+                <HoldingsTable showEarningsColumn />
+              </TabContent>
+            </Tabs.Content>
+          </div>
         </Tabs.Root>
       </main>
 
@@ -96,7 +110,7 @@ const Yield: NextPage = () => {
         isOpen={!!router.query.asset}
         onClose={() => {
           const link = resolvedRoute(pathname, { category, vaultAddress })
-          router.push(link.href, link.as, { shallow: true })
+          router.push(link.href, link.as, { shallow: true, scroll: false })
         }}
         asset={asset as Address}
         type={type as VaultType}
