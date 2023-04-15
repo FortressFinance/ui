@@ -5,7 +5,6 @@ import { BiInfoCircle } from "react-icons/bi"
 import { useAccount } from "wagmi"
 
 import { formatPercentage } from "@/lib/helpers/formatPercentage"
-import { VaultProps } from "@/lib/types"
 import { useIsTokenVault, useTokenOrNative, useVaultFees } from "@/hooks"
 
 import { ModalBaseProps } from "@/components/Modal/lib/ModalBase"
@@ -17,6 +16,7 @@ import { VaultStrategyModalAmmApr } from "@/components/Modal/VaultStrategyModal/
 import { VaultStrategyModalTokenApr } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalTokenApr"
 import Skeleton from "@/components/Skeleton"
 import Tooltip from "@/components/Tooltip"
+import { VaultRowPropsWithProduct } from "@/components/VaultRow"
 
 import {
   FortIconAddToWallet,
@@ -26,11 +26,9 @@ import {
 
 import strategyText from "@/constant/strategyText"
 
-export const VaultStrategyModal: FC<VaultProps & ModalBaseProps> = ({
-  isOpen,
-  onClose,
-  ...vaultProps
-}) => {
+export const VaultStrategyModal: FC<
+  VaultRowPropsWithProduct & ModalBaseProps
+> = ({ isOpen, onClose, ...vaultProps }) => {
   const { connector } = useAccount()
   const fees = useVaultFees(vaultProps)
 

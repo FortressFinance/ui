@@ -58,6 +58,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
     asset: props.asset,
     type: props.type,
     vaultAddress: props.vaultAddress,
+    productType: props.productType,
   })
 
   const toggleVaultOpen: MouseEventHandler<
