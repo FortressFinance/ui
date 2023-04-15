@@ -1,5 +1,6 @@
 export * from "./AMMCompounderBase"
 export * from "./AMMConcentratorBase"
+export * from "./FortressLendingPair"
 export * from "./RewardDistributor"
 export * from "./TokenCompounderBase"
 export * from "./vaultCompounderArbitrumAbi"
