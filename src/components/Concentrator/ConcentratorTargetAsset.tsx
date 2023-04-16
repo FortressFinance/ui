@@ -68,6 +68,7 @@ export const ConcentratorTargetAssetBalance: FC<
         concentratorsList.isLoading ||
         concentrator.isLoading
       }
+      abbreviate
     />
   )
 }
