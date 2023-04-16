@@ -2,7 +2,7 @@ import * as Dialog from "@radix-ui/react-dialog"
 import Link from "next/link"
 import { FC, MouseEventHandler } from "react"
 import { BiInfoCircle } from "react-icons/bi"
-import { useAccount } from "wagmi"
+import { useAccount, useNetwork } from "wagmi"
 
 import { formatPercentage } from "@/lib/helpers/formatPercentage"
 import { useIsTokenVault, useTokenOrNative, useVaultFees } from "@/hooks"
@@ -31,6 +31,7 @@ export const VaultStrategyModal: FC<
 > = ({ isOpen, onClose, ...vaultProps }) => {
   const { connector } = useAccount()
   const fees = useVaultFees(vaultProps)
+  const { chain } = useNetwork()
 
   const { data: ybToken } = useTokenOrNative({
     address: vaultProps.vaultAddress,
@@ -64,16 +65,19 @@ export const VaultStrategyModal: FC<
                   </button>
                 </Tooltip>
               )}
-              <Tooltip label="View contract">
-                <Link
-                  className="h-6 w-6 p-[1px]"
-                  href={`https://arbiscan.io/address/${vaultProps.vaultAddress}`}
-                  target="_blank"
-                >
-                  <FortIconExternalLink className="h-full w-full" />
-                  <span className="sr-only">View contract</span>
-                </Link>
-              </Tooltip>
+              {chain?.blockExplorers?.default.url &&
+                vaultProps.vaultAddress && (
+                  <Tooltip label="View contract">
+                    <Link
+                      className="h-6 w-6 p-[1px]"
+                      href={`${chain.blockExplorers.default.url}/address/${vaultProps.vaultAddress}`}
+                      target="_blank"
+                    >
+                      <FortIconExternalLink className="h-full w-full" />
+                      <span className="sr-only">View contract</span>
+                    </Link>
+                  </Tooltip>
+                )}
             </div>
             <Dialog.Close className="h-6 w-6 p-[1px]">
               <FortIconClose className="h-full w-full fill-white" />
