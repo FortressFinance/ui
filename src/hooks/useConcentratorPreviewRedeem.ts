@@ -16,11 +16,11 @@ export function useConcentratorPreviewRedeem({
   ...rest
 }: VaultPreviewTransactionArgs) {
   const { data: targetAssetId } = useConcentratorTargetAssetId({
-    targetAsset: rest.vaultAddress,
+    targetAsset: rest.asset,
   })
   const { data: concentratorId } = useConcentratorId({
-    primaryAsset: rest.asset,
-    targetAsset: rest.vaultAddress,
+    primaryAsset: rest.vaultAddress,
+    targetAsset: rest.asset,
   })
   const isCurve = useIsConcentratorCurveVault(rest.vaultAddress)
 
