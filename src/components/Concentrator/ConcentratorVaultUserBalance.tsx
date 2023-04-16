@@ -8,8 +8,8 @@ import { AssetBalance, AssetBalanceUsd } from "@/components/Asset"
 
 export const ConcentratorVaultUserBalance: FC<VaultProps> = (props) => {
   const concentrator = useConcentratorVault({
-    targetAsset: props.vaultAddress,
-    primaryAsset: props.asset,
+    targetAsset: props.asset,
+    primaryAsset: props.vaultAddress,
     type: props.type,
   })
   const { data: balance } = useTokenOrNativeBalance({

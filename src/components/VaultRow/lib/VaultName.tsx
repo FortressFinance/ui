@@ -1,22 +1,16 @@
 import { FC } from "react"
 
-import { CompounderVaultName } from "@/components/Compounder"
-import { ConcentratorVaultName } from "@/components/Concentrator"
-import { VaultRowPropsWithProduct } from "@/components/VaultRow/VaultRow"
+import { VaultProps } from "@/lib/types"
+import { useVault } from "@/hooks"
 
-export const VaultName: FC<VaultRowPropsWithProduct> = ({
-  productType,
-  ...props
-}) => {
-  const isCompounderProduct = productType === "compounder"
+import Skeleton from "@/components/Skeleton"
+
+export const VaultName: FC<VaultProps> = (props) => {
+  const vault = useVault(props)
 
   return (
-    <>
-      {isCompounderProduct ? (
-        <CompounderVaultName {...props} />
-      ) : (
-        <ConcentratorVaultName {...props} />
-      )}
-    </>
+    <Skeleton isLoading={vault.isLoading} loadingText="Loading vault">
+      {vault.data?.name}
+    </Skeleton>
   )
 }

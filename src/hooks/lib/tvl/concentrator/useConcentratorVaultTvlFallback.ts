@@ -1,12 +1,18 @@
-import { VaultProps } from "@/lib/types"
+import { Address } from "wagmi"
+
+import { VaultType } from "@/lib/types"
 import { useConcentratorVault, useTokenPriceUsd } from "@/hooks"
 import useVaultTotalAssets from "@/hooks/lib/tvl/compounder/useVaultTotalAssets"
 
 export default function useConcentratorVaultTvlFallback({
-  asset: primaryAsset,
-  vaultAddress: targetAsset,
+  targetAsset,
+  primaryAsset,
   type,
-}: VaultProps) {
+}: {
+  targetAsset: Address
+  primaryAsset: Address
+  type: VaultType
+}) {
   const concentrator = useConcentratorVault({
     targetAsset,
     primaryAsset,
@@ -14,7 +20,7 @@ export default function useConcentratorVaultTvlFallback({
   })
 
   const { data: primaryAssetPriceUsd, isLoading: isLoadingPricer } =
-    useTokenPriceUsd({ asset: targetAsset, enabled: true })
+    useTokenPriceUsd({ asset: primaryAsset, enabled: true })
   const { data: totalAssets, isLoading: isLoadingTotalAssets } =
     useVaultTotalAssets({
       vaultAddress: concentrator?.data?.ybTokenAddress,

@@ -8,19 +8,19 @@ import { VaultDepositForm } from "@/components/VaultRow/lib"
 
 export const ConcentratorVaultDepositForm: FC<VaultProps> = (props) => {
   const concentrator = useConcentratorVault({
-    targetAsset: props.vaultAddress,
-    primaryAsset: props.asset,
+    targetAsset: props.asset,
+    primaryAsset: props.vaultAddress,
     type: props.type ?? "balancer",
   })
 
   const { data: underlyingAssets } = useConcentratorUnderlyingAssets({
-    targetAsset: props.vaultAddress,
-    primaryAsset: props.asset,
+    targetAsset: props.asset,
+    primaryAsset: props.vaultAddress,
   })
   return (
     <VaultDepositForm
       {...props}
-      defaultInputToken={props.asset}
+      defaultInputToken={props.vaultAddress}
       defaultOutputToken={concentrator?.data?.ybTokenAddress}
       underlyingAssets={underlyingAssets}
       productType="concentrator"

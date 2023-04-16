@@ -16,7 +16,6 @@ export function useConcentratorVault({
 }) {
   const apiQuery = useApiConcentratorVault({
     targetAsset,
-    primaryAsset,
   })
 
   // Fallback: contract requests
@@ -28,7 +27,7 @@ export function useConcentratorVault({
       args: [type === "curve", targetAsset ?? "0x", primaryAsset ?? "0x"],
       select: (data) => ({
         ybTokenAddress: data,
-        rewardTokenAddress: primaryAsset ?? "0x",
+        rewardTokenAddress: targetAsset ?? "0x",
       }),
     },
     []

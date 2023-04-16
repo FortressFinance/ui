@@ -133,9 +133,7 @@ const ConcentratorRewardsAum: FC<ConcentratorRewardsProps> = ({
 
   const tvl = useConcentratorAum({
     targetAsset: concentratorTargetAsset,
-    primaryAsset: firstConcentrator?.vaultAssetAddress ?? "0x",
     ybToken: concentrator.data?.ybTokenAddress ?? "0x",
-    type: firstConcentrator?.vaultType ?? "balancer",
   })
 
   return (

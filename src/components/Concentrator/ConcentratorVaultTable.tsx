@@ -68,12 +68,19 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
         </TableEmpty>
       ) : (
         filteredConcentratorVaults?.map(
-          ({ concentratorTargetAsset, vaultAssetAddress, vaultType }, i) => (
+          (
+            {
+              concentratorTargetAsset,
+              vaultAssetAddress: primaryAsset,
+              vaultType,
+            },
+            i
+          ) => (
             <VaultRow
               key={`concentrator-${i}`}
-              asset={vaultAssetAddress}
+              asset={concentratorTargetAsset}
               type={vaultType}
-              vaultAddress={concentratorTargetAsset}
+              vaultAddress={primaryAsset}
               productType="concentrator"
             />
           )

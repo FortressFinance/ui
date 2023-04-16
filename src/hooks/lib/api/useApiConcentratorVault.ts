@@ -4,10 +4,8 @@ import { useApiConcentratorStaticData } from "@/hooks/lib/api/useApiConcentrator
 
 export function useApiConcentratorVault({
   targetAsset,
-  primaryAsset,
 }: {
   targetAsset?: Address
-  primaryAsset?: Address
 }) {
   const apiQuery = useApiConcentratorStaticData()
   const targetAssetToYbToken: Record<Address, Address> = {} // target to primaryKey
@@ -29,7 +27,7 @@ export function useApiConcentratorVault({
     const ybToken = targetAssetToYbToken[targetAsset as Address]
     ybTokens.push({
       ybTokenAddress: ybToken,
-      rewardTokenAddress: primaryAsset ?? "0x",
+      rewardTokenAddress: targetAsset ?? "0x",
     })
   }
   return {
