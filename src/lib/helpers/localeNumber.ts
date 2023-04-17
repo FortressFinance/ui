@@ -1,4 +1,4 @@
-import { SUPPORTED_LOCALES } from "@/constant/locales"
+import { DEFAULT_LOCALE } from "@/constant/locales"
 
 export function localeNumber(
   num: number,
@@ -8,44 +8,10 @@ export function localeNumber(
     maximumFractionDigits?: number
   }
 ) {
-  const formatter = Intl.NumberFormat(currentLocale(), {
+  const formatter = Intl.NumberFormat(DEFAULT_LOCALE, {
     ...(options?.compact ? { notation: "compact" } : {}),
     minimumFractionDigits: options?.minimumFractionDigits,
     maximumFractionDigits: options?.maximumFractionDigits,
   })
   return formatter.format(num).toLocaleUpperCase()
-}
-
-function currentLocale() {
-  const browserLocales = getBrowserLocales()
-  return browserLocales?.filter((l) => SUPPORTED_LOCALES.includes(l))
-}
-
-function getBrowserLocales(options = {}) {
-  const defaultOptions = {
-    languageCodeOnly: false,
-  }
-
-  const opt = {
-    ...defaultOptions,
-
-    ...options,
-  }
-
-  const browserLocales =
-    typeof navigator === "undefined"
-      ? ["en-US"]
-      : navigator.languages === undefined
-      ? [navigator.language]
-      : navigator.languages
-
-  if (!browserLocales) {
-    return undefined
-  }
-
-  return browserLocales.map((locale) => {
-    const trimmedLocale = locale.trim()
-
-    return opt.languageCodeOnly ? trimmedLocale.split(/-|_/)[0] : trimmedLocale
-  })
 }
