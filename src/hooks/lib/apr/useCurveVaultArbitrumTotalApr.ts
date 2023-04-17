@@ -25,6 +25,21 @@ export default function useCurveVaultArbitrumTotalApr({
   asset: Address
   enabled: boolean
 }) {
+  const breakdownApr = useCurveVaultArbitrumBreakdownApr({ asset, enabled })
+
+  return {
+    ...breakdownApr,
+    data: !breakdownApr.data ? 0 : breakdownApr.data.totalApr,
+  }
+}
+
+export function useCurveVaultArbitrumBreakdownApr({
+  asset,
+  enabled,
+}: {
+  asset: Address
+  enabled: boolean
+}) {
   const chainId = useActiveChainId()
   const poolCurveAddress = ARBI_CURVE_ADDRESS[asset] ?? "0x"
   const curveApiQuery = useQuery([chainId, asset, "curveApi"], {
@@ -51,17 +66,23 @@ const respSchema = z.object({
 async function getCurveArbitrumApi(poolCurveAddress: Address) {
   const resp = await axios.get(convexSidechainsUrl)
   const parsed = respSchema.parse(resp.data)
-  let totalApr = 0
+  let crvApy = 0,
+    cvxApy = 0,
+    baseApy = 0
   Object.entries(parsed.apys).forEach(([key, value]) => {
     if (
       poolCurveAddress !== "0x" &&
       key.toLocaleLowerCase().includes(poolCurveAddress.toLocaleLowerCase())
     ) {
-      const baseApy = value.baseApy / 100
-      const crvApy = value.crvApy / 100
-      const cvxApy = value.cvxApy / 100
-      totalApr = baseApy + crvApy + cvxApy
+      baseApy = value.baseApy / 100
+      crvApy = value.crvApy / 100
+      cvxApy = value.cvxApy / 100
     }
   })
-  return totalApr
+  return {
+    baseApy,
+    crvApy,
+    cvxApy,
+    totalApr: baseApy + crvApy + cvxApy,
+  }
 }

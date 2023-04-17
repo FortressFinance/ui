@@ -1,28 +1,10 @@
 import { Address } from "wagmi"
 
-import { convertToApy } from "@/lib/api/vaults/convertToApy"
 import { useActiveChainId } from "@/hooks"
 import { useConcentratorTokenVaultArbitrumBreakdownApr } from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultArbitrumTotalApr"
 import { useConcentratorTokenVaultMainnetBreakdownApr } from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultMainnetTotalApr"
 
-export default function useConcentratorTokenVaultTotalApy({
-  asset,
-  enabled,
-}: {
-  asset: Address
-  enabled: boolean
-}) {
-  const tokenVaultBreakdownApr = useConcentratorTokenVaultBreakdownApr({
-    asset,
-    enabled,
-  })
-  return {
-    ...tokenVaultBreakdownApr,
-    data: convertToApy(tokenVaultBreakdownApr.data?.totalApr),
-  }
-}
-
-export function useConcentratorTokenVaultBreakdownApr({
+export default function useConcentratorTokenVaultBreakdownApr({
   asset,
   enabled,
 }: {

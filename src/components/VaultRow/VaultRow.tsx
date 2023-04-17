@@ -2,11 +2,12 @@ import * as Accordion from "@radix-ui/react-accordion"
 import * as Tabs from "@radix-ui/react-tabs"
 import { useRouter } from "next/router"
 import { FC, MouseEventHandler } from "react"
+import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 import { resolvedRoute } from "@/lib/helpers"
 import { VaultProps } from "@/lib/types"
-import { useVault } from "@/hooks"
+import { useVault, useVaultYbtokenAddress } from "@/hooks"
 
 import { AssetLogo } from "@/components/Asset"
 import { ButtonLink } from "@/components/Button"
@@ -31,8 +32,8 @@ import {
 import { FortIconChevronDownCircle } from "@/icons"
 
 export type VaultRowPropsWithProduct =
-  | ({ productType: "compounder" } & VaultProps)
-  | ({ productType: "concentrator" } & VaultProps)
+  | ({ productType: "compounder"; ybTokenAddress?: Address } & VaultProps)
+  | ({ productType: "concentrator"; ybTokenAddress?: Address } & VaultProps)
 
 export type VaultTableRowProps = VaultRowPropsWithProduct & {
   activeVault?: string
@@ -51,6 +52,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
   const { pathname, query } = router
   const { isLoading } = useVault(props)
 
+  const ybTokenAddress = useVaultYbtokenAddress(props)
   const vaultAddress = props.vaultAddress
 
   const vaultStrategyLink = resolvedRoute(pathname, {
@@ -59,6 +61,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
     type: props.type,
     vaultAddress: props.vaultAddress,
     productType: props.productType,
+    ybToken: ybTokenAddress,
   })
 
   const toggleVaultOpen: MouseEventHandler<

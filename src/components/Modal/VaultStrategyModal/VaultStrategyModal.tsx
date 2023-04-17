@@ -13,6 +13,8 @@ import PurpleModal, {
   PurpleModalHeader,
 } from "@/components/Modal/lib/PurpleModal"
 import { VaultStrategyModalAmmApr } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalAmmApr"
+import { VaultStrategyModalConcentratorApr } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalConcentratorApr"
+import { VaultStrategyModalConcentratorRewardApr as VaultStrategyModalConcentratorRewardApy } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalConcentratorRewardApy"
 import { VaultStrategyModalTokenApr } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalTokenApr"
 import Skeleton from "@/components/Skeleton"
 import Tooltip from "@/components/Tooltip"
@@ -29,12 +31,16 @@ import strategyText from "@/constant/strategyText"
 export const VaultStrategyModal: FC<
   VaultRowPropsWithProduct & ModalBaseProps
 > = ({ isOpen, onClose, ...vaultProps }) => {
+  const isCompounderProduct = vaultProps.productType === "compounder"
   const { connector } = useAccount()
   const fees = useVaultFees(vaultProps)
   const { chain } = useNetwork()
 
+  const strategyTextAddress = isCompounderProduct
+    ? vaultProps.asset
+    : vaultProps.vaultAddress
   const { data: ybToken } = useTokenOrNative({
-    address: vaultProps.vaultAddress,
+    address: vaultProps.ybTokenAddress ?? "0x",
   })
   const isToken = useIsTokenVault(vaultProps.type)
 
@@ -93,7 +99,8 @@ export const VaultStrategyModal: FC<
               </h1>
 
               <div className="space-y-3 p-4 pb-5 leading-relaxed text-pink-50 max-md:text-sm md:px-5">
-                {strategyText[vaultProps.asset] ?? "No description available"}
+                {strategyText[strategyTextAddress] ??
+                  "No description available"}
               </div>
             </div>
 
@@ -101,16 +108,30 @@ export const VaultStrategyModal: FC<
             <div className="sm:grid sm:grid-cols-2 sm:divide-x sm:divide-pink-800 md:block md:divide-x-0">
               <div>
                 <h1 className="border-b border-pink-800 p-3 text-xs font-semibold uppercase text-pink-300 max-md:text-center md:px-5">
-                  APR
+                  {isCompounderProduct ? "APR" : "Concentrator APR"}
                 </h1>
                 <div className="p-4 pb-5 md:px-5">
-                  {isToken ? (
-                    <VaultStrategyModalTokenApr {...vaultProps} />
+                  {isCompounderProduct ? (
+                    isToken ? (
+                      <VaultStrategyModalTokenApr {...vaultProps} />
+                    ) : (
+                      <VaultStrategyModalAmmApr {...vaultProps} />
+                    )
                   ) : (
-                    <VaultStrategyModalAmmApr {...vaultProps} />
+                    <VaultStrategyModalConcentratorApr {...vaultProps} />
                   )}
                 </div>
               </div>
+              {!isCompounderProduct && (
+                <div>
+                  <h1 className="border-b border-pink-800 p-3 text-xs font-semibold uppercase text-pink-300 max-md:text-center max-sm:border-t md:border-t md:px-5">
+                    Reward APY
+                  </h1>
+                  <div className="p-4 pb-5 md:px-5">
+                    <VaultStrategyModalConcentratorRewardApy {...vaultProps} />
+                  </div>
+                </div>
+              )}
 
               {/* Fees */}
               <div>

@@ -51,7 +51,7 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
   const supportedChain = availableChains?.[0]
 
   return (
-    <VaultTable label={`${label} Vaults`}>
+    <VaultTable label={`${label} Vaults`} useAPR>
       {showLoadingState ? (
         <TableLoading>Loading concentrators...</TableLoading>
       ) : !supportedChain ? (

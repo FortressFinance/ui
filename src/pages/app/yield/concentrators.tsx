@@ -1,10 +1,11 @@
 import * as Tabs from "@radix-ui/react-tabs"
 import { NextPage } from "next"
+import { useRouter } from "next/router"
 import { FC, useState } from "react"
 import { Address } from "wagmi"
 
-import { capitalizeFirstLetter } from "@/lib/helpers"
-import { FilterCategory } from "@/lib/types"
+import { capitalizeFirstLetter, resolvedRoute } from "@/lib/helpers"
+import { FilterCategory, ProductType, VaultType } from "@/lib/types"
 
 import {
   ConcentratorMenu,
@@ -13,10 +14,17 @@ import {
 } from "@/components/Concentrator"
 import HoldingsTable from "@/components/HoldingsTable"
 import Layout from "@/components/Layout"
+import { VaultStrategyModal } from "@/components/Modal"
 import Seo from "@/components/Seo"
 import { TabButton, TabContent, TabListGroup } from "@/components/Tabs"
 
 const Concentrators: NextPage = () => {
+  const router = useRouter()
+  const {
+    pathname,
+    query: { asset, category, type, vaultAddress, productType, ybTokenAddress },
+  } = router
+
   return (
     <Layout>
       <Seo
@@ -28,6 +36,18 @@ const Concentrators: NextPage = () => {
         {/* Child component because we need queryClient to retrieve vaults */}
         <ConcentratorVaults />
       </main>
+      <VaultStrategyModal
+        isOpen={!!router.query.asset}
+        onClose={() => {
+          const link = resolvedRoute(pathname, { category, vaultAddress })
+          router.push(link.href, link.as, { shallow: true, scroll: false })
+        }}
+        asset={asset as Address}
+        type={type as VaultType}
+        vaultAddress={vaultAddress as Address}
+        ybTokenAddress={ybTokenAddress as Address}
+        productType={productType as ProductType}
+      />
     </Layout>
   )
 }

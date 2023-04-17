@@ -4,7 +4,7 @@ import { useRouter } from "next/router"
 import { Address } from "wagmi"
 
 import { resolvedRoute } from "@/lib/helpers"
-import { VaultType } from "@/lib/types"
+import { ProductType, VaultType } from "@/lib/types"
 
 import { CompounderVaultTable } from "@/components/Compounder"
 import HoldingsTable from "@/components/HoldingsTable"
@@ -17,7 +17,7 @@ const Yield: NextPage = () => {
   const router = useRouter()
   const {
     pathname,
-    query: { asset, category, type, vaultAddress },
+    query: { asset, category, type, vaultAddress, productType, ybTokenAddress },
   } = router
 
   return (
@@ -115,7 +115,8 @@ const Yield: NextPage = () => {
         asset={asset as Address}
         type={type as VaultType}
         vaultAddress={vaultAddress as Address}
-        productType="compounder"
+        ybTokenAddress={ybTokenAddress as Address}
+        productType={productType as ProductType}
       />
     </Layout>
   )

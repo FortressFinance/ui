@@ -1,28 +1,10 @@
 import { Address } from "wagmi"
 
-import { convertToApy } from "@/lib/api/vaults/convertToApy"
 import { useActiveChainId } from "@/hooks"
 import { useBalancerVaultArbitrumBreakdownApr } from "@/hooks/lib/apr/useBalancerVaultArbitrumTotalApr"
 import { useBalancerVaultMainnetBreakdownApr } from "@/hooks/lib/apr/useBalancerVaultMainnetTotalApr"
 
-export default function useBalancerVaultTotalApy({
-  asset,
-  enabled,
-}: {
-  asset: Address
-  enabled: boolean
-}) {
-  const balancerVaultBreakdownApr = useBalancerVaultBreakdownApr({
-    asset,
-    enabled,
-  })
-  return {
-    ...balancerVaultBreakdownApr,
-    data: convertToApy(balancerVaultBreakdownApr.data?.totalApr),
-  }
-}
-
-export function useBalancerVaultBreakdownApr({
+export default function useBalancerVaultBreakdownApr({
   asset,
   enabled,
 }: {

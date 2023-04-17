@@ -11,6 +11,24 @@ export default function useConcentratorTokenVaultMainnetTotalApr({
   asset: Address
   enabled: boolean
 }) {
+  const tokenVaultBreakdownApr = useConcentratorTokenVaultMainnetBreakdownApr({
+    asset,
+    enabled,
+  })
+
+  return {
+    ...tokenVaultBreakdownApr,
+    data: tokenVaultBreakdownApr?.data?.totalApr,
+  }
+}
+
+export function useConcentratorTokenVaultMainnetBreakdownApr({
+  asset,
+  enabled,
+}: {
+  asset: Address
+  enabled: boolean
+}) {
   const { data: token } = useTokenOrNative({
     address: asset,
   })
@@ -34,19 +52,15 @@ export default function useConcentratorTokenVaultMainnetTotalApr({
   if (asset === "0x") {
     return {
       isLoading: false,
-      data: 0,
+      data: {
+        totalApr: 0,
+      },
     }
   }
 
   if (!tokenAuraBalVault.isError) {
-    return {
-      ...tokenAuraBalVault,
-      data: tokenAuraBalVault?.data?.totalApr,
-    }
+    return tokenAuraBalVault
   }
 
-  return {
-    ...tokenCvxCrvVault,
-    data: tokenCvxCrvVault?.data?.totalApr,
-  }
+  return tokenCvxCrvVault
 }

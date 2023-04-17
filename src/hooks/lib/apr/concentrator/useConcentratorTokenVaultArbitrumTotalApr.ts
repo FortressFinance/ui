@@ -10,6 +10,24 @@ export default function useConcentratorTokenVaultArbitrumTotalApr({
   asset: Address
   enabled: boolean
 }) {
+  const tokenVaultBreakdownApr = useConcentratorTokenVaultArbitrumBreakdownApr({
+    asset,
+    enabled,
+  })
+
+  return {
+    ...tokenVaultBreakdownApr,
+    data: tokenVaultBreakdownApr.data?.totalApr,
+  }
+}
+
+export function useConcentratorTokenVaultArbitrumBreakdownApr({
+  asset,
+  enabled,
+}: {
+  asset: Address
+  enabled: boolean
+}) {
   const { data: token } = useTokenOrNative({
     address: asset,
   })
@@ -23,8 +41,5 @@ export default function useConcentratorTokenVaultArbitrumTotalApr({
     enabled: isGlpTokenFallbackEnabled ?? false,
   })
 
-  return {
-    ...tokenGlpVault,
-    data: tokenGlpVault.data?.totalApr,
-  }
+  return tokenGlpVault
 }
