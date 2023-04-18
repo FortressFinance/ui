@@ -10,6 +10,9 @@ export type ConcentratorStaticData = {
     type: string
   }
   concentrator: {
+    platformFee?: string
+    harvestBounty?: string
+    withdrawalFee?: string
     ybToken: {
       concentratorId: number
       address: Address

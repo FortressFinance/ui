@@ -9,7 +9,8 @@ export const VaultStrategyModalConcentratorApr: FC<VaultProps> = (props) => {
   const breakdownApr = useConcentratorVaultBreakdownApy(props)
 
   const items = []
-  const data = breakdownApr.data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = breakdownApr.data as any
 
   if (data?.baseApr !== undefined)
     items.push({ label: "Base APR", value: data?.baseApr })
