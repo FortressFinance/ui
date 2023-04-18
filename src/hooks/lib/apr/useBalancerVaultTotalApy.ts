@@ -2,8 +2,8 @@ import { Address } from "wagmi"
 
 import { convertToApy } from "@/lib/api/vaults/convertToApy"
 import { useActiveChainId } from "@/hooks"
-import useBalancerVaultArbitrumTotalApr from "@/hooks/lib/apr/useBalancerVaultArbitrumTotalApr"
-import useBalancerVaultMainnetTotalApr from "@/hooks/lib/apr/useBalancerVaultMainnetTotalApr"
+import { useBalancerVaultArbitrumBreakdownApr } from "@/hooks/lib/apr/useBalancerVaultArbitrumTotalApr"
+import { useBalancerVaultMainnetBreakdownApr } from "@/hooks/lib/apr/useBalancerVaultMainnetTotalApr"
 
 export default function useBalancerVaultTotalApy({
   asset,
@@ -12,26 +12,38 @@ export default function useBalancerVaultTotalApy({
   asset: Address
   enabled: boolean
 }) {
+  const balancerVaultBreakdownApr = useBalancerVaultBreakdownApr({
+    asset,
+    enabled,
+  })
+  return {
+    ...balancerVaultBreakdownApr,
+    data: convertToApy(balancerVaultBreakdownApr.data?.totalApr),
+  }
+}
+
+export function useBalancerVaultBreakdownApr({
+  asset,
+  enabled,
+}: {
+  asset: Address
+  enabled: boolean
+}) {
   const chainId = useActiveChainId()
   const isArbitrumFamily = chainId === 313371 || chainId === 42161
-  const balancerVaultMainnetTotalApr = useBalancerVaultMainnetTotalApr({
+  const balancerVaultMainnetBreakdownApr = useBalancerVaultMainnetBreakdownApr({
     asset,
     enabled: enabled && !isArbitrumFamily,
   })
 
-  const balancerVaultArbitrumTotalApr = useBalancerVaultArbitrumTotalApr({
-    asset,
-    enabled: enabled && isArbitrumFamily,
-  })
+  const balancerVaultArbitrumBreakdownApr =
+    useBalancerVaultArbitrumBreakdownApr({
+      asset,
+      enabled: enabled && isArbitrumFamily,
+    })
 
   if (!isArbitrumFamily) {
-    return {
-      ...balancerVaultMainnetTotalApr,
-      data: convertToApy(balancerVaultMainnetTotalApr.data),
-    }
+    return balancerVaultMainnetBreakdownApr
   }
-  return {
-    ...balancerVaultArbitrumTotalApr,
-    data: convertToApy(balancerVaultArbitrumTotalApr.data),
-  }
+  return balancerVaultArbitrumBreakdownApr
 }

@@ -13,8 +13,8 @@ import {
 } from "@/hooks"
 
 import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"
-import { ConcentratorVaultRow } from "@/components/Concentrator/ConcentratorVaultRow"
 import { TableEmpty, TableLoading } from "@/components/Table"
+import { VaultRow } from "@/components/VaultRow"
 import { VaultTable } from "@/components/VaultRow/lib"
 
 type ConcentratorVaultTableProps = {
@@ -51,7 +51,7 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
   const supportedChain = availableChains?.[0]
 
   return (
-    <VaultTable label={`${label} Vaults`} showEarningsColumn={false}>
+    <VaultTable label={`${label} Vaults`} useAPR>
       {showLoadingState ? (
         <TableLoading>Loading concentrators...</TableLoading>
       ) : !supportedChain ? (
@@ -68,12 +68,20 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
         </TableEmpty>
       ) : (
         filteredConcentratorVaults?.map(
-          ({ concentratorTargetAsset, vaultAssetAddress, vaultType }, i) => (
-            <ConcentratorVaultRow
-              key={`pool-${i}`}
-              targetAsset={concentratorTargetAsset}
-              primaryAsset={vaultAssetAddress}
+          (
+            {
+              concentratorTargetAsset,
+              vaultAssetAddress: primaryAsset,
+              vaultType,
+            },
+            i
+          ) => (
+            <VaultRow
+              key={`concentrator-${i}`}
+              asset={concentratorTargetAsset}
               type={vaultType}
+              vaultAddress={primaryAsset}
+              productType="concentrator"
             />
           )
         )

@@ -12,15 +12,12 @@ import {
 
 import { fortLog } from "@/lib/fortLog"
 import { parseCurrencyUnits } from "@/lib/helpers"
-import { VaultProps } from "@/lib/types"
 import {
   useActiveChainId,
   useInvalidateHoldingsVaults,
   usePreviewRedeem,
   useTokenOrNative,
   useTokenOrNativeBalance,
-  useVault,
-  useVaultPoolId,
 } from "@/hooks"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
 import useDebounce from "@/hooks/useDebounce"
@@ -31,22 +28,24 @@ import {
   InvalidMinAmountModal,
 } from "@/components/Modal"
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
+import { VaultDepositWithdrawProps } from "@/components/VaultRow/lib"
 
 import { useGlobalStore } from "@/store"
 
-export const VaultWithdrawForm: FC<VaultProps> = (props) => {
+export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
+  defaultInputToken,
+  defaultOutputToken,
+  underlyingAssets,
+  ...props
+}) => {
   const [showConfirmWithdrawModal, setShowConfirmWithdraw] = useState(false)
   const [showInvalidMinAmountModal, setShowInvalidMinAmountModal] =
     useState(false)
 
-  const { data: poolId } = useVaultPoolId(props)
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
-  const vault = useVault(props)
   const toastManager = useToast()
   const expertMode = useGlobalStore((store) => store.expertMode)
-
-  const underlyingAssets = vault.data?.underlyingAssets
 
   const invalidateHoldingsVaults = useInvalidateHoldingsVaults()
 
@@ -54,8 +53,8 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const form = useForm<TokenFormValues>({
     defaultValues: {
       amountIn: "",
-      inputToken: props.vaultAddress,
-      outputToken: props.asset,
+      inputToken: defaultInputToken,
+      outputToken: defaultOutputToken,
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -66,11 +65,11 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
   const amountInDebounced = useDebounce(amountIn)
   const outputTokenAddress = form.watch("outputToken")
   // Calculate + fetch information on selected tokens
-  const outputIsLp = outputTokenAddress === props.asset
-  const { data: inputToken } = useTokenOrNative({ address: props.vaultAddress })
+  const outputIsLp = outputTokenAddress === defaultOutputToken
+  const { data: inputToken } = useTokenOrNative({ address: defaultInputToken })
 
   const inputTokenBalance = useTokenOrNativeBalance({
-    address: props.vaultAddress,
+    address: defaultInputToken,
   })
   const outputTokenBalance = useTokenOrNativeBalance({
     address: outputTokenAddress,
@@ -91,15 +90,14 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
 
   // Preview redeem method
   const previewRedeem = usePreviewRedeem({
+    ...props,
     chainId,
-    id: poolId,
     token: outputTokenAddress,
     amount: value.toString(),
-    type: props.type,
     enabled: value.gt(0),
   })
 
-  const vaultContract = useVaultContract(props.vaultAddress)
+  const vaultContract = useVaultContract(defaultInputToken)
   // Enable/disable prepare hooks based on form state
   const enablePrepareTx =
     !form.formState.isValidating &&
@@ -242,7 +240,7 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
           onSubmit={onSubmitForm}
           previewResultWei={previewRedeem.data?.resultWei}
           submitText="Withdraw"
-          asset={props.asset}
+          asset={defaultOutputToken}
           tokenAddresses={underlyingAssets}
         />
       </FormProvider>
@@ -252,7 +250,7 @@ export const VaultWithdrawForm: FC<VaultProps> = (props) => {
         onClose={() => setShowConfirmWithdraw(false)}
         onConfirm={onConfirmTransactionDetails}
         inputAmount={value.toString()}
-        inputTokenAddress={props.vaultAddress}
+        inputTokenAddress={defaultInputToken}
         outputAmount={previewRedeem.data?.resultWei}
         outputAmountMin={
           outputIsLp

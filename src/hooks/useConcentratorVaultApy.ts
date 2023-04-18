@@ -1,4 +1,4 @@
-import { ConcentratorVaultProps } from "@/lib/types"
+import { VaultProps } from "@/lib/types"
 import { useApiConcentratorDynamic } from "@/hooks/lib/api/useApiConcentratorDynamic"
 import useConcentratorTokenVaultTotalApy from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultTotalApy"
 import useBalancerVaultTotalApy from "@/hooks/lib/apr/useBalancerVaultTotalApy"
@@ -11,12 +11,12 @@ import {
 } from "@/hooks/useVaultTypes"
 
 export function useConcentratorVaultApy({
-  primaryAsset,
-  targetAsset,
+  asset: targetAsset,
+  vaultAddress: primaryAsset,
   type,
-}: ConcentratorVaultProps) {
-  const isCurve = useIsConcentratorCurveVault(targetAsset)
-  const isToken = useIsConcentratorTokenVault(targetAsset)
+}: VaultProps) {
+  const isCurve = useIsConcentratorCurveVault(primaryAsset)
+  const isToken = useIsConcentratorTokenVault(primaryAsset)
 
   const { data: targetAssetId, isLoading: targetAssetIdIsLoading } =
     useConcentratorTargetAssetId({ targetAsset })
@@ -24,7 +24,6 @@ export function useConcentratorVaultApy({
     useConcentratorId({
       primaryAsset,
       targetAsset,
-      type,
     })
 
   const apiQuery = useApiConcentratorDynamic({
@@ -38,19 +37,19 @@ export function useConcentratorVaultApy({
   const isTokenFallbackEnabled = apiQuery.isError && isToken
 
   const curveVaultTotalApy = useCurveVaultTotalApy({
-    asset: targetAsset,
+    asset: primaryAsset,
     enabled: isCurveFallbackEnabled ?? false,
   })
   const balancerVaultTotalApy = useBalancerVaultTotalApy({
-    asset: targetAsset,
+    asset: primaryAsset,
     enabled: isBalancerFallbackEnabled ?? false,
   })
   const tokenVaultTotalApy = useConcentratorTokenVaultTotalApy({
-    asset: targetAsset,
+    asset: primaryAsset,
     enabled: isTokenFallbackEnabled ?? false,
   })
 
-  if (targetAsset === "0x") {
+  if (primaryAsset === "0x") {
     return {
       isLoading: false,
       data: 0,
@@ -73,6 +72,6 @@ export function useConcentratorVaultApy({
     ...apiQuery,
     isLoading:
       targetAssetIdIsLoading || concentratorIdIsLoading || apiQuery.isLoading,
-    data: apiQuery.data?.APY.compounderAPY,
+    data: apiQuery.data?.APY.concentrator_APR,
   }
 }

@@ -6,16 +6,16 @@ import { useTokenOrNativeBalance } from "@/hooks/useTokenOrNativeBalance"
 import { useTokenPriceUsd } from "@/hooks/useTokenPriceUsd"
 
 export default function useConcentratorAumFallback({
-  asset,
+  targetAsset,
   ybToken,
   enabled,
 }: {
-  asset: Address
+  targetAsset: Address
   ybToken: Address
   enabled: boolean
 }) {
-  const { data: primaryAssetPriceUsd, isLoading: isLoadingPricer } =
-    useTokenPriceUsd({ asset, enabled })
+  const { data: targetAssetPriceUsd, isLoading: isLoadingPricer } =
+    useTokenPriceUsd({ asset: targetAsset, enabled })
 
   const { data: userShare, isLoading: isLoadingUserShare } =
     useTokenOrNativeBalance({ address: ybToken })
@@ -29,7 +29,7 @@ export default function useConcentratorAumFallback({
   return {
     isLoading: isLoadingPricer || isLoadingUserShare || isLoadingUserAsset,
     data:
-      Number(primaryAssetPriceUsd ?? 0) *
+      Number(targetAssetPriceUsd ?? 0) *
       (Number(userAsset === undefined ? "0" : userAsset.toString()) / 1e18),
   }
 }

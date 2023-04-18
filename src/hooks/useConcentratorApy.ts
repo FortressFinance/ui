@@ -12,7 +12,7 @@ import {
   useIsConcentratorTokenVault,
 } from "@/hooks/useVaultTypes"
 
-type ConcentratorApyProps = {
+export type ConcentratorApyProps = {
   targetAsset: Address
   primaryAsset: Address
   type: VaultType
@@ -23,15 +23,14 @@ export function useConcentratorApy({
   primaryAsset,
   type,
 }: ConcentratorApyProps) {
-  const isCurve = useIsConcentratorCurveVault(primaryAsset)
-  const isToken = useIsConcentratorTokenVault(primaryAsset)
+  const isCurve = useIsConcentratorCurveVault(targetAsset)
+  const isToken = useIsConcentratorTokenVault(targetAsset)
   const { data: targetAssetId, isLoading: targetAssetIdIsLoading } =
     useConcentratorTargetAssetId({ targetAsset })
   const { data: concentratorId, isLoading: concentratorIdIsLoading } =
     useConcentratorId({
       targetAsset,
       primaryAsset,
-      type,
     })
 
   const apiQuery = useApiConcentratorDynamic({
@@ -45,19 +44,19 @@ export function useConcentratorApy({
   const isTokenFallbackEnabled = apiQuery.isError && isToken
 
   const curveVaultTotalApy = useCurveVaultTotalApy({
-    asset: primaryAsset,
+    asset: targetAsset,
     enabled: isCurveFallbackEnabled ?? false,
   })
   const balancerVaultTotalApy = useBalancerVaultTotalApy({
-    asset: primaryAsset,
+    asset: targetAsset,
     enabled: isBalancerFallbackEnabled ?? false,
   })
   const tokenVaultTotalApy = useConcentratorTokenVaultTotalApy({
-    asset: primaryAsset,
+    asset: targetAsset,
     enabled: isTokenFallbackEnabled ?? false,
   })
 
-  if (primaryAsset === "0x") {
+  if (targetAsset === "0x") {
     return {
       isLoading: false,
       data: 0,
@@ -80,6 +79,6 @@ export function useConcentratorApy({
     ...apiQuery,
     isLoading:
       targetAssetIdIsLoading || concentratorIdIsLoading || apiQuery.isLoading,
-    data: apiQuery.data?.APY.concentrator_APR,
+    data: apiQuery.data?.APY.compounderAPY,
   }
 }

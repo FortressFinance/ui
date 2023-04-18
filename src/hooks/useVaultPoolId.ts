@@ -1,16 +1,22 @@
-// TODO: Support Concentrator vaults
+import { Address } from "wagmi"
 
 import {
   findApiCompounderVaultForAsset,
   findApiTokenVaultForAsset,
 } from "@/lib/findApiVaultForAsset"
-import { VaultProps } from "@/lib/types"
+import { VaultType } from "@/lib/types"
 import { useApiCompounderVaults } from "@/hooks/lib/api/useApiCompounderVaults"
 import { useApiTokenVaults } from "@/hooks/lib/api/useApiTokenVaults"
 import { useListCompounders } from "@/hooks/useListCompounders"
 import { useIsTokenVault } from "@/hooks/useVaultTypes"
 
-export function useVaultPoolId({ asset, type }: VaultProps) {
+export function useVaultPoolId({
+  asset,
+  type,
+}: {
+  asset: Address
+  type: VaultType
+}) {
   const isToken = useIsTokenVault(type)
 
   // Preferred: API request

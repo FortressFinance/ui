@@ -2,8 +2,8 @@ import { Address } from "wagmi"
 
 import { convertToApy } from "@/lib/api/vaults/convertToApy"
 import { useActiveChainId } from "@/hooks"
-import useConcentratorTokenVaultArbitrumTotalApr from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultArbitrumTotalApr"
-import useConcentratorTokenVaultMainnetTotalApr from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultMainnetTotalApr"
+import { useConcentratorTokenVaultArbitrumBreakdownApr } from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultArbitrumTotalApr"
+import { useConcentratorTokenVaultMainnetBreakdownApr } from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultMainnetTotalApr"
 
 export default function useConcentratorTokenVaultTotalApy({
   asset,
@@ -12,26 +12,39 @@ export default function useConcentratorTokenVaultTotalApy({
   asset: Address
   enabled: boolean
 }) {
+  const tokenVaultBreakdownApr = useConcentratorTokenVaultBreakdownApr({
+    asset,
+    enabled,
+  })
+  return {
+    ...tokenVaultBreakdownApr,
+    data: convertToApy(tokenVaultBreakdownApr.data?.totalApr),
+  }
+}
+
+export function useConcentratorTokenVaultBreakdownApr({
+  asset,
+  enabled,
+}: {
+  asset: Address
+  enabled: boolean
+}) {
   const chainId = useActiveChainId()
   const isArbitrumFamily = chainId === 313371 || chainId === 42161
-  const tokenVaultMainnetTotalApr = useConcentratorTokenVaultMainnetTotalApr({
-    asset,
-    enabled: enabled && !isArbitrumFamily,
-  })
+  const tokenVaultMainnetBreakdownApr =
+    useConcentratorTokenVaultMainnetBreakdownApr({
+      asset,
+      enabled: enabled && !isArbitrumFamily,
+    })
 
-  const tokenVaultArbitrumTotalApr = useConcentratorTokenVaultArbitrumTotalApr({
-    asset,
-    enabled: enabled && isArbitrumFamily,
-  })
+  const tokenVaultArbitrumBreakdownApr =
+    useConcentratorTokenVaultArbitrumBreakdownApr({
+      asset,
+      enabled: enabled && isArbitrumFamily,
+    })
 
   if (!isArbitrumFamily) {
-    return {
-      ...tokenVaultMainnetTotalApr,
-      data: convertToApy(tokenVaultMainnetTotalApr.data),
-    }
+    return tokenVaultMainnetBreakdownApr
   }
-  return {
-    ...tokenVaultArbitrumTotalApr,
-    data: convertToApy(tokenVaultArbitrumTotalApr.data),
-  }
+  return tokenVaultArbitrumBreakdownApr
 }

@@ -2,29 +2,40 @@ import * as Accordion from "@radix-ui/react-accordion"
 import * as Tabs from "@radix-ui/react-tabs"
 import { useRouter } from "next/router"
 import { FC, MouseEventHandler } from "react"
+import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 import { resolvedRoute } from "@/lib/helpers"
 import { VaultProps } from "@/lib/types"
-import { useVault } from "@/hooks"
+import { useVault, useVaultYbtokenAddress } from "@/hooks"
 
 import { AssetLogo } from "@/components/Asset"
 import { ButtonLink } from "@/components/Button"
-import { CompounderVaultApy } from "@/components/Compounder/CompounderVaultApy"
+import {
+  CompounderVaultDepositForm,
+  CompounderVaultWithdrawForm,
+} from "@/components/Compounder"
+import {
+  ConcentratorVaultDepositForm,
+  ConcentratorVaultWithdrawForm,
+} from "@/components/Concentrator"
 import { TableCell, TableRow } from "@/components/Table"
 import { GradientText } from "@/components/Typography"
 import {
-  VaultDepositForm,
+  VaultApy,
   VaultName,
   VaultTvl,
   VaultUserBalance,
   VaultUserEarnings,
-  VaultWithdrawForm,
 } from "@/components/VaultRow/lib"
 
 import { FortIconChevronDownCircle } from "@/icons"
 
-export type VaultTableRowProps = VaultProps & {
+export type VaultRowPropsWithProduct =
+  | ({ productType: "compounder"; ybTokenAddress?: Address } & VaultProps)
+  | ({ productType: "concentrator"; ybTokenAddress?: Address } & VaultProps)
+
+export type VaultTableRowProps = VaultRowPropsWithProduct & {
   activeVault?: string
   setActiveVault?: (activeVault: string | undefined) => void
   showEarningsColumn?: boolean
@@ -36,15 +47,21 @@ export const VaultRow: FC<VaultTableRowProps> = ({
   showEarningsColumn = false,
   ...props
 }) => {
+  const isCompounderProduct = props.productType === "compounder"
   const router = useRouter()
   const { pathname, query } = router
   const { isLoading } = useVault(props)
+
+  const ybTokenAddress = useVaultYbtokenAddress(props)
+  const vaultAddress = props.vaultAddress
 
   const vaultStrategyLink = resolvedRoute(pathname, {
     category: query.category,
     asset: props.asset,
     type: props.type,
     vaultAddress: props.vaultAddress,
+    productType: props.productType,
+    ybToken: ybTokenAddress,
   })
 
   const toggleVaultOpen: MouseEventHandler<
@@ -58,7 +75,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
   }
 
   return (
-    <Accordion.Item value={props.vaultAddress} asChild>
+    <Accordion.Item value={vaultAddress} asChild>
       <TableRow
         className="group lg:py-6 lg:first:rounded-t-none"
         onClick={toggleVaultOpen}
@@ -67,10 +84,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
       >
         {/* Row of vault info */}
         <TableCell className="relative grid grid-cols-[max-content,auto,max-content] items-center gap-x-3 max-lg:-mx-3 max-lg:border-b max-lg:border-b-pink/30 max-lg:px-3 max-lg:pb-3.5 lg:pointer-events-none">
-          <AssetLogo
-            className="flex h-12 w-12"
-            tokenAddress={props.vaultAddress}
-          />
+          <AssetLogo className="flex h-12 w-12" tokenAddress={vaultAddress} />
 
           <span className="line-clamp-2 max-lg:mr-8">
             <VaultName {...props} />
@@ -121,7 +135,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
 
         {/* Desktop: APY, TVL, Balance */}
         <TableCell className="pointer-events-none text-center max-lg:hidden">
-          <CompounderVaultApy {...props} />
+          <VaultApy {...props} />
         </TableCell>
         <TableCell className="pointer-events-none text-center max-lg:hidden">
           <VaultTvl {...props} />
@@ -129,9 +143,11 @@ export const VaultRow: FC<VaultTableRowProps> = ({
         <TableCell className="pointer-events-none text-center max-lg:hidden">
           <VaultUserBalance {...props} />
         </TableCell>
-        <TableCell className="pointer-events-none text-center max-lg:hidden">
-          <VaultUserEarnings {...props} />
-        </TableCell>
+        {isCompounderProduct && (
+          <TableCell className="pointer-events-none text-center max-lg:hidden">
+            <VaultUserEarnings {...props} />
+          </TableCell>
+        )}
 
         {/* Desktop: Action buttons */}
         <TableCell className="relative flex items-center max-lg:hidden">
@@ -159,8 +175,17 @@ export const VaultRow: FC<VaultTableRowProps> = ({
         <Accordion.Content className="col-span-full overflow-hidden ui-state-closed:animate-accordion-close ui-state-open:animate-accordion-open max-lg:-mx-3">
           {/* Desktop: forms */}
           <div className="mt-6 grid grid-cols-2 gap-4 max-lg:hidden">
-            <VaultDepositForm {...props} />
-            <VaultWithdrawForm {...props} />
+            {isCompounderProduct ? (
+              <>
+                <CompounderVaultDepositForm {...props} />
+                <CompounderVaultWithdrawForm {...props} />
+              </>
+            ) : (
+              <>
+                <ConcentratorVaultDepositForm {...props} />
+                <ConcentratorVaultWithdrawForm {...props} />
+              </>
+            )}
           </div>
 
           {/* Mobile: forms */}
@@ -181,10 +206,18 @@ export const VaultRow: FC<VaultTableRowProps> = ({
                 </Tabs.Trigger>
               </Tabs.List>
               <Tabs.Content value="deposit">
-                <VaultDepositForm {...props} />
+                {isCompounderProduct ? (
+                  <CompounderVaultDepositForm {...props} />
+                ) : (
+                  <ConcentratorVaultDepositForm {...props} />
+                )}
               </Tabs.Content>
               <Tabs.Content value="withdraw">
-                <VaultWithdrawForm {...props} />
+                {isCompounderProduct ? (
+                  <CompounderVaultWithdrawForm {...props} />
+                ) : (
+                  <ConcentratorVaultWithdrawForm {...props} />
+                )}
               </Tabs.Content>
             </Tabs.Root>
           </div>
@@ -195,7 +228,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
           <dl className="grid grid-cols-4 gap-x-3 text-center">
             <dt className="row-start-2 text-xs text-pink-100/60">APY</dt>
             <dd className="text-sm font-medium text-pink-100">
-              <CompounderVaultApy {...props} />
+              <VaultApy {...props} />
             </dd>
             <dt className="row-start-2 text-xs text-pink-100/60">TVL</dt>
             <dd className="text-sm font-medium text-pink-100">
@@ -205,10 +238,16 @@ export const VaultRow: FC<VaultTableRowProps> = ({
             <dd className="text-sm font-medium text-pink-100">
               <VaultUserBalance {...props} />
             </dd>
-            <dt className="row-start-2 text-xs text-pink-100/60">Earnings</dt>
-            <dd className="text-sm font-medium text-pink-100">
-              <VaultUserEarnings {...props} />
-            </dd>
+            {isCompounderProduct && (
+              <>
+                <dt className="row-start-2 text-xs text-pink-100/60">
+                  Earnings
+                </dt>
+                <dd className="text-sm font-medium text-pink-100">
+                  <VaultUserEarnings {...props} />
+                </dd>
+              </>
+            )}
           </dl>
         </TableCell>
 

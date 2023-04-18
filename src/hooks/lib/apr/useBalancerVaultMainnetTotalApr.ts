@@ -15,6 +15,24 @@ export default function useBalancerVaultMainnetTotalApr({
   asset: Address
   enabled: boolean
 }) {
+  const balancerVaultBreakdownApr = useBalancerVaultMainnetBreakdownApr({
+    asset,
+    enabled,
+  })
+
+  return {
+    ...balancerVaultBreakdownApr,
+    data: balancerVaultBreakdownApr.data?.totalApr,
+  }
+}
+
+export function useBalancerVaultMainnetBreakdownApr({
+  asset,
+  enabled,
+}: {
+  asset: Address
+  enabled: boolean
+}) {
   const chainId = useActiveChainId()
   const auraQuery = useQueries({
     queries: [
@@ -47,8 +65,5 @@ export default function useBalancerVaultMainnetTotalApr({
     }
   )
 
-  return {
-    ...balancerTotalAprFallbackQuery,
-    data: balancerTotalAprFallbackQuery.data?.totalApr,
-  }
+  return balancerTotalAprFallbackQuery
 }
