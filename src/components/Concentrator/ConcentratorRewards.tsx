@@ -255,12 +255,15 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
     primaryAssetList: primaryAssetList ?? [],
     type: isCurve ? "curve" : "balancer",
   })
+  const ybTokenListNonZero = ybTokenList.data?.filter(
+    (x) => x !== ethers.constants.AddressZero
+  )
   const claim = useConcentratorClaim({
     targetAsset: concentratorTargetAsset,
-    ybTokenList: ybTokenList.data ?? [],
+    ybTokenList: ybTokenListNonZero ?? [],
   })
   const rewardsBalance = useConcentratorPendingReward({
-    ybTokenList: ybTokenList.data ?? [],
+    ybTokenList: ybTokenListNonZero ?? [],
   })
   return (
     <Button

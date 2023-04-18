@@ -35,7 +35,7 @@ export function useConcentratorPendingReward({
   })
   return useContractReads({
     contracts: contracts,
-    enabled: !!userAddress,
+    enabled: !!userAddress && ybTokenList.length > 0,
     select: (data) =>
       data.map((reward) => {
         if (reward === undefined) {
@@ -58,7 +58,7 @@ export function useConcentratorClaim({
     abi: MultiClaimer,
     functionName: "multiClaim",
     args: [ybTokenList, userAddress ?? "0x"],
-    enabled: !!userAddress,
+    enabled: !!userAddress && ybTokenList.length > 0,
   })
   const write = useContractWrite(prepareWrite.config)
   const waitWrite = useWaitForTransaction({ hash: write.data?.hash })

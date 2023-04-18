@@ -27,10 +27,8 @@ export const AssetLogo: FC<AssetLogoProps> = ({ className, tokenAddress }) => {
   const [isError, setIsError] = useState(false)
 
   useEffect(() => {
-    if (!isError) {
-      setIsError(tokenAddress === "0x" || tokenAddress === undefined)
-    }
-  }, [isError, tokenAddress])
+    setIsError(tokenAddress === "0x" || tokenAddress === undefined)
+  }, [tokenAddress])
 
   const chainId = useActiveChainId()
   const [supportedChain] = enabledNetworks.chains.filter(
