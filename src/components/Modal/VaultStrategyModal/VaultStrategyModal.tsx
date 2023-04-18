@@ -108,7 +108,7 @@ export const VaultStrategyModal: FC<
             <div className="sm:grid sm:grid-cols-2 sm:divide-x sm:divide-pink-800 md:block md:divide-x-0">
               <div>
                 <h1 className="border-b border-pink-800 p-3 text-xs font-semibold uppercase text-pink-300 max-md:text-center md:px-5">
-                  {isCompounderProduct ? "APR" : "Concentrator APR"}
+                  APR
                 </h1>
                 <div className="p-4 pb-5 md:px-5">
                   {isCompounderProduct ? (
