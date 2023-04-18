@@ -12,7 +12,9 @@ import {
   useConcentratorPendingReward,
   useConcentratorTargetAssets,
   useConcentratorVault,
+  useConcentratorVaultList,
   useFirstConcentrator,
+  useIsConcentratorCurveVault,
   useListConcentrators,
   useTokenOrNative,
 } from "@/hooks"
@@ -166,6 +168,7 @@ const ConcentratorRewardsApy: FC<ConcentratorRewardsProps> = ({
     concentratorTargetAsset,
     filterCategory,
   })
+
   const totalApy = useConcentratorApy({
     targetAsset: concentratorTargetAsset,
     primaryAsset: firstConcentrator?.vaultAssetAddress ?? "0x",
@@ -207,13 +210,15 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
     type: firstConcentrator?.vaultType,
   })
   const rewardsBalance = useConcentratorPendingReward({
-    concentratorAddress: concentrator.data?.ybTokenAddress,
+    ybTokenList: [concentrator.data?.ybTokenAddress],
   })
   const rewardToken = useTokenOrNative({
     address: concentrator.data?.rewardTokenAddress,
   })
   const formatted = ethers.utils.formatUnits(
-    rewardsBalance.data ?? BigNumber.from(0),
+    rewardsBalance.data !== undefined && rewardsBalance.data.length > 0
+      ? rewardsBalance.data[0]
+      : BigNumber.from(0),
     rewardToken.data?.decimals ?? 18
   )
   return (
@@ -234,7 +239,6 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
 
 const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
   concentratorTargetAsset,
-  filterCategory,
 }) => {
   const isReady = useClientReady()
   const {
@@ -242,31 +246,29 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
     isLoading: concentratorTargetAssetsIsLoading,
   } = useConcentratorTargetAssets()
   const concentratorsList = useListConcentrators({ concentratorTargetAssets })
-  const firstConcentrator = useFirstConcentrator({
-    concentratorsList,
-    concentratorTargetAsset,
-    filterCategory,
-  })
-  const concentrator = useConcentratorVault({
+  const isCurve = useIsConcentratorCurveVault(concentratorTargetAsset)
+  const primaryAssetList = concentratorsList.data?.map(
+    (x) => x.vaultAssetAddress
+  )
+  const ybTokenList = useConcentratorVaultList({
     targetAsset: concentratorTargetAsset,
-    primaryAsset: firstConcentrator?.vaultAssetAddress,
-    type: firstConcentrator?.vaultType,
-  })
-  const rewardsBalance = useConcentratorPendingReward({
-    concentratorAddress: concentrator.data?.ybTokenAddress,
+    primaryAssetList: primaryAssetList ?? [],
+    type: isCurve ? "curve" : "balancer",
   })
   const claim = useConcentratorClaim({
-    concentratorAddress: concentrator.data?.rewardTokenAddress,
+    targetAsset: concentratorTargetAsset,
+    ybTokenList: ybTokenList.data ?? [],
+  })
+  const rewardsBalance = useConcentratorPendingReward({
+    ybTokenList: ybTokenList.data ?? [],
   })
   return (
     <Button
       className="mt-4 w-full py-2"
-      disabled={rewardsBalance.data?.eq(0) || !isReady}
+      disabled={rewardsBalance.data?.every((q) => q.eq(0)) || !isReady}
       isLoading={
         concentratorTargetAssetsIsLoading ||
         concentratorsList.isLoading ||
-        concentrator.isLoading ||
-        rewardsBalance.isLoading ||
         claim.isLoading ||
         !isReady
       }

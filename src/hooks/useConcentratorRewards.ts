@@ -1,7 +1,8 @@
+import { BigNumber } from "ethers"
 import {
   Address,
   useAccount,
-  useContractRead,
+  useContractReads,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
@@ -9,39 +10,55 @@ import {
 
 import { useActiveChainId } from "@/hooks"
 
-import { AMMConcentratorBase } from "@/constant/abi"
+import { AMMConcentratorBase, MultiClaimer } from "@/constant/abi"
 
 type ConcentratorRewardArgs = {
-  concentratorAddress: Address | undefined
+  targetAsset: Address
+  ybTokenList: Address[]
 }
 
 export function useConcentratorPendingReward({
-  concentratorAddress: address,
-}: ConcentratorRewardArgs) {
+  ybTokenList,
+}: {
+  ybTokenList: ConcentratorRewardArgs["ybTokenList"]
+}) {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
-  return useContractRead({
-    address,
-    chainId,
-    abi: AMMConcentratorBase,
-    functionName: "pendingReward",
-    args: [userAddress ?? "0x"],
+  const contracts = ybTokenList.map((ybToken) => {
+    return {
+      address: ybToken,
+      chainId,
+      abi: AMMConcentratorBase,
+      functionName: "pendingReward",
+      args: [userAddress ?? "0x"],
+    }
+  })
+  return useContractReads({
+    contracts: contracts,
     enabled: !!userAddress,
+    select: (data) =>
+      data.map((reward) => {
+        if (reward === undefined) {
+          return BigNumber.from(0)
+        }
+        return BigNumber.from(reward)
+      }),
   })
 }
 
 export function useConcentratorClaim({
-  concentratorAddress: address,
+  targetAsset,
+  ybTokenList,
 }: ConcentratorRewardArgs) {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
   const prepareWrite = usePrepareContractWrite({
-    address,
+    address: targetAsset,
     chainId,
-    abi: AMMConcentratorBase,
-    functionName: "claim",
+    abi: MultiClaimer,
+    functionName: "multiClaim",
+    args: [ybTokenList, userAddress ?? "0x"],
     enabled: !!userAddress,
-    args: [userAddress ?? "0x", userAddress ?? "0x"],
   })
   const write = useContractWrite(prepareWrite.config)
   const waitWrite = useWaitForTransaction({ hash: write.data?.hash })

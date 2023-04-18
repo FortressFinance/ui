@@ -8,6 +8,7 @@ import {
 import { queryKeys } from "@/lib/helpers"
 import { VaultType } from "@/lib/types"
 import { useActiveChainId } from "@/hooks/useActiveChainId"
+import { useClientReady } from "@/hooks/useClientReady"
 import { useIsCurveVault } from "@/hooks/useVaultTypes"
 
 export function useApiConcentratorDynamic({
@@ -19,6 +20,7 @@ export function useApiConcentratorDynamic({
   concentratorId: ConcentratorStaticData["concentrator"]["ybToken"]["concentratorId"]
   type: VaultType
 }) {
+  const isReady = useClientReady()
   const isCurve = useIsCurveVault(type)
   const { address: user } = useAccount()
   const chainId = useActiveChainId()
@@ -39,5 +41,6 @@ export function useApiConcentratorDynamic({
         user: user ?? "0x",
       }),
     retry: false,
+    enabled: isReady && targetAssetId >= 0 && concentratorId >= 0,
   })
 }
