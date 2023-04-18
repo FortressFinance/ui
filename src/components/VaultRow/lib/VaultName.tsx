@@ -1,14 +1,11 @@
 import { FC } from "react"
-import { Address } from "wagmi"
 
+import { VaultProps } from "@/lib/types"
 import { useVault } from "@/hooks"
 
 import Skeleton from "@/components/Skeleton"
 
-export const VaultName: FC<{
-  asset: Address
-  vaultAddress: Address
-}> = (props) => {
+export const VaultName: FC<VaultProps> = (props) => {
   const vault = useVault(props)
 
   return (

@@ -2,6 +2,8 @@ import { Address } from "wagmi"
 
 import { CompounderVaultStaticData } from "@/lib/api/vaults"
 
+export type ProductType = "compounder" | "concentrator"
+
 export type VaultType = "balancer" | "curve" | "token"
 
 export type VaultProps = {
@@ -20,9 +22,3 @@ export type FilterCategory =
   | "stable"
   | "balancer"
   | "curve"
-
-export type ConcentratorVaultProps = {
-  primaryAsset: Address
-  targetAsset: Address
-  type: VaultType
-}

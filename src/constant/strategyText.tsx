@@ -121,6 +121,36 @@ const strategyText = {
       </p>
     </>
   ),
+  // HARDCODED ATM for ARBI FORKED
+  ["0x8e0B8c8BB9db49a46697F3a5Bb8A308e744821D2"]: (
+    <>
+      <p>
+        This vault accepts deposits in form of its primary asset Curve.fi
+        USD-BTC-ETH and any of its underlying assets mentioned below, all of
+        which will be converted to Curve LP tokens automatically.
+      </p>
+      <p>
+        Deposited assets are used to provide liquidity for Curve Finance,
+        earning swap fees plus CRV emissions for extra yield.
+      </p>
+      <p>
+        The vault auto-compounds the accumulated rewards periodically into more
+        LP tokens.
+      </p>
+      <p>
+        Investors receive vault shares as ERC20 tokens called fcFraxBP,
+        representing their pro-rata share of the compounding funds.
+      </p>
+      <p>
+        Investors can use fcFraxBP in other Fortress products or integrated
+        protocols.
+      </p>
+      <p>
+        The FraxBP vault contains the following underlying assets: USDC and
+        FRAX.
+      </p>
+    </>
+  ),
 }
 
 export default strategyText

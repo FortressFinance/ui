@@ -1,10 +1,9 @@
+import { ethers } from "ethers"
 import { Address } from "wagmi"
 
 import { useApiConcentratorTargetAssets } from "@/hooks/lib/api/useApiConcentratorTargetAssets"
 import { useFallbackRead } from "@/hooks/lib/useFallbackRequest"
 import { useRegistryContract } from "@/hooks/lib/useRegistryContract"
-
-import { AddressZero } from "@/constant/addresses"
 
 ///
 /// Returns the concentrator lists
@@ -21,7 +20,7 @@ export function useConcentratorTargetAssets(
       ...useRegistryContract(),
       functionName: "concentratorTargetAssets",
       select: (data) => {
-        return data.filter((x) => x !== AddressZero)
+        return data.filter((x) => x !== ethers.constants.AddressZero)
       },
       onSuccess: options.onSuccess,
       enabled: apiQuery.isError,

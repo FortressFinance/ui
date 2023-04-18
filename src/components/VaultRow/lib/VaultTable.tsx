@@ -17,12 +17,14 @@ import { VaultTableRowProps } from "@/components/VaultRow/VaultRow"
 type VaultTableProps = {
   label: string
   showEarningsColumn?: boolean
+  useAPR?: boolean
 }
 
 export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
   children,
   label,
   showEarningsColumn,
+  useAPR,
 }) => {
   const router = useRouter()
   const {
@@ -47,7 +49,9 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
           showEarningsColumn={showEarningsColumn}
         >
           <TableHeader className="text-sm">{label}</TableHeader>
-          <TableHeader className="text-center text-sm">APY</TableHeader>
+          <TableHeader className="text-center text-sm">
+            {useAPR ? "APR" : "APY"}
+          </TableHeader>
           <TableHeader className="text-center text-sm">TVL</TableHeader>
           <TableHeader className="text-center text-sm">Balance</TableHeader>
           {showEarningsColumn && (

@@ -126,16 +126,14 @@ const ConcentratorRewardsAum: FC<ConcentratorRewardsProps> = ({
     filterCategory,
   })
   const concentrator = useConcentratorVault({
-    concentratorTargetAsset,
-    vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
-    vaultType: firstConcentrator?.vaultType,
+    targetAsset: concentratorTargetAsset,
+    primaryAsset: firstConcentrator?.vaultAssetAddress,
+    type: firstConcentrator?.vaultType,
   })
 
   const tvl = useConcentratorAum({
     targetAsset: concentratorTargetAsset,
-    primaryAsset: firstConcentrator?.vaultAssetAddress ?? "0x",
     ybToken: concentrator.data?.ybTokenAddress ?? "0x",
-    type: firstConcentrator?.vaultType ?? "balancer",
   })
 
   return (
@@ -204,9 +202,9 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
     filterCategory,
   })
   const concentrator = useConcentratorVault({
-    concentratorTargetAsset,
-    vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
-    vaultType: firstConcentrator?.vaultType,
+    targetAsset: concentratorTargetAsset,
+    primaryAsset: firstConcentrator?.vaultAssetAddress,
+    type: firstConcentrator?.vaultType,
   })
   const rewardsBalance = useConcentratorPendingReward({
     concentratorAddress: concentrator.data?.ybTokenAddress,
@@ -250,9 +248,9 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
     filterCategory,
   })
   const concentrator = useConcentratorVault({
-    concentratorTargetAsset,
-    vaultAssetAddress: firstConcentrator?.vaultAssetAddress,
-    vaultType: firstConcentrator?.vaultType,
+    targetAsset: concentratorTargetAsset,
+    primaryAsset: firstConcentrator?.vaultAssetAddress,
+    type: firstConcentrator?.vaultType,
   })
   const rewardsBalance = useConcentratorPendingReward({
     concentratorAddress: concentrator.data?.ybTokenAddress,

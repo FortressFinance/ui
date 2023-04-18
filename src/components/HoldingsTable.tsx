@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { Address, useAccount } from "wagmi"
 
-import { VaultType } from "@/lib/types"
+import { ProductType, VaultType } from "@/lib/types"
 import { enabledNetworks } from "@/lib/wagmi"
 import {
   useActiveChainId,
@@ -17,7 +17,8 @@ import { VaultTable } from "@/components/VaultRow/lib"
 
 const HoldingsTable: FC<{
   showEarningsColumn?: boolean
-}> = ({ showEarningsColumn }) => {
+  productType?: ProductType
+}> = ({ showEarningsColumn, productType }) => {
   const ready = useClientReady()
   const { isConnected } = useAccount()
   const chainId = useActiveChainId()
@@ -54,6 +55,7 @@ const HoldingsTable: FC<{
             key={`pool-${vault.vaultType}-${index}`}
             asset={vault.vaultAssetAddress}
             type={vault.vaultType}
+            productType={productType ?? "compounder"}
           />
         ))
       )}
@@ -66,6 +68,7 @@ export default HoldingsTable
 type HoldingsRowProps = {
   asset: Address
   type: VaultType
+  productType: ProductType
 }
 
 export const HoldingsRow: FC<HoldingsRowProps> = (props) => {
@@ -84,6 +87,7 @@ export const HoldingsRow: FC<HoldingsRowProps> = (props) => {
     <VaultRow
       {...props}
       vaultAddress={vaultAddress.data.ybTokenAddress}
+      productType={props.productType}
       showEarningsColumn
     />
   ) : null
