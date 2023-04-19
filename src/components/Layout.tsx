@@ -26,7 +26,7 @@ import { TxSettingsPopover } from "@/components/TxSettingsPopover"
 
 import { FortIconClose, FortIconHamburger } from "@/icons"
 
-import { DISABLE_CONCENTRATORS } from "@/constant/env"
+import { DISABLE_CONCENTRATORS, DISABLE_LENDING } from "@/constant/env"
 
 import FortressLogoAnimated from "~/images/fortress-animated-logo.gif"
 import FortressBackground from "~/images/fortress-background.gif"
@@ -47,7 +47,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
       <div className="min-h-screen-small relative z-[1] grid grid-cols-1 grid-rows-[auto,1fr]">
         <header className="sticky top-0 z-10 border-b border-[rgba(255,255,255,0.025)] bg-[rgba(255,255,255,0.025)] shadow-2xl backdrop-blur-lg">
           <div className="layout flex items-center justify-between">
-            <div className="flex items-center space-x-10 max-sm:pl-1">
+            <div className="flex items-center space-x-10 max-md:pl-1">
               <Link
                 {...resolvedRoute("/app/yield")}
                 className="group my-3 h-11 px-1 py-2 md:my-4"
@@ -66,7 +66,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
               {/* Desktop navigation */}
               <NavigationMenu.Root>
-                <NavigationMenu.List className="hidden space-x-10 md:flex">
+                <NavigationMenu.List className="hidden space-x-6 md:flex lg:space-x-10">
                   <NavigationMenu.Item>
                     <NavigationMenu.Trigger
                       // we must override these to disable showing menu on hover
@@ -104,14 +104,45 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                       </DropdownMenuItems>
                     </NavigationMenu.Content>
                   </NavigationMenu.Item>
-                  <NavigationMenu.Item asChild>
-                    <span className="flex cursor-not-allowed items-center">
-                      <span className="opacity-50">Lend</span>
-                      <span className="ml-1 grow-0 rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
-                        Coming soon
-                      </span>
-                    </span>
-                  </NavigationMenu.Item>
+                  {DISABLE_LENDING ? (
+                    <>
+                      <NavigationMenu.Item asChild>
+                        <span className="flex cursor-not-allowed items-center">
+                          <span className="opacity-50">Lend</span>
+                          <span className="ml-1 grow-0 rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
+                            <span className="max-lg:hidden">Coming</span> soon
+                          </span>
+                        </span>
+                      </NavigationMenu.Item>
+                      <NavigationMenu.Item asChild>
+                        <span className="flex cursor-not-allowed items-center">
+                          <span className="opacity-50">Lever</span>
+                          <span className="ml-1 grow-0 rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
+                            <span className="max-lg:hidden">Coming</span> soon
+                          </span>
+                        </span>
+                      </NavigationMenu.Item>
+                    </>
+                  ) : (
+                    <>
+                      <NavigationMenu.Link asChild>
+                        <Link
+                          {...resolvedRoute("/app/lend")}
+                          className="transition-color duration-200 hover:stroke-pink-300 hover:text-pink-300"
+                        >
+                          Lend
+                        </Link>
+                      </NavigationMenu.Link>
+                      <NavigationMenu.Link asChild>
+                        <Link
+                          {...resolvedRoute("/app/lever")}
+                          className="transition-color duration-200 hover:stroke-pink-300 hover:text-pink-300"
+                        >
+                          Lever
+                        </Link>
+                      </NavigationMenu.Link>
+                    </>
+                  )}
                 </NavigationMenu.List>
               </NavigationMenu.Root>
             </div>
@@ -199,9 +230,48 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                         Lend
                       </h1>
                       <div className="space-y-2 pt-2">
-                        <span className="px-3 py-2.5 text-lg text-white/20">
-                          Coming soon
-                        </span>
+                        {DISABLE_LENDING ? (
+                          <span className="px-3 py-2.5 text-lg text-white/20">
+                            Coming soon
+                          </span>
+                        ) : (
+                          <Link
+                            {...resolvedRoute("/app/lend")}
+                            className={clsxm(
+                              "block rounded px-3 py-2.5 text-lg font-medium text-white/80",
+                              {
+                                "bg-gradient-to-r from-orange-400/20 to-orange-400/5 text-white ring-1 ring-inset ring-orange-400/20":
+                                  router.pathname === "/app/lend",
+                              }
+                            )}
+                          >
+                            Lend
+                          </Link>
+                        )}
+                      </div>
+
+                      <h1 className="mt-3 px-3 pt-3 text-xs font-medium uppercase tracking-wider text-orange-400/20">
+                        Lever
+                      </h1>
+                      <div className="space-y-2 pt-2">
+                        {DISABLE_LENDING ? (
+                          <span className="px-3 py-2.5 text-lg text-white/20">
+                            Coming soon
+                          </span>
+                        ) : (
+                          <Link
+                            {...resolvedRoute("/app/lever")}
+                            className={clsxm(
+                              "block rounded px-3 py-2.5 text-lg font-medium text-white/80",
+                              {
+                                "bg-gradient-to-r from-orange-400/20 to-orange-400/5 text-white ring-1 ring-inset ring-orange-400/20":
+                                  router.pathname === "/app/lever",
+                              }
+                            )}
+                          >
+                            Lever
+                          </Link>
+                        )}
                       </div>
                     </nav>
                   </div>

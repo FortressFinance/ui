@@ -9,6 +9,7 @@ export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ""
 export const DISABLE_CONCENTRATORS = toBool(
   process.env.NEXT_PUBLIC_DISABLE_CONCENTRATOR
 )
+export const DISABLE_LENDING = toBool(process.env.NEXT_PUBLIC_DISABLE_LENDING)
 export const DEFAULT_SLIPPAGE = !isNaN(
   Number(process.env.NEXT_PUBLIC_DEFAULT_SLIPPAGE)
 )

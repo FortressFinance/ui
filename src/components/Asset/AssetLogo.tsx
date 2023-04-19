@@ -5,7 +5,7 @@ import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 import { enabledNetworks } from "@/lib/wagmi"
-import { useActiveChainId, useTokenOrNative } from "@/hooks"
+import { useActiveChainId, useClientReady, useTokenOrNative } from "@/hooks"
 
 import Spinner from "@/components/Spinner"
 
@@ -24,6 +24,7 @@ const LOGOS_NETWORK_NAME: Record<string, string> = {
 }
 
 export const AssetLogo: FC<AssetLogoProps> = ({ className, tokenAddress }) => {
+  const isClientReady = useClientReady()
   const [isError, setIsError] = useState(false)
   const isTokenAddressUndefined =
     tokenAddress === "0x" || tokenAddress === undefined
@@ -53,7 +54,7 @@ export const AssetLogo: FC<AssetLogoProps> = ({ className, tokenAddress }) => {
         className
       )}
     >
-      {tokenAddress ? (
+      {isClientReady && tokenAddress ? (
         isError || isTokenAddressUndefined ? (
           <BiErrorCircle className="col-span-full row-span-full h-full w-full fill-dark/50" />
         ) : (

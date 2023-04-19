@@ -7,6 +7,7 @@ import { Address } from "wagmi"
 import { capitalizeFirstLetter, resolvedRoute } from "@/lib/helpers"
 import { FilterCategory, ProductType, VaultType } from "@/lib/types"
 
+import { DisabledPage } from "@/components"
 import {
   ConcentratorMenu,
   ConcentratorRewards,
@@ -18,6 +19,8 @@ import { VaultStrategyModal } from "@/components/Modal"
 import Seo from "@/components/Seo"
 import { TabButton, TabContent, TabListGroup } from "@/components/Tabs"
 
+import { DISABLE_CONCENTRATORS } from "@/constant/env"
+
 const Concentrators: NextPage = () => {
   const router = useRouter()
   const {
@@ -26,29 +29,30 @@ const Concentrators: NextPage = () => {
   } = router
 
   return (
-    <Layout>
-      <Seo
-        templateTitle="Concentrators"
-        description="Concentrators automatically re-invest earnings into specific target assets"
-      />
-
-      <main>
-        {/* Child component because we need queryClient to retrieve vaults */}
-        <ConcentratorVaults />
-      </main>
-      <VaultStrategyModal
-        isOpen={!!router.query.asset}
-        onClose={() => {
-          const link = resolvedRoute(pathname, { category, vaultAddress })
-          router.push(link.href, link.as, { shallow: true, scroll: false })
-        }}
-        asset={asset as Address}
-        type={type as VaultType}
-        vaultAddress={vaultAddress as Address}
-        ybTokenAddress={ybTokenAddress as Address}
-        productType={productType as ProductType}
-      />
-    </Layout>
+    <DisabledPage isDisabled={DISABLE_CONCENTRATORS}>
+      <Layout>
+        <Seo
+          templateTitle="Concentrators"
+          description="Concentrators automatically re-invest earnings into specific target assets"
+        />
+        <main>
+          {/* Child component because we need queryClient to retrieve vaults */}
+          <ConcentratorVaults />
+        </main>
+        <VaultStrategyModal
+          isOpen={!!router.query.asset}
+          onClose={() => {
+            const link = resolvedRoute(pathname, { category, vaultAddress })
+            router.push(link.href, link.as, { shallow: true, scroll: false })
+          }}
+          asset={asset as Address}
+          type={type as VaultType}
+          vaultAddress={vaultAddress as Address}
+          ybTokenAddress={ybTokenAddress as Address}
+          productType={productType as ProductType}
+        />
+      </Layout>
+    </DisabledPage>
   )
 }
 
