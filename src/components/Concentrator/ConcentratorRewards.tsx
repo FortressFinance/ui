@@ -216,9 +216,7 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
     address: concentrator.data?.rewardTokenAddress,
   })
   const formatted = ethers.utils.formatUnits(
-    rewardsBalance.data !== undefined && rewardsBalance.data.length > 0
-      ? rewardsBalance.data[0]
-      : BigNumber.from(0),
+    rewardsBalance.data?.[0] ?? BigNumber.from(0),
     rewardToken.data?.decimals ?? 18
   )
   return (

@@ -24,25 +24,17 @@ export function useConcentratorPendingReward({
 }) {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
-  const contracts = ybTokenList.map((ybToken) => {
-    return {
-      address: ybToken,
-      chainId,
-      abi: AMMConcentratorBase,
-      functionName: "pendingReward",
-      args: [userAddress ?? "0x"],
-    }
-  })
+  const contracts = ybTokenList.map((ybToken) => ({
+    address: ybToken,
+    chainId,
+    abi: AMMConcentratorBase,
+    functionName: "pendingReward",
+    args: [userAddress ?? "0x"],
+  }))
   return useContractReads({
     contracts: contracts,
     enabled: !!userAddress && ybTokenList.length > 0,
-    select: (data) =>
-      data.map((reward) => {
-        if (reward === undefined) {
-          return BigNumber.from(0)
-        }
-        return BigNumber.from(reward)
-      }),
+    select: (data) => data.map((reward) => BigNumber.from(reward ?? 0)),
   })
 }
 

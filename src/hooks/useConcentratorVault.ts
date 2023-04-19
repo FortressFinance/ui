@@ -53,22 +53,15 @@ export function useConcentratorVaultList({
   type?: VaultType
 }) {
   const registryContract = useRegistryContract()
-  const contracts = primaryAssetList.map((primaryAsset) => {
-    return {
-      ...registryContract,
-      functionName: "getConcentrator",
-      args: [type === "curve", targetAsset ?? "0x", primaryAsset ?? "0x"],
-    }
-  })
+  const contracts = primaryAssetList.map((primaryAsset) => ({
+    ...registryContract,
+    functionName: "getConcentrator",
+    args: [type === "curve", targetAsset ?? "0x", primaryAsset ?? "0x"],
+  }))
 
   return useContractReads({
     contracts,
     select: (data) =>
-      data.map((ybTokenAddress) => {
-        if (ybTokenAddress === undefined) {
-          return "0x"
-        }
-        return ybTokenAddress as Address
-      }),
+      data.map((ybTokenAddress) => (ybTokenAddress ?? "0x") as Address),
   })
 }
