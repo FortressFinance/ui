@@ -15,7 +15,7 @@ export function useApiConcentratorId({
       targetAsset !== undefined &&
       targetAsset.toLocaleUpperCase() === curTargetAsset.toLocaleUpperCase()
     ) {
-      targetAssetToConcentratorId[data?.target_asset?.address] =
+      targetAssetToConcentratorId[curTargetAsset] =
         data?.concentrator?.ybToken.concentratorId
     }
   })
