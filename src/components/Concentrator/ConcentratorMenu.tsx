@@ -1,5 +1,5 @@
 import * as Collapsible from "@radix-ui/react-collapsible"
-import { Dispatch, FC, SetStateAction } from "react"
+import { Dispatch, FC, SetStateAction, useEffect } from "react"
 import { Address } from "wagmi"
 
 import { useClientReady, useConcentratorTargetAssets } from "@/hooks"
@@ -26,6 +26,19 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
       }
     },
   })
+
+  useEffect(() => {
+    if (
+      concentratorTargetAsset === "0x" &&
+      concentratorTargetAssets.data?.length
+    ) {
+      setConcentratorTargetAsset(concentratorTargetAssets.data[0])
+    }
+  }, [
+    concentratorTargetAsset,
+    concentratorTargetAssets.data,
+    setConcentratorTargetAsset,
+  ])
 
   // TODO: This isn't the best solution. We must handle cases where no assets exist or failure
   const isLoading =

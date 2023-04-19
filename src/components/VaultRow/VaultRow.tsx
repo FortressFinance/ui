@@ -61,7 +61,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
     type: props.type,
     vaultAddress: props.vaultAddress,
     productType: props.productType,
-    ybToken: ybTokenAddress,
+    ybTokenAddress: ybTokenAddress,
   })
 
   const toggleVaultOpen: MouseEventHandler<

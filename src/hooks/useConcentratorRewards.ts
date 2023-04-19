@@ -1,7 +1,8 @@
+import { BigNumber } from "ethers"
 import {
   Address,
   useAccount,
-  useContractRead,
+  useContractReads,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
@@ -9,39 +10,47 @@ import {
 
 import { useActiveChainId } from "@/hooks"
 
-import { AMMConcentratorBase } from "@/constant/abi"
+import { AMMConcentratorBase, MultiClaimer } from "@/constant/abi"
 
 type ConcentratorRewardArgs = {
-  concentratorAddress: Address | undefined
+  targetAsset: Address
+  ybTokenList: Address[]
 }
 
 export function useConcentratorPendingReward({
-  concentratorAddress: address,
-}: ConcentratorRewardArgs) {
+  ybTokenList,
+}: {
+  ybTokenList: ConcentratorRewardArgs["ybTokenList"]
+}) {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
-  return useContractRead({
-    address,
+  const contracts = ybTokenList.map((ybToken) => ({
+    address: ybToken,
     chainId,
     abi: AMMConcentratorBase,
     functionName: "pendingReward",
     args: [userAddress ?? "0x"],
-    enabled: !!userAddress,
+  }))
+  return useContractReads({
+    contracts: contracts,
+    enabled: !!userAddress && ybTokenList.length > 0,
+    select: (data) => data.map((reward) => BigNumber.from(reward ?? 0)),
   })
 }
 
 export function useConcentratorClaim({
-  concentratorAddress: address,
+  targetAsset,
+  ybTokenList,
 }: ConcentratorRewardArgs) {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
   const prepareWrite = usePrepareContractWrite({
-    address,
+    address: targetAsset,
     chainId,
-    abi: AMMConcentratorBase,
-    functionName: "claim",
-    enabled: !!userAddress,
-    args: [userAddress ?? "0x", userAddress ?? "0x"],
+    abi: MultiClaimer,
+    functionName: "multiClaim",
+    args: [ybTokenList, userAddress ?? "0x"],
+    enabled: !!userAddress && ybTokenList.length > 0,
   })
   const write = useContractWrite(prepareWrite.config)
   const waitWrite = useWaitForTransaction({ hash: write.data?.hash })

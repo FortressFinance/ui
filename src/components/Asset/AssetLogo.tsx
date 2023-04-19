@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { FC, useEffect, useState } from "react"
+import { FC, useState } from "react"
 import { BiErrorCircle } from "react-icons/bi"
 import { Address } from "wagmi"
 
@@ -26,12 +26,8 @@ const LOGOS_NETWORK_NAME: Record<string, string> = {
 export const AssetLogo: FC<AssetLogoProps> = ({ className, tokenAddress }) => {
   const isClientReady = useClientReady()
   const [isError, setIsError] = useState(false)
-
-  useEffect(() => {
-    if (!isError) {
-      setIsError(tokenAddress === "0x" || tokenAddress === undefined)
-    }
-  }, [isError, tokenAddress])
+  const isTokenAddressUndefined =
+    tokenAddress === "0x" || tokenAddress === undefined
 
   const chainId = useActiveChainId()
   const [supportedChain] = enabledNetworks.chains.filter(
@@ -59,7 +55,7 @@ export const AssetLogo: FC<AssetLogoProps> = ({ className, tokenAddress }) => {
       )}
     >
       {isClientReady && tokenAddress ? (
-        isError ? (
+        isError || isTokenAddressUndefined ? (
           <BiErrorCircle className="col-span-full row-span-full h-full w-full fill-dark/50" />
         ) : (
           <Image

@@ -1,4 +1,4 @@
-import { Address } from "wagmi"
+import { Address, useContractReads } from "wagmi"
 
 import { VaultType } from "@/lib/types"
 import { useApiConcentratorVault } from "@/hooks/lib/api/useApiConcentratorVault"
@@ -41,4 +41,27 @@ export function useConcentratorVault({
   }
 
   return apiQuery
+}
+
+export function useConcentratorVaultList({
+  targetAsset,
+  primaryAssetList,
+  type,
+}: {
+  targetAsset: Address
+  primaryAssetList: Address[]
+  type?: VaultType
+}) {
+  const registryContract = useRegistryContract()
+  const contracts = primaryAssetList.map((primaryAsset) => ({
+    ...registryContract,
+    functionName: "getConcentrator",
+    args: [type === "curve", targetAsset ?? "0x", primaryAsset ?? "0x"],
+  }))
+
+  return useContractReads({
+    contracts,
+    select: (data) =>
+      data.map((ybTokenAddress) => (ybTokenAddress ?? "0x") as Address),
+  })
 }
