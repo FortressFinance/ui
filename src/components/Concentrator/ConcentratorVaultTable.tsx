@@ -12,7 +12,7 @@ import {
   useListConcentrators,
 } from "@/hooks"
 
-import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"
+import { AssetSymbol } from "@/components/Asset"
 import { TableEmpty, TableLoading } from "@/components/Table"
 import { VaultRow } from "@/components/VaultRow"
 import { VaultTable } from "@/components/VaultRow/lib"
@@ -61,10 +61,8 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
       ) : !filteredConcentratorVaults?.length ? (
         <TableEmpty heading="Where Concentrator Vaults ser?">
           It seems we don't have{" "}
-          <ConcentratorTargetAssetSymbol
-            concentratorTargetAsset={concentratorTargetAsset}
-          />{" "}
-          Concentrator Vaults for {capitalizeFirstLetter(filterCategory)} (yet).
+          <AssetSymbol address={concentratorTargetAsset} /> Concentrator Vaults
+          for {capitalizeFirstLetter(filterCategory)} (yet).
         </TableEmpty>
       ) : (
         filteredConcentratorVaults?.map(

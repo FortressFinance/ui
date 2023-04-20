@@ -13,7 +13,7 @@ export const ConcentratorVaultUserBalance: FC<VaultProps> = (props) => {
     type: props.type,
   })
   const { data: balance } = useTokenOrNativeBalance({
-    address: concentrator?.data?.ybTokenAddres,
+    address: concentrator?.data?.ybTokenAddress,
   })
 
   return (

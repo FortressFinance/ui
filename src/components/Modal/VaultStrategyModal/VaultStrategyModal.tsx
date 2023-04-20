@@ -37,8 +37,8 @@ export const VaultStrategyModal: FC<
   const { chain } = useNetwork()
 
   const strategyTextAddress = isCompounderProduct
-    ? vaultProps.asset
-    : vaultProps.vaultAddress
+    ? `compounder_${vaultProps.asset}`
+    : `concentrator_${vaultProps.vaultAddress}`
   const { data: ybToken } = useTokenOrNative({
     address: vaultProps.ybTokenAddress ?? "0x",
   })
