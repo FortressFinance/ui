@@ -4,16 +4,11 @@ import useConcentratorAumFallback from "@/hooks/lib/tvl/concentrator/useConcentr
 
 type ConcentratorAumProps = {
   targetAsset: Address
-  ybToken: Address
 }
 
-export function useConcentratorAum({
-  targetAsset,
-  ybToken,
-}: ConcentratorAumProps) {
+export function useConcentratorAum({ targetAsset }: ConcentratorAumProps) {
   const aumFallback = useConcentratorAumFallback({
     targetAsset,
-    ybToken,
     enabled: true,
   })
 

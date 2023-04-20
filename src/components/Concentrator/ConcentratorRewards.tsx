@@ -100,40 +100,14 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
 
 const ConcentratorRewardsAum: FC<ConcentratorRewardsProps> = ({
   concentratorTargetAsset,
-  filterCategory,
 }) => {
   const isReady = useClientReady()
-  const {
-    data: concentratorTargetAssets,
-    isLoading: concentratorTargetAssetsIsLoading,
-  } = useConcentratorTargetAssets()
-  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
-  const firstConcentrator = useFirstConcentrator({
-    concentratorsList,
-    concentratorTargetAsset,
-    filterCategory,
-  })
-  const concentrator = useConcentratorVault({
-    targetAsset: concentratorTargetAsset,
-    primaryAsset: firstConcentrator?.vaultAssetAddress,
-    type: firstConcentrator?.vaultType,
-  })
-
   const tvl = useConcentratorAum({
     targetAsset: concentratorTargetAsset,
-    ybToken: concentrator.data?.ybTokenAddress ?? "0x",
   })
 
   return (
-    <Skeleton
-      isLoading={
-        !isReady ||
-        concentratorTargetAssetsIsLoading ||
-        concentratorsList.isLoading ||
-        concentrator.isLoading ||
-        tvl.isLoading
-      }
-    >
+    <Skeleton isLoading={!isReady || tvl.isLoading}>
       {formatUsd({ abbreviate: true, amount: tvl.data })}
     </Skeleton>
   )
