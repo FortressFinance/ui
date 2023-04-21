@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 import {
   crvTriCryptoTokenAddress,
   crvTwoCryptoTokenAddress,
@@ -124,28 +126,36 @@ const strategyText = {
   [`concentrator_${crvTriCryptoTokenAddress}`]: (
     <>
       <p>
-        This vault accepts deposits in the form of crv3Crypto, which serves as
-        its principal asset, as well as any of the underlying assets listed
-        below, all of which will be instantly converted to Fortress Compounding
-        LP tokens.
+        This vault accepts deposits in form of its primary asset crv3Crypto and
+        any of its underlying assets mentioned below, all of which will be
+        converted to Curve LP tokens automatically.
       </p>
       <p>
-        This auto-concentrators vault swaps its reward tokens into fcGLP, which
-        are then invested in vaults with differing risk profiles from the
-        originating vault, and claims its strategy rewards on a periodic basis.
+        Deposited assets are used to provide liquidity for Curve Finance,
+        earning swap fees plus CRV emissions for extra yield.
       </p>
       <p>
-        Investors receive their proportionate share of the concentrator money in
-        the form of ERC20 tokens called fctrTriCrypto-fcGLP, which stands for
-        vault shares.
+        The vault auto-concentrates the accumulated rewards periodically into{" "}
+        <Link
+          href="https://docs.fortress.finance/resources/smart-contracts/glp-compounder"
+          className="flex items-center gap-3 underline underline-offset-4"
+          target="_blank"
+        >
+          the GLP Compounder.
+        </Link>
       </p>
       <p>
-        The fctrTriCrypto-fcGLP can be used by investors in other Fortress
-        products or integrated protocols.
+        Investors receive vault shares as ERC20 tokens called
+        fctrTriCrypto-fcGLP, representing their pro-rata share of the
+        concentrated funds.
       </p>
       <p>
-        The following underlying assets are present in the Curve.fi USD-BTC-ETH
-        vault: crv3Crypto, USDT, WBTC, WETH, and ETH.
+        Investors can use fctrTriCrypto-fcGLP in other Fortress products or
+        integrated protocols.
+      </p>
+      <p>
+        The TriCrypto vault contains the following underlying assets: WBTC,
+        WETH, ETH, and USDT.
       </p>
     </>
   ),
