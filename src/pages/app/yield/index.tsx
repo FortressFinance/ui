@@ -99,7 +99,7 @@ const Yield: NextPage = () => {
             </Tabs.Content>
             <Tabs.Content value="holdings" asChild>
               <TabContent>
-                <HoldingsTable showEarningsColumn />
+                <HoldingsTable />
               </TabContent>
             </Tabs.Content>
           </div>
