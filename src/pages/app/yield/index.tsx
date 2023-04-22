@@ -7,7 +7,7 @@ import { resolvedRoute } from "@/lib/helpers"
 import { ProductType, VaultType } from "@/lib/types"
 
 import { CompounderVaultTable } from "@/components/Compounder"
-import HoldingsTable from "@/components/HoldingsTable"
+import CompounderHoldingsTable from "@/components/Compounder/CompounderHoldingsTable"
 import Layout from "@/components/Layout"
 import { VaultStrategyModal } from "@/components/Modal"
 import Seo from "@/components/Seo"
@@ -99,7 +99,7 @@ const Yield: NextPage = () => {
             </Tabs.Content>
             <Tabs.Content value="holdings" asChild>
               <TabContent>
-                <HoldingsTable />
+                <CompounderHoldingsTable />
               </TabContent>
             </Tabs.Content>
           </div>
