@@ -28,7 +28,7 @@ const ConcentratorHoldingsTable: FC = () => {
   const { data: concentratorsList, isLoading: concentratorsListIsLoading } =
     useListConcentrators({ concentratorTargetAssets })
   const { data: holdingsVaults, isLoading: isLoadingHoldingsVault } =
-    useHoldingsVaults()
+    useHoldingsVaults({ isCompounder: false })
 
   const showLoadingState =
     concentratorTargetAssetsIsLoading ||

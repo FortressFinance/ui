@@ -26,7 +26,7 @@ const CompounderHoldingsTable: FC<{
 
   const { data: compoundersList, isLoading } = useListCompounders()
   const { data: holdingsVaults, isLoading: isLoadingHoldingsVault } =
-    useHoldingsVaults()
+    useHoldingsVaults({ isCompounder: true })
 
   const showLoadingState = isLoading || isLoadingHoldingsVault || !ready
 
@@ -73,7 +73,7 @@ const HoldingsRow: FC<HoldingsRowProps> = (props) => {
     vaultAssetAddress: props.asset,
     vaultType: props.type,
   })
-  const holdingsVaults = useHoldingsVaults()
+  const holdingsVaults = useHoldingsVaults({ isCompounder: true })
 
   if (!vaultAddress.data?.ybTokenAddress || holdingsVaults.isLoading)
     return <TableLoading>Loading holdings...</TableLoading>

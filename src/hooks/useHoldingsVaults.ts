@@ -6,13 +6,13 @@ import { fortressApi } from "@/lib/api/util/fortressApi"
 import { queryKeys } from "@/lib/helpers"
 import { useActiveChainId } from "@/hooks"
 
-export function useHoldingsVaults() {
+export function useHoldingsVaults({ isCompounder }: { isCompounder: boolean }) {
   const { address: userAddress } = useAccount()
   const chainId = useActiveChainId()
 
   return useQuery({
     ...queryKeys.holdings.list({ chainId, user: userAddress }),
-    queryFn: () => getUserVaults({ chainId, user: userAddress }),
+    queryFn: () => getUserVaults({ chainId, user: userAddress, isCompounder }),
     retry: false,
   })
 }
@@ -41,12 +41,15 @@ type UserVault = {
 async function getUserVaults({
   chainId,
   user = "0x",
+  isCompounder,
 }: {
   chainId: number
-  user: Address | undefined
+  user?: Address
+  isCompounder: boolean
 }) {
   const resp = await fortressApi.post<UserVault>("Protocol/get_user_vaults", {
     chainId,
+    isCompounder,
     user,
   })
   return handledResponse(resp?.data?.data)
