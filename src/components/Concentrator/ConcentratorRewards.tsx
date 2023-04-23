@@ -1,5 +1,6 @@
 import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
+import { BiInfoCircle } from "react-icons/bi"
 import { Address } from "wagmi"
 
 import { formatPercentage, formatUsd } from "@/lib/helpers"
@@ -22,6 +23,7 @@ import {
 import { AssetBalance, AssetLogo, AssetSymbol } from "@/components/Asset"
 import Button from "@/components/Button"
 import Skeleton from "@/components/Skeleton"
+import Tooltip from "@/components/Tooltip"
 import { GradientText } from "@/components/Typography"
 
 type ConcentratorRewardsProps = {
@@ -40,7 +42,12 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
           <AssetLogo tokenAddress={concentratorTargetAsset} />
         </div>
         <div>
-          <h1 className="text-sm">Concentrator</h1>
+          <Tooltip label="The accumulated rewards are periodically invested in this vault. All accrued rewards can be claimed at any time even if further rewards are not accruing anymore.">
+            <span>
+              <h1 className="float-left mr-1 text-sm">Concentrator</h1>
+              <BiInfoCircle className="h-5 w-5 cursor-pointer" />
+            </span>
+          </Tooltip>
           <h2 className="font-semibold">
             <GradientText>
               <AssetSymbol address={concentratorTargetAsset} />
