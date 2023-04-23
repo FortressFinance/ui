@@ -52,7 +52,7 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "top",
-    strategy: "fixed",
+    strategy: "absolute",
     modifiers: [
       { name: "preventOverflow", options: { padding: 8 } },
       { name: "offset", options: { offset: [0, 16] } },
@@ -72,28 +72,26 @@ const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
         ref: setReferenceElement,
       })}
       {isMounted && (
-        <div className="fixed">
-          <div
-            ref={setPopperElement}
-            className={clsxm(
-              "z-20 max-w-sm rounded-lg bg-blue px-4 py-2 text-center text-sm font-normal text-white",
-              {
-                "animate-fade-in": isOpen,
-                "animate-fade-out": !isOpen,
-              }
-            )}
-            style={styles.popper}
-            {...attributes.popper}
+        <div
+          ref={setPopperElement}
+          className={clsxm(
+            "z-20 !m-0 max-w-sm rounded-lg bg-blue px-4 py-2 text-center text-sm font-normal text-white",
+            {
+              "animate-fade-in": isOpen,
+              "animate-fade-out": !isOpen,
+            }
+          )}
+          style={styles.popper}
+          {...attributes.popper}
+        >
+          <span className="-translate-y-4">{label}</span>
+          <span
+            ref={setArrowElement}
+            style={styles.arrow}
+            {...attributes.arrow}
           >
-            <span className="-translate-y-4">{label}</span>
-            <span
-              ref={setArrowElement}
-              style={styles.arrow}
-              {...attributes.arrow}
-            >
-              <Triangle className="h-3 w-6 translate-y-6 fill-blue" />
-            </span>
-          </div>
+            <Triangle className="h-3 w-6 translate-y-6 fill-blue" />
+          </span>
         </div>
       )}
     </>
