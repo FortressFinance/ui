@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { Address, useAccount } from "wagmi"
 
-import { ProductType, VaultType } from "@/lib/types"
+import { VaultType } from "@/lib/types"
 import { enabledNetworks } from "@/lib/wagmi"
 import {
   useActiveChainId,
@@ -15,10 +15,9 @@ import { TableDisconnected, TableEmpty, TableLoading } from "@/components/Table"
 import { VaultRow } from "@/components/VaultRow"
 import { VaultTable } from "@/components/VaultRow/lib"
 
-const HoldingsTable: FC<{
+const CompounderHoldingsTable: FC<{
   showEarningsColumn?: boolean
-  productType?: ProductType
-}> = ({ showEarningsColumn, productType }) => {
+}> = ({ showEarningsColumn }) => {
   const ready = useClientReady()
   const { isConnected } = useAccount()
   const chainId = useActiveChainId()
@@ -55,7 +54,6 @@ const HoldingsTable: FC<{
             key={`pool-${vault.vaultType}-${index}`}
             asset={vault.vaultAssetAddress}
             type={vault.vaultType}
-            productType={productType ?? "compounder"}
           />
         ))
       )}
@@ -63,15 +61,14 @@ const HoldingsTable: FC<{
   )
 }
 
-export default HoldingsTable
+export default CompounderHoldingsTable
 
 type HoldingsRowProps = {
   asset: Address
   type: VaultType
-  productType: ProductType
 }
 
-export const HoldingsRow: FC<HoldingsRowProps> = (props) => {
+const HoldingsRow: FC<HoldingsRowProps> = (props) => {
   const vaultAddress = useCompounderVault({
     vaultAssetAddress: props.asset,
     vaultType: props.type,
@@ -87,7 +84,7 @@ export const HoldingsRow: FC<HoldingsRowProps> = (props) => {
     <VaultRow
       {...props}
       vaultAddress={vaultAddress.data.ybTokenAddress}
-      productType={props.productType}
+      productType="compounder"
       showEarningsColumn
     />
   ) : null

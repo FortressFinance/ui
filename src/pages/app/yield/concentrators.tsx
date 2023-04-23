@@ -13,7 +13,7 @@ import {
   ConcentratorRewards,
   ConcentratorVaultTable,
 } from "@/components/Concentrator"
-import HoldingsTable from "@/components/HoldingsTable"
+import ConcentratorHoldingsTable from "@/components/Concentrator/ConcentratorHoldingsTable"
 import Layout from "@/components/Layout"
 import { VaultStrategyModal } from "@/components/Modal"
 import Seo from "@/components/Seo"
@@ -133,7 +133,7 @@ const ConcentratorVaults: FC = () => {
           ))}
           <Tabs.Content value="holdings" asChild>
             <TabContent>
-              <HoldingsTable productType="concentrator" />
+              <ConcentratorHoldingsTable />
             </TabContent>
           </Tabs.Content>
         </div>

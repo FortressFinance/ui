@@ -36,9 +36,6 @@ export const VaultStrategyModal: FC<
   const fees = useVaultFees(vaultProps)
   const { chain } = useNetwork()
 
-  const strategyTextAddress = isCompounderProduct
-    ? vaultProps.asset
-    : vaultProps.vaultAddress
   const { data: ybToken } = useTokenOrNative({
     address: vaultProps.ybTokenAddress ?? "0x",
   })
@@ -50,6 +47,11 @@ export const VaultStrategyModal: FC<
     }
   }
   const label = `Add ${ybToken?.symbol} to wallet`
+
+  const strategyTextValue =
+    strategyText[vaultProps.productType]?.[
+      isCompounderProduct ? vaultProps.asset : vaultProps.vaultAddress
+    ]
 
   return (
     <PurpleModal
@@ -99,8 +101,7 @@ export const VaultStrategyModal: FC<
               </h1>
 
               <div className="space-y-3 p-4 pb-5 leading-relaxed text-pink-50 max-md:text-sm md:px-5">
-                {strategyText[strategyTextAddress] ??
-                  "No description available"}
+                {strategyTextValue ?? "No description available"}
               </div>
             </div>
 

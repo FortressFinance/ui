@@ -19,12 +19,8 @@ import {
   useTokenOrNative,
 } from "@/hooks"
 
+import { AssetBalance, AssetLogo, AssetSymbol } from "@/components/Asset"
 import Button from "@/components/Button"
-import {
-  ConcentratorTargetAssetBalance,
-  ConcentratorTargetAssetLogo,
-  ConcentratorTargetAssetSymbol,
-} from "@/components/Concentrator/ConcentratorTargetAsset"
 import Skeleton from "@/components/Skeleton"
 import { GradientText } from "@/components/Typography"
 
@@ -41,17 +37,13 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
     <div className="divide-y divide-pink/30 rounded-lg bg-pink-900/80 px-4 backdrop-blur-md">
       <div className="grid grid-cols-[auto,1fr,auto] items-center gap-2 py-4">
         <div className="relative h-9 w-9 rounded-full bg-white">
-          <ConcentratorTargetAssetLogo
-            concentratorTargetAsset={concentratorTargetAsset}
-          />
+          <AssetLogo tokenAddress={concentratorTargetAsset} />
         </div>
         <div>
           <h1 className="text-sm">Concentrator</h1>
           <h2 className="font-semibold">
             <GradientText>
-              <ConcentratorTargetAssetSymbol
-                concentratorTargetAsset={concentratorTargetAsset}
-              />
+              <AssetSymbol address={concentratorTargetAsset} />
             </GradientText>
           </h2>
         </div>
@@ -80,12 +72,8 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
           </dd>
           <dt className="text-xs font-medium text-white/80">Balance</dt>
           <dd className="text-right text-xs font-medium text-white/80">
-            <ConcentratorTargetAssetBalance
-              concentratorTargetAsset={concentratorTargetAsset}
-            />{" "}
-            <ConcentratorTargetAssetSymbol
-              concentratorTargetAsset={concentratorTargetAsset}
-            />
+            <AssetBalance address={concentratorTargetAsset} abbreviate />{" "}
+            <AssetSymbol address={concentratorTargetAsset} />
           </dd>
           <dt className="text-sm font-semibold leading-relaxed">
             <GradientText>Rewards</GradientText>
@@ -96,9 +84,7 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
                 concentratorTargetAsset={concentratorTargetAsset}
                 filterCategory={filterCategory}
               />{" "}
-              <ConcentratorTargetAssetSymbol
-                concentratorTargetAsset={concentratorTargetAsset}
-              />
+              <AssetSymbol address={concentratorTargetAsset} />
             </GradientText>
           </dd>
         </dl>
@@ -114,40 +100,14 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
 
 const ConcentratorRewardsAum: FC<ConcentratorRewardsProps> = ({
   concentratorTargetAsset,
-  filterCategory,
 }) => {
   const isReady = useClientReady()
-  const {
-    data: concentratorTargetAssets,
-    isLoading: concentratorTargetAssetsIsLoading,
-  } = useConcentratorTargetAssets()
-  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
-  const firstConcentrator = useFirstConcentrator({
-    concentratorsList,
-    concentratorTargetAsset,
-    filterCategory,
-  })
-  const concentrator = useConcentratorVault({
-    targetAsset: concentratorTargetAsset,
-    primaryAsset: firstConcentrator?.vaultAssetAddress,
-    type: firstConcentrator?.vaultType,
-  })
-
   const tvl = useConcentratorAum({
     targetAsset: concentratorTargetAsset,
-    ybToken: concentrator.data?.ybTokenAddress ?? "0x",
   })
 
   return (
-    <Skeleton
-      isLoading={
-        !isReady ||
-        concentratorTargetAssetsIsLoading ||
-        concentratorsList.isLoading ||
-        concentrator.isLoading ||
-        tvl.isLoading
-      }
-    >
+    <Skeleton isLoading={!isReady || tvl.isLoading}>
       {formatUsd({ abbreviate: true, amount: tvl.data })}
     </Skeleton>
   )

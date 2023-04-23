@@ -4,7 +4,7 @@ import { Address } from "wagmi"
 
 import { useClientReady, useConcentratorTargetAssets } from "@/hooks"
 
-import { ConcentratorTargetAssetSymbol } from "@/components/Concentrator/ConcentratorTargetAsset"
+import { AssetSymbol } from "@/components/Asset"
 import { TabButton } from "@/components/Tabs"
 
 import { FortIconChevronDown } from "@/icons"
@@ -54,9 +54,7 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
           disabled={isLoading}
         >
           <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-left">
-            <ConcentratorTargetAssetSymbol
-              concentratorTargetAsset={concentratorTargetAsset}
-            />
+            <AssetSymbol address={concentratorTargetAsset} />
           </div>
           <FortIconChevronDown className="w-3.5 shrink-0 stroke-current group-ui-state-open:rotate-180" />
         </TabButton>
@@ -73,9 +71,7 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
                 onClick={() => setConcentratorTargetAsset(targetAsset)}
               >
                 {" "}
-                <ConcentratorTargetAssetSymbol
-                  concentratorTargetAsset={targetAsset}
-                />
+                <AssetSymbol address={targetAsset} />
               </button>
             </Collapsible.Trigger>
           ))}
