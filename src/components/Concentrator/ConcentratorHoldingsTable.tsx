@@ -1,11 +1,13 @@
 import { FC } from "react"
-import { useAccount } from "wagmi"
+import { Address, useAccount } from "wagmi"
 
+import { VaultType } from "@/lib/types"
 import { enabledNetworks } from "@/lib/wagmi"
 import {
   useActiveChainId,
   useClientReady,
   useConcentratorTargetAssets,
+  useConcentratorVault,
   useHoldingsVaults,
   useListConcentrators,
 } from "@/hooks"
@@ -37,7 +39,7 @@ const ConcentratorHoldingsTable: FC = () => {
     !ready
 
   return (
-    <VaultTable label="Holdings" useAPR>
+    <VaultTable label="Holdings" productType="concentrator" useAPR>
       {!isConnected ? (
         <TableDisconnected heading="Oops! It looks like you are not connected...">
           Connect your wallet to start exploring our Vaults.
@@ -63,12 +65,11 @@ const ConcentratorHoldingsTable: FC = () => {
             },
             i
           ) => (
-            <VaultRow
+            <HoldingsRow
               key={`concentrator-${i}`}
-              asset={concentratorTargetAsset}
+              targetAsset={concentratorTargetAsset}
               type={vaultType}
-              vaultAddress={primaryAsset}
-              productType="concentrator"
+              primaryAsset={primaryAsset}
             />
           )
         )
@@ -78,3 +79,38 @@ const ConcentratorHoldingsTable: FC = () => {
 }
 
 export default ConcentratorHoldingsTable
+
+type HoldingsRowProps = {
+  primaryAsset: Address
+  targetAsset: Address
+  type: VaultType
+}
+
+const HoldingsRow: FC<HoldingsRowProps> = ({
+  primaryAsset,
+  targetAsset,
+  type,
+  ...props
+}) => {
+  const concentrator = useConcentratorVault({
+    targetAsset,
+    primaryAsset,
+    type,
+  })
+  const holdingsVaults = useHoldingsVaults({ isCompounder: false })
+
+  if (!concentrator.data?.ybTokenAddress || holdingsVaults.isLoading)
+    return <TableLoading>Loading holdings...</TableLoading>
+
+  return holdingsVaults.data?.vaults?.includes(
+    concentrator.data.ybTokenAddress
+  ) ? (
+    <VaultRow
+      {...props}
+      asset={targetAsset}
+      type={type}
+      vaultAddress={primaryAsset}
+      productType="concentrator"
+    />
+  ) : null
+}
