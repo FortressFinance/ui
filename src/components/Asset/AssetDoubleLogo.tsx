@@ -87,9 +87,9 @@ export const AssetDoubleLogo: FC<AssetDoubleLogoProps> = ({
               />
             )}
           </div>
-          <div className="absolute bottom-0 right-0 h-1/2 w-1/2 overflow-hidden rounded-full bg-white ring-0 ring-inset ring-white">
+          <div className="absolute -right-1 bottom-0 h-1/2 w-1/2 overflow-hidden rounded-full bg-white p-[1px] ring-0 ring-inset ring-white">
             {isSecondError || isSecondTokenAddressUndefined ? (
-              <BiErrorCircle className="absolute bottom-0 right-0 col-span-full row-span-full h-full w-full fill-dark/50" />
+              <BiErrorCircle className="col-span-full row-span-full h-full w-full fill-dark/50" />
             ) : (
               <Image
                 src={`${TOKEN_LOGOS_API_URL}/${logosNetworkName}/assets/${secondTokenAddress}/logo.png`}
