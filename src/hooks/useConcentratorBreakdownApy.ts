@@ -73,6 +73,6 @@ export function useConcentratorBreakdownApy({
     ...apiQuery,
     isLoading:
       targetAssetIdIsLoading || concentratorIdIsLoading || apiQuery.isLoading,
-    data: apiQuery.data?.APY.compounder_APR_breakdown,
+    data: apiQuery.data?.APY.compounderAPR_breakdown,
   }
 }

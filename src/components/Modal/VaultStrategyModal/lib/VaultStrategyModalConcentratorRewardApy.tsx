@@ -2,7 +2,7 @@ import { FC } from "react"
 
 import { convertToApy } from "@/lib/api/vaults/convertToApy"
 import { VaultProps } from "@/lib/types"
-import { useIsConcentratorCurveVault } from "@/hooks"
+import { useConcentratorFirstVaultType } from "@/hooks"
 import { useConcentratorBreakdownApy } from "@/hooks/useConcentratorBreakdownApy"
 
 import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalDefinitionList"
@@ -10,16 +10,24 @@ import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrate
 export const VaultStrategyModalConcentratorRewardApr: FC<VaultProps> = (
   props
 ) => {
-  const isCurve = useIsConcentratorCurveVault(props.asset)
+  const firstConcentratorVaultType = useConcentratorFirstVaultType({
+    targetAsset: props.asset,
+  })
   const breakdownApy = useConcentratorBreakdownApy({
     targetAsset: props.asset,
     primaryAsset: props.vaultAddress,
-    type: isCurve ? "curve" : "balancer",
+    type: firstConcentratorVaultType ?? "balancer",
   })
 
   const items = []
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = breakdownApy.data as any
+  if (data?.totalApr !== undefined)
+    items.push({
+      label: "Total APY",
+      value: convertToApy(data?.totalApr),
+      emphasis: true,
+    })
   if (data?.baseApr !== undefined)
     items.push({ label: "Base APR", value: data?.baseApr })
   if (data?.crvApr !== undefined)
@@ -38,12 +46,6 @@ export const VaultStrategyModalConcentratorRewardApr: FC<VaultProps> = (
     items.push({ label: "GMX APR", value: data?.GMXApr })
   if (data?.ETHApr !== undefined)
     items.push({ label: "ETH APR", value: data?.ETHApr })
-  if (data?.totalApr !== undefined)
-    items.push({
-      label: "Total APY",
-      value: convertToApy(data?.totalApr),
-      emphasis: true,
-    })
 
   return (
     <VaultStrategyModalDefinitionList

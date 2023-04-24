@@ -22,7 +22,7 @@ export type ConcentratorDynamicData = {
       totalApr: number
     }
     concentrator_APR: number
-    compounder_APR_breakdown: {
+    compounderAPR_breakdown: {
       GMXApr: number
       ETHApr: number
       totalApr: number
