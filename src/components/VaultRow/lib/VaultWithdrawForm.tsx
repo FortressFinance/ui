@@ -242,6 +242,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
           submitText="Withdraw"
           asset={defaultOutputToken}
           tokenAddresses={underlyingAssets}
+          productType={props.productType}
         />
       </FormProvider>
 

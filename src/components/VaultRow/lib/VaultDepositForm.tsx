@@ -321,6 +321,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
           previewResultWei={previewDeposit.data?.resultWei}
           asset={defaultInputToken}
           tokenAddresses={underlyingAssets}
+          productType={props.productType}
         />
       </FormProvider>
 
