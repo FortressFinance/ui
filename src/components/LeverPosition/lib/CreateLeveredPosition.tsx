@@ -56,7 +56,7 @@ export const CreateLeveredPosition: FC<CreateLeveredPositionProps> = ({
   const [leverAmount, setLeverAmount] = useState(1)
 
   const collateralAmountBig = parseUnits(
-    collateralAmount,
+    collateralAmount || "0",
     collateralAssetBalance.data?.decimals
   )
   const leveredBalance = collateralAmountBig
@@ -129,7 +129,7 @@ export const CreateLeveredPosition: FC<CreateLeveredPositionProps> = ({
           AMT:{" "}
           {formatCurrencyUnits({
             abbreviate: true,
-            amountWei: collateralAssetBalance.data?.value?.toString(),
+            amountWei: collateralAmountBig.toString(),
             decimals: collateralAssetBalance.data?.decimals,
           })}{" "}
           {collateralAssetBalance.data?.symbol}{" "}
