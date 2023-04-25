@@ -111,7 +111,6 @@ const ConcentratorVaults: FC = () => {
             />
             <ConcentratorRewards
               concentratorTargetAsset={concentratorTargetAsset}
-              filterCategory={activeFilterCategory}
             />
           </div>
         </div>
