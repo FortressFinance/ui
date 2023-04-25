@@ -39,17 +39,17 @@ export function useTokenPriceUsd({
   return priceRequest
 }
 
-async function getApiPrice({
+export async function getApiPrice({
   asset = "0x",
   chainId,
 }: {
   asset?: Address
-  chainId: number
+  chainId?: number
 }) {
   let data = await getLlamaPrice({ asset, chainId })
   if (data === undefined) {
     data = await getCoinGeckoPrice({ asset, chainId })
   }
 
-  return data
+  return data ?? 0
 }
