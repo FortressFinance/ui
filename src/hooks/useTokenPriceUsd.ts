@@ -44,7 +44,6 @@ async function getApiPrice({
   chainId,
 }: {
   asset?: Address
-  enabled?: boolean
   chainId: number
 }) {
   let data = await getLlamaPrice({ asset, chainId })
