@@ -10,6 +10,7 @@ import { Address, useAccount } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
+import { ProductType } from "@/lib/types"
 import {
   useClientReady,
   useTokenOrNative,
@@ -20,6 +21,7 @@ import { AssetBalance } from "@/components/Asset"
 import Button from "@/components/Button"
 import { ConnectButton } from "@/components/ConnectButton"
 import TokenSelectModal from "@/components/Modal/TokenSelectModal"
+import DoubleTokenSelectButton from "@/components/TokenForm/DoubleTokenSelectButton"
 import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
 
 type TokenFormProps = {
@@ -32,6 +34,7 @@ type TokenFormProps = {
   isLoadingTransaction: boolean
   isWithdraw?: boolean
   previewResultWei?: string
+  productType?: ProductType
   onSubmit: SubmitHandler<TokenFormValues>
 }
 
@@ -53,6 +56,7 @@ const TokenForm: FC<TokenFormProps> = ({
   isLoadingTransaction,
   isWithdraw = false,
   previewResultWei,
+  productType,
   onSubmit,
 }) => {
   const clientReady = useClientReady()
@@ -158,11 +162,19 @@ const TokenForm: FC<TokenFormProps> = ({
 
         {/* inputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-1 flex items-start justify-self-end pr-4 pt-4">
-          <TokenSelectButton
-            canChange={!isWithdraw && tokenAddresses.length > 1}
-            tokenAddress={inputTokenAddress}
-            onClick={() => setTokenSelectMode("inputToken")}
-          />
+          {productType === "concentrator" && isWithdraw ? (
+            <DoubleTokenSelectButton
+              canChange={!isWithdraw && tokenAddresses.length > 1}
+              tokenAddress={inputTokenAddress}
+              onClick={() => setTokenSelectMode("inputToken")}
+            />
+          ) : (
+            <TokenSelectButton
+              canChange={!isWithdraw && tokenAddresses.length > 1}
+              tokenAddress={inputTokenAddress}
+              onClick={() => setTokenSelectMode("inputToken")}
+            />
+          )}
         </div>
 
         {/* outputToken input */}
@@ -181,11 +193,19 @@ const TokenForm: FC<TokenFormProps> = ({
         </div>
         {/* outputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-2 flex items-start space-x-1 justify-self-end pb-4 pr-4">
-          <TokenSelectButton
-            canChange={isWithdraw && tokenAddresses.length > 1}
-            tokenAddress={outputTokenAddress}
-            onClick={() => setTokenSelectMode("outputToken")}
-          />
+          {productType === "concentrator" && !isWithdraw ? (
+            <DoubleTokenSelectButton
+              canChange={isWithdraw && tokenAddresses.length > 1}
+              tokenAddress={outputTokenAddress}
+              onClick={() => setTokenSelectMode("outputToken")}
+            />
+          ) : (
+            <TokenSelectButton
+              canChange={isWithdraw && tokenAddresses.length > 1}
+              tokenAddress={outputTokenAddress}
+              onClick={() => setTokenSelectMode("outputToken")}
+            />
+          )}
         </div>
 
         <div className="relative z-[1] col-span-full col-start-1 row-start-3 h-[38px] px-4 pb-3 text-left align-bottom text-xs">

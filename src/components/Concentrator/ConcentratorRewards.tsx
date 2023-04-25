@@ -10,12 +10,12 @@ import {
   useConcentratorApy,
   useConcentratorAum,
   useConcentratorClaim,
+  useConcentratorFirstVaultType,
   useConcentratorPendingReward,
   useConcentratorTargetAssets,
   useConcentratorVault,
   useConcentratorVaultList,
   useFirstConcentrator,
-  useIsConcentratorCurveVault,
   useListConcentrators,
   useTokenOrNative,
 } from "@/hooks"
@@ -42,7 +42,7 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
           <AssetLogo tokenAddress={concentratorTargetAsset} />
         </div>
         <div>
-          <Tooltip label="The accumulated rewards are periodically invested in this vault. All accrued rewards can be claimed at any time even if further rewards are not accruing anymore.">
+          <Tooltip label="The accumulated rewards are periodically invested into this vault. All accrued rewards can be claimed at any time, even if further rewards are not accruing anymore.">
             <span>
               <h1 className="float-left mr-1 text-sm">Concentrator</h1>
               <BiInfoCircle className="h-5 w-5 cursor-pointer" />
@@ -211,14 +211,16 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
     isLoading: concentratorTargetAssetsIsLoading,
   } = useConcentratorTargetAssets()
   const concentratorsList = useListConcentrators({ concentratorTargetAssets })
-  const isCurve = useIsConcentratorCurveVault(concentratorTargetAsset)
+  const firstConcentratorVaultType = useConcentratorFirstVaultType({
+    targetAsset: concentratorTargetAsset,
+  })
   const primaryAssetList = concentratorsList.data?.map(
     (x) => x.vaultAssetAddress
   )
   const ybTokenList = useConcentratorVaultList({
     targetAsset: concentratorTargetAsset,
     primaryAssetList: primaryAssetList ?? [],
-    type: isCurve ? "curve" : "balancer",
+    type: firstConcentratorVaultType ?? "balancer",
   })
   const ybTokenListNonZero = ybTokenList.data?.filter(
     (x) => x !== ethers.constants.AddressZero

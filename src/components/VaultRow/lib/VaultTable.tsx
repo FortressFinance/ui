@@ -55,7 +55,7 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
         >
           <TableHeader className="text-sm">
             {productType === "concentrator" ? (
-              <Tooltip label="To get into the auto-concentrator vault, make a deposit below. You will be given ERC20 tokens, which represent vault shares, in exchange for your proportionate share of the concentrator money.">
+              <Tooltip label="To get into the auto-concentrator vault, make a deposit below. You will be given ERC20 tokens representing vault shares in exchange for your proportionate share of the concentrator money.">
                 <span>
                   <div className="float-left mr-1">{label}</div>
                   <BiInfoCircle className="float-left h-5 w-5 cursor-pointer" />

@@ -3,9 +3,9 @@ import { useQuery } from "@tanstack/react-query"
 import { getConcentratorPreviewRedeem } from "@/lib/api/concentrators/getConcentratorPreviewRedeem"
 import { queryKeys } from "@/lib/helpers"
 import { VaultPreviewTransactionArgs } from "@/hooks/lib/api/types"
+import { useConcentratorFirstVaultType } from "@/hooks/useConcentratorFirstVaultType"
 import { useConcentratorId } from "@/hooks/useConcentratorId"
 import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAssetId"
-import { useIsConcentratorCurveVault } from "@/hooks/useVaultTypes"
 
 import { useGlobalStore } from "@/store"
 
@@ -22,7 +22,10 @@ export function useConcentratorPreviewRedeem({
     primaryAsset: rest.vaultAddress,
     targetAsset: rest.asset,
   })
-  const isCurve = useIsConcentratorCurveVault(rest.vaultAddress)
+
+  const firstConcentratorVaultType = useConcentratorFirstVaultType({
+    targetAsset: rest.asset,
+  })
 
   const args = {
     amount: rest.amount,
@@ -30,7 +33,7 @@ export function useConcentratorPreviewRedeem({
     token: rest.token,
     targetAssetId,
     concentratorId,
-    isCurve,
+    isCurve: firstConcentratorVaultType === "curve",
     // we store slippage as a fraction of 100; api expects slippage as a fraction of 1
     slippage: useGlobalStore((store) => store.slippageTolerance) / 100,
   }

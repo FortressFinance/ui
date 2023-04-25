@@ -3,7 +3,7 @@ import { Address } from "wagmi"
 import { useApiConcentratorId } from "@/hooks/lib/api/useApiConcentratorId"
 import { useFallbackRead } from "@/hooks/lib/useFallbackRequest"
 import { useRegistryContract } from "@/hooks/lib/useRegistryContract"
-import { useIsConcentratorCurveVault } from "@/hooks/useVaultTypes"
+import { useConcentratorFirstVaultType } from "@/hooks/useConcentratorFirstVaultType"
 
 export function useConcentratorId({
   targetAsset,
@@ -13,13 +13,14 @@ export function useConcentratorId({
   primaryAsset: Address
 }) {
   const apiQuery = useApiConcentratorId({ targetAsset })
-
-  const isCurve = useIsConcentratorCurveVault(targetAsset)
+  const firstConcentratorVaultType = useConcentratorFirstVaultType({
+    targetAsset,
+  })
   const primaryAssets = useFallbackRead(
     {
       ...useRegistryContract(),
       functionName: "getConcentratorPrimaryAssets",
-      args: [isCurve, targetAsset],
+      args: [firstConcentratorVaultType === "curve", targetAsset],
       enabled: apiQuery.isError,
     },
     []

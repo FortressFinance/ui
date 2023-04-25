@@ -12,6 +12,8 @@ export const VaultStrategyModalConcentratorApr: FC<VaultProps> = (props) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = breakdownApr.data as any
 
+  if (data?.totalApr !== undefined)
+    items.push({ label: "Total APR", value: data?.totalApr, emphasis: true })
   if (data?.baseApr !== undefined)
     items.push({ label: "Base APR", value: data?.baseApr })
   if (data?.crvApr !== undefined)
@@ -30,8 +32,6 @@ export const VaultStrategyModalConcentratorApr: FC<VaultProps> = (props) => {
     items.push({ label: "GMX APR", value: data?.GMXApr })
   if (data?.ETHApr !== undefined)
     items.push({ label: "ETH APR", value: data?.ETHApr })
-  if (data?.totalApr !== undefined)
-    items.push({ label: "Total APR", value: data?.totalApr, emphasis: true })
 
   return (
     <VaultStrategyModalDefinitionList
