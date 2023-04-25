@@ -4,8 +4,8 @@ import request, { gql } from "graphql-request"
 import { Address } from "wagmi"
 
 import { getGmxPriceData } from "@/lib/api/pricer/getGlpPrice"
-import { getLlamaPrice } from "@/lib/api/pricer/getLlamaPrice"
 import { VaultProps } from "@/lib/types"
+import { getApiPrice } from "@/hooks"
 
 import {
   auraBalTokenAddress,
@@ -52,7 +52,7 @@ export async function getFortGlpAprFallback(
   const ethRewardsAnnual =
     ((ethRewardsPerSecond ?? BigNumber.from(0)).toNumber() * 3600 * 24 * 365) /
     1e18
-  const ethPrice = await getLlamaPrice({ asset: ethTokenAddress })
+  const ethPrice = await getApiPrice({ asset: ethTokenAddress })
   const gmxRewardsMonthlyEmissionRate = 0 // need to know why is it zero
   const esGmxRewards = priceGmx * gmxRewardsMonthlyEmissionRate * 12
   const aprGmx = esGmxRewards / aum
@@ -103,7 +103,7 @@ export async function getFortCvxCrvAprFallback() {
 export async function getFortAuraBalAprFallback(auraMint: any) {
   const { rewardRates, addresses, totalStaked } = await getAuraBalRewardData()
   const tvl =
-    (await getLlamaPrice({ asset: auraBalTokenAddress })) *
+    (await getApiPrice({ asset: auraBalTokenAddress })) *
     (Number(totalStaked) / 1e18)
 
   let aprTokens = 0
@@ -115,7 +115,7 @@ export async function getFortAuraBalAprFallback(auraMint: any) {
   const BalYearlyRewards = (Number(rewardRates["BAL"]) / 1e18) * 86_400 * 365
   const AuraRewardYearly = calculateAuraMintAmount(auraMint, BalYearlyRewards)
   const AuraRewardAnnualUsd =
-    AuraRewardYearly * (await getLlamaPrice({ asset: auraTokenAddress }))
+    AuraRewardYearly * (await getApiPrice({ asset: auraTokenAddress }))
   const aprAura = AuraRewardAnnualUsd / tvl
 
   const aprTotal = aprTokens + aprAura
@@ -184,7 +184,7 @@ export async function getBalancerTotalAprFallback(
     (Number(rewardRates["BAL"] ?? 0) / 1e18) * 86_400 * 365
   const AuraRewardYearly = calculateAuraMintAmount(auraMint, BalYearlyRewards)
   const AuraRewardAnnualUsd =
-    AuraRewardYearly * (await getLlamaPrice({ asset: auraTokenAddress }))
+    AuraRewardYearly * (await getApiPrice({ asset: auraTokenAddress }))
   const aprAura = tvl === 0 ? 0 : AuraRewardAnnualUsd / tvl
 
   const aprTotal =
@@ -227,7 +227,7 @@ function calculateAuraMintAmount(auraMint: any, BALYearlyRewards: number) {
 
 async function getTokenAPR(rewardRate: number, token: Address, tvl: number) {
   const rewardYearly = rewardRate * 86_400 * 365
-  const tokenPriceUsd = await getLlamaPrice({ asset: token })
+  const tokenPriceUsd = await getApiPrice({ asset: token })
   const rewardAnnualUsd = rewardYearly * tokenPriceUsd
   const tokenApr = rewardAnnualUsd / tvl
   return tokenApr

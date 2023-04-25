@@ -4,20 +4,17 @@ import { z } from "zod"
 
 const chainIdToPrefix: Record<number, string> = {
   1: "ethereum",
-  42161: "arbitrum",
+  42161: "arbitrum-one",
   31337: "ethereum",
-  313371: "arbitrum",
+  313371: "arbitrum-one",
 }
 
-const respSchema = z.object({
-  coins: z.record(
-    z.object({
-      price: z.number().optional(),
-    })
-  ),
-})
+const respSchema = z.record(
+  z.string().toUpperCase(),
+  z.object({ usd: z.number().optional() })
+)
 
-export async function getLlamaPrice({
+export async function getCoinGeckoPrice({
   asset,
   chainId = 1,
 }: {
@@ -26,10 +23,9 @@ export async function getLlamaPrice({
 }) {
   const chainPrefix = chainIdToPrefix[chainId]
   if (!chainPrefix) throw new Error("Unsupported chain")
-  const llamaKey = `${chainPrefix}:${asset}`
   const resp = await axios.get(
-    `https://coins.llama.fi/prices/current/${llamaKey}`
+    `https://api.coingecko.com/api/v3/simple/token_price/${chainPrefix}?contract_addresses=${asset}&vs_currencies=usd`
   )
   const parsed = respSchema.parse(resp.data)
-  return parsed.coins[llamaKey]?.price
+  return parsed[asset.toUpperCase()]?.usd
 }
