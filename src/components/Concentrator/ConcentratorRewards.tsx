@@ -4,7 +4,6 @@ import { BiInfoCircle } from "react-icons/bi"
 import { Address } from "wagmi"
 
 import { formatPercentage, formatUsd } from "@/lib/helpers"
-import { FilterCategory } from "@/lib/types"
 import {
   useClientReady,
   useConcentratorApy,
@@ -28,12 +27,10 @@ import { GradientText } from "@/components/Typography"
 
 type ConcentratorRewardsProps = {
   concentratorTargetAsset: Address
-  filterCategory: FilterCategory
 }
 
 export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
   concentratorTargetAsset,
-  filterCategory,
 }) => {
   return (
     <div className="divide-y divide-pink/30 rounded-lg bg-pink-900/80 px-4 backdrop-blur-md">
@@ -61,7 +58,6 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
               <GradientText>
                 <ConcentratorRewardsApy
                   concentratorTargetAsset={concentratorTargetAsset}
-                  filterCategory={filterCategory}
                 />
               </GradientText>
             </dd>
@@ -74,7 +70,6 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
           <dd className="text-right text-xs font-medium text-white/80">
             <ConcentratorRewardsAum
               concentratorTargetAsset={concentratorTargetAsset}
-              filterCategory={filterCategory}
             />
           </dd>
           <dt className="text-xs font-medium text-white/80">Balance</dt>
@@ -89,7 +84,6 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
             <GradientText>
               <ConcentratorRewardsBalance
                 concentratorTargetAsset={concentratorTargetAsset}
-                filterCategory={filterCategory}
               />{" "}
               <AssetSymbol address={concentratorTargetAsset} />
             </GradientText>
@@ -98,7 +92,6 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
 
         <ConcentratorClaimButton
           concentratorTargetAsset={concentratorTargetAsset}
-          filterCategory={filterCategory}
         />
       </div>
     </div>
@@ -122,7 +115,6 @@ const ConcentratorRewardsAum: FC<ConcentratorRewardsProps> = ({
 
 const ConcentratorRewardsApy: FC<ConcentratorRewardsProps> = ({
   concentratorTargetAsset,
-  filterCategory,
 }) => {
   const isReady = useClientReady()
   const {
@@ -133,7 +125,6 @@ const ConcentratorRewardsApy: FC<ConcentratorRewardsProps> = ({
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
     concentratorTargetAsset,
-    filterCategory,
   })
 
   const totalApy = useConcentratorApy({
@@ -158,7 +149,6 @@ const ConcentratorRewardsApy: FC<ConcentratorRewardsProps> = ({
 
 const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
   concentratorTargetAsset,
-  filterCategory,
 }) => {
   const isReady = useClientReady()
   const {
@@ -169,7 +159,6 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
     concentratorTargetAsset,
-    filterCategory,
   })
   const concentrator = useConcentratorVault({
     targetAsset: concentratorTargetAsset,
