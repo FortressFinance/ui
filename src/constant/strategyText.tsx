@@ -167,6 +167,7 @@ const strategyText: { [key in ProductType]: any } = {
       </>
     ),
   },
+  managedVaults: {},
 }
 
 export default strategyText
