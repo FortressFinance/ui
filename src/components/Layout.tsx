@@ -107,7 +107,9 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                         )}
                         {DISABLE_MANAGED_VAULTS ? (
                           <span className="flex cursor-not-allowed items-center px-3 py-2.5">
-                            <span className="opacity-50">Managed Vaults</span>
+                            <span className="whitespace-nowrap opacity-50">
+                              Managed Vaults
+                            </span>
                             <span className="ml-1 grow-0 whitespace-nowrap rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
                               Coming soon
                             </span>
