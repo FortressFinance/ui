@@ -28,6 +28,7 @@ export type ConcentratorDynamicData = {
       totalApr: number
     }
     compounderAPY: number
+    totalAPY: number
   }
   userShare: {
     address?: Address
