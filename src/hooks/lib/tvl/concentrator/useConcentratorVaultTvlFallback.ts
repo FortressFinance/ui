@@ -29,8 +29,12 @@ export default function useConcentratorVaultTvlFallback({
   return {
     isLoading:
       isLoadingPricer || isLoadingTotalAssets || concentrator.isLoading,
-    data:
-      Number(primaryAssetPriceUsd ?? 0) *
-      (Number(totalAssets === undefined ? "0" : totalAssets.toString()) / 1e18),
+    data: {
+      usdTvl:
+        Number(primaryAssetPriceUsd ?? 0) *
+        (Number(totalAssets === undefined ? "0" : totalAssets.toString()) /
+          1e18),
+      tvl: totalAssets === undefined ? "0" : totalAssets.toString(),
+    },
   }
 }
