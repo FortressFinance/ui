@@ -22,9 +22,8 @@ export default function useVaultTvlFallback({
     data: {
       usdTvl:
         Number(primaryAssetPriceUsd ?? 0) *
-        (Number(totalAssets === undefined ? "0" : totalAssets.toString()) /
-          1e18),
-      tvl: totalAssets === undefined ? "0" : totalAssets.toString(),
+        (Number(totalAssets?.toString() ?? "0") / 1e18),
+      tvl: totalAssets?.toString() ?? "0",
     },
   }
 }

@@ -10,10 +10,7 @@ export function concentratorConvertToApy(
   concentratorApr?: number,
   compounderApy?: number
 ) {
-  const compoundPeriod = 84_600 * 7 // 7 days - 1 week
-  const yearInSecond = 31_556_926
-  const n = yearInSecond / compoundPeriod
-  return concentratorApr === undefined || compounderApy === undefined
-    ? 0
-    : concentratorApr * (((1 + compounderApy / n) ** n - 1) / compounderApy)
+  if (concentratorApr === undefined) return 0
+  if (compounderApy === undefined) return concentratorApr
+  return concentratorApr * (convertToApy(compounderApy) / compounderApy)
 }
