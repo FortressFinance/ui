@@ -1,8 +1,10 @@
+import { concentratorConvertToApy } from "@/lib/api/vaults/convertToApy"
 import { VaultProps } from "@/lib/types"
 import { useApiConcentratorDynamic } from "@/hooks/lib/api/useApiConcentratorDynamic"
 import useConcentratorTokenVaultTotalApy from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultTotalApy"
 import useBalancerVaultTotalApy from "@/hooks/lib/apr/useBalancerVaultTotalApy"
 import useCurveVaultTotalApy from "@/hooks/lib/apr/useCurveVaultTotalApy"
+import { useConcentratorApy } from "@/hooks/useConcentratorApy"
 import { useConcentratorId } from "@/hooks/useConcentratorId"
 import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAssetId"
 import {
@@ -26,6 +28,8 @@ export function useConcentratorVaultApy({
       targetAsset,
     })
 
+  const compounderApy = useConcentratorApy({ targetAsset, primaryAsset, type })
+
   const apiQuery = useApiConcentratorDynamic({
     targetAssetId,
     concentratorId,
@@ -36,15 +40,15 @@ export function useConcentratorVaultApy({
   const isBalancerFallbackEnabled = apiQuery.isError && !isCurve && !isToken
   const isTokenFallbackEnabled = apiQuery.isError && isToken
 
-  const curveVaultTotalApy = useCurveVaultTotalApy({
+  const concentratorCurveVaultTotalApy = useCurveVaultTotalApy({
     asset: primaryAsset,
     enabled: isCurveFallbackEnabled ?? false,
   })
-  const balancerVaultTotalApy = useBalancerVaultTotalApy({
+  const concentratorBalancerVaultTotalApy = useBalancerVaultTotalApy({
     asset: primaryAsset,
     enabled: isBalancerFallbackEnabled ?? false,
   })
-  const tokenVaultTotalApy = useConcentratorTokenVaultTotalApy({
+  const concentratorTokenVaultTotalApy = useConcentratorTokenVaultTotalApy({
     asset: primaryAsset,
     enabled: isTokenFallbackEnabled ?? false,
   })
@@ -57,21 +61,39 @@ export function useConcentratorVaultApy({
   }
 
   if (isCurveFallbackEnabled) {
-    return curveVaultTotalApy
+    return {
+      ...concentratorCurveVaultTotalApy,
+      data: concentratorConvertToApy(
+        concentratorCurveVaultTotalApy.data,
+        compounderApy.data
+      ),
+    }
   }
 
   if (isBalancerFallbackEnabled) {
-    return balancerVaultTotalApy
+    return {
+      ...concentratorBalancerVaultTotalApy,
+      data: concentratorConvertToApy(
+        concentratorBalancerVaultTotalApy.data,
+        compounderApy.data
+      ),
+    }
   }
 
   if (isTokenFallbackEnabled) {
-    return tokenVaultTotalApy
+    return {
+      ...concentratorTokenVaultTotalApy,
+      data: concentratorConvertToApy(
+        concentratorTokenVaultTotalApy.data,
+        compounderApy.data
+      ),
+    }
   }
 
   return {
     ...apiQuery,
     isLoading:
       targetAssetIdIsLoading || concentratorIdIsLoading || apiQuery.isLoading,
-    data: apiQuery.data?.APY.concentrator_APR,
+    data: apiQuery.data?.APY.totalAPY,
   }
 }

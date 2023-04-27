@@ -19,8 +19,11 @@ export default function useVaultTvlFallback({
     useVaultTotalAssets({ vaultAddress, enabled })
   return {
     isLoading: isLoadingPricer || isLoadingTotalAssets,
-    data:
-      Number(primaryAssetPriceUsd ?? 0) *
-      (Number(totalAssets === undefined ? "0" : totalAssets.toString()) / 1e18),
+    data: {
+      usdTvl:
+        Number(primaryAssetPriceUsd ?? 0) *
+        (Number(totalAssets?.toString() ?? "0") / 1e18),
+      tvl: totalAssets?.toString() ?? "0",
+    },
   }
 }
