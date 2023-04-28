@@ -7,7 +7,7 @@ import { Address } from "wagmi"
 import clsxm from "@/lib/clsxm"
 import { resolvedRoute } from "@/lib/helpers"
 import { VaultProps } from "@/lib/types"
-import { useVault, useVaultYbtokenAddress } from "@/hooks"
+import { useVault } from "@/hooks"
 
 import { AssetLogo } from "@/components/Asset"
 import { ButtonLink } from "@/components/Button"
@@ -40,12 +40,20 @@ export type VaultTableRowProps = VaultRowPropsWithProduct & {
   activeVault?: string
   setActiveVault?: (activeVault: string | undefined) => void
   showEarningsColumn?: boolean
+  setStrategyLink: ({
+    pathname,
+    category,
+  }: {
+    pathname: string
+    category?: string | string[]
+  }) => ReturnType<typeof resolvedRoute>
 }
 
 export const VaultRow: FC<VaultTableRowProps> = ({
   activeVault,
   setActiveVault,
   showEarningsColumn = false,
+  setStrategyLink,
   ...props
 }) => {
   const isCompounderProduct = props.productType === "compounder"
@@ -53,16 +61,11 @@ export const VaultRow: FC<VaultTableRowProps> = ({
   const { pathname, query } = router
   const { isLoading } = useVault(props)
 
-  const ybTokenAddress = useVaultYbtokenAddress(props)
   const vaultAddress = props.vaultAddress
 
-  const vaultStrategyLink = resolvedRoute(pathname, {
+  const vaultStrategyLink = setStrategyLink({
+    pathname,
     category: query.category,
-    asset: props.asset,
-    type: props.type,
-    vaultAddress: props.vaultAddress,
-    productType: props.productType,
-    ybTokenAddress: ybTokenAddress,
   })
 
   const toggleVaultOpen: MouseEventHandler<

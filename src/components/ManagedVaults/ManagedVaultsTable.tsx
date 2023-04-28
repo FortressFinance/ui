@@ -1,7 +1,8 @@
 import { FC } from "react"
+import { Address } from "wagmi"
 
-import { capitalizeFirstLetter } from "@/lib/helpers"
-import { FilterCategory } from "@/lib/types"
+import { capitalizeFirstLetter, resolvedRoute } from "@/lib/helpers"
+import { FilterCategory, VaultType } from "@/lib/types"
 import { enabledNetworks } from "@/lib/wagmi"
 import { useClientReady } from "@/hooks"
 import { useActiveChainId } from "@/hooks"
@@ -54,15 +55,48 @@ export const ManagedVaultsTable: FC<ManagedVaultsTableProps> = ({
         </TableEmpty>
       ) : (
         metaVaults?.map((el, i) => (
-          <VaultRow
+          <ManagedVaultRow
             key={`metaVault-${i}`}
-            asset={el.asset}
+            metaVault={el.asset}
             type={el.vaultType}
-            vaultAddress={el.vaultAddress}
-            productType="managedVaults"
           />
         ))
       )}
     </VaultTable>
+  )
+}
+
+type ManagedVaultRowProps = {
+  metaVault: Address
+  type: VaultType
+}
+
+const ManagedVaultRow: FC<ManagedVaultRowProps> = (props) => {
+  const setStrategyLink = ({
+    pathname,
+    category,
+  }: {
+    pathname: string
+    category?: string | string[]
+  }) => {
+    return resolvedRoute(pathname, {
+      category: category,
+      asset: "0x",
+      type: props.type,
+      vaultAddress: props.metaVault,
+      productType: "managedVaults",
+      ybTokenAddress: "0x",
+    })
+  }
+  return (
+    <VaultRow
+      {...props}
+      asset="0x"
+      type={props.type}
+      vaultAddress={props.metaVault}
+      productType="managedVaults"
+      setStrategyLink={setStrategyLink}
+      showEarningsColumn
+    />
   )
 }
