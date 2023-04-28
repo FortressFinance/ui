@@ -117,7 +117,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                         ) : (
                           <NavigationMenu.Link asChild>
                             <DropdownMenuItemLink
-                              {...resolvedRoute("/app/yield/managed_vaults")}
+                              {...resolvedRoute("/app/yield/managed-vaults")}
                             >
                               Managed Vaults
                             </DropdownMenuItemLink>
@@ -255,13 +255,13 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                           </span>
                         ) : (
                           <Link
-                            {...resolvedRoute("/app/yield/managed_vaults")}
+                            {...resolvedRoute("/app/yield/managed-vaults")}
                             className={clsxm(
                               "block rounded px-3 py-2.5 text-lg font-medium text-white/80",
                               {
                                 "bg-gradient-to-r from-orange-400/20 to-orange-400/5 text-white ring-1 ring-inset ring-orange-400/20":
                                   router.pathname ===
-                                  "/app/yield/managed_vaults",
+                                  "/app/yield/managed-vaults",
                               }
                             )}
                           >

@@ -25,9 +25,7 @@ const ManagedVaults: NextPage = () => {
 
       <main>
         <Tabs.Root
-          value={
-            category && typeof category === "string" ? category : "featured"
-          }
+          value={typeof category === "string" ? category : "featured"}
           onValueChange={(category) => {
             const link = resolvedRoute(pathname, { category })
             router.push(link.href, link.as, { shallow: true, scroll: false })
