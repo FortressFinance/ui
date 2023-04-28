@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { Address } from "wagmi"
 
-import { getCoinGeckoPrice } from "@/lib/api/pricer/getCoinGeckoPrice"
+import { getCurvePrice } from "@/lib/api/pricer/getCurvePrice"
 import { getGlpPrice } from "@/lib/api/pricer/getGlpPrice"
 import { getLlamaPrice } from "@/lib/api/pricer/getLlamaPrice"
 import { queryKeys } from "@/lib/helpers"
@@ -48,8 +48,11 @@ export async function getApiPrice({
 }) {
   let data = await getLlamaPrice({ asset, chainId })
   if (data === undefined) {
-    data = await getCoinGeckoPrice({ asset, chainId })
+    data = await getCurvePrice({ asset, chainId })
   }
+  // if(data === undefined){
+  //   data = await getCoinGeckoPrice({ asset, chainId })
+  // }
 
   return data ?? 0
 }
