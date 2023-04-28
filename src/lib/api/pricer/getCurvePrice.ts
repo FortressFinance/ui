@@ -22,22 +22,13 @@ export const respSchema = z.object({
         totalSupply: z.string(),
         symbol: z.string().optional(),
         coins: z.array(
-          z.union([
-            z.object({
-              address: z.string(),
-              decimals: z.number(),
-              symbol: z.string(),
-              usdPrice: z.number(),
-              poolBalance: z.string(),
-            }),
-            z.object({
-              address: z.string(),
-              decimals: z.string(),
-              symbol: z.string(),
-              usdPrice: z.number(),
-              poolBalance: z.string(),
-            }),
-          ])
+          z.object({
+            address: z.string(),
+            decimals: z.union([z.string(), z.number()]),
+            symbol: z.string(),
+            usdPrice: z.number(),
+            poolBalance: z.string(),
+          })
         ),
       })
     ),
