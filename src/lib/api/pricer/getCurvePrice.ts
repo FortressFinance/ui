@@ -1,4 +1,5 @@
 import axios from "axios"
+import { ethers } from "ethers"
 import { Address } from "wagmi"
 import { z } from "zod"
 
@@ -18,11 +19,15 @@ export const respSchema = z.object({
         name: z.string(),
         lpTokenAddress: z.string(),
         virtualPrice: z.string(),
+        totalSupply: z.string(),
         symbol: z.string().optional(),
         coins: z.array(
           z.object({
             address: z.string(),
+            decimals: z.union([z.string(), z.number()]),
+            symbol: z.string(),
             usdPrice: z.number(),
+            poolBalance: z.string(),
           })
         ),
       })
@@ -43,8 +48,23 @@ export async function getCurvePrice({
     `https://api.curve.fi/api/getPools/${chainPrefix}/main`
   )
   const parsed = respSchema.parse(resp.data)
-  const filterCoin = parsed.data.poolData
-    .flatMap((pool) => pool.coins)
-    .filter((coin) => coin.address === asset)
-  return filterCoin?.[0]?.usdPrice
+  const poolAsset = parsed.data.poolData.filter(
+    (pool) => pool.lpTokenAddress === asset
+  )
+
+  let lpTokenPrice = 0
+  poolAsset.forEach((pool) => {
+    const sumUnderlying = pool.coins.reduce((acc, coin) => {
+      return (
+        acc +
+        coin.usdPrice *
+          parseFloat(
+            ethers.utils.formatUnits(coin.poolBalance ?? "0", coin.decimals)
+          )
+      )
+    }, 0)
+    lpTokenPrice =
+      sumUnderlying / parseFloat(ethers.utils.formatUnits(pool.totalSupply, 18))
+  })
+  return lpTokenPrice
 }
