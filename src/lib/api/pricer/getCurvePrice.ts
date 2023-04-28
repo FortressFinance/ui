@@ -53,15 +53,16 @@ export async function getCurvePrice({
   )
 
   let lpTokenPrice = 0
-  poolAsset.map((pool) => {
-    let sumUnderlying = 0
-    pool.coins.map((coin) => {
-      sumUnderlying +=
+  poolAsset.forEach((pool) => {
+    const sumUnderlying = pool.coins.reduce((acc, coin) => {
+      return (
+        acc +
         coin.usdPrice *
-        parseFloat(
-          ethers.utils.formatUnits(coin.poolBalance ?? "0", coin.decimals)
-        )
-    })
+          parseFloat(
+            ethers.utils.formatUnits(coin.poolBalance ?? "0", coin.decimals)
+          )
+      )
+    }, 0)
     lpTokenPrice =
       sumUnderlying / parseFloat(ethers.utils.formatUnits(pool.totalSupply, 18))
   })
