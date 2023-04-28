@@ -1,15 +1,16 @@
 import { Address } from "wagmi"
 
+import { convertToApy } from "@/lib/api/vaults/convertToApy"
 import { VaultType } from "@/lib/types"
 import { useApiConcentratorDynamic } from "@/hooks/lib/api/useApiConcentratorDynamic"
-import useConcentratorTokenVaultTotalApy from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultTotalApy"
-import useBalancerVaultTotalApy from "@/hooks/lib/apr/useBalancerVaultTotalApy"
-import useCurveVaultTotalApy from "@/hooks/lib/apr/useCurveVaultTotalApy"
+import { useConcentratorTokenVaultTotalApr } from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultTotalApy"
+import { useBalancerVaultTotalApr } from "@/hooks/lib/apr/useBalancerVaultTotalApy"
+import { useCurveVaultTotalApr } from "@/hooks/lib/apr/useCurveVaultTotalApy"
 import { useConcentratorId } from "@/hooks/useConcentratorId"
 import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAssetId"
 import {
-  useIsConcentratorCurveVault,
-  useIsConcentratorTokenVault,
+  useShouldUseCurveFallback,
+  useShouldUseTokenFallback,
 } from "@/hooks/useVaultTypes"
 
 export type ConcentratorApyProps = {
@@ -23,8 +24,8 @@ export function useConcentratorApy({
   primaryAsset,
   type,
 }: ConcentratorApyProps) {
-  const isCurve = useIsConcentratorCurveVault(targetAsset)
-  const isToken = useIsConcentratorTokenVault(targetAsset)
+  const shouldCurveFallback = useShouldUseCurveFallback(targetAsset)
+  const shouldTokenFallback = useShouldUseTokenFallback(targetAsset)
   const { data: targetAssetId, isLoading: targetAssetIdIsLoading } =
     useConcentratorTargetAssetId({ targetAsset })
   const { data: concentratorId, isLoading: concentratorIdIsLoading } =
@@ -39,19 +40,61 @@ export function useConcentratorApy({
     type,
   })
 
-  const isCurveFallbackEnabled = apiQuery.isError && isCurve && !isToken
-  const isBalancerFallbackEnabled = apiQuery.isError && !isCurve && !isToken
-  const isTokenFallbackEnabled = apiQuery.isError && isToken
+  const isCurveFallbackEnabled =
+    apiQuery.isError && shouldCurveFallback && !shouldTokenFallback
+  const isBalancerFallbackEnabled =
+    apiQuery.isError && !shouldCurveFallback && !shouldTokenFallback
+  const isTokenFallbackEnabled = apiQuery.isError && shouldTokenFallback
 
-  const curveVaultTotalApy = useCurveVaultTotalApy({
+  const fallbackApr = useConcentratorFallbackApr({ targetAsset })
+
+  if (targetAsset === "0x") {
+    return {
+      isLoading: false,
+      data: 0,
+    }
+  }
+
+  if (
+    isCurveFallbackEnabled ||
+    isBalancerFallbackEnabled ||
+    isTokenFallbackEnabled
+  ) {
+    return {
+      ...fallbackApr,
+      data: convertToApy(fallbackApr.data),
+    }
+  }
+
+  return {
+    ...apiQuery,
+    isLoading:
+      targetAssetIdIsLoading || concentratorIdIsLoading || apiQuery.isLoading,
+    data: apiQuery.data?.APY.compounderAPY,
+  }
+}
+
+export function useConcentratorFallbackApr({
+  targetAsset,
+}: {
+  targetAsset: Address
+}) {
+  const isCurve = useShouldUseCurveFallback(targetAsset)
+  const isToken = useShouldUseTokenFallback(targetAsset)
+
+  const isCurveFallbackEnabled = isCurve && !isToken
+  const isBalancerFallbackEnabled = !isCurve && !isToken
+  const isTokenFallbackEnabled = isToken
+
+  const curveVaultTotalApr = useCurveVaultTotalApr({
     asset: targetAsset,
     enabled: isCurveFallbackEnabled ?? false,
   })
-  const balancerVaultTotalApy = useBalancerVaultTotalApy({
+  const balancerVaultTotalApr = useBalancerVaultTotalApr({
     asset: targetAsset,
     enabled: isBalancerFallbackEnabled ?? false,
   })
-  const tokenVaultTotalApy = useConcentratorTokenVaultTotalApy({
+  const tokenVaultTotalApr = useConcentratorTokenVaultTotalApr({
     asset: targetAsset,
     enabled: isTokenFallbackEnabled ?? false,
   })
@@ -64,21 +107,12 @@ export function useConcentratorApy({
   }
 
   if (isCurveFallbackEnabled) {
-    return curveVaultTotalApy
+    return curveVaultTotalApr
   }
 
   if (isBalancerFallbackEnabled) {
-    return balancerVaultTotalApy
+    return balancerVaultTotalApr
   }
 
-  if (isTokenFallbackEnabled) {
-    return tokenVaultTotalApy
-  }
-
-  return {
-    ...apiQuery,
-    isLoading:
-      targetAssetIdIsLoading || concentratorIdIsLoading || apiQuery.isLoading,
-    data: apiQuery.data?.APY.compounderAPY,
-  }
+  return tokenVaultTotalApr
 }

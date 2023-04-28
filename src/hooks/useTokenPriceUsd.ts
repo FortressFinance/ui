@@ -3,11 +3,15 @@ import { Address } from "wagmi"
 
 import { getCurvePrice } from "@/lib/api/pricer/getCurvePrice"
 import { getGlpPrice } from "@/lib/api/pricer/getGlpPrice"
-import { getLlamaPrice } from "@/lib/api/pricer/getLlamaPrice"
+import { getLlamaPrice, getLlamaPriceEth } from "@/lib/api/pricer/getLlamaPrice"
 import { queryKeys } from "@/lib/helpers"
 import { useActiveChainId } from "@/hooks"
 
-import { fcGlpTokenAddress, glpTokenAddress } from "@/constant/addresses"
+import {
+  ethTokenAddress,
+  fcGlpTokenAddress,
+  glpTokenAddress,
+} from "@/constant/addresses"
 
 const customPricers: Record<Address, () => Promise<number>> = {
   [glpTokenAddress]: getGlpPrice,
@@ -46,6 +50,9 @@ export async function getApiPrice({
   asset?: Address
   chainId?: number
 }) {
+  if (asset === ethTokenAddress) {
+    return await getLlamaPriceEth()
+  }
   let data = await getLlamaPrice({ asset, chainId })
   if (data === undefined) {
     data = await getCurvePrice({ asset, chainId })

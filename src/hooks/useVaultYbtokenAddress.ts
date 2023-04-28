@@ -1,8 +1,8 @@
 import { Address } from "wagmi"
 
 import { ProductType } from "@/lib/types"
+import { useConcentratorFirstVaultType } from "@/hooks/useConcentratorFirstVaultType"
 import { useConcentratorVault } from "@/hooks/useConcentratorVault"
-import { useIsConcentratorCurveVault } from "@/hooks/useVaultTypes"
 
 export function useVaultYbtokenAddress({
   asset,
@@ -15,11 +15,13 @@ export function useVaultYbtokenAddress({
 }) {
   const isCompounderProduct = productType === "compounder"
 
-  const isCurve = useIsConcentratorCurveVault(vaultAddress)
+  const firstConcentratorVaultType = useConcentratorFirstVaultType({
+    targetAsset: asset,
+  })
   const concentrator = useConcentratorVault({
     targetAsset: asset,
     primaryAsset: vaultAddress,
-    type: isCurve ? "curve" : "balancer",
+    type: firstConcentratorVaultType ?? "balancer",
   })
 
   if (isCompounderProduct) {

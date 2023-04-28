@@ -3,10 +3,7 @@ import { Address } from "wagmi"
 import { VaultType } from "@/lib/types"
 import { useActiveChainId } from "@/hooks"
 
-const CONCENTRATOR_VAULT_TYPE_BY_ASSET: Record<
-  number,
-  Record<Address, VaultType>
-> = {
+const FALLBACK_TO_USE_BY_ASSET: Record<number, Record<Address, VaultType>> = {
   // arbitrum
   42161: {
     "0x86eE39B28A7fDea01b53773AEE148884Db311B46": "token",
@@ -22,7 +19,7 @@ const CONCENTRATOR_VAULT_TYPE_BY_ASSET: Record<
   },
 }
 
-export function useConcentratorVaultTypeByAsset() {
+export function useFallbackToUseByAsset() {
   const chainId = useActiveChainId()
-  return CONCENTRATOR_VAULT_TYPE_BY_ASSET[chainId] ?? {}
+  return FALLBACK_TO_USE_BY_ASSET[chainId] ?? {}
 }

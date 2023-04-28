@@ -4,12 +4,12 @@ import { useApiConcentratorDynamic } from "@/hooks/lib/api/useApiConcentratorDyn
 import useConcentratorTokenVaultTotalApy from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultTotalApy"
 import useBalancerVaultTotalApy from "@/hooks/lib/apr/useBalancerVaultTotalApy"
 import useCurveVaultTotalApy from "@/hooks/lib/apr/useCurveVaultTotalApy"
-import { useConcentratorApy } from "@/hooks/useConcentratorApy"
+import { useConcentratorFallbackApr } from "@/hooks/useConcentratorApy"
 import { useConcentratorId } from "@/hooks/useConcentratorId"
 import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAssetId"
 import {
-  useIsConcentratorCurveVault,
-  useIsConcentratorTokenVault,
+  useShouldUseCurveFallback,
+  useShouldUseTokenFallback,
 } from "@/hooks/useVaultTypes"
 
 export function useConcentratorVaultApy({
@@ -17,8 +17,8 @@ export function useConcentratorVaultApy({
   vaultAddress: primaryAsset,
   type,
 }: VaultProps) {
-  const isCurve = useIsConcentratorCurveVault(primaryAsset)
-  const isToken = useIsConcentratorTokenVault(primaryAsset)
+  const shouldCurveFallback = useShouldUseCurveFallback(primaryAsset)
+  const shouldTokenFallback = useShouldUseTokenFallback(primaryAsset)
 
   const { data: targetAssetId, isLoading: targetAssetIdIsLoading } =
     useConcentratorTargetAssetId({ targetAsset })
@@ -28,7 +28,7 @@ export function useConcentratorVaultApy({
       targetAsset,
     })
 
-  const compounderApy = useConcentratorApy({ targetAsset, primaryAsset, type })
+  const compounderApr = useConcentratorFallbackApr({ targetAsset })
 
   const apiQuery = useApiConcentratorDynamic({
     targetAssetId,
@@ -36,9 +36,11 @@ export function useConcentratorVaultApy({
     type,
   })
 
-  const isCurveFallbackEnabled = apiQuery.isError && isCurve && !isToken
-  const isBalancerFallbackEnabled = apiQuery.isError && !isCurve && !isToken
-  const isTokenFallbackEnabled = apiQuery.isError && isToken
+  const isCurveFallbackEnabled =
+    apiQuery.isError && shouldCurveFallback && !shouldTokenFallback
+  const isBalancerFallbackEnabled =
+    apiQuery.isError && !shouldCurveFallback && !shouldTokenFallback
+  const isTokenFallbackEnabled = apiQuery.isError && shouldTokenFallback
 
   const concentratorCurveVaultTotalApy = useCurveVaultTotalApy({
     asset: primaryAsset,
@@ -65,7 +67,7 @@ export function useConcentratorVaultApy({
       ...concentratorCurveVaultTotalApy,
       data: concentratorConvertToApy(
         concentratorCurveVaultTotalApy.data,
-        compounderApy.data
+        compounderApr.data
       ),
     }
   }
@@ -75,7 +77,7 @@ export function useConcentratorVaultApy({
       ...concentratorBalancerVaultTotalApy,
       data: concentratorConvertToApy(
         concentratorBalancerVaultTotalApy.data,
-        compounderApy.data
+        compounderApr.data
       ),
     }
   }
@@ -85,7 +87,7 @@ export function useConcentratorVaultApy({
       ...concentratorTokenVaultTotalApy,
       data: concentratorConvertToApy(
         concentratorTokenVaultTotalApy.data,
-        compounderApy.data
+        compounderApr.data
       ),
     }
   }

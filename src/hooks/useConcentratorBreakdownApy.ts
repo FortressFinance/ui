@@ -6,8 +6,8 @@ import { ConcentratorApyProps } from "@/hooks/useConcentratorApy"
 import { useConcentratorId } from "@/hooks/useConcentratorId"
 import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAssetId"
 import {
-  useIsConcentratorCurveVault,
-  useIsConcentratorTokenVault,
+  useShouldUseCurveFallback,
+  useShouldUseTokenFallback,
 } from "@/hooks/useVaultTypes"
 
 export function useConcentratorBreakdownApy({
@@ -15,8 +15,8 @@ export function useConcentratorBreakdownApy({
   primaryAsset,
   type,
 }: ConcentratorApyProps) {
-  const isCurve = useIsConcentratorCurveVault(targetAsset)
-  const isToken = useIsConcentratorTokenVault(targetAsset)
+  const shouldCurveFallback = useShouldUseCurveFallback(targetAsset)
+  const shouldTokenFallback = useShouldUseTokenFallback(targetAsset)
   const { data: targetAssetId, isLoading: targetAssetIdIsLoading } =
     useConcentratorTargetAssetId({ targetAsset })
   const { data: concentratorId, isLoading: concentratorIdIsLoading } =
@@ -31,9 +31,11 @@ export function useConcentratorBreakdownApy({
     type,
   })
 
-  const isCurveFallbackEnabled = apiQuery.isError && isCurve && !isToken
-  const isBalancerFallbackEnabled = apiQuery.isError && !isCurve && !isToken
-  const isTokenFallbackEnabled = apiQuery.isError && isToken
+  const isCurveFallbackEnabled =
+    apiQuery.isError && shouldCurveFallback && !shouldTokenFallback
+  const isBalancerFallbackEnabled =
+    apiQuery.isError && !shouldCurveFallback && !shouldTokenFallback
+  const isTokenFallbackEnabled = apiQuery.isError && shouldTokenFallback
 
   const curveVaultBreakdownApy = useCurveVaultBreakdownApr({
     asset: targetAsset,
