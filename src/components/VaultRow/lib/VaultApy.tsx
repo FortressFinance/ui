@@ -8,14 +8,14 @@ export const VaultApy: FC<VaultRowPropsWithProduct> = ({
   productType = "compounder",
   ...props
 }) => {
-  const isCompounderProduct = productType === "compounder"
-
   return (
     <>
-      {isCompounderProduct ? (
+      {productType === "compounder" ? (
         <CompounderVaultApy {...props} />
-      ) : (
+      ) : productType === "concentrator" ? (
         <ConcentratorVaultApy {...props} />
+      ) : (
+        <div></div>
       )}
     </>
   )

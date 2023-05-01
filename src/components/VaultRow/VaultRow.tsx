@@ -34,7 +34,7 @@ import { FortIconChevronDownCircle } from "@/icons"
 export type VaultRowPropsWithProduct =
   | ({ productType: "compounder"; ybTokenAddress?: Address } & VaultProps)
   | ({ productType: "concentrator"; ybTokenAddress?: Address } & VaultProps)
-  | ({ productType: "managedVaults"; ybTokenAddress?: Address } & VaultProps)
+  | ({ productType: "managedVaults" } & VaultProps)
 
 export type VaultTableRowProps = VaultRowPropsWithProduct & {
   activeVault?: string

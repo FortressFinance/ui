@@ -1,6 +1,7 @@
 import { FC } from "react"
 import { Address, useAccount } from "wagmi"
 
+import { resolvedRoute } from "@/lib/helpers"
 import { VaultType } from "@/lib/types"
 import { enabledNetworks } from "@/lib/wagmi"
 import {
@@ -75,6 +76,23 @@ const HoldingsRow: FC<HoldingsRowProps> = (props) => {
   })
   const holdingsVaults = useHoldingsVaults({ isCompounder: true })
 
+  const setStrategyLink = ({
+    pathname,
+    category,
+  }: {
+    pathname: string
+    category?: string | string[]
+  }) => {
+    return resolvedRoute(pathname, {
+      category: category,
+      asset: props.asset,
+      type: props.type,
+      productType: "compounder",
+      vaultAddress: vaultAddress.data?.ybTokenAddress,
+      ybTokenAddress: vaultAddress.data?.ybTokenAddress,
+    })
+  }
+
   if (!vaultAddress.data?.ybTokenAddress || holdingsVaults.isLoading)
     return <TableLoading>Loading holdings...</TableLoading>
 
@@ -85,6 +103,7 @@ const HoldingsRow: FC<HoldingsRowProps> = (props) => {
       {...props}
       vaultAddress={vaultAddress.data.ybTokenAddress}
       productType="compounder"
+      setStrategyLink={setStrategyLink}
       showEarningsColumn
     />
   ) : null

@@ -3,9 +3,11 @@ import { NextPage } from "next"
 import { useRouter } from "next/router"
 
 import { resolvedRoute } from "@/lib/helpers"
+import { ProductType } from "@/lib/types"
 
 import Layout from "@/components/Layout"
-import { ManagedVaultsTable } from "@/components/ManagedVaults/ManagedVaultsTable"
+import { ManagedVaultsTable } from "@/components/ManagedVaults"
+import { VaultStrategyModal } from "@/components/Modal"
 import Seo from "@/components/Seo"
 import { TabButton, TabContent, TabListGroup } from "@/components/Tabs"
 
@@ -13,7 +15,7 @@ const ManagedVaults: NextPage = () => {
   const router = useRouter()
   const {
     pathname,
-    query: { category },
+    query: { category, productType },
   } = router
 
   return (
@@ -27,7 +29,7 @@ const ManagedVaults: NextPage = () => {
         <Tabs.Root
           value={typeof category === "string" ? category : "featured"}
           onValueChange={(category) => {
-            const link = resolvedRoute(pathname, { category })
+            const link = resolvedRoute(pathname, { category, productType })
             router.push(link.href, link.as, { shallow: true, scroll: false })
           }}
         >
@@ -70,6 +72,18 @@ const ManagedVaults: NextPage = () => {
           </div>
         </Tabs.Root>
       </main>
+
+      <VaultStrategyModal
+        isOpen={!!router.query.asset}
+        onClose={() => {
+          const link = resolvedRoute(pathname, { category })
+          router.push(link.href, link.as, { shallow: true, scroll: false })
+        }}
+        asset="0x"
+        type="curve" // stupid stuff - MetaVault doesn't care about it
+        vaultAddress="0x"
+        productType={productType as ProductType}
+      />
     </Layout>
   )
 }
