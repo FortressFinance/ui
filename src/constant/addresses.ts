@@ -24,3 +24,5 @@ export const fcTriCryptoTokenAddress: Address =
   "0xE0eEbD35B952c9C73a187edA3D669d9BcFD79006"
 export const fcGlpTokenAddress: Address =
   "0xBDF9001c5d3fFc03AB6564CA28E530665594dfF7"
+export const fctrFraxBPFcGlpTokenAddress: Address =
+  "0xA7C12b4B98E6A38c51B12668773DAe855DdDecf8"

@@ -13,7 +13,11 @@ export default function useTokenGlpVault({
   asset: Address
   enabled: boolean
 }) {
-  const chainId = useActiveChainId()
+  let chainId = useActiveChainId()
+  // force to get the latest tokensPerInterval in mainnet
+  if (chainId === 313371) {
+    chainId = 42161
+  }
   const glpQuery = useContractRead({
     chainId,
     abi: RewardDistributor,

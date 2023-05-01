@@ -2,8 +2,10 @@ import { Address } from "wagmi"
 
 import {
   fcGlpTokenAddress,
+  fctrFraxBPFcGlpTokenAddress,
   fcTriCryptoTokenAddress,
   fctrTriCryptoFcGlpTokenAddress,
+  fraxBpTokenAddress,
 } from "@/constant/addresses"
 
 export const doubleTokens: { [key: Address]: [Address, Address] } = {
@@ -11,4 +13,5 @@ export const doubleTokens: { [key: Address]: [Address, Address] } = {
     fcTriCryptoTokenAddress,
     fcGlpTokenAddress,
   ],
+  [fctrFraxBPFcGlpTokenAddress]: [fraxBpTokenAddress, fcGlpTokenAddress],
 }
