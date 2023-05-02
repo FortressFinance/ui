@@ -22,7 +22,7 @@ const Lend: NextPage = () => {
   return (
     <DisabledPage isDisabled={DISABLE_LENDING}>
       <Layout>
-        <Seo templateTitle="Index" />
+        <Seo templateTitle="Lend" />
 
         <main>
           <div className="grid grid-cols-1 gap-4 xl:gap-6">
