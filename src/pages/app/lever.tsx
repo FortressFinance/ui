@@ -24,12 +24,8 @@ const Lever: NextPage = () => {
             <h1 className="font-display text-4xl">Lever</h1>
 
             <div>
-              {chainLendingPairs.map(({ chainId, pairAddress }) => (
-                <LeverPosition
-                  key={pairAddress}
-                  chainId={chainId}
-                  pairAddress={pairAddress}
-                />
+              {chainLendingPairs.map((lendingPair) => (
+                <LeverPosition key={lendingPair.pairAddress} {...lendingPair} />
               ))}
             </div>
           </div>

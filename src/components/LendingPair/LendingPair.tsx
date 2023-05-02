@@ -2,23 +2,18 @@ import Link from "next/link"
 import { FC } from "react"
 
 import { resolvedRoute } from "@/lib/helpers"
-import { useLendingPair, useTokenOrNative } from "@/hooks"
+import { useLendingPair } from "@/hooks"
 
 import { AssetBalance, AssetLogo } from "@/components/Asset"
 import { ButtonLink } from "@/components/Button"
 import { LendingPairAPY } from "@/components/LendingPair/LendingPairAPY"
 import { LendingPairUtilization } from "@/components/LendingPair/LendingPairUtilization"
-import Skeleton from "@/components/Skeleton"
 import { TableCell } from "@/components/Table"
 
 import { LendingPair } from "@/constant"
 
 export const LendingPairRow: FC<LendingPair> = (lendingPair) => {
   const lendingPairData = useLendingPair(lendingPair)
-  const share = useTokenOrNative({
-    address: lendingPair.pairAddress,
-    chainId: lendingPair.chainId,
-  })
 
   return (
     <>
@@ -34,11 +29,7 @@ export const LendingPairRow: FC<LendingPair> = (lendingPair) => {
           />
         </div>
 
-        <h1>
-          <Skeleton isLoading={share.isLoading}>
-            {share.data?.name ?? "Loading..."}
-          </Skeleton>
-        </h1>
+        <h1>{lendingPair.name}</h1>
       </TableCell>
 
       {/* Desktop stats */}

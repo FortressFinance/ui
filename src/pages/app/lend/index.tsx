@@ -47,9 +47,9 @@ const Lend: NextPage = () => {
               </div>
 
               {isClientReady && chainLendingPairs.length ? (
-                chainLendingPairs.map(({ chainId, pairAddress }, index) => (
+                chainLendingPairs.map((lendingPair, index) => (
                   <div
-                    key={pairAddress}
+                    key={lendingPair.pairAddress}
                     className={clsxm(
                       "relative items-center gap-x-3 overflow-hidden bg-pink-900/80 p-3 backdrop-blur-md lg:grid lg:grid-cols-[3.5fr,1fr,1fr,1fr,7rem] lg:px-6",
                       {
@@ -59,10 +59,7 @@ const Lend: NextPage = () => {
                     )}
                     role="row"
                   >
-                    <LendingPairRow
-                      chainId={chainId}
-                      pairAddress={pairAddress}
-                    />
+                    <LendingPairRow {...lendingPair} />
                   </div>
                 ))
               ) : (
