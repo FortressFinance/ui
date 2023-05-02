@@ -26,7 +26,7 @@ const Skeleton: FC<PropsWithChildren<SkeletonProps>> = ({
         className
       )}
     >
-      {!isClientReady || isLoading ? loadingText : children}
+      {!isClientReady || isLoading ? loadingText : children ?? loadingText}
     </span>
   )
 }

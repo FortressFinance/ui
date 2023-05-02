@@ -6,12 +6,13 @@ import {
   useController,
   useFormContext,
 } from "react-hook-form"
-import { Address, useAccount } from "wagmi"
+import { Address, useAccount, useSwitchNetwork } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
 import { ProductType } from "@/lib/types"
 import {
+  useActiveChainId,
   useClientReady,
   useTokenOrNative,
   useTokenOrNativeBalance,
@@ -26,6 +27,7 @@ import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
 
 type TokenFormProps = {
   asset?: Address
+  chainId?: number
   submitText: string
   tokenAddresses?: Address[] | readonly Address[]
   isDebouncing: boolean
@@ -48,6 +50,7 @@ export type TokenFormValues = {
 
 const TokenForm: FC<TokenFormProps> = ({
   asset,
+  chainId,
   submitText,
   tokenAddresses = [],
   isDebouncing,
@@ -60,6 +63,8 @@ const TokenForm: FC<TokenFormProps> = ({
   onSubmit,
 }) => {
   const clientReady = useClientReady()
+  const activeChainId = useActiveChainId()
+  const { switchNetwork, isLoading: isSwitchingNetwork } = useSwitchNetwork()
 
   const [tokenSelectMode, setTokenSelectMode] = useState<TokenSelectMode>(null)
 
@@ -91,13 +96,15 @@ const TokenForm: FC<TokenFormProps> = ({
     isLoading: isLoadingInputTokenBalanceOrShare,
   } = useTokenOrNativeBalance({
     address: inputTokenAddress,
+    chainId,
     onSuccess: () => revalidateAmountIn(),
   })
   const { data: inputToken, isLoading: isLoadingInputToken } = useTokenOrNative(
-    { address: inputTokenAddress }
+    { address: inputTokenAddress, chainId }
   )
   const { data: outputToken } = useTokenOrNative({
     address: outputTokenAddress,
+    chainId,
   })
 
   const showMaxBtn =
@@ -165,12 +172,14 @@ const TokenForm: FC<TokenFormProps> = ({
           {productType === "concentrator" && isWithdraw ? (
             <DoubleTokenSelectButton
               canChange={!isWithdraw && tokenAddresses.length > 1}
+              chainId={chainId}
               tokenAddress={inputTokenAddress}
               onClick={() => setTokenSelectMode("inputToken")}
             />
           ) : (
             <TokenSelectButton
               canChange={!isWithdraw && tokenAddresses.length > 1}
+              chainId={chainId}
               tokenAddress={inputTokenAddress}
               onClick={() => setTokenSelectMode("inputToken")}
             />
@@ -196,12 +205,14 @@ const TokenForm: FC<TokenFormProps> = ({
           {productType === "concentrator" && !isWithdraw ? (
             <DoubleTokenSelectButton
               canChange={isWithdraw && tokenAddresses.length > 1}
+              chainId={chainId}
               tokenAddress={outputTokenAddress}
               onClick={() => setTokenSelectMode("outputToken")}
             />
           ) : (
             <TokenSelectButton
               canChange={isWithdraw && tokenAddresses.length > 1}
+              chainId={chainId}
               tokenAddress={outputTokenAddress}
               onClick={() => setTokenSelectMode("outputToken")}
             />
@@ -211,7 +222,11 @@ const TokenForm: FC<TokenFormProps> = ({
         <div className="relative z-[1] col-span-full col-start-1 row-start-3 h-[38px] px-4 pb-3 text-left align-bottom text-xs">
           <span className="text-pink-100">
             {!isWithdraw ? "Balance: " : "Share: "}
-            <AssetBalance address={inputTokenAddress} abbreviate />
+            <AssetBalance
+              address={inputTokenAddress}
+              chainId={chainId}
+              abbreviate
+            />
           </span>
           <button
             className="ml-1.5 cursor-pointer rounded border border-orange-400 px-2 py-1 font-semibold text-pink-100"
@@ -231,30 +246,40 @@ const TokenForm: FC<TokenFormProps> = ({
 
         {/* Submit button (or Connect Wallet if not connected) */}
         {clientReady && isConnected ? (
-          <Button
-            className="col-span-full mt-3 grid"
-            disabled={!form.formState.isValid || isError}
-            isLoading={
-              !isError &&
-              (isDebouncing ||
-                isLoadingInputToken ||
-                isLoadingInputTokenBalanceOrShare ||
-                isLoadingTransaction)
-            }
-            type="submit"
-          >
-            {isError
-              ? "Error preparing transaction"
-              : form.formState.isDirty
-              ? form.formState.isValid
-                ? submitText
-                : form.formState.errors.amountIn
-                ? `Insufficient ${inputToken?.symbol ?? ""} ${
-                    isWithdraw ? "share" : "balance"
-                  }`
-                : "Enter an amount"
-              : "Enter an amount"}
-          </Button>
+          !!chainId && activeChainId !== chainId ? (
+            <Button
+              className="col-span-full mt-3 w-full"
+              isLoading={isSwitchingNetwork}
+              onClick={() => switchNetwork?.(chainId)}
+            >
+              Switch network
+            </Button>
+          ) : (
+            <Button
+              className="col-span-full mt-3 grid"
+              disabled={!form.formState.isValid || isError}
+              isLoading={
+                !isError &&
+                (isDebouncing ||
+                  isLoadingInputToken ||
+                  isLoadingInputTokenBalanceOrShare ||
+                  isLoadingTransaction)
+              }
+              type="submit"
+            >
+              {isError
+                ? "Error preparing transaction"
+                : form.formState.isDirty
+                ? form.formState.isValid
+                  ? submitText
+                  : form.formState.errors.amountIn
+                  ? `Insufficient ${inputToken?.symbol ?? ""} ${
+                      isWithdraw ? "share" : "balance"
+                    }`
+                  : "Enter an amount"
+                : "Enter an amount"}
+            </Button>
+          )
         ) : (
           <ConnectButton className="col-span-full mt-3 w-full" />
         )}

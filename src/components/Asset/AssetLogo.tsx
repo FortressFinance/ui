@@ -11,6 +11,7 @@ import Spinner from "@/components/Spinner"
 
 export type AssetLogoProps = {
   className?: string
+  chainId?: number
   tokenAddress?: Address
 }
 const TOKEN_LOGOS_API_URL =
@@ -23,19 +24,23 @@ const LOGOS_NETWORK_NAME: Record<string, string> = {
   mainnetFork: "ethereum",
 }
 
-export const AssetLogo: FC<AssetLogoProps> = ({ className, tokenAddress }) => {
+export const AssetLogo: FC<AssetLogoProps> = ({
+  className,
+  chainId,
+  tokenAddress,
+}) => {
   const isClientReady = useClientReady()
   const [isError, setIsError] = useState(false)
   const isTokenAddressUndefined =
     tokenAddress === "0x" || tokenAddress === undefined
 
-  const chainId = useActiveChainId()
+  const activeChainId = useActiveChainId()
   const [supportedChain] = enabledNetworks.chains.filter(
-    (n) => n.id === chainId
+    (n) => n.id === (chainId ?? activeChainId)
   )
   const logosNetworkName = LOGOS_NETWORK_NAME[supportedChain.network]
 
-  const { data: token } = useTokenOrNative({ address: tokenAddress })
+  const { data: token } = useTokenOrNative({ address: tokenAddress, chainId })
 
   const handleAssetLogoError = () => {
     setIsError(true)

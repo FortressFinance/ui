@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers"
+import { BigNumber, ethers } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
 import {
   Address,
@@ -18,11 +18,12 @@ import { FortressLendingPair } from "@/constant/abi"
 
 export const usePairLeverParams = ({
   pairAddress,
+  chainId,
 }: {
   pairAddress: Address
+  chainId?: number
 }) => {
-  const chainId = useActiveChainId()
-  const { address: userAddress = "0x" } = useAccount()
+  const { address: userAddress = ethers.constants.AddressZero } = useAccount()
   const accounting = useContractReads({
     contracts: [
       {
@@ -47,6 +48,12 @@ export const usePairLeverParams = ({
         chainId,
         address: pairAddress,
         abi: FortressLendingPair,
+        functionName: "totalAssets",
+      },
+      {
+        chainId,
+        address: pairAddress,
+        abi: FortressLendingPair,
         functionName: "totalBorrow",
       },
       {
@@ -64,7 +71,7 @@ export const usePairLeverParams = ({
         args: [userAddress],
       },
     ],
-    enabled: userAddress !== "0x",
+    enabled: !!chainId && !!pairAddress,
     select: ([
       maxLTV,
       [lastTimestamp, exchangeRate],
@@ -78,6 +85,7 @@ export const usePairLeverParams = ({
         defaultProtocolFee,
         maxProtocolFee,
       ],
+      totalAssets,
       [totalBorrowAmount, totalBorrowShares],
       userBorrowShares,
       userCollateralBalance,
@@ -97,6 +105,7 @@ export const usePairLeverParams = ({
         exchangeRate,
       },
       maxLTV,
+      totalAssets,
       totalBorrowAmount,
       totalBorrowShares,
       userBorrowShares,
@@ -132,6 +141,7 @@ export const usePairLeverParams = ({
       borrowedAmount: borrowedAmount.data,
       borrowedShares: accounting.data?.userBorrowShares,
       collateralAmount: accounting.data?.userCollateralBalance,
+      totalAssets: accounting.data?.totalAssets,
       totalBorrowAmount: accounting.data?.totalBorrowAmount,
       totalBorrowShares: accounting.data?.totalBorrowShares,
     },
@@ -141,7 +151,7 @@ export const usePairLeverParams = ({
 
 export const useLeverPosition = ({
   borrowAmount = BigNumber.from(0),
-  borrowAssetAddress = "0x",
+  borrowAssetAddress = ethers.constants.AddressZero,
   collateralAmount = BigNumber.from(0),
   enabled = true,
   minAmount,
@@ -164,11 +174,7 @@ export const useLeverPosition = ({
     abi: FortressLendingPair,
     functionName: "leveragePosition",
     args: [borrowAmount, collateralAmount, minAmount, borrowAssetAddress],
-    enabled:
-      borrowAmount.gt(0) &&
-      collateralAmount.gt(0) &&
-      borrowAssetAddress !== "0x" &&
-      enabled,
+    enabled: borrowAmount.gt(0) && collateralAmount.gt(0) && enabled,
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -386,6 +392,28 @@ export const useConvertToShares = ({
     abi: FortressLendingPair,
     functionName: "convertToShares",
     args: [totalBorrowAmount, totalBorrowShares, amount, false],
-    enabled: amount.gt(0) && totalBorrowAmount.gt(0) && totalBorrowShares.gt(0),
+    enabled: amount.gt(0),
+  })
+}
+
+export const useConvertToAssets = ({
+  shares = BigNumber.from(0),
+  totalBorrowAmount = BigNumber.from(0),
+  totalBorrowShares = BigNumber.from(0),
+  pairAddress,
+}: {
+  shares?: BigNumber
+  totalBorrowAmount?: BigNumber
+  totalBorrowShares?: BigNumber
+  pairAddress: Address
+}) => {
+  const chainId = useActiveChainId()
+  return useContractRead({
+    chainId,
+    address: pairAddress,
+    abi: FortressLendingPair,
+    functionName: "convertToAssets",
+    args: [totalBorrowAmount, totalBorrowShares, shares, false],
+    enabled: shares.gt(0),
   })
 }
