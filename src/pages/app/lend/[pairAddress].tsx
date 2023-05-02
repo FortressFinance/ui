@@ -244,10 +244,12 @@ const LendingPairHeading: FC<LendingPair> = ({ pairAddress, chainId }) => {
     <div className="flex items-center gap-3">
       <div className="flex">
         <AssetLogo
+          chainId={chainId}
           className="relative z-10 flex h-8 w-8"
           tokenAddress={lendingPair.data?.assetContract}
         />
         <AssetLogo
+          chainId={chainId}
           className="-ml-4 flex h-8 w-8"
           tokenAddress={lendingPair.data?.collateralContract}
         />

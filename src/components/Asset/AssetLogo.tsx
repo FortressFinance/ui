@@ -26,7 +26,7 @@ const LOGOS_NETWORK_NAME: Record<string, string> = {
 
 export const AssetLogo: FC<AssetLogoProps> = ({
   className,
-  chainId,
+  chainId: passedChainId,
   tokenAddress,
 }) => {
   const isClientReady = useClientReady()
@@ -35,12 +35,16 @@ export const AssetLogo: FC<AssetLogoProps> = ({
     tokenAddress === "0x" || tokenAddress === undefined
 
   const activeChainId = useActiveChainId()
+  const chainId = passedChainId ?? activeChainId
   const [supportedChain] = enabledNetworks.chains.filter(
-    (n) => n.id === (chainId ?? activeChainId)
+    (n) => n.id === chainId
   )
   const logosNetworkName = LOGOS_NETWORK_NAME[supportedChain.network]
 
-  const { data: token } = useTokenOrNative({ address: tokenAddress, chainId })
+  const { data: token } = useTokenOrNative({
+    address: tokenAddress,
+    chainId,
+  })
 
   const handleAssetLogoError = () => {
     setIsError(true)
