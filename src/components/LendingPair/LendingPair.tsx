@@ -33,13 +33,13 @@ export const LendingPairRow: FC<LendingPair> = (lendingPair) => {
       </TableCell>
 
       {/* Desktop stats */}
-      <TableCell className="text-center max-lg:hidden">
+      <TableCell className="pointer-events-none text-center max-lg:hidden">
         <LendingPairAPY {...lendingPair} />
       </TableCell>
-      <TableCell className="text-center max-lg:hidden">
+      <TableCell className="pointer-events-none text-center max-lg:hidden">
         <LendingPairUtilization {...lendingPair} />
       </TableCell>
-      <TableCell className="text-center max-lg:hidden">
+      <TableCell className="pointer-events-none text-center max-lg:hidden">
         <AssetBalance
           address={lendingPair.pairAddress}
           chainId={lendingPair.chainId}

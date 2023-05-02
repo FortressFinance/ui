@@ -36,6 +36,12 @@ export const usePairLeverParams = ({
         chainId,
         address: pairAddress,
         abi: FortressLendingPair,
+        functionName: "currentRateInfo",
+      },
+      {
+        chainId,
+        address: pairAddress,
+        abi: FortressLendingPair,
         functionName: "exchangeRateInfo",
       },
       {
@@ -74,7 +80,13 @@ export const usePairLeverParams = ({
     enabled: !!chainId && !!pairAddress,
     select: ([
       maxLTV,
-      [lastTimestamp, exchangeRate],
+      [
+        currRateLastBlock,
+        currRateFeeToProtocolRate,
+        currRateLastTimestamp,
+        currRateRatePerSec,
+      ],
+      [exRateLastTimestamp, exRateExchangeRate],
       [
         ltvPrecision,
         liqPrecision,
@@ -100,9 +112,15 @@ export const usePairLeverParams = ({
         defaultProtocolFee,
         maxProtocolFee,
       },
+      currentRateInfo: {
+        lastBlock: currRateLastBlock,
+        feeToProtocolRate: currRateFeeToProtocolRate,
+        lastTimestamp: currRateLastTimestamp,
+        ratePerSec: currRateRatePerSec,
+      },
       exchangeRate: {
-        lastTimestamp,
-        exchangeRate,
+        lastTimestamp: exRateLastTimestamp,
+        exchangeRate: exRateExchangeRate,
       },
       maxLTV,
       totalAssets,
@@ -137,6 +155,7 @@ export const usePairLeverParams = ({
     data: {
       constants: accounting.data?.constants,
       exchangeRate: accounting.data?.exchangeRate.exchangeRate,
+      interestRatePerSecond: accounting.data?.currentRateInfo.ratePerSec,
       maxLTV: accounting.data?.maxLTV,
       borrowedAmount: borrowedAmount.data,
       borrowedShares: accounting.data?.userBorrowShares,
