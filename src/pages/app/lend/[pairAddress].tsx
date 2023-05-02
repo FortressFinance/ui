@@ -201,7 +201,7 @@ const LendingPairHeading: FC<LendingPair> = ({
       <div className="flex">
         <AssetLogo
           chainId={chainId}
-          className="relative z-10 flex h-8 w-8"
+          className="relative z-10 flex h-8 w-8 shadow shadow-black"
           tokenAddress={lendingPair.data?.assetContract}
         />
         <AssetLogo

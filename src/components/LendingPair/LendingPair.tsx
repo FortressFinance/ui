@@ -20,7 +20,7 @@ export const LendingPairRow: FC<LendingPair> = (lendingPair) => {
       <TableCell className="pointer-events-none grid grid-cols-[max-content,auto] items-center gap-x-3 max-lg:-mx-3 max-lg:border-b max-lg:border-b-pink/30 max-lg:px-3 max-lg:pb-3.5 lg:pointer-events-none">
         <div className="flex">
           <AssetLogo
-            className="relative z-10 flex h-12 w-12"
+            className="relative z-10 flex h-12 w-12 shadow shadow-black"
             tokenAddress={lendingPairData.data?.assetContract}
           />
           <AssetLogo
