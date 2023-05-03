@@ -1,7 +1,7 @@
 import * as Slider from "@radix-ui/react-slider"
 import { BigNumber, ethers } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
-import { Dispatch, FC, SetStateAction, useState } from "react"
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { useDebounce } from "react-use"
 import { Address, UserRejectedRequestError } from "wagmi"
@@ -48,28 +48,40 @@ export const CreateLeveredPosition: FC<CreateLeveredPositionProps> = ({
     ltvPrecision,
   })
 
-  const [collateralAmount, setCollateralAmount] = useState("1")
-  const [leverAmount, setLeverAmount] = useState(1)
+  const [collateralAmount, setCollateralAmount] = useState("")
+  const [leverAmount, setLeverAmount] = useState(0)
   const [collateralAmountDebounced, setCollateralAmountDebounced] =
     useState<BigNumber>(BigNumber.from(0))
 
   const [debounceReady] = useDebounce(
     () => {
-      const collateralAmountBig = parseUnits(
-        collateralAmount || "0",
-        collateralAssetBalance.data?.decimals
-      )
-      const leveredCollateralAmount = collateralAmountBig
-        .mul(BigNumber.from(Math.floor(leverAmount * 100)))
-        .div(100)
-      setCollateralAmountDebounced(collateralAmountBig)
-      setAdjustedBorrowAmount(leveredCollateralAmount?.sub(collateralAmountBig))
-      setAdjustedCollateralAmount(leveredCollateralAmount)
+      if (leverAmount > 0 && !!collateralAmount) {
+        const collateralAmountBig = parseUnits(
+          collateralAmount || "0",
+          collateralAssetBalance.data?.decimals
+        )
+        const leveredCollateralAmount = collateralAmountBig
+          .mul(BigNumber.from(Math.floor(leverAmount * 100)))
+          .div(100)
+        setCollateralAmountDebounced(collateralAmountBig)
+        setAdjustedBorrowAmount(
+          leveredCollateralAmount?.sub(collateralAmountBig)
+        )
+        setAdjustedCollateralAmount(leveredCollateralAmount)
+      }
     },
     500,
     [collateralAmount, leverAmount]
   )
   const isDebounced = debounceReady() ?? false
+
+  useEffect(() => {
+    return () => {
+      setAdjustedBorrowAmount(undefined)
+      setAdjustedCollateralAmount(undefined)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const approval = useTokenApproval({
     amount: ethers.constants.MaxUint256,
