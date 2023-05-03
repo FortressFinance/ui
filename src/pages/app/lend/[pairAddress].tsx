@@ -18,7 +18,6 @@ import { DisabledPage } from "@/components"
 import { AssetBalance, AssetLogo, AssetSymbol } from "@/components/Asset"
 import Layout from "@/components/Layout"
 import {
-  LendingPairAsset,
   LendingPairDepositForm,
   LendingPairRedeem,
   LendingPairStats,
@@ -160,6 +159,13 @@ const LendingPairHeading: FC<LendingPair> = ({
       </div>
       {name}
     </div>
+  )
+}
+
+const LendingPairAsset: FC<LendingPair> = ({ pairAddress, chainId }) => {
+  const lendingPair = useLendingPair({ pairAddress, chainId })
+  return (
+    <AssetSymbol address={lendingPair.data?.assetContract} chainId={chainId} />
   )
 }
 

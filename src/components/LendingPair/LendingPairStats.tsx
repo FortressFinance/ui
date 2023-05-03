@@ -6,13 +6,16 @@ import { useLendingPair, usePairLeverParams, useTokenOrNative } from "@/hooks"
 
 import { AssetSymbol } from "@/components/Asset"
 import { LendingPairAPY } from "@/components/LendingPair/LendingPairAPY"
-import { LendingPairAsset } from "@/components/LendingPair/LendingPairAsset"
 import { LendingPairUtilization } from "@/components/LendingPair/LendingPairUtilization"
 import Skeleton from "@/components/Skeleton"
 
 import { LendingPair } from "@/constant"
 
-export const LendingPairStats: FC<LendingPair> = (lendingPair) => {
+export const LendingPairStats: FC<LendingPair> = (props) => {
+  const lendingPair = useLendingPair({
+    pairAddress: props.pairAddress,
+    chainId: props.chainId,
+  })
   return (
     <>
       <h2 className="mb-5 font-display text-2xl lg:text-3xl">Market stats</h2>
@@ -20,8 +23,8 @@ export const LendingPairStats: FC<LendingPair> = (lendingPair) => {
         <div className="flex items-center justify-between gap-3 lg:gap-6">
           <div className="text-sm uppercase text-white/75">Total borrowed</div>
           <div className="inline-flex gap-2 font-mono lg:text-lg">
-            <TotalBorrowed {...lendingPair} />
-            <LendingPairAsset {...lendingPair} />
+            <TotalBorrowed {...props} />
+            <AssetSymbol address={lendingPair.data?.assetContract} />
           </div>
         </div>
         <div className="flex items-center justify-between gap-3 lg:gap-6">
@@ -29,48 +32,38 @@ export const LendingPairStats: FC<LendingPair> = (lendingPair) => {
             Assets available
           </div>
           <div className="inline-flex gap-2 font-mono lg:text-lg">
-            <AssetsAvailable {...lendingPair} />
-            <LendingPairAsset {...lendingPair} />
+            <AssetsAvailable {...props} />
+            <AssetSymbol address={lendingPair.data?.assetContract} />
           </div>
         </div>
         <div className="flex items-center justify-between gap-3 lg:gap-6">
           <div className="text-sm uppercase text-white/75">Utilization</div>
           <div className="inline-flex gap-2 font-mono lg:text-lg">
-            <LendingPairUtilization {...lendingPair} />
+            <LendingPairUtilization {...props} />
           </div>
         </div>
         <div className="flex items-center justify-between gap-3 lg:gap-6">
           <div className="text-sm uppercase text-white/75">Max LTV</div>
           <div className="inline-flex gap-2 font-mono lg:text-lg">
-            <LendingPairMaxLTV {...lendingPair} />
+            <LendingPairMaxLTV {...props} />
           </div>
         </div>
         <div className="flex items-center justify-between gap-3 lg:gap-6">
           <div className="text-sm uppercase text-white/75">APY</div>
           <div className="inline-flex gap-2 font-mono lg:text-lg">
-            <LendingPairAPY {...lendingPair} />
+            <LendingPairAPY {...props} />
           </div>
         </div>
         <div className="flex items-center justify-between gap-3 lg:gap-6">
           <div className="text-sm uppercase text-white/75">Exchange rate</div>
           <div className="inline-flex gap-2 font-mono lg:text-lg">
-            1 <LendingPairCollateral {...lendingPair} /> ={" "}
-            <CollateralExchangeRate {...lendingPair} />
-            <LendingPairAsset {...lendingPair} />
+            1 <AssetSymbol address={lendingPair.data?.collateralContract} /> ={" "}
+            <CollateralExchangeRate {...props} />
+            <AssetSymbol address={lendingPair.data?.assetContract} />
           </div>
         </div>
       </div>
     </>
-  )
-}
-
-const LendingPairCollateral: FC<LendingPair> = ({ pairAddress, chainId }) => {
-  const lendingPair = useLendingPair({ pairAddress, chainId })
-  return (
-    <AssetSymbol
-      address={lendingPair.data?.collateralContract}
-      chainId={chainId}
-    />
   )
 }
 
