@@ -14,13 +14,13 @@ import { fortLog } from "@/lib/fortLog"
 import { parseCurrencyUnits } from "@/lib/helpers"
 import {
   useActiveChainId,
+  useDebouncedValue,
   useInvalidateHoldingsVaults,
   usePreviewRedeem,
   useTokenOrNative,
   useTokenOrNativeBalance,
 } from "@/hooks"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
-import useDebounce from "@/hooks/useDebounce"
 import { useToast } from "@/hooks/useToast"
 
 import {
@@ -62,7 +62,9 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
 
   // Watch form values
   const amountIn = form.watch("amountIn")
-  const amountInDebounced = useDebounce(amountIn)
+  const [amountInDebounced, isDebounced] = useDebouncedValue(amountIn, 500, [
+    amountIn,
+  ])
   const outputTokenAddress = form.watch("outputToken")
   // Calculate + fetch information on selected tokens
   const outputIsLp = outputTokenAddress === defaultOutputToken
@@ -225,7 +227,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
       <FormProvider {...form}>
         <TokenForm
           isWithdraw
-          isDebouncing={amountIn !== amountInDebounced}
+          isDebouncing={!!amountIn && !isDebounced}
           isError={prepareRedeem.isError || prepareRedeemUnderlying.isError}
           isLoadingPreview={previewRedeem.isFetching}
           isLoadingTransaction={

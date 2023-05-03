@@ -1,29 +1,28 @@
 import * as Tabs from "@radix-ui/react-tabs"
+import { BigNumber } from "ethers"
 import { GetStaticPaths, GetStaticProps, NextPage } from "next"
 import Link from "next/link"
-import { FC } from "react"
+import { Dispatch, FC, SetStateAction, useState } from "react"
 import { FiArrowLeft } from "react-icons/fi"
-import { useAccount } from "wagmi"
 
-import { calculateLTV, ltvPercentage } from "@/lib"
-import { formatCurrencyUnits, resolvedRoute } from "@/lib/helpers"
+import { resolvedRoute } from "@/lib/helpers"
 import {
   useClientReady,
   useLendingPair,
   usePairLeverParams,
   useSignificantLeverAmount,
-  useTokenOrNative,
   useTokenOrNativeBalance,
 } from "@/hooks"
 
 import { DisabledPage } from "@/components"
-import { AssetLogo, AssetSymbol } from "@/components/Asset"
+import { AssetLogo } from "@/components/Asset"
 import Layout from "@/components/Layout"
 import { LendingPairStats } from "@/components/LendingPair"
 import {
   AddCollateral,
   CreateLeveredPosition,
   LeverPairs,
+  LeverPositionUserStats,
   RemoveCollateral,
   RepayAsset,
   RepayAssetWithCollateral,
@@ -51,6 +50,10 @@ export const getStaticProps: GetStaticProps = (context) => {
 }
 
 const LeverPairDetail: NextPage<LendingPair> = (lendingPair) => {
+  const [adjustedBorrowAmount, setAdjustedBorrowAmount] = useState<BigNumber>()
+  const [adjustedCollateralAmount, setAdjustedCollateralAmount] =
+    useState<BigNumber>()
+
   return (
     <DisabledPage isDisabled={DISABLE_LENDING}>
       <Layout>
@@ -76,10 +79,19 @@ const LeverPairDetail: NextPage<LendingPair> = (lendingPair) => {
             </header>
             <div className="mt-4 lg:mt-6">
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
-                <ActiveLeverControls {...lendingPair} />
+                <ActiveLeverControls
+                  {...lendingPair}
+                  adjustedBorrowAmount={adjustedBorrowAmount}
+                  setAdjustedBorrowAmount={setAdjustedBorrowAmount}
+                  setAdjustedCollateralAmount={setAdjustedCollateralAmount}
+                />
               </div>
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
-                <UserPositionStats {...lendingPair} />
+                <LeverPositionUserStats
+                  {...lendingPair}
+                  adjustedBorrowAmount={adjustedBorrowAmount}
+                  adjustedCollateralAmount={adjustedCollateralAmount}
+                />
               </div>
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
                 <LendingPairStats {...lendingPair} />
@@ -112,103 +124,19 @@ const LeverPairHeading: FC<LendingPair> = ({
   )
 }
 
-const UserPositionStats: FC<LendingPair> = (props) => {
-  const isClientReady = useClientReady()
-  const { isConnected } = useAccount()
-  const lendingPair = useLendingPair({
-    chainId: props.chainId,
-    pairAddress: props.pairAddress,
-  })
-  const pairLeverParams = usePairLeverParams({
-    chainId: props.chainId,
-    pairAddress: props.pairAddress,
-  })
-  const borrowAsset = useTokenOrNative({
-    chainId: props.chainId,
-    address: lendingPair.data?.assetContract,
-  })
-  const collateralAsset = useTokenOrNative({
-    chainId: props.chainId,
-    address: lendingPair.data?.collateralContract,
-  })
-  return (
-    <>
-      <h2 className="mb-5 font-display text-2xl lg:text-3xl">Your position</h2>
-      <div className="space-y-3">
-        <div className="flex items-center justify-between gap-3 lg:gap-6">
-          <div className="text-sm uppercase text-white/75">Assets borrowed</div>
-          <div className="inline-flex gap-2 font-mono lg:text-lg">
-            {isClientReady && isConnected
-              ? formatCurrencyUnits({
-                  amountWei: pairLeverParams.data.borrowedAmount?.toString(),
-                  decimals: borrowAsset.data?.decimals,
-                  abbreviate: true,
-                })
-              : "—"}
-            <AssetSymbol
-              address={lendingPair.data?.assetContract}
-              chainId={props.chainId}
-            />
-          </div>
-        </div>
-        <div className="flex items-center justify-between gap-3 lg:gap-6">
-          <div className="text-sm uppercase text-white/75">
-            Collateral deposited
-          </div>
-          <div className="inline-flex gap-2 font-mono lg:text-lg">
-            {isClientReady && isConnected
-              ? formatCurrencyUnits({
-                  amountWei: pairLeverParams.data.collateralAmount?.toString(),
-                  decimals: collateralAsset.data?.decimals,
-                  abbreviate: true,
-                })
-              : "—"}
-            <AssetSymbol
-              address={lendingPair.data?.collateralContract}
-              chainId={props.chainId}
-            />
-          </div>
-        </div>
-        <div className="flex items-center justify-between gap-3 lg:gap-6">
-          <div className="text-sm uppercase text-white/75">LTV</div>
-          <div className="inline-flex gap-2 font-mono lg:text-lg">
-            {isClientReady && isConnected
-              ? ltvPercentage(
-                  calculateLTV({
-                    borrowedAmount: pairLeverParams.data.borrowedAmount,
-                    collateralAmount: pairLeverParams.data.collateralAmount,
-                    exchangeRate: pairLeverParams.data.exchangeRate,
-                    exchangePrecision:
-                      pairLeverParams.data.constants?.exchangePrecision,
-                    ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
-                  }),
-                  pairLeverParams.data.constants?.ltvPrecision
-                )
-              : "—"}
-          </div>
-        </div>
-        <div className="flex items-center justify-between gap-3 lg:gap-6">
-          <div className="text-sm uppercase text-white/75">
-            Liquidation price
-          </div>
-          <div className="inline-flex gap-2 font-mono lg:text-lg">
-            {isClientReady && isConnected ? "TODO" : "—"}
-          </div>
-        </div>
-        <div className="flex items-center justify-between gap-3 lg:gap-6">
-          <div className="text-sm uppercase text-white/75">
-            Available credit
-          </div>
-          <div className="inline-flex gap-2 font-mono lg:text-lg">
-            {isClientReady && isConnected ? "TODO" : "—"}
-          </div>
-        </div>
-      </div>
-    </>
-  )
+type ActiveLeverControlsProps = LendingPair & {
+  adjustedBorrowAmount?: BigNumber
+  setAdjustedBorrowAmount: Dispatch<SetStateAction<BigNumber | undefined>>
+  setAdjustedCollateralAmount: Dispatch<SetStateAction<BigNumber | undefined>>
 }
 
-const ActiveLeverControls: FC<LendingPair> = ({ chainId, pairAddress }) => {
+const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
+  chainId,
+  pairAddress,
+  adjustedBorrowAmount,
+  setAdjustedBorrowAmount,
+  setAdjustedCollateralAmount,
+}) => {
   const isClientReady = useClientReady()
   const lendingPair = useLendingPair({ chainId, pairAddress })
   const pairLeverParams = usePairLeverParams({ chainId, pairAddress })
@@ -276,7 +204,6 @@ const ActiveLeverControls: FC<LendingPair> = ({ chainId, pairAddress }) => {
           />
         </Tabs.Content>
         <Tabs.Content className="pt-3 lg:pt-6" value="repayAssetWithCollateral">
-          {" "}
           <RepayAssetWithCollateral
             borrowAmountSignificant={borrowAmountSignificant}
             borrowAssetAddress={lendingPair.data?.assetContract}
@@ -314,11 +241,12 @@ const ActiveLeverControls: FC<LendingPair> = ({ chainId, pairAddress }) => {
         borrowAssetAddress={lendingPair.data?.assetContract}
         collateralAssetBalance={collateralAssetBalance}
         collateralAssetAddress={lendingPair.data?.collateralContract}
-        exchangeRate={pairLeverParams.data.exchangeRate}
-        exchangePrecision={pairLeverParams.data.constants?.exchangePrecision}
         ltvPrecision={pairLeverParams.data.constants?.ltvPrecision}
         maxLTV={pairLeverParams.data.maxLTV}
         pairAddress={pairAddress}
+        adjustedBorrowAmount={adjustedBorrowAmount}
+        setAdjustedBorrowAmount={setAdjustedBorrowAmount}
+        setAdjustedCollateralAmount={setAdjustedCollateralAmount}
         onSuccess={onSuccess}
       />
     )
