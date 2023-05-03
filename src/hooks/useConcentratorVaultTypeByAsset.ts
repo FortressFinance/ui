@@ -8,7 +8,11 @@ const CONCENTRATOR_VAULT_TYPE_BY_ASSET: Record<
   Record<Address, VaultType>
 > = {
   // arbitrum
-  42161: {},
+  42161: {
+    "0x86eE39B28A7fDea01b53773AEE148884Db311B46": "token",
+    "0xC9B8a3FDECB9D5b218d02555a8Baf332E5B740d5": "curve",
+    "0x8e0B8c8BB9db49a46697F3a5Bb8A308e744821D2": "curve",
+  },
   // mainnet fork
   31337: {},
   // arbitrum fork

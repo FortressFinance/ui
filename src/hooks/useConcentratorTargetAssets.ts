@@ -19,7 +19,10 @@ export function useConcentratorTargetAssets(
     {
       ...useRegistryContract(),
       functionName: "concentratorTargetAssets",
-      select: (data) => data.filter((x) => x !== ethers.constants.AddressZero),
+      select: (data) =>
+        Array.from(
+          new Set(data.filter((x) => x !== ethers.constants.AddressZero))
+        ),
       onSuccess: options.onSuccess,
       enabled: apiQuery.isError,
     },
