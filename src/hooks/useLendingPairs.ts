@@ -10,18 +10,16 @@ import {
   useWaitForTransaction,
 } from "wagmi"
 
-import { useActiveChainConfig } from "@/hooks/useActiveChainConfig"
-import { useActiveChainId } from "@/hooks/useActiveChainId"
 import { useToast } from "@/hooks/useToast"
 import { useTokenOrNativeBalance } from "@/hooks/useTokenOrNativeBalance"
 
+import { lendingPairs } from "@/constant"
 import { FortressLendingPair } from "@/constant/abi"
 
-export const useLendingPairs = () => {
-  const chainId = useActiveChainId()
-  const chainConfig = useActiveChainConfig()
-  const lendingPairs = useContractReads({
-    contracts: chainConfig.lendingPairs.flatMap((pairAddress) => [
+export const useLendingPairs = ({ chainId }: { chainId?: number }) => {
+  const chainLendingPairs = lendingPairs.filter((p) => p.chainId === chainId)
+  const lendingPairsData = useContractReads({
+    contracts: chainLendingPairs.flatMap(({ chainId, pairAddress }) => [
       {
         chainId,
         address: pairAddress,
@@ -59,7 +57,7 @@ export const useLendingPairs = () => {
           [name, assetContract, collateralContract, maxLTV, totalAssets],
           index
         ) => ({
-          pairAddress: chainConfig.lendingPairs[index],
+          pairAddress: chainLendingPairs[index].pairAddress,
           name: name as string,
           assetContract: assetContract as Address,
           collateralContract: collateralContract as Address,
@@ -67,15 +65,21 @@ export const useLendingPairs = () => {
           totalAssets: totalAssets as BigNumber,
         })
       ),
-    enabled: chainConfig.lendingPairs.length > 0,
+    enabled: !!chainId && chainLendingPairs.length > 0,
   })
-  return chainConfig.lendingPairs.length > 0
-    ? lendingPairs
-    : { ...lendingPairs, data: [] }
+  return chainLendingPairs.length > 0
+    ? lendingPairsData
+    : { ...lendingPairsData, data: [] }
 }
 
-export const useLendingPair = ({ pairAddress }: { pairAddress: Address }) => {
-  const lendingPairs = useLendingPairs()
+export const useLendingPair = ({
+  chainId,
+  pairAddress,
+}: {
+  chainId: number
+  pairAddress: Address
+}) => {
+  const lendingPairs = useLendingPairs({ chainId })
   return {
     ...lendingPairs,
     data: lendingPairs.data?.find((p) => p.pairAddress === pairAddress),
@@ -84,58 +88,61 @@ export const useLendingPair = ({ pairAddress }: { pairAddress: Address }) => {
 
 export const useLendingDepositPreview = ({
   amount,
+  chainId,
   pairAddress,
   enabled = true,
 }: {
   amount: BigNumber
+  chainId: number
   pairAddress: Address
   enabled?: boolean
 }) => {
-  const chainId = useActiveChainId()
   return useContractRead({
     chainId,
     address: pairAddress,
     abi: FortressLendingPair,
     functionName: "previewDeposit",
     args: [amount],
-    enabled,
+    enabled: enabled && !!chainId,
   })
 }
 
 export const useLendingRedeemPreview = ({
   amount,
+  chainId,
   pairAddress,
   enabled = true,
 }: {
   amount: BigNumber
+  chainId: number
   pairAddress: Address
   enabled?: boolean
 }) => {
-  const chainId = useActiveChainId()
   return useContractRead({
     chainId,
     address: pairAddress,
     abi: FortressLendingPair,
     functionName: "previewRedeem",
     args: [amount],
-    enabled,
+    enabled: enabled && !!chainId,
   })
 }
 
 export const useLendingDeposit = ({
   amount,
   assetAddress,
+  chainId,
   pairAddress,
   enabled = true,
   onSuccess,
 }: {
   amount: BigNumber
   assetAddress?: Address
+  chainId: number
   pairAddress: Address
   enabled?: boolean
   onSuccess: () => void
 }) => {
-  const chainId = useActiveChainId()
   const toastManager = useToast()
   const { address: receiver = "0x" } = useAccount()
   const assetBalance = useTokenOrNativeBalance({ address: assetAddress })
@@ -146,7 +153,7 @@ export const useLendingDeposit = ({
     abi: FortressLendingPair,
     functionName: "deposit",
     args: [amount, receiver],
-    enabled: amount.gt(0) && receiver !== "0x" && enabled,
+    enabled: !!chainId && amount.gt(0) && receiver !== "0x" && enabled,
   })
   const write = useContractWrite(prepare.data)
   const wait = useWaitForTransaction({
@@ -173,17 +180,18 @@ export const useLendingDeposit = ({
 export const useLendingRedeem = ({
   amount,
   assetAddress,
+  chainId,
   pairAddress,
   enabled = true,
   onSuccess,
 }: {
   amount: BigNumber
   assetAddress?: Address
+  chainId: number
   pairAddress: Address
   enabled?: boolean
   onSuccess: () => void
 }) => {
-  const chainId = useActiveChainId()
   const toastManager = useToast()
   const { address: receiver = "0x" } = useAccount()
   const assetBalance = useTokenOrNativeBalance({ address: assetAddress })
@@ -194,7 +202,7 @@ export const useLendingRedeem = ({
     abi: FortressLendingPair,
     functionName: "redeem",
     args: [amount, receiver, receiver],
-    enabled: amount.gt(0) && receiver !== "0x" && enabled,
+    enabled: !!chainId && amount.gt(0) && receiver !== "0x" && enabled,
   })
   const write = useContractWrite(prepare.data)
   const wait = useWaitForTransaction({

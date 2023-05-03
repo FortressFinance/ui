@@ -5,14 +5,16 @@ import { useActiveChainId } from "@/hooks"
 
 export function useTokenOrNative({
   address,
+  chainId,
 }: {
   address: Address | undefined
+  chainId?: number
 }) {
   const isEth = isEthTokenAddress(address)
-  const chainId = useActiveChainId()
+  const activeChainId = useActiveChainId()
   const token = useToken({
     address,
-    chainId,
+    chainId: chainId ?? activeChainId,
     enabled: !isEth && address !== "0x",
   })
   if (isEth) {

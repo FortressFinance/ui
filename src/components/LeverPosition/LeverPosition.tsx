@@ -1,5 +1,4 @@
 import { FC } from "react"
-import { Address } from "wagmi"
 
 import {
   useClientReady,
@@ -17,16 +16,14 @@ import { RepayAsset } from "@/components/LeverPosition/lib/RepayAsset"
 import { RepayAssetWithCollateral } from "@/components/LeverPosition/lib/RepayAssetWithCollateral"
 import Skeleton from "@/components/Skeleton"
 
-type LeverPositionProps = {
-  pairAddress: Address
-}
+import { LendingPair } from "@/constant"
 
-export const LeverPosition: FC<LeverPositionProps> = ({ pairAddress }) => {
+export const LeverPosition: FC<LendingPair> = ({ chainId, pairAddress }) => {
   const isClientReady = useClientReady()
 
-  const lendingPair = useLendingPair({ pairAddress })
-  const pairLeverParams = usePairLeverParams({ pairAddress })
-  const share = useTokenOrNative({ address: pairAddress })
+  const lendingPair = useLendingPair({ chainId, pairAddress })
+  const pairLeverParams = usePairLeverParams({ chainId, pairAddress })
+  const share = useTokenOrNative({ address: pairAddress, chainId })
 
   const borrowAmountSignificant = useSignificantLeverAmount({
     amount: pairLeverParams.data.borrowedAmount,
@@ -38,9 +35,11 @@ export const LeverPosition: FC<LeverPositionProps> = ({ pairAddress }) => {
   })
   const borrowAssetBalance = useTokenOrNativeBalance({
     address: lendingPair.data?.assetContract,
+    chainId,
   })
   const collateralAssetBalance = useTokenOrNativeBalance({
     address: lendingPair.data?.collateralContract,
+    chainId,
   })
 
   const onSuccess = () => {

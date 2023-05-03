@@ -1,238 +1,88 @@
-import { ethers } from "ethers"
+import Link from "next/link"
 import { FC } from "react"
-import { FormProvider, useForm } from "react-hook-form"
-import toast from "react-hot-toast"
-import { Address, UserRejectedRequestError } from "wagmi"
 
-import { parseCurrencyUnits } from "@/lib/helpers"
-import {
-  useLendingDeposit,
-  useLendingDepositPreview,
-  useLendingPair,
-  useLendingRedeem,
-  useLendingRedeemPreview,
-  useTokenApproval,
-  useTokenOrNative,
-} from "@/hooks"
-import useDebounce from "@/hooks/useDebounce"
-import { useToast } from "@/hooks/useToast"
+import { resolvedRoute } from "@/lib/helpers"
+import { useLendingPair } from "@/hooks"
 
-import Skeleton from "@/components/Skeleton"
-import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
+import { AssetBalance, AssetLogo } from "@/components/Asset"
+import { ButtonLink } from "@/components/Button"
+import { LendingPairAPY } from "@/components/LendingPair/LendingPairAPY"
+import { LendingPairUtilization } from "@/components/LendingPair/LendingPairUtilization"
+import { TableCell } from "@/components/Table"
 
-type LendingPairProps = {
-  pairAddress: Address
-}
+import { LendingPair } from "@/constant"
 
-export const LendingPair: FC<LendingPairProps> = ({ pairAddress }) => {
-  const lendingPair = useLendingPair({ pairAddress })
-  const share = useTokenOrNative({ address: pairAddress })
+export const LendingPairRow: FC<LendingPair> = (lendingPair) => {
+  const lendingPairData = useLendingPair(lendingPair)
 
   return (
-    <div className="rounded-lg bg-pink-900/80 p-3 backdrop-blur-md lg:p-6">
-      <h1>
-        <Skeleton isLoading={share.isLoading}>
-          {share.data?.name ?? "Loading lending pair..."}
-        </Skeleton>
-      </h1>
-      <div className="mt-6 grid grid-cols-2 gap-4">
-        <LendingPairDeposit
-          pairAddress={pairAddress}
-          assetAddress={lendingPair.data?.assetContract}
+    <>
+      <TableCell className="pointer-events-none grid grid-cols-[max-content,auto] items-center gap-x-3 max-lg:-mx-3 max-lg:border-b max-lg:border-b-pink/30 max-lg:px-3 max-lg:pb-3.5 lg:pointer-events-none">
+        <div className="flex">
+          <AssetLogo
+            className="relative z-10 flex h-12 w-12 shadow shadow-black"
+            tokenAddress={lendingPairData.data?.assetContract}
+          />
+          <AssetLogo
+            className="-ml-6 flex h-12 w-12"
+            tokenAddress={lendingPairData.data?.collateralContract}
+          />
+        </div>
+
+        <h1>{lendingPair.name}</h1>
+      </TableCell>
+
+      {/* Desktop stats */}
+      <TableCell className="pointer-events-none text-center max-lg:hidden">
+        <LendingPairAPY {...lendingPair} />
+      </TableCell>
+      <TableCell className="pointer-events-none text-center max-lg:hidden">
+        <LendingPairUtilization {...lendingPair} />
+      </TableCell>
+      <TableCell className="pointer-events-none text-center max-lg:hidden">
+        <AssetBalance
+          address={lendingPair.pairAddress}
+          chainId={lendingPair.chainId}
+          abbreviate
         />
-        <LendingPairRedeem
-          pairAddress={pairAddress}
-          assetAddress={lendingPair.data?.assetContract}
-        />
-      </div>
-    </div>
-  )
-}
+      </TableCell>
 
-type LendingPairInteractionProps = {
-  pairAddress: Address
-  assetAddress?: Address
-}
+      {/* Mobile stats */}
+      <TableCell className="-mx-3 border-b border-b-pink/30 px-3 py-3 lg:hidden">
+        <dl className="grid grid-cols-3 gap-x-3 text-center">
+          <dt className="row-start-2 text-xs text-pink-100/60">APY</dt>
+          <dd className="text-sm font-medium text-pink-100">
+            <LendingPairAPY {...lendingPair} />
+          </dd>
+          <dt className="row-start-2 text-xs text-pink-100/60">Utilization</dt>
+          <dd className="text-sm font-medium text-pink-100">
+            <LendingPairUtilization {...lendingPair} />
+          </dd>
+          <dt className="row-start-2 text-xs text-pink-100/60">Shares</dt>
+          <dd className="text-sm font-medium text-pink-100">
+            <AssetBalance
+              address={lendingPair.pairAddress}
+              chainId={lendingPair.chainId}
+              abbreviate
+            />
+          </dd>
+        </dl>
+      </TableCell>
 
-const LendingPairDeposit: FC<LendingPairInteractionProps> = ({
-  pairAddress,
-  assetAddress,
-}) => {
-  const toastManager = useToast()
-  const asset = useTokenOrNative({ address: assetAddress })
+      <TableCell>
+        <ButtonLink
+          {...resolvedRoute(`/app/lend/${lendingPair.pairAddress}`)}
+          className="w-full text-center max-lg:mt-3"
+          variant="outline"
+        >
+          View pair
+        </ButtonLink>
+      </TableCell>
 
-  const form = useForm<TokenFormValues>({
-    defaultValues: {
-      amountIn: "0",
-      inputToken: assetAddress,
-      outputToken: pairAddress,
-    },
-  })
-  const amountIn = form.watch("amountIn")
-  const amountInDebounced = useDebounce(amountIn, 500)
-  const depositValue = parseCurrencyUnits({
-    amountFormatted: amountInDebounced,
-    decimals: asset.data?.decimals,
-  })
-
-  const approval = useTokenApproval({
-    amount: ethers.constants.MaxUint256,
-    spender: pairAddress,
-    token: assetAddress,
-    enabled: form.formState.isValid,
-  })
-  const preview = useLendingDepositPreview({
-    pairAddress,
-    amount: depositValue,
-    enabled: form.formState.isValid,
-  })
-  const deposit = useLendingDeposit({
-    pairAddress,
-    assetAddress,
-    amount: depositValue,
-    enabled: form.formState.isValid && approval.isSufficient,
-    onSuccess: () => {
-      form.resetField("amountIn")
-    },
-  })
-
-  return (
-    <FormProvider {...form}>
-      <div className="p-3 md:rounded-md md:bg-pink-100/10 lg:p-4">
-        <h2 className="mb-3 text-center font-medium text-pink-100 max-md:hidden">
-          Deposit
-        </h2>
-        <TokenForm
-          asset={assetAddress}
-          submitText={approval.isSufficient ? "Lend" : "Approve"}
-          isDebouncing={amountIn !== amountInDebounced}
-          isError={
-            preview.isError ||
-            approval.prepare.isError ||
-            deposit.prepare.isError
-          }
-          isLoadingPreview={preview.isLoading}
-          isLoadingTransaction={
-            approval.wait.isLoading || deposit.wait.isLoading
-          }
-          previewResultWei={preview.data?.toString()}
-          onSubmit={() => {
-            const waitingForSignature = toastManager.loading(
-              "Waiting for signature..."
-            )
-            if (approval.isSufficient) {
-              deposit.write
-                .writeAsync?.()
-                .then((receipt) =>
-                  toastManager.loading(
-                    "Waiting for transaction confirmation...",
-                    receipt.hash
-                  )
-                )
-                .catch((err) =>
-                  toastManager.error(
-                    err instanceof UserRejectedRequestError
-                      ? "User rejected request"
-                      : "Error broadcasting transaction"
-                  )
-                )
-                .finally(() => toast.dismiss(waitingForSignature))
-            } else {
-              approval.write
-                .writeAsync?.()
-                .then((receipt) =>
-                  toastManager.loading(
-                    "Waiting for transaction confirmation...",
-                    receipt.hash
-                  )
-                )
-                .catch((err) =>
-                  toastManager.error(
-                    err instanceof UserRejectedRequestError
-                      ? "User rejected request"
-                      : "Error broadcasting transaction"
-                  )
-                )
-                .finally(() => toast.dismiss(waitingForSignature))
-            }
-          }}
-        />
-      </div>
-    </FormProvider>
-  )
-}
-
-const LendingPairRedeem: FC<LendingPairInteractionProps> = ({
-  pairAddress,
-  assetAddress,
-}) => {
-  const toastManager = useToast()
-  const share = useTokenOrNative({ address: pairAddress })
-
-  const form = useForm<TokenFormValues>({
-    defaultValues: {
-      amountIn: "0",
-      inputToken: pairAddress,
-      outputToken: assetAddress,
-    },
-  })
-  const amountIn = form.watch("amountIn")
-  const amountInDebounced = useDebounce(amountIn, 500)
-  const redeemValue = parseCurrencyUnits({
-    amountFormatted: amountInDebounced,
-    decimals: share.data?.decimals,
-  })
-
-  const preview = useLendingRedeemPreview({
-    pairAddress,
-    amount: redeemValue,
-    enabled: form.formState.isValid,
-  })
-  const redeem = useLendingRedeem({
-    pairAddress,
-    assetAddress,
-    amount: redeemValue,
-    enabled: form.formState.isValid,
-    onSuccess: () => form.resetField("amountIn"),
-  })
-
-  return (
-    <FormProvider {...form}>
-      <div className="p-3 md:rounded-md md:bg-pink-100/10 lg:p-4">
-        <h2 className="mb-3 text-center font-medium text-pink-100 max-md:hidden">
-          Withdraw
-        </h2>
-        <TokenForm
-          asset={assetAddress}
-          submitText="Withdraw"
-          isDebouncing={amountIn !== amountInDebounced}
-          isError={preview.isError || redeem.prepare.isError}
-          isLoadingPreview={preview.isLoading}
-          isLoadingTransaction={redeem.wait.isLoading}
-          previewResultWei={preview.data?.toString()}
-          onSubmit={() => {
-            const waitingForSignature = toastManager.loading(
-              "Waiting for signature..."
-            )
-            redeem.write
-              .writeAsync?.()
-              .then((receipt) =>
-                toastManager.loading(
-                  "Waiting for transaction confirmation...",
-                  receipt.hash
-                )
-              )
-              .catch((err) =>
-                toastManager.error(
-                  err instanceof UserRejectedRequestError
-                    ? "User rejected request"
-                    : "Error broadcasting transaction"
-                )
-              )
-              .finally(() => toast.dismiss(waitingForSignature))
-          }}
-        />
-      </div>
-    </FormProvider>
+      <Link
+        {...resolvedRoute(`/app/lend/${lendingPair.pairAddress}`)}
+        className="absolute inset-0 -z-[1] block max-lg:hidden"
+      />
+    </>
   )
 }
