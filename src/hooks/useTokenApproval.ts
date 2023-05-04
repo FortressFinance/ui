@@ -5,7 +5,6 @@ import {
   useAccount,
   useContractRead,
   useContractWrite,
-  usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi"
 
@@ -42,21 +41,14 @@ export const useTokenApproval = ({
       !isNativeToken &&
       enabled,
   })
-  const prepare = usePrepareContractWrite({
+  const write = useContractWrite({
+    mode: "recklesslyUnprepared",
     chainId,
     address: token,
     abi: erc20ABI,
     functionName: "approve",
     args: [spender, amount],
-    enabled:
-      amount.gt(0) &&
-      spender !== "0x" &&
-      token !== "0x" &&
-      !isNativeToken &&
-      allowance.data?.lt(amount) &&
-      enabled,
   })
-  const write = useContractWrite(prepare.data)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
     onSettled: (receipt, error) =>
@@ -74,7 +66,6 @@ export const useTokenApproval = ({
   return {
     isSufficient: isNativeToken ? true : allowance.data?.gte(amount) ?? false,
     allowance,
-    prepare,
     write,
     wait,
   }

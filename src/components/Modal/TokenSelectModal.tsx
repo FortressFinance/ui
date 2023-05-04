@@ -13,13 +13,15 @@ import { ModalBaseProps } from "@/components/Modal/lib/ModalBase"
 import PurpleModal, {
   PurpleModalContent,
 } from "@/components/Modal/lib/PurpleModal"
-import { TokenFormValues } from "@/components/TokenForm/TokenForm"
 
 import { FortIconCloseCircle } from "@/icons"
 
 type TokenSelectModalProps = ModalBaseProps & {
   asset?: Address
-  controller: UseControllerReturn<TokenFormValues, "inputToken" | "outputToken">
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  controller: UseControllerReturn<any, any>
+  title?: string
+  tokens: Array<{ address?: Address; badge?: string }>
   tokenAddresses?: Address[] | readonly Address[]
   onChangeToken: () => void
 }
@@ -30,7 +32,8 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
     field: { onChange: controllerOnChange, ...controllerField },
   },
   isOpen,
-  tokenAddresses,
+  title = "Select a token",
+  tokens,
   onClose,
   onChangeToken,
 }) => {
@@ -38,7 +41,7 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
     <PurpleModal className="max-w-md" isOpen={isOpen} onClose={onClose}>
       <PurpleModalContent>
         <header className="mb-4 flex items-center justify-between">
-          <Dialog.Title className="text-xl">Select a token</Dialog.Title>
+          <Dialog.Title className="text-xl">{title}</Dialog.Title>
           <Dialog.Close>
             <FortIconCloseCircle className="h-7 w-7" />
             <span className="sr-only">Close</span>
@@ -57,13 +60,19 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
           {asset && (
             <TokenSelectOption tokenAddress={asset} onClose={onClose} />
           )}
-          {tokenAddresses?.map((tokenAddress, index) => (
-            <TokenSelectOption
-              key={`option-${index}`}
-              tokenAddress={tokenAddress}
-              onClose={onClose}
-            />
-          ))}
+          {tokens
+            ?.filter(
+              (token): token is { address: Address; badge?: string } =>
+                !!token.address
+            )
+            .map(({ address, badge }, index) => (
+              <TokenSelectOption
+                key={`option-${index}`}
+                badge={badge}
+                tokenAddress={address}
+                onClose={onClose}
+              />
+            ))}
         </RadioGroup.Root>
       </PurpleModalContent>
     </PurpleModal>
@@ -73,17 +82,18 @@ const TokenSelectModal: FC<TokenSelectModalProps> = ({
 export default TokenSelectModal
 
 type TokenSelectOptionProps = {
+  badge?: string
   tokenAddress: Address
   underlyingAssets?: Address[]
   onClose: () => void
 }
 
 const TokenSelectOption = forwardRef<HTMLButtonElement, TokenSelectOptionProps>(
-  ({ tokenAddress, underlyingAssets, onClose }, ref) => {
+  ({ badge, tokenAddress, underlyingAssets, onClose }, ref) => {
     return (
       <RadioGroup.Item ref={ref} value={tokenAddress} asChild>
         <button
-          className="grid w-full grid-cols-[auto,1fr] grid-rows-[1fr,auto] items-center gap-x-2 rounded-lg p-2 ui-state-checked:bg-white/80 ui-state-checked:text-pink-900 ui-state-unchecked:bg-black ui-state-unchecked:text-white md:gap-x-3 md:p-3"
+          className="group grid w-full grid-cols-[auto,1fr] grid-rows-[1fr,auto] items-center gap-x-2 rounded-lg p-2 ui-state-checked:bg-white/80 ui-state-checked:text-pink-900 ui-state-unchecked:bg-black ui-state-unchecked:text-white md:gap-x-3 md:p-3"
           onClick={(e) => {
             // radix-ui uses click events to move focus throughout the radio group for accessibility
             // clientX and clientY will be 0 if the click event was triggered by a keyboard event
@@ -101,8 +111,13 @@ const TokenSelectOption = forwardRef<HTMLButtonElement, TokenSelectOptionProps>(
               underlyingAssets={underlyingAssets}
             />
           </div>
-          <h2 className="col-start-2 row-start-1 text-left font-medium">
+          <h2 className="col-start-2 row-start-1 flex items-center gap-1.5 text-left font-medium">
             <AssetSymbol address={tokenAddress} />
+            {badge && (
+              <span className="inline-flex -translate-y-[1px] items-center rounded-full bg-white/80 px-2 py-0.5 text-2xs font-medium uppercase text-black group-ui-state-checked:bg-black group-ui-state-checked:text-white">
+                {badge}
+              </span>
+            )}
           </h2>
           <h3 className="col-start-2 row-start-2 text-left text-sm">
             <AssetName address={tokenAddress} />

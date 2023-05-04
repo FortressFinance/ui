@@ -395,11 +395,13 @@ export const useSignificantLeverAmount = ({
 
 export const useConvertToShares = ({
   amount = BigNumber.from(0),
+  enabled = true,
   totalBorrowAmount = BigNumber.from(0),
   totalBorrowShares = BigNumber.from(0),
   pairAddress,
 }: {
   amount?: BigNumber
+  enabled?: boolean
   totalBorrowAmount?: BigNumber
   totalBorrowShares?: BigNumber
   pairAddress: Address
@@ -411,7 +413,7 @@ export const useConvertToShares = ({
     abi: FortressLendingPair,
     functionName: "convertToShares",
     args: [totalBorrowAmount, totalBorrowShares, amount, false],
-    enabled: amount.gt(0),
+    enabled: enabled && amount.gt(0),
   })
 }
 

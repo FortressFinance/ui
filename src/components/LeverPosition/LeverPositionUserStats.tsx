@@ -17,14 +17,6 @@ import { GradientText } from "@/components/Typography"
 
 import { LendingPair } from "@/constant"
 
-export type LeverPositionPreview = {
-  assetsBorrowed?: string
-  collateralDeposited?: string
-  ltv?: string
-  liquidationPrice?: string
-  availableCredit?: string
-}
-
 type LeverPositionUserStatsProps = LendingPair & {
   adjustedBorrowAmount?: BigNumber
   adjustedCollateralAmount?: BigNumber

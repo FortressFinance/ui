@@ -122,11 +122,7 @@ export const CreateLeveredPosition: FC<CreateLeveredPositionProps> = ({
       <div className="flex gap-3">
         <Button
           className="w-full"
-          isLoading={
-            approval.prepare.isLoading ||
-            approval.write.isLoading ||
-            approval.wait.isLoading
-          }
+          isLoading={approval.write.isLoading || approval.wait.isLoading}
           disabled={approval.isSufficient || leverAmount === 1 || !isDebounced}
           onClick={() => {
             const waitingForSignature = toastManager.loading(
