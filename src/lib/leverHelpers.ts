@@ -35,8 +35,6 @@ export const calculateMaxLeverage = ({
     .div(BigNumber.from(1).mul(ltvPrecision).sub(maxLTV))
     .toNumber()
 
-export const leverageMultiplier = (leverage = 1) => leverage.toFixed(2) + "x"
-
 export const assetToCollateral = (
   amount = BigNumber.from(0),
   exchangeRate = BigNumber.from(1),

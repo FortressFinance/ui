@@ -61,11 +61,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
           onChange={(e) => setCollateralAmount(e.target.value)}
         />
         <Button
-          isLoading={
-            approval.prepare.isLoading ||
-            approval.write.isLoading ||
-            approval.wait.isLoading
-          }
+          isLoading={approval.write.isLoading || approval.wait.isLoading}
           disabled={approval.isSufficient || collateralAmountBig.eq(0)}
           onClick={() => {
             const waitingForSignature = toastManager.loading(

@@ -1,4 +1,3 @@
-import { ethers } from "ethers"
 import { FC } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
@@ -50,7 +49,7 @@ export const LendingPairDepositForm: FC<LendingPair> = ({
   })
 
   const approval = useTokenApproval({
-    amount: ethers.constants.MaxUint256,
+    amount: depositValue,
     spender: pairAddress,
     token: lendingPair.data?.assetContract,
     enabled: form.formState.isValid,
@@ -79,9 +78,7 @@ export const LendingPairDepositForm: FC<LendingPair> = ({
         chainId={chainId}
         submitText={approval.isSufficient ? "Lend" : "Approve"}
         isDebouncing={!!amountIn && !isDebounced}
-        isError={
-          preview.isError || approval.prepare.isError || deposit.prepare.isError
-        }
+        isError={preview.isError || deposit.prepare.isError}
         isLoadingPreview={preview.isLoading}
         isLoadingTransaction={approval.wait.isLoading || deposit.wait.isLoading}
         previewResultWei={preview.data?.toString()}

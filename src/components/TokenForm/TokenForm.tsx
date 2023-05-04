@@ -289,7 +289,7 @@ const TokenForm: FC<TokenFormProps> = ({
           controller={tokenSelectField}
           asset={asset}
           isOpen={tokenSelectMode !== null}
-          tokenAddresses={tokenAddresses}
+          tokens={tokenAddresses.map((address) => ({ address }))}
           onClose={() => setTokenSelectMode(null)}
           onChangeToken={revalidateAmountIn}
         />

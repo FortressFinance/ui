@@ -24,8 +24,7 @@ import {
   LeverPairs,
   LeverPositionUserStats,
   RemoveCollateral,
-  RepayAsset,
-  RepayAssetWithCollateral,
+  RepayLeverPosition,
 } from "@/components/LeverPosition"
 import Seo from "@/components/Seo"
 
@@ -165,68 +164,43 @@ const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
 
   return isClientReady ? (
     borrowAmountSignificant.gt(0) ? (
-      <Tabs.Root defaultValue="repayAsset">
+      <Tabs.Root defaultValue="repay">
         <Tabs.List className="-mx-3 -mt-4 divide-x divide-pink/30 border-b border-pink/30 lg:-mx-6 lg:-mt-6">
           <Tabs.Trigger
-            value="repayAsset"
-            className="transition-color w-1/2 py-5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400 lg:w-1/4"
+            value="repay"
+            className="transition-color w-1/2 py-5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
           >
             Repay
           </Tabs.Trigger>
           <Tabs.Trigger
-            value="repayAssetWithCollateral"
-            className="transition-color w-1/2 py-5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400 lg:w-1/4"
+            value="manageCollateral"
+            className="transition-color w-1/2 py-5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400 max-lg:border-t max-lg:border-t-pink/30"
           >
-            Repay w/ collateral
-          </Tabs.Trigger>
-          <Tabs.Trigger
-            value="addCollateral"
-            className="transition-color w-1/2 py-5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400 max-lg:border-t max-lg:border-t-pink/30 lg:w-1/4"
-          >
-            Add collateral
-          </Tabs.Trigger>
-          <Tabs.Trigger
-            value="removeCollateral"
-            className="transition-color w-1/2 py-5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400 max-lg:border-t max-lg:border-t-pink/30 lg:w-1/4"
-          >
-            Remove collateral
+            Manage collateral
           </Tabs.Trigger>
         </Tabs.List>
-        <Tabs.Content className="pt-3 lg:pt-6" value="repayAsset">
-          <RepayAsset
+        <Tabs.Content className="pt-3 lg:pt-6" value="repay">
+          <RepayLeverPosition
+            chainId={chainId}
             borrowAmountSignificant={borrowAmountSignificant}
             borrowAssetAddress={lendingPair.data?.assetContract}
             borrowAssetBalance={borrowAssetBalance}
-            totalBorrowAmount={pairLeverParams.data.totalBorrowAmount}
-            totalBorrowShares={pairLeverParams.data.totalBorrowShares}
-            pairAddress={pairAddress}
-            onSuccess={onSuccess}
-          />
-        </Tabs.Content>
-        <Tabs.Content className="pt-3 lg:pt-6" value="repayAssetWithCollateral">
-          <RepayAssetWithCollateral
-            borrowAmountSignificant={borrowAmountSignificant}
-            borrowAssetAddress={lendingPair.data?.assetContract}
             collateralAmountSignificant={collateralAmountSignificant}
-            collateralAssetBalance={collateralAssetBalance}
             collateralAssetAddress={lendingPair.data?.collateralContract}
-            exchangeRate={pairLeverParams.data.exchangeRate}
-            exchangePrecision={
-              pairLeverParams.data.constants?.exchangePrecision
-            }
-            pairAddress={pairAddress}
+            collateralAssetBalance={collateralAssetBalance}
+            setAdjustedBorrowAmount={setAdjustedBorrowAmount}
+            setAdjustedCollateralAmount={setAdjustedCollateralAmount}
             onSuccess={onSuccess}
+            pairAddress={pairAddress}
           />
         </Tabs.Content>
-        <Tabs.Content className="pt-3 lg:pt-6" value="addCollateral">
+        <Tabs.Content value="manageCollateral">
           <AddCollateral
             collateralAssetBalance={collateralAssetBalance}
             collateralAssetAddress={lendingPair.data?.collateralContract}
             pairAddress={pairAddress}
             onSuccess={onSuccess}
           />
-        </Tabs.Content>
-        <Tabs.Content className="pt-3 lg:pt-6" value="removeCollateral">
           <RemoveCollateral
             collateralAmountSignificant={collateralAmountSignificant}
             collateralAssetBalance={collateralAssetBalance}
