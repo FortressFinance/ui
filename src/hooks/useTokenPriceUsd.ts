@@ -5,18 +5,9 @@ import { getCurvePrice } from "@/lib/api/pricer/getCurvePrice"
 import { getGlpPrice } from "@/lib/api/pricer/getGlpPrice"
 import { getLlamaPrice, getLlamaPriceEth } from "@/lib/api/pricer/getLlamaPrice"
 import { queryKeys } from "@/lib/helpers"
-import { useActiveChainId } from "@/hooks"
+import { useActiveChainConfig, useActiveChainId } from "@/hooks"
 
-import {
-  ethTokenAddress,
-  fcGlpTokenAddress,
-  glpTokenAddress,
-} from "@/constant/addresses"
-
-const customPricers: Record<Address, () => Promise<number>> = {
-  [glpTokenAddress]: getGlpPrice,
-  [fcGlpTokenAddress]: getGlpPrice,
-}
+import { ethTokenAddress, glpTokenAddress } from "@/constant/addresses"
 
 export function useTokenPriceUsd({
   asset = "0x",
@@ -25,6 +16,12 @@ export function useTokenPriceUsd({
   asset?: Address
   enabled?: boolean
 }) {
+  const chainConfig = useActiveChainConfig()
+  const customPricers: Record<Address, () => Promise<number>> = {
+    [glpTokenAddress]: getGlpPrice,
+    [chainConfig.fcGlpTokenAddress]: getGlpPrice,
+  }
+
   const chainId = useActiveChainId()
   const priceRequest = useQuery({
     ...queryKeys.tokens.priceUsd({ asset }),

@@ -13,6 +13,7 @@ type VaultStrategyModalDefinitionListProps = {
     label: string
     value?: number
     emphasis?: boolean
+    disabledTooltip?: boolean
   }>
 }
 
@@ -29,13 +30,19 @@ export const VaultStrategyModalDefinitionList: FC<
               {item.emphasis ? (
                 <>
                   <dt className="flex items-center gap-1 text-base font-bold">
-                    <Tooltip label="APY calculation assumes weekly compounding and excludes Fortress fees.">
+                    {!item.disabledTooltip ? (
+                      <Tooltip label="APY calculation assumes weekly compounding and excludes Fortress fees.">
+                        <span className="flex items-center gap-1">
+                          <GradientText>{item.label}</GradientText>
+
+                          <BiInfoCircle className="h-5 w-5" />
+                        </span>
+                      </Tooltip>
+                    ) : (
                       <span className="flex items-center gap-1">
                         <GradientText>{item.label}</GradientText>
-
-                        <BiInfoCircle className="h-5 w-5" />
                       </span>
-                    </Tooltip>
+                    )}
                   </dt>
                   <dd className="text-right text-base font-bold">
                     <GradientText>{formatPercentage(item.value)}</GradientText>

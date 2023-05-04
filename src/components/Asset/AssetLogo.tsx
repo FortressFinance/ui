@@ -33,7 +33,7 @@ export const AssetLogo: FC<AssetLogoProps> = ({ className, tokenAddress }) => {
   const [supportedChain] = enabledNetworks.chains.filter(
     (n) => n.id === chainId
   )
-  const logosNetworkName = LOGOS_NETWORK_NAME[supportedChain.network]
+  const logosNetworkName = LOGOS_NETWORK_NAME[supportedChain?.network]
 
   const { data: token } = useTokenOrNative({ address: tokenAddress })
 
