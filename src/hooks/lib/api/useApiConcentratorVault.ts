@@ -4,30 +4,40 @@ import { useApiConcentratorStaticData } from "@/hooks/lib/api/useApiConcentrator
 
 export function useApiConcentratorVault({
   targetAsset,
+  primaryAsset,
 }: {
   targetAsset?: Address
+  primaryAsset?: Address
 }) {
   const apiQuery = useApiConcentratorStaticData()
-  const targetAssetToYbToken: Record<Address, Address> = {} // target to primaryKey
+  const targetAssetToYbToken: Record<Address, Set<Address>> = {} // target to primaryKey
   apiQuery.data?.map((data) => {
-    const targetAssetAddress = data?.target_asset?.address
+    const curTargetAsset = data?.target_asset?.address
+    const curPrimaryAsset = data.concentrator.primaryAsset?.address
     if (
       targetAssetToYbToken !== undefined &&
       targetAsset !== undefined &&
-      targetAsset.toLocaleUpperCase() === targetAssetAddress.toLocaleUpperCase()
+      targetAsset.toLocaleUpperCase() === curTargetAsset.toLocaleUpperCase() &&
+      primaryAsset !== undefined &&
+      primaryAsset.toLocaleLowerCase() === curPrimaryAsset.toLocaleLowerCase()
     ) {
-      targetAssetToYbToken[targetAssetAddress] =
+      if (!targetAssetToYbToken[curTargetAsset]) {
+        targetAssetToYbToken[curTargetAsset] = new Set()
+      }
+      targetAssetToYbToken[curTargetAsset].add(
         data?.concentrator?.ybToken?.address
+      )
     }
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ybTokens: any[] = []
-  for (const targetAsset in targetAssetToYbToken) {
-    const ybToken = targetAssetToYbToken[targetAsset as Address]
-    ybTokens.push({
-      ybTokenAddress: ybToken,
-      rewardTokenAddress: targetAsset ?? "0x",
+  for (const targetAssetKey in targetAssetToYbToken) {
+    targetAssetToYbToken[targetAssetKey as Address].forEach((ybToken) => {
+      ybTokens.push({
+        ybTokenAddress: ybToken,
+        rewardTokenAddress: targetAsset ?? "0x",
+      })
     })
   }
   return {

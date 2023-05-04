@@ -18,11 +18,3 @@ export const glpRewardsDistributorAddress: Address =
   "0x5C04a12EB54A093c396f61355c6dA0B15890150d"
 export const glpTokenAddress: Address =
   "0x5402B5F40310bDED796c7D0F3FF6683f5C0cFfdf"
-export const fctrTriCryptoFcGlpTokenAddress: Address =
-  "0xeFeF25D7AD0689c29c400eD6eC29c57Cb86cB058"
-export const fcTriCryptoTokenAddress: Address =
-  "0xE0eEbD35B952c9C73a187edA3D669d9BcFD79006"
-export const fcGlpTokenAddress: Address =
-  "0xBDF9001c5d3fFc03AB6564CA28E530665594dfF7"
-export const fctrFraxBPFcGlpTokenAddress: Address =
-  "0xA7C12b4B98E6A38c51B12668773DAe855DdDecf8"
