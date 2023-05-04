@@ -6,6 +6,7 @@ import { UserRejectedRequestError } from "wagmi"
 
 import { parseCurrencyUnits } from "@/lib/helpers"
 import {
+  useDebouncedValue,
   useLendingDeposit,
   useLendingDepositPreview,
   useLendingPair,
@@ -14,7 +15,6 @@ import {
   useTokenApproval,
   useTokenOrNative,
 } from "@/hooks"
-import useDebounce from "@/hooks/useDebounce"
 import { useToast } from "@/hooks/useToast"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
@@ -40,7 +40,10 @@ export const LendingPairDepositForm: FC<LendingPair> = ({
     },
   })
   const amountIn = form.watch("amountIn")
-  const amountInDebounced = useDebounce(amountIn, 500)
+  const [amountInDebounced, isDebounced] = useDebouncedValue(amountIn, 500, [
+    amountIn,
+  ])
+
   const depositValue = parseCurrencyUnits({
     amountFormatted: amountInDebounced,
     decimals: asset.data?.decimals,
@@ -75,7 +78,7 @@ export const LendingPairDepositForm: FC<LendingPair> = ({
         asset={lendingPair.data?.assetContract}
         chainId={chainId}
         submitText={approval.isSufficient ? "Lend" : "Approve"}
-        isDebouncing={amountIn !== amountInDebounced}
+        isDebouncing={!!amountIn && !isDebounced}
         isError={
           preview.isError || approval.prepare.isError || deposit.prepare.isError
         }
@@ -143,7 +146,10 @@ export const LendingPairRedeem: FC<LendingPair> = ({
     },
   })
   const amountIn = form.watch("amountIn")
-  const amountInDebounced = useDebounce(amountIn, 500)
+  const [amountInDebounced, isDebounced] = useDebouncedValue(amountIn, 500, [
+    amountIn,
+  ])
+
   const redeemValue = parseCurrencyUnits({
     amountFormatted: amountInDebounced,
     decimals: share.data?.decimals,
@@ -170,7 +176,7 @@ export const LendingPairRedeem: FC<LendingPair> = ({
         asset={lendingPair.data?.assetContract}
         chainId={chainId}
         submitText="Withdraw"
-        isDebouncing={amountIn !== amountInDebounced}
+        isDebouncing={!!amountIn && !isDebounced}
         isError={preview.isError || redeem.prepare.isError}
         isLoadingPreview={preview.isLoading}
         isLoadingTransaction={redeem.wait.isLoading}

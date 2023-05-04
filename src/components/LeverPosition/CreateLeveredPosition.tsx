@@ -1,23 +1,17 @@
 import * as Slider from "@radix-ui/react-slider"
 import { BigNumber, ethers } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
-import { FC, useState } from "react"
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
 import toast from "react-hot-toast"
+import { useDebounce } from "react-use"
 import { Address, UserRejectedRequestError } from "wagmi"
 
-import {
-  calculateLTV,
-  calculateMaxLeverage,
-  leverageMultiplier,
-  ltvPercentage,
-} from "@/lib"
-import { formatCurrencyUnits } from "@/lib/helpers"
+import { calculateMaxLeverage } from "@/lib"
 import {
   useLeverPosition,
   useTokenApproval,
   useTokenOrNativeBalance,
 } from "@/hooks"
-import useDebounce from "@/hooks/useDebounce"
 import { useToast } from "@/hooks/useToast"
 
 import Button from "@/components/Button"
@@ -26,11 +20,12 @@ type CreateLeveredPositionProps = {
   borrowAssetAddress?: Address
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
   collateralAssetAddress?: Address
-  exchangeRate?: BigNumber
-  exchangePrecision?: BigNumber
   ltvPrecision?: BigNumber
   maxLTV?: BigNumber
   pairAddress: Address
+  adjustedBorrowAmount?: BigNumber
+  setAdjustedBorrowAmount: Dispatch<SetStateAction<BigNumber | undefined>>
+  setAdjustedCollateralAmount: Dispatch<SetStateAction<BigNumber | undefined>>
   onSuccess: () => void
 }
 
@@ -38,11 +33,12 @@ export const CreateLeveredPosition: FC<CreateLeveredPositionProps> = ({
   borrowAssetAddress,
   collateralAssetBalance,
   collateralAssetAddress,
-  exchangeRate,
-  exchangePrecision,
   ltvPrecision,
   maxLTV,
   pairAddress,
+  adjustedBorrowAmount,
+  setAdjustedBorrowAmount,
+  setAdjustedCollateralAmount,
   onSuccess,
 }) => {
   const toastManager = useToast()
@@ -52,38 +48,53 @@ export const CreateLeveredPosition: FC<CreateLeveredPositionProps> = ({
     ltvPrecision,
   })
 
-  const [collateralAmount, setCollateralAmount] = useState<string>("1")
-  const [leverAmount, setLeverAmount] = useState(1)
+  const [collateralAmount, setCollateralAmount] = useState("")
+  const [leverAmount, setLeverAmount] = useState(0)
+  const [collateralAmountDebounced, setCollateralAmountDebounced] =
+    useState<BigNumber>(BigNumber.from(0))
 
-  const collateralAmountBig = parseUnits(
-    collateralAmount || "0",
-    collateralAssetBalance.data?.decimals
+  const [debounceReady] = useDebounce(
+    () => {
+      if (leverAmount > 0 && !!collateralAmount) {
+        const collateralAmountBig = parseUnits(
+          collateralAmount || "0",
+          collateralAssetBalance.data?.decimals
+        )
+        const leveredCollateralAmount = collateralAmountBig
+          .mul(BigNumber.from(Math.floor(leverAmount * 100)))
+          .div(100)
+        setCollateralAmountDebounced(collateralAmountBig)
+        setAdjustedBorrowAmount(
+          leveredCollateralAmount?.sub(collateralAmountBig)
+        )
+        setAdjustedCollateralAmount(leveredCollateralAmount)
+      }
+    },
+    500,
+    [collateralAmount, leverAmount]
   )
-  const leveredBalance = collateralAmountBig
-    .mul(BigNumber.from(Math.floor(leverAmount * 100)))
-    .div(100)
-  const leveredBorrowAmount = leveredBalance?.sub(collateralAmountBig)
-  const leveredBorrowAmountDebounced = useDebounce(leveredBorrowAmount, 1000)
-  const leveredLTV = calculateLTV({
-    borrowedAmount: leveredBorrowAmount,
-    collateralAmount: leveredBalance,
-    exchangeRate,
-    exchangePrecision,
-    ltvPrecision,
-  })
+  const isDebounced = debounceReady() ?? false
+
+  useEffect(() => {
+    return () => {
+      setAdjustedBorrowAmount(undefined)
+      setAdjustedCollateralAmount(undefined)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const approval = useTokenApproval({
     amount: ethers.constants.MaxUint256,
     spender: pairAddress,
     token: collateralAssetAddress,
-    enabled: leverAmount > 1,
+    enabled: leverAmount > 1 && isDebounced,
   })
   const leverPosition = useLeverPosition({
-    borrowAmount: leveredBorrowAmountDebounced,
+    borrowAmount: adjustedBorrowAmount,
     borrowAssetAddress,
-    collateralAmount: collateralAmountBig,
+    collateralAmount: collateralAmountDebounced,
     minAmount: BigNumber.from(1),
-    enabled: leverAmount > 1 && approval.isSufficient,
+    enabled: leverAmount > 1 && approval.isSufficient && isDebounced,
     pairAddress,
     onSuccess,
   })
@@ -108,44 +119,6 @@ export const CreateLeveredPosition: FC<CreateLeveredPositionProps> = ({
         </Slider.Track>
         <Slider.Thumb className="hover:bg-violet3 focus:shadow-blackA8 block h-5 w-5 rounded-[10px] bg-white focus:outline-none focus:ring-4 focus:ring-white/25" />
       </Slider.Root>
-      <div className="font-mono">
-        <div>
-          LEV: {leverageMultiplier(1)}{" "}
-          {leverAmount > 1 && (
-            <span className="text-green-300">
-              &rarr; {leverageMultiplier(leverAmount)}
-            </span>
-          )}
-        </div>
-        <div>
-          LTV: {ltvPercentage(BigNumber.from(1), ltvPrecision)}{" "}
-          {leverAmount > 1 && (
-            <span className="text-green-300">
-              &rarr; {ltvPercentage(leveredLTV, ltvPrecision)}
-            </span>
-          )}
-        </div>
-        <div>
-          AMT:{" "}
-          {formatCurrencyUnits({
-            abbreviate: true,
-            amountWei: collateralAmountBig.toString(),
-            decimals: collateralAssetBalance.data?.decimals,
-          })}{" "}
-          {collateralAssetBalance.data?.symbol}{" "}
-          {leverAmount > 1 && (
-            <span className="text-green-300">
-              &rarr;{" "}
-              {formatCurrencyUnits({
-                abbreviate: true,
-                amountWei: leveredBalance?.toString(),
-                decimals: collateralAssetBalance.data?.decimals,
-              })}{" "}
-              {collateralAssetBalance.data?.symbol}
-            </span>
-          )}
-        </div>
-      </div>
       <div className="flex gap-3">
         <Button
           className="w-full"
@@ -154,7 +127,7 @@ export const CreateLeveredPosition: FC<CreateLeveredPositionProps> = ({
             approval.write.isLoading ||
             approval.wait.isLoading
           }
-          disabled={approval.isSufficient || leverAmount === 1}
+          disabled={approval.isSufficient || leverAmount === 1 || !isDebounced}
           onClick={() => {
             const waitingForSignature = toastManager.loading(
               "Waiting for signature..."
@@ -186,16 +159,7 @@ export const CreateLeveredPosition: FC<CreateLeveredPositionProps> = ({
             leverPosition.write.isLoading ||
             leverPosition.wait.isLoading
           }
-          disabled={
-            !approval.isSufficient ||
-            leverAmount === 1 ||
-            !leveredBorrowAmount?.eq(
-              leveredBorrowAmountDebounced ?? BigNumber.from(0)
-            ) ||
-            leveredBorrowAmountDebounced?.eq(
-              leveredBalance ?? BigNumber.from(0)
-            )
-          }
+          disabled={!approval.isSufficient || leverAmount === 1 || !isDebounced}
           onClick={() => {
             const waitingForSignature = toastManager.loading(
               "Waiting for signature..."
