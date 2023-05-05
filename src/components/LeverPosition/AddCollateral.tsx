@@ -19,7 +19,7 @@ import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
 
 import { useToastStore } from "@/store"
 
-type AddCollateralToLeverPositionProps = {
+type AddCollateralProps = {
   chainId: number
   collateralAssetAddress?: Address
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
@@ -33,9 +33,7 @@ type AddCollateralFormValues = {
   amount: string
 }
 
-export const AddCollateralToLeverPosition: FC<
-  AddCollateralToLeverPositionProps
-> = ({
+export const AddCollateral: FC<AddCollateralProps> = ({
   chainId,
   collateralAssetAddress,
   collateralAssetBalance,

@@ -19,13 +19,13 @@ import { AssetLogo } from "@/components/Asset"
 import Layout from "@/components/Layout"
 import { LendingPairStats } from "@/components/LendingPair"
 import {
+  AddCollateral,
   CreateLeveredPosition,
   LeverPairs,
   LeverPositionUserStats,
-  RemoveCollateralFromLeverPosition,
+  RemoveCollateral,
   RepayLeverPosition,
 } from "@/components/LeverPosition"
-import { AddCollateralToLeverPosition } from "@/components/LeverPosition/AddCollateralToLeverPosition"
 import Seo from "@/components/Seo"
 
 import { LendingPair, lendingPairs } from "@/constant"
@@ -201,7 +201,7 @@ const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
           />
         </Tabs.Content>
         <Tabs.Content className="pt-3 lg:pt-6" value="addCollateral">
-          <AddCollateralToLeverPosition
+          <AddCollateral
             chainId={chainId}
             collateralAssetAddress={lendingPair.data?.collateralContract}
             collateralAssetBalance={collateralAssetBalance}
@@ -212,7 +212,7 @@ const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
           />
         </Tabs.Content>
         <Tabs.Content className="pt-3 lg:pt-6" value="removeCollateral">
-          <RemoveCollateralFromLeverPosition
+          <RemoveCollateral
             chainId={chainId}
             collateralAssetAddress={lendingPair.data?.collateralContract}
             collateralAssetBalance={collateralAssetBalance}
