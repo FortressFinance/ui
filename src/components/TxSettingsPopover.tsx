@@ -8,6 +8,7 @@ import { BiInfoCircle } from "react-icons/bi"
 import { z } from "zod"
 
 import clsxm from "@/lib/clsxm"
+import { inter, vt323 } from "@/lib/fonts"
 
 import Button from "@/components/Button"
 import Tooltip from "@/components/Tooltip"
@@ -45,7 +46,7 @@ export const TxSettingsPopover: FC<TxSettingsPopoverProps> = ({
       <Popover.Portal>
         <Popover.Content
           align={isMobile ? "center" : "end"}
-          className="z-40 mr-3 w-[283px] translate-y-3 rounded border border-black/60 bg-orange-400 p-4 shadow-lg ui-state-closed:animate-fade-out ui-state-open:animate-fade-in max-md:left-0 md:-mr-6 md:w-72 md:rounded-md md:rounded-t-none md:border-t-0 md:shadow-pink-900/50"
+          className={`${inter.variable} ${vt323.variable} z-40 mr-3 w-[283px] translate-y-3 rounded border border-black/60 bg-orange-400 p-4 font-sans shadow-lg ui-state-closed:animate-fade-out ui-state-open:animate-fade-in max-md:left-0 md:-mr-6 md:w-72 md:rounded-md md:rounded-t-none md:border-t-0 md:shadow-pink-900/50`}
         >
           <TxSettingsForm close={() => setIsOpen(false)} />
         </Popover.Content>

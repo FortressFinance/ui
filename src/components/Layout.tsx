@@ -6,6 +6,7 @@ import { useRouter } from "next/router"
 import { FC, PropsWithChildren, useState } from "react"
 
 import clsxm from "@/lib/clsxm"
+import { inter, vt323 } from "@/lib/fonts"
 import { resolvedRoute } from "@/lib/helpers"
 
 import AppProviders from "@/components/AppProviders"
@@ -165,7 +166,9 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         <Dialog.Root open={sidebarOpen} onOpenChange={setSidebarOpen}>
           <Dialog.Portal>
             <Dialog.Overlay className="fixed inset-0 z-40 bg-pink-900/90 backdrop-blur ui-state-closed:animate-fade-out ui-state-open:animate-fade-in" />
-            <Dialog.Content className="fixed inset-y-0 right-0 z-40 ui-state-closed:animate-slide-out-right ui-state-open:animate-slide-in-right">
+            <Dialog.Content
+              className={`${inter.variable} ${vt323.variable} fixed inset-y-0 right-0 z-40 font-sans ui-state-closed:animate-slide-out-right ui-state-open:animate-slide-in-right`}
+            >
               <div className="relative h-full w-full max-w-xs overflow-y-auto border-l border-pink/10 bg-gradient-to-tr from-pink-600/40 to-orange-600/40 shadow-xl">
                 <div className="grid h-full grid-cols-1 grid-rows-[1fr,auto] gap-16 p-3">
                   <div>
