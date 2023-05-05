@@ -29,7 +29,7 @@ export const Toaster: FC<{ className?: string }> = ({ className }) => {
     <>
       <ToastPrimitive.Viewport
         className={clsxm(
-          "fixed bottom-9 left-1/2 z-50 flex w-full -translate-x-1/2 flex-col gap-1.5 md:max-w-sm lg:bottom-auto lg:top-2.5 lg:translate-x-48",
+          "fixed inset-x-3 bottom-9 z-50 flex flex-col gap-1.5 md:left-1/2 md:right-auto md:w-full md:max-w-sm md:-translate-x-1/2 lg:bottom-auto lg:top-2.5 lg:translate-x-48",
           className
         )}
       />
