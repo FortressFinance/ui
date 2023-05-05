@@ -15,8 +15,7 @@ export function useApiConcentratorTargetAssetId({
       targetAsset !== undefined &&
       targetAsset.toLocaleUpperCase() === curTargetAsset.toLocaleUpperCase()
     ) {
-      targetAssetToId[data?.target_asset?.address] =
-        data?.target_asset?.targetAssetId
+      targetAssetToId[targetAsset] = data?.target_asset?.targetAssetId
     }
   })
 

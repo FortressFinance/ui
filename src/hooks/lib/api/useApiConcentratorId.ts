@@ -20,7 +20,7 @@ export function useApiConcentratorId({
       primaryAsset !== undefined &&
       primaryAsset.toLocaleLowerCase() === curPrimaryAsset.toLocaleLowerCase()
     ) {
-      targetAssetToConcentratorId[curTargetAsset] =
+      targetAssetToConcentratorId[targetAsset] =
         data?.concentrator?.ybToken.concentratorId
     }
   })
