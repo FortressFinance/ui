@@ -63,7 +63,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         <span
           className={clsxm(
-            "col-start-1 row-start-1 overflow-hidden text-ellipsis whitespace-nowrap",
+            "col-start-1 row-start-1 flex items-center justify-center gap-1.5 overflow-hidden text-ellipsis whitespace-nowrap",
             { "opacity-25": isLoading }
           )}
         >

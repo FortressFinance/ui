@@ -18,13 +18,13 @@ import { parseCurrencyUnits } from "@/lib/helpers"
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import {
   useActiveChainId,
+  useDebouncedValue,
   useInvalidateHoldingsVaults,
   usePreviewDeposit,
   useTokenOrNative,
   useTokenOrNativeBalance,
 } from "@/hooks"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
-import useDebounce from "@/hooks/useDebounce"
 import { useToast } from "@/hooks/useToast"
 
 import {
@@ -72,7 +72,10 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
 
   // Watch form values
   const amountIn = form.watch("amountIn")
-  const amountInDebounced = useDebounce(amountIn, 500)
+  const [amountInDebounced, isDebounced] = useDebouncedValue(amountIn, 500, [
+    amountIn,
+  ])
+
   const inputTokenAddress = form.watch("inputToken")
   // Calculate + fetch information on selected tokens
   const inputIsLp = inputTokenAddress === defaultInputToken
@@ -325,7 +328,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
       </h2>
       <FormProvider {...form}>
         <TokenForm
-          isDebouncing={amountIn !== amountInDebounced}
+          isDebouncing={!!amountIn && !isDebounced}
           isError={prepareDeposit.isError || prepareDepositUnderlying.isError}
           isLoadingPreview={previewDeposit.isFetching}
           isLoadingTransaction={

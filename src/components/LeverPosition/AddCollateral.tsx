@@ -1,102 +1,68 @@
-import { BigNumber, ethers } from "ethers"
-import { parseUnits } from "ethers/lib/utils"
+import { ethers } from "ethers"
+import { parseUnits } from "ethers/lib/utils.js"
 import { FC, useState } from "react"
 import toast from "react-hot-toast"
 import { Address, UserRejectedRequestError } from "wagmi"
 
-import { addSlippage } from "@/lib"
-import { formatCurrencyUnits } from "@/lib/helpers"
 import {
-  useConvertToShares,
-  useRepayAsset,
+  useAddCollateral,
   useTokenApproval,
-  useTokenOrNative,
   useTokenOrNativeBalance,
 } from "@/hooks"
 import { useToast } from "@/hooks/useToast"
 
 import Button from "@/components/Button"
 
-type RepayAssetProps = {
-  borrowAmountSignificant: BigNumber
-  borrowAssetAddress?: Address
-  borrowAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
-  totalBorrowAmount?: BigNumber
-  totalBorrowShares?: BigNumber
+type AddCollateralProps = {
+  collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
+  collateralAssetAddress?: Address
   pairAddress: Address
   onSuccess: () => void
 }
-export const RepayAsset: FC<RepayAssetProps> = ({
-  borrowAmountSignificant,
-  borrowAssetAddress,
-  borrowAssetBalance,
-  totalBorrowAmount,
-  totalBorrowShares,
+
+export const AddCollateral: FC<AddCollateralProps> = ({
+  collateralAssetBalance,
+  collateralAssetAddress,
   pairAddress,
   onSuccess,
 }) => {
   const toastManager = useToast()
 
-  const [repayAssetAmount, setRepayAssetAmount] = useState<string>("1")
-  const repayAssetAmountBig = parseUnits(
-    repayAssetAmount || "0",
-    borrowAssetBalance.data?.decimals
+  const [collateralAmount, setCollateralAmount] = useState<string>("1")
+  const collateralAmountBig = parseUnits(
+    collateralAmount || "0",
+    collateralAssetBalance.data?.decimals
   )
-  const slippage = 0.000001
-
-  const borrowAsset = useTokenOrNative({
-    address: borrowAssetAddress,
-  })
 
   const approval = useTokenApproval({
     amount: ethers.constants.MaxUint256,
     spender: pairAddress,
-    token: borrowAssetAddress,
-    enabled: repayAssetAmountBig.gt(0),
+    token: collateralAssetAddress,
+    enabled: collateralAmountBig.gt(0),
   })
-  const sharesToRepay = useConvertToShares({
-    amount: repayAssetAmountBig,
-    totalBorrowAmount,
-    totalBorrowShares,
-    pairAddress,
-  })
-  const repayAsset = useRepayAsset({
-    shares: sharesToRepay.data,
-    enabled: approval.isSufficient,
+  const addCollateral = useAddCollateral({
+    collateralAmount: collateralAmountBig,
+    enabled: collateralAssetBalance.data?.value.gt(0),
     pairAddress,
     onSuccess,
   })
 
   return (
     <div>
-      <h1>Repay asset</h1>
+      <h1>Add collateral</h1>
       <div>
-        Repay in full:{" "}
-        {formatCurrencyUnits({
-          amountWei: borrowAmountSignificant?.toString(),
-          decimals: borrowAsset.data?.decimals,
-        })}{" "}
-        FRAX, with 1% buffer{" "}
-        {formatCurrencyUnits({
-          amountWei: addSlippage(borrowAmountSignificant, slippage)?.toString(),
-          decimals: borrowAsset.data?.decimals,
-        })}{" "}
-        FRAX
+        Collateral available: {collateralAssetBalance.data?.formatted} fcGLP
       </div>
       <div className="flex gap-3">
         <input
           className="bg-dark p-3"
           type="text"
-          value={repayAssetAmount}
-          onChange={(e) => setRepayAssetAmount(e.target.value)}
+          value={collateralAmount}
+          onChange={(e) => setCollateralAmount(e.target.value)}
         />
         <Button
-          isLoading={
-            approval.prepare.isLoading ||
-            approval.write.isLoading ||
-            approval.wait.isLoading
-          }
-          disabled={approval.isSufficient || borrowAmountSignificant.eq(0)}
+          isLoading={approval.write.isLoading || approval.wait.isLoading}
+          disabled={approval.isSufficient || collateralAmountBig.eq(0)}
           onClick={() => {
             const waitingForSignature = toastManager.loading(
               "Waiting for signature..."
@@ -123,21 +89,20 @@ export const RepayAsset: FC<RepayAssetProps> = ({
         </Button>
         <Button
           disabled={
-            repayAsset.prepare.isError ||
+            addCollateral.prepare.isError ||
             !approval.isSufficient ||
-            borrowAmountSignificant.eq(BigNumber.from(0))
+            collateralAmountBig.lte(0)
           }
           isLoading={
-            sharesToRepay.isLoading ||
-            repayAsset.prepare.isLoading ||
-            repayAsset.write.isLoading ||
-            repayAsset.wait.isLoading
+            addCollateral.prepare.isLoading ||
+            addCollateral.write.isLoading ||
+            addCollateral.wait.isLoading
           }
           onClick={() => {
             const waitingForSignature = toastManager.loading(
               "Waiting for signature..."
             )
-            repayAsset.write
+            addCollateral.write
               .writeAsync?.()
               .then((receipt) =>
                 toastManager.loading(
@@ -155,8 +120,8 @@ export const RepayAsset: FC<RepayAssetProps> = ({
               .finally(() => toast.dismiss(waitingForSignature))
           }}
         >
-          Repay asset
-          {repayAsset.prepare.isError ? " (error)" : ""}
+          Add collateral
+          {addCollateral.prepare.isError ? " (error)" : ""}
         </Button>
       </div>
     </div>
