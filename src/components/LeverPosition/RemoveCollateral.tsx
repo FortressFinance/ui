@@ -173,7 +173,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
 
           <div className="relative z-[1] col-span-full col-start-1 row-start-2 px-4 pb-4 text-left align-bottom text-xs">
             <span className="text-pink-100">
-              Balance:{" "}
+              Collateral available:{" "}
               {formatCurrencyUnits({
                 amountWei: collateralAmountSignificant.toString(),
                 decimals: collateralAssetBalance.data?.decimals,
