@@ -1,11 +1,9 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Address, useProvider, useWaitForTransaction } from "wagmi"
 
-export function useExtractSolidityError({
-  hash,
-}: {
-  hash: Address | undefined
-}) {
+export function useExtractSolidityError() {
+  const [hash, setHash] = useState<Address>()
+
   const provider = useProvider()
 
   const { data: waitTxData } = useWaitForTransaction({
@@ -44,4 +42,6 @@ export function useExtractSolidityError({
         })
     })
   }, [provider, waitTxData])
+
+  return setHash
 }
