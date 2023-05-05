@@ -180,8 +180,14 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
   })
 
   // DEBUG HERE
-  // let depositUnderlyingHash: Address | undefined
-  // const prepareDepositUnderlying = useContractWrite({
+  // mock prepare object so the form allows you to submit
+  // const prepareDepositUnderlying = { isError: false, isLoading: false }
+  // you can't set variables in react without using state, so I moved the state into the extract hook
+  // when you have the hash for debugging, you call the returned func with it
+  // const extractSolidityError = useExtractSolidityError()
+  // to make this work without failing before actually submitting it, you have to recklessly set the args when executing the call
+  // removed args here
+  // const debugDepositUnderlying = useContractWrite({
   //   ...vaultContract,
   //   mode: "recklesslyUnprepared",
   //   functionName: "depositUnderlying",
@@ -192,16 +198,11 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
   //     BigNumber.from(previewDeposit.data?.minAmountWei ?? "0"),
   //   ],
   //   overrides: { value: inputIsEth ? value : BigNumber.from(0) },
-  //   // onSettled: (receipt, error) =>{
-  //   //   console.log(">>>>>>>>", receipt?.hash)
-  //   //   depositUnderlyingHash = receipt?.hash
-  //   // },
+  //   onSettled: (receipt, error) => {
+  //     console.log(">>>>>>>>", receipt?.hash)
+  //     extractSolidityError(receipt?.hash)
+  //   },
   // })
-  // prepareDepositUnderlying.writeAsync?.().then((receipt) => {
-  //   console.log("########", receipt?.hash)
-  //   depositUnderlyingHash = receipt?.hash
-  // })
-  //useExtractSolidityError({ hash: depositUnderlyingHash })
 
   // Configure depositUnderlying method
   const prepareDepositUnderlying = usePrepareContractWrite({
