@@ -112,6 +112,30 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     outputTokenBalance.refetch()
   }
 
+  // DEBUG HERE
+  // let depositUnderlyingHash: Address | undefined
+  // const prepareDepositUnderlying = useContractWrite({
+  //   ...vaultContract,
+  //   mode: "recklesslyUnprepared",
+  //   functionName: "depositUnderlying",
+  //   args: [
+  //     inputTokenAddress,
+  //     userAddress ?? "0x",
+  //     value,
+  //     BigNumber.from(previewDeposit.data?.minAmountWei ?? "0"),
+  //   ],
+  //   overrides: { value: inputIsEth ? value : BigNumber.from(0) },
+  //   // onSettled: (receipt, error) =>{
+  //   //   console.log(">>>>>>>>", receipt?.hash)
+  //   //   depositUnderlyingHash = receipt?.hash
+  //   // },
+  // })
+  // prepareDepositUnderlying.writeAsync?.().then((receipt) => {
+  //   console.log("########", receipt?.hash)
+  //   depositUnderlyingHash = receipt?.hash
+  // })
+  //useExtractSolidityError({ hash: depositUnderlyingHash })
+
   // Configure approve method
   const prepareApprove = usePrepareContractWrite({
     chainId,
