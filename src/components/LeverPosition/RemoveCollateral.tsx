@@ -1,14 +1,15 @@
 import { BigNumber } from "ethers"
 import { parseUnits } from "ethers/lib/utils"
 import { FC, useState } from "react"
-import toast from "react-hot-toast"
-import { Address, UserRejectedRequestError } from "wagmi"
+import { Address } from "wagmi"
+import { shallow } from "zustand/shallow"
 
 import { formatCurrencyUnits } from "@/lib/helpers"
 import { useRemoveCollateral, useTokenOrNativeBalance } from "@/hooks"
-import { useToast } from "@/hooks/useToast"
 
 import Button from "@/components/Button"
+
+import { useToastStore } from "@/store"
 
 type RemoveCollateralProps = {
   collateralAmountSignificant: BigNumber
@@ -25,7 +26,10 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
   pairAddress,
   onSuccess,
 }) => {
-  const toastManager = useToast()
+  const [addToast, replaceToast] = useToastStore(
+    (state) => [state.addToast, state.replaceToast],
+    shallow
+  )
 
   const [collateralAmount, setCollateralAmount] = useState<string>("1")
   const collateralAmountBig = parseUnits(
@@ -70,25 +74,20 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
             removeCollateral.wait.isLoading
           }
           onClick={() => {
-            const waitingForSignature = toastManager.loading(
-              "Waiting for signature..."
-            )
+            const action = "Collateral withdrawal"
+            const toastId = addToast({ type: "startTx", action })
             removeCollateral.write
-              .writeAsync?.()
+              ?.writeAsync?.()
               .then((receipt) =>
-                toastManager.loading(
-                  "Waiting for transaction confirmation...",
-                  receipt.hash
-                )
+                replaceToast(toastId, {
+                  type: "waitTx",
+                  hash: receipt.hash,
+                  action,
+                })
               )
-              .catch((err) =>
-                toastManager.error(
-                  err instanceof UserRejectedRequestError
-                    ? "User rejected request"
-                    : "Error broadcasting transaction"
-                )
+              .catch((error) =>
+                replaceToast(toastId, { type: "errorWrite", error, action })
               )
-              .finally(() => toast.dismiss(waitingForSignature))
           }}
         >
           Remove collateral

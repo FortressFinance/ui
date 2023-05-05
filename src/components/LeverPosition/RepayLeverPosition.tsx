@@ -2,9 +2,8 @@ import * as ToggleGroup from "@radix-ui/react-toggle-group"
 import { BigNumber } from "ethers"
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
 import { SubmitHandler, useController, useForm } from "react-hook-form"
-import toast from "react-hot-toast"
 import { useDebounce } from "react-use"
-import { UserRejectedRequestError } from "wagmi"
+import { shallow } from "zustand/shallow"
 
 import { addSlippage, assetToCollateral, collateralToAsset } from "@/lib"
 import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
@@ -17,13 +16,14 @@ import {
   useTokenApproval,
   useTokenOrNativeBalance,
 } from "@/hooks"
-import { useToast } from "@/hooks/useToast"
 
 import { ApproveToken } from "@/components"
 import Address from "@/components/Address"
 import Button from "@/components/Button"
 import TokenSelectModal from "@/components/Modal/TokenSelectModal"
 import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
+
+import { useToastStore } from "@/store"
 
 type RepayLeverPositionProps = {
   chainId: number
@@ -60,7 +60,10 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   pairAddress,
 }) => {
   const isClientReady = useClientReady()
-  const toastManager = useToast()
+  const [addToast, replaceToast] = useToastStore(
+    (state) => [state.addToast, state.replaceToast],
+    shallow
+  )
 
   const pairLeverParams = usePairLeverParams({ chainId, pairAddress })
 
@@ -224,23 +227,18 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     repay.prepare.isLoading || repay.write.isLoading || repay.wait.isLoading
 
   const submitRepayment: SubmitHandler<RepayLeverPositionFormValues> = () => {
-    const waitingForSignature = toastManager.loading("Waiting for signature...")
+    const action = isRepayingWithCollateral
+      ? "Repayment with collateral"
+      : "Repayment"
+    const toastId = addToast({ type: "startTx", action })
     repay.write
       .writeAsync?.()
       .then((receipt) =>
-        toastManager.loading(
-          "Waiting for transaction confirmation...",
-          receipt.hash
-        )
+        replaceToast(toastId, { type: "waitTx", action, hash: receipt.hash })
       )
-      .catch((err) =>
-        toastManager.error(
-          err instanceof UserRejectedRequestError
-            ? "User rejected request"
-            : "Error broadcasting transaction"
-        )
+      .catch((error) =>
+        replaceToast(toastId, { type: "errorWrite", action, error })
       )
-      .finally(() => toast.dismiss(waitingForSignature))
   }
 
   return (

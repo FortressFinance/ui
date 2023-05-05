@@ -1,13 +1,13 @@
 import { BigNumber, ethers } from "ethers"
 import React, { FC, useEffect } from "react"
-import toast from "react-hot-toast"
 import { BiInfinite } from "react-icons/bi"
-import { UserRejectedRequestError } from "wagmi"
+import { shallow } from "zustand/shallow"
 
 import { useTokenApproval } from "@/hooks"
-import { useToast } from "@/hooks/useToast"
 
 import Button from "@/components/Button"
+
+import { useToastStore } from "@/store"
 
 type ApproveTokenProps = {
   amount: BigNumber
@@ -20,7 +20,11 @@ export const ApproveToken: FC<ApproveTokenProps> = ({
   approval,
   disabled,
 }) => {
-  const toastManager = useToast()
+  const [addToast, replaceToast] = useToastStore(
+    (state) => [state.addToast, state.replaceToast],
+    shallow
+  )
+
   const [amountToApprove, setAmountToApprove] =
     React.useState<BigNumber | null>(null)
 
@@ -31,23 +35,16 @@ export const ApproveToken: FC<ApproveTokenProps> = ({
 
   const submitApproval = () => {
     if (!amountToApprove) return
-    const waitingForSignature = toastManager.loading("Waiting for signature...")
+    const action = "Token approval"
+    const toastId = addToast({ type: "startTx", action })
     approval.write
       .writeAsync()
       .then((receipt) =>
-        toastManager.loading(
-          "Waiting for transaction confirmation...",
-          receipt.hash
-        )
+        replaceToast(toastId, { type: "waitTx", hash: receipt.hash, action })
       )
-      .catch((err) =>
-        toastManager.error(
-          err instanceof UserRejectedRequestError
-            ? "User rejected request"
-            : "Error broadcasting transaction"
-        )
+      .catch((error) =>
+        replaceToast(toastId, { type: "errorWrite", error, action })
       )
-      .finally(() => toast.dismiss(waitingForSignature))
   }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

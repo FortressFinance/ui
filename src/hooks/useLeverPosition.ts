@@ -11,7 +11,6 @@ import {
 } from "wagmi"
 
 import { useActiveChainId } from "@/hooks/useActiveChainId"
-import { useToast } from "@/hooks/useToast"
 import { useTokenOrNative } from "@/hooks/useTokenOrNative"
 
 import { FortressLendingPair } from "@/constant/abi"
@@ -186,7 +185,6 @@ export const useLeverPosition = ({
   onSuccess?: () => void
 }) => {
   const chainId = useActiveChainId()
-  const toastManager = useToast()
   const prepare = usePrepareContractWrite({
     chainId,
     address: pairAddress,
@@ -198,16 +196,6 @@ export const useLeverPosition = ({
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
-    onSettled: (receipt, error) =>
-      error
-        ? toastManager.error(
-            "Failed to leverage position",
-            receipt?.transactionHash
-          )
-        : toastManager.success(
-            "Position leveraged successfully",
-            receipt?.transactionHash
-          ),
     onSuccess,
   })
   return { prepare, write, wait }
@@ -225,7 +213,6 @@ export const useAddCollateral = ({
   onSuccess?: () => void
 }) => {
   const chainId = useActiveChainId()
-  const toastManager = useToast()
   const { address: borrower = "0x" } = useAccount()
   const prepare = usePrepareContractWrite({
     chainId,
@@ -238,17 +225,7 @@ export const useAddCollateral = ({
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
-    onSettled: (receipt, error) =>
-      error
-        ? toastManager.error(
-            "Failed to add collateral",
-            receipt?.transactionHash
-          )
-        : toastManager.success(
-            "Collateral added successfully",
-            receipt?.transactionHash
-          ),
-    onSuccess,
+    onSettled: () => onSuccess,
   })
   return { prepare, write, wait }
 }
@@ -267,7 +244,6 @@ export const useRemoveCollateral = ({
   onSuccess?: () => void
 }) => {
   const chainId = useActiveChainId()
-  const toastManager = useToast()
   const { address: borrower = "0x" } = useAccount()
   const prepare = usePrepareContractWrite({
     chainId,
@@ -284,17 +260,6 @@ export const useRemoveCollateral = ({
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
-    onSettled: (receipt, error) =>
-      error
-        ? toastManager.error(
-            "Failed to remove collateral",
-            receipt?.transactionHash
-          )
-        : toastManager.success(
-            "Collateral removed successfully",
-
-            receipt?.transactionHash
-          ),
     onSuccess,
   })
   return { prepare, write, wait }
@@ -312,7 +277,6 @@ export const useRepayAsset = ({
   onSuccess?: () => void
 }) => {
   const chainId = useActiveChainId()
-  const toastManager = useToast()
   const { address: borrower = "0x" } = useAccount()
   const prepare = usePrepareContractWrite({
     chainId,
@@ -325,13 +289,6 @@ export const useRepayAsset = ({
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
-    onSettled: (receipt, error) =>
-      error
-        ? toastManager.error("Failed to repay asset", receipt?.transactionHash)
-        : toastManager.success(
-            "Asset repaid successfully",
-            receipt?.transactionHash
-          ),
     onSuccess,
   })
   return { prepare, write, wait }
@@ -353,7 +310,6 @@ export const useRepayAssetWithCollateral = ({
   onSuccess?: () => void
 }) => {
   const chainId = useActiveChainId()
-  const toastManager = useToast()
   const prepare = usePrepareContractWrite({
     chainId,
     address: pairAddress,
@@ -365,16 +321,6 @@ export const useRepayAssetWithCollateral = ({
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
-    onSettled: (receipt, error) =>
-      error
-        ? toastManager.error(
-            "Failed to repay asset with collateral",
-            receipt?.transactionHash
-          )
-        : toastManager.success(
-            "Asset repaid with collateral successfully",
-            receipt?.transactionHash
-          ),
     onSuccess,
   })
   return { prepare, write, wait }

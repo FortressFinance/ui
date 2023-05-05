@@ -1,3 +1,4 @@
+import { ToastProvider } from "@radix-ui/react-toast"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { FC, PropsWithChildren } from "react"
 import { configureChains, createClient, WagmiConfig } from "wagmi"
@@ -48,9 +49,11 @@ const queryClient = new QueryClient({
 
 const AppProviders: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <WagmiConfig client={wagmiClient}>{children}</WagmiConfig>
-    </QueryClientProvider>
+    <ToastProvider>
+      <QueryClientProvider client={queryClient}>
+        <WagmiConfig client={wagmiClient}>{children}</WagmiConfig>
+      </QueryClientProvider>
+    </ToastProvider>
   )
 }
 

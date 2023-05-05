@@ -1,17 +1,18 @@
 import { ethers } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
 import { FC, useState } from "react"
-import toast from "react-hot-toast"
-import { Address, UserRejectedRequestError } from "wagmi"
+import { Address } from "wagmi"
+import { shallow } from "zustand/shallow"
 
 import {
   useAddCollateral,
   useTokenApproval,
   useTokenOrNativeBalance,
 } from "@/hooks"
-import { useToast } from "@/hooks/useToast"
 
 import Button from "@/components/Button"
+
+import { useToastStore } from "@/store"
 
 type AddCollateralProps = {
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
@@ -26,7 +27,10 @@ export const AddCollateral: FC<AddCollateralProps> = ({
   pairAddress,
   onSuccess,
 }) => {
-  const toastManager = useToast()
+  const [addToast, replaceToast] = useToastStore(
+    (state) => [state.addToast, state.replaceToast],
+    shallow
+  )
 
   const [collateralAmount, setCollateralAmount] = useState<string>("1")
   const collateralAmountBig = parseUnits(
@@ -64,25 +68,20 @@ export const AddCollateral: FC<AddCollateralProps> = ({
           isLoading={approval.write.isLoading || approval.wait.isLoading}
           disabled={approval.isSufficient || collateralAmountBig.eq(0)}
           onClick={() => {
-            const waitingForSignature = toastManager.loading(
-              "Waiting for signature..."
-            )
+            const action = "Token approval"
+            const toastId = addToast({ type: "startTx", action })
             approval.write
               .writeAsync?.()
               .then((receipt) =>
-                toastManager.loading(
-                  "Waiting for transaction confirmation...",
-                  receipt.hash
-                )
+                replaceToast(toastId, {
+                  type: "waitTx",
+                  action,
+                  hash: receipt.hash,
+                })
               )
-              .catch((err) =>
-                toastManager.error(
-                  err instanceof UserRejectedRequestError
-                    ? "User rejected request"
-                    : "Error broadcasting transaction"
-                )
+              .catch((error) =>
+                replaceToast(toastId, { type: "errorWrite", action, error })
               )
-              .finally(() => toast.dismiss(waitingForSignature))
           }}
         >
           Approve
@@ -99,25 +98,20 @@ export const AddCollateral: FC<AddCollateralProps> = ({
             addCollateral.wait.isLoading
           }
           onClick={() => {
-            const waitingForSignature = toastManager.loading(
-              "Waiting for signature..."
-            )
+            const action = "Collateral deposit"
+            const toastId = addToast({ type: "startTx", action })
             addCollateral.write
               .writeAsync?.()
               .then((receipt) =>
-                toastManager.loading(
-                  "Waiting for transaction confirmation...",
-                  receipt.hash
-                )
+                replaceToast(toastId, {
+                  type: "waitTx",
+                  action,
+                  hash: receipt.hash,
+                })
               )
-              .catch((err) =>
-                toastManager.error(
-                  err instanceof UserRejectedRequestError
-                    ? "User rejected request"
-                    : "Error broadcasting transaction"
-                )
+              .catch((error) =>
+                replaceToast(toastId, { type: "errorWrite", action, error })
               )
-              .finally(() => toast.dismiss(waitingForSignature))
           }}
         >
           Add collateral
