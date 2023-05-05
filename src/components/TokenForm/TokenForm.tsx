@@ -62,7 +62,7 @@ const TokenForm: FC<TokenFormProps> = ({
   productType,
   onSubmit,
 }) => {
-  const clientReady = useClientReady()
+  const isClientReady = useClientReady()
   const activeChainId = useActiveChainId()
   const { switchNetwork, isLoading: isSwitchingNetwork } = useSwitchNetwork()
 
@@ -108,7 +108,7 @@ const TokenForm: FC<TokenFormProps> = ({
   })
 
   const showMaxBtn =
-    clientReady &&
+    isClientReady &&
     inputTokenBalanceOrShare?.value?.gt(0) &&
     inputTokenBalanceOrShare?.formatted !== amountIn
 
@@ -190,7 +190,7 @@ const TokenForm: FC<TokenFormProps> = ({
         <div
           className={clsxm(
             "peer relative z-[2] col-start-1 row-start-2 block w-full overflow-hidden text-ellipsis bg-transparent px-4 pb-4 pt-1 text-xl text-pink-100/60 placeholder-pink-100/60 focus:outline-none",
-            { "animate-pulse": clientReady && isLoadingPreview }
+            { "animate-pulse": isClientReady && isLoadingPreview }
           )}
         >
           <span>
@@ -245,7 +245,7 @@ const TokenForm: FC<TokenFormProps> = ({
         />
 
         {/* Submit button (or Connect Wallet if not connected) */}
-        {clientReady && isConnected ? (
+        {isClientReady && isConnected ? (
           !!chainId && activeChainId !== chainId ? (
             <Button
               className="col-span-full mt-3 w-full"

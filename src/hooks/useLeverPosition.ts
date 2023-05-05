@@ -232,13 +232,11 @@ export const useAddCollateral = ({
 
 export const useRemoveCollateral = ({
   collateralAmount = BigNumber.from(0),
-  collateralAssetAddress = "0x",
   enabled = true,
   pairAddress,
   onSuccess,
 }: {
   collateralAmount?: BigNumber
-  collateralAssetAddress?: Address
   enabled?: boolean
   pairAddress: Address
   onSuccess?: () => void
@@ -251,11 +249,7 @@ export const useRemoveCollateral = ({
     abi: FortressLendingPair,
     functionName: "removeCollateral",
     args: [collateralAmount, borrower],
-    enabled:
-      collateralAmount.gt(0) &&
-      collateralAssetAddress !== "0x" &&
-      borrower !== "0x" &&
-      enabled,
+    enabled: collateralAmount.gt(0) && borrower !== "0x" && enabled,
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({

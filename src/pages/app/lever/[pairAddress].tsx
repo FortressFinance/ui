@@ -19,13 +19,13 @@ import { AssetLogo } from "@/components/Asset"
 import Layout from "@/components/Layout"
 import { LendingPairStats } from "@/components/LendingPair"
 import {
-  AddCollateral,
   CreateLeveredPosition,
   LeverPairs,
   LeverPositionUserStats,
-  RemoveCollateral,
+  RemoveCollateralFromLeverPosition,
   RepayLeverPosition,
 } from "@/components/LeverPosition"
+import { AddCollateralToLeverPosition } from "@/components/LeverPosition/AddCollateralToLeverPosition"
 import Seo from "@/components/Seo"
 
 import { LendingPair, lendingPairs } from "@/constant"
@@ -200,21 +200,26 @@ const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
             pairAddress={pairAddress}
           />
         </Tabs.Content>
-        <Tabs.Content value="addCollateral">
-          <AddCollateral
-            collateralAssetBalance={collateralAssetBalance}
+        <Tabs.Content className="pt-3 lg:pt-6" value="addCollateral">
+          <AddCollateralToLeverPosition
+            chainId={chainId}
             collateralAssetAddress={lendingPair.data?.collateralContract}
-            pairAddress={pairAddress}
+            collateralAssetBalance={collateralAssetBalance}
+            collateralAmountSignificant={collateralAmountSignificant}
+            setAdjustedCollateralAmount={setAdjustedCollateralAmount}
             onSuccess={onSuccess}
+            pairAddress={pairAddress}
           />
         </Tabs.Content>
-        <Tabs.Content value="removeCollateral">
-          <RemoveCollateral
-            collateralAmountSignificant={collateralAmountSignificant}
-            collateralAssetBalance={collateralAssetBalance}
+        <Tabs.Content className="pt-3 lg:pt-6" value="removeCollateral">
+          <RemoveCollateralFromLeverPosition
+            chainId={chainId}
             collateralAssetAddress={lendingPair.data?.collateralContract}
-            pairAddress={pairAddress}
+            collateralAssetBalance={collateralAssetBalance}
+            collateralAmountSignificant={collateralAmountSignificant}
+            setAdjustedCollateralAmount={setAdjustedCollateralAmount}
             onSuccess={onSuccess}
+            pairAddress={pairAddress}
           />
         </Tabs.Content>
       </Tabs.Root>
