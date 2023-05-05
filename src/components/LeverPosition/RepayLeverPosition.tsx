@@ -78,7 +78,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
 
   const form = useForm<RepayLeverPositionFormValues>({
     values: {
-      amount: "0",
+      amount: "",
       asset: borrowAssetAddress,
     },
     mode: "all",
@@ -139,7 +139,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   const [isDebouncing, setIsDebouncing] = useState(false)
   useDebounce(
     () => {
-      if (amount === "") {
+      if (!Number(amount)) {
         setRepaymentAmount(BigNumber.from(0))
         setAdjustedBorrowAmount(undefined)
         setAdjustedCollateralAmount(undefined)
