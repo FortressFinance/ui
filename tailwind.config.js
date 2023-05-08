@@ -14,6 +14,9 @@ module.exports = {
         sans: ["var(--font-inter)", ...fontFamily.sans],
         display: ["var(--font-vt323)", ...fontFamily.sans],
       },
+      fontSize: {
+        "2xs": "0.625rem",
+      },
       transitionProperty: {
         height: "height",
       },

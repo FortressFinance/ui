@@ -35,8 +35,6 @@ export const calculateMaxLeverage = ({
     .div(BigNumber.from(1).mul(ltvPrecision).sub(maxLTV))
     .toNumber()
 
-export const leverageMultiplier = (leverage = 1) => leverage.toFixed(2) + "x"
-
 export const assetToCollateral = (
   amount = BigNumber.from(0),
   exchangeRate = BigNumber.from(1),
@@ -51,3 +49,18 @@ export const collateralToAsset = (
 
 export const addSlippage = (amount = BigNumber.from(0), slippage: number) =>
   amount.add(amount.div(1 / slippage))
+
+export const calculateUtilizationRate = ({
+  totalAssets = BigNumber.from(1),
+  totalBorrowAmount = BigNumber.from(0),
+  utilPrecision = BigNumber.from(1),
+}) =>
+  totalBorrowAmount.mul(utilPrecision).div(totalAssets).toNumber() /
+  utilPrecision.toNumber()
+
+export const calculateBorrowAPY = ({
+  interestRatePerSecond = BigNumber.from(0),
+}) => (1 + interestRatePerSecond.toNumber() / 1e18) ** (365 * 24 * 60 * 60) - 1
+
+export const calculateLendAPY = ({ borrowAPY = 0, utilizationRate = 0 }) =>
+  borrowAPY * utilizationRate

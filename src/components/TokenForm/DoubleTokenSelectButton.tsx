@@ -10,12 +10,14 @@ import { doubleTokens } from "@/constant/tokens"
 
 type DoubleTokenSelectButtonProps = {
   canChange?: boolean
+  chainId?: number
   tokenAddress: Address
   onClick: MouseEventHandler<HTMLButtonElement>
 }
 
 const DoubleTokenSelectButton: FC<DoubleTokenSelectButtonProps> = ({
   canChange = false,
+  chainId,
   tokenAddress,
   onClick,
 }) => {
@@ -30,20 +32,22 @@ const DoubleTokenSelectButton: FC<DoubleTokenSelectButtonProps> = ({
     >
       <AssetDoubleLogo
         className="h-6 w-6"
+        chainId={chainId}
         mainTokenAddress={mainToken}
         secondTokenAddress={secondToken}
       />
-      <AssetSymbol address={tokenAddress} />
+      <AssetSymbol address={tokenAddress} chainId={chainId} />
       <FortIconChevronDown className="h-2.5 w-2.5 stroke-black" />
     </button>
   ) : (
     <div className="flex h-8 items-center space-x-1 justify-self-end rounded bg-white pl-1.5 pr-2.5 text-xs font-medium text-black">
       <AssetDoubleLogo
         className="h-6 w-6"
+        chainId={chainId}
         mainTokenAddress={mainToken}
         secondTokenAddress={secondToken}
       />
-      <AssetSymbol address={tokenAddress} />
+      <AssetSymbol address={tokenAddress} chainId={chainId} />
     </div>
   )
 }

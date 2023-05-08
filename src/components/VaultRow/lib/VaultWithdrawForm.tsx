@@ -1,27 +1,25 @@
 import { BigNumber } from "ethers"
 import { FC, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
-import toast from "react-hot-toast"
 import {
   useAccount,
   useContractWrite,
   usePrepareContractWrite,
-  UserRejectedRequestError,
   useWaitForTransaction,
 } from "wagmi"
+import { shallow } from "zustand/shallow"
 
 import { fortLog } from "@/lib/fortLog"
 import { parseCurrencyUnits } from "@/lib/helpers"
 import {
   useActiveChainId,
+  useDebouncedValue,
   useInvalidateHoldingsVaults,
   usePreviewRedeem,
   useTokenOrNative,
   useTokenOrNativeBalance,
 } from "@/hooks"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
-import useDebounce from "@/hooks/useDebounce"
-import { useToast } from "@/hooks/useToast"
 
 import {
   ConfirmTransactionModal,
@@ -30,7 +28,7 @@ import {
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 import { VaultDepositWithdrawProps } from "@/components/VaultRow/lib"
 
-import { useGlobalStore } from "@/store"
+import { useGlobalStore, useToastStore } from "@/store"
 
 export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
   defaultInputToken,
@@ -38,13 +36,17 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
   underlyingAssets,
   ...props
 }) => {
+  const [addToast, replaceToast] = useToastStore(
+    (state) => [state.addToast, state.replaceToast],
+    shallow
+  )
+
   const [showConfirmWithdrawModal, setShowConfirmWithdraw] = useState(false)
   const [showInvalidMinAmountModal, setShowInvalidMinAmountModal] =
     useState(false)
 
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
-  const toastManager = useToast()
   const expertMode = useGlobalStore((store) => store.expertMode)
 
   const invalidateHoldingsVaults = useInvalidateHoldingsVaults()
@@ -62,7 +64,9 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
 
   // Watch form values
   const amountIn = form.watch("amountIn")
-  const amountInDebounced = useDebounce(amountIn)
+  const [amountInDebounced, isDebounced] = useDebouncedValue(amountIn, 500, [
+    amountIn,
+  ])
   const outputTokenAddress = form.watch("outputToken")
   // Calculate + fetch information on selected tokens
   const outputIsLp = outputTokenAddress === defaultOutputToken
@@ -117,16 +121,6 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
   const redeem = useContractWrite(prepareRedeem.config)
   const waitRedeem = useWaitForTransaction({
     hash: redeem.data?.hash,
-    onSettled: (receipt, error) =>
-      error
-        ? toastManager.error(
-            "Withdraw transaction failed.",
-            receipt?.transactionHash
-          )
-        : toastManager.success(
-            "Withdraw transaction done successfully.",
-            receipt?.transactionHash
-          ),
     onSuccess: () => onWithdrawSuccess(),
   })
 
@@ -146,16 +140,6 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
   const redeemUnderlying = useContractWrite(prepareRedeemUnderlying.config)
   const waitRedeemUnderlying = useWaitForTransaction({
     hash: redeemUnderlying.data?.hash,
-    onSettled: (receipt, error) =>
-      error
-        ? toastManager.error(
-            "Withdraw transaction failed.",
-            receipt?.transactionHash
-          )
-        : toastManager.success(
-            "Withdraw transaction done successfully.",
-            receipt?.transactionHash
-          ),
     onSuccess: () => onWithdrawSuccess(),
   })
 
@@ -172,48 +156,32 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
   const onConfirmTransactionDetails = () => {
     if (enableRedeem) {
       fortLog("Redeeming", amountInDebounced)
-      const redeemWaitingForSigner = toastManager.loading(
-        "Waiting for signature..."
-      )
+      const action = "Vault withdrawal"
+      const toastId = addToast({ type: "startTx", action })
       redeem
         .writeAsync?.()
         .then((receipt) => {
+          // this fires after the transaction has been broadcast successfully
           setShowConfirmWithdraw(false)
-          toastManager.loading(
-            "Waiting for transaction confirmation...",
-            receipt.hash
-          )
+          replaceToast(toastId, { type: "waitTx", hash: receipt.hash, action })
         })
-        .catch((err) =>
-          toastManager.error(
-            err instanceof UserRejectedRequestError
-              ? "User rejected request"
-              : "Error broadcasting transaction"
-          )
+        .catch((error) =>
+          replaceToast(toastId, { type: "errorWrite", error, action })
         )
-        .finally(() => toast.dismiss(redeemWaitingForSigner))
     } else if (enableRedeemUnderlying) {
       fortLog("Redeeming underlying tokens", amountInDebounced)
-      const redeemUnderlyingWaitingForSigner = toastManager.loading(
-        "Waiting for signature..."
-      )
+      const action = "Vault withdrawal"
+      const toastId = addToast({ type: "startTx", action })
       redeemUnderlying
         .writeAsync?.()
         .then((receipt) => {
+          // this fires after the transaction has been broadcast successfully
           setShowConfirmWithdraw(false)
-          toastManager.loading(
-            "Waiting for transaction confirmation...",
-            receipt.hash
-          )
+          replaceToast(toastId, { type: "waitTx", hash: receipt.hash, action })
         })
-        .catch((err) =>
-          toastManager.error(
-            err instanceof UserRejectedRequestError
-              ? "User rejected request"
-              : "Error broadcasting transaction"
-          )
+        .catch((error) =>
+          replaceToast(toastId, { type: "errorWrite", error, action })
         )
-        .finally(() => toast.dismiss(redeemUnderlyingWaitingForSigner))
     }
   }
 
@@ -225,7 +193,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
       <FormProvider {...form}>
         <TokenForm
           isWithdraw
-          isDebouncing={amountIn !== amountInDebounced}
+          isDebouncing={!!amountIn && !isDebounced}
           isError={prepareRedeem.isError || prepareRedeemUnderlying.isError}
           isLoadingPreview={previewRedeem.isFetching}
           isLoadingTransaction={

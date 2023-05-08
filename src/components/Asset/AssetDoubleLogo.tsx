@@ -9,12 +9,14 @@ import Spinner from "@/components/Spinner"
 
 export type AssetDoubleLogoProps = {
   className?: string
+  chainId?: number
   mainTokenAddress?: Address
   secondTokenAddress?: Address
 }
 
 export const AssetDoubleLogo: FC<AssetDoubleLogoProps> = ({
   className,
+  chainId,
   mainTokenAddress,
   secondTokenAddress,
 }) => {
@@ -25,10 +27,14 @@ export const AssetDoubleLogo: FC<AssetDoubleLogoProps> = ({
       {isClientReady ? (
         <>
           <div className="relative flex flex-row">
-            <AssetLogo tokenAddress={mainTokenAddress} />
+            <AssetLogo tokenAddress={mainTokenAddress} chainId={chainId} />
           </div>
           <div className="absolute -right-1 bottom-0 h-1/2 w-1/2">
-            <AssetLogo tokenAddress={secondTokenAddress} className="!p-[1px]" />
+            <AssetLogo
+              tokenAddress={secondTokenAddress}
+              className="!p-[1px]"
+              chainId={chainId}
+            />
           </div>
         </>
       ) : (

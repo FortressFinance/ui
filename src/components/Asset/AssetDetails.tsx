@@ -12,12 +12,18 @@ import Skeleton from "@/components/Skeleton"
 
 export type AssetDetailsProps = {
   address: Address | undefined
+  chainId?: number
   isLoading?: boolean
 }
 
-export const AssetSymbol: FC<AssetDetailsProps> = ({ address, isLoading }) => {
+export const AssetSymbol: FC<AssetDetailsProps> = ({
+  address,
+  chainId,
+  isLoading,
+}) => {
   const { data: token, isLoading: isLoadingToken } = useTokenOrNative({
     address,
+    chainId,
   })
   return (
     <Skeleton isLoading={isLoading || isLoadingToken}>
@@ -26,9 +32,14 @@ export const AssetSymbol: FC<AssetDetailsProps> = ({ address, isLoading }) => {
   )
 }
 
-export const AssetName: FC<AssetDetailsProps> = ({ address, isLoading }) => {
+export const AssetName: FC<AssetDetailsProps> = ({
+  address,
+  chainId,
+  isLoading,
+}) => {
   const { data: token, isLoading: isLoadingToken } = useTokenOrNative({
     address,
+    chainId,
   })
   const re = /(\(arb1\))/gi
   const tokenName = token?.name ?? "Loading..."
@@ -47,9 +58,13 @@ type AssetBalanceProps = AssetDetailsProps & {
 export const AssetBalance: FC<AssetBalanceProps> = ({
   address,
   abbreviate,
+  chainId,
 }) => {
   const { isConnected } = useAccount()
-  const { data: balance, isLoading } = useTokenOrNativeBalance({ address })
+  const { data: balance, isLoading } = useTokenOrNativeBalance({
+    address,
+    chainId,
+  })
   return (
     <Skeleton isLoading={isLoading}>
       {isConnected
@@ -71,8 +86,12 @@ export const AssetBalanceUsd: FC<AssetBalanceUsdProps> = ({
   asset,
   address,
   abbreviate,
+  chainId,
 }) => {
-  const { data: balance, isLoading } = useTokenOrNativeBalance({ address })
+  const { data: balance, isLoading } = useTokenOrNativeBalance({
+    address,
+    chainId,
+  })
   const { data: tokenPriceUsd, isLoading: isLoadingTokenPriceUsd } =
     useTokenPriceUsd({ asset })
   return (
