@@ -369,6 +369,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
         isLoading={previewDeposit.isFetching}
         isPreparing={prepareDeposit.isFetching}
         isWaitingForSignature={deposit.isLoading || depositUnderlying.isLoading}
+        productType={props.productType}
         type="deposit"
       />
 

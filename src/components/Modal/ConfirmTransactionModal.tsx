@@ -4,9 +4,12 @@ import { Address } from "wagmi"
 
 import clsxm from "@/lib/clsxm"
 import { formatCurrencyUnits, localeNumber } from "@/lib/helpers"
+import { ProductType } from "@/lib/types"
 import { useTokenOrNative } from "@/hooks"
+import { useDoubleTokenConfig } from "@/hooks/useDoubleTokenConfig"
 
 import { AssetLogo, AssetSymbol } from "@/components/Asset"
+import { AssetDoubleLogo } from "@/components/Asset/AssetDoubleLogo"
 import Button from "@/components/Button"
 import { ModalBaseProps } from "@/components/Modal/lib/ModalBase"
 import PurpleModal, {
@@ -28,6 +31,7 @@ type ConfirmTransactionModalProps = ModalBaseProps & {
   isLoading: boolean
   isPreparing: boolean
   isWaitingForSignature: boolean
+  productType?: ProductType
   type: "deposit" | "withdraw"
 }
 
@@ -41,6 +45,7 @@ export const ConfirmTransactionModal: FC<ConfirmTransactionModalProps> = ({
   isLoading,
   isPreparing,
   isWaitingForSignature,
+  productType,
   type,
   ...modalProps
 }) => {
@@ -60,6 +65,14 @@ export const ConfirmTransactionModal: FC<ConfirmTransactionModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalProps.isOpen])
 
+  const doubleTokens = useDoubleTokenConfig()
+  const inputTokens = doubleTokens?.[inputTokenAddress]
+  const mainInputToken = inputTokens?.[0]
+  const secondInputToken = inputTokens?.[1]
+  const outputTokens = doubleTokens?.[outputTokenAddress]
+  const mainOutputToken = outputTokens?.[0]
+  const secondOutputToken = outputTokens?.[1]
+
   return (
     <PurpleModal className="max-w-sm" {...modalProps}>
       <PurpleModalHeader className="flex justify-between space-x-4">
@@ -76,7 +89,18 @@ export const ConfirmTransactionModal: FC<ConfirmTransactionModalProps> = ({
         <div className="space-y-2">
           <div className="overflow-hidden rounded border border-pink-700 bg-pink-800/50">
             <div className="col-span-full mb-2 flex items-center justify-start gap-2 px-3 pt-3 text-xs text-pink-200">
-              <AssetLogo className="h-5 w-5" tokenAddress={inputTokenAddress} />
+              {productType === "concentrator" && type === "withdraw" ? (
+                <AssetDoubleLogo
+                  className="h-5 w-5"
+                  mainTokenAddress={mainInputToken}
+                  secondTokenAddress={secondInputToken}
+                />
+              ) : (
+                <AssetLogo
+                  className="h-5 w-5"
+                  tokenAddress={inputTokenAddress}
+                />
+              )}
               <span>
                 {type === "deposit" ? "Deposit" : "Redeem"} /{" "}
                 <strong>
@@ -93,10 +117,18 @@ export const ConfirmTransactionModal: FC<ConfirmTransactionModalProps> = ({
           </div>
           <div className="overflow-hidden rounded border border-pink-700 bg-pink-800/50">
             <div className="col-span-full mb-2 flex items-center justify-start gap-2 px-3 pt-3 text-xs text-pink-200">
-              <AssetLogo
-                className="h-5 w-5"
-                tokenAddress={outputTokenAddress}
-              />
+              {productType === "concentrator" && type === "deposit" ? (
+                <AssetDoubleLogo
+                  className="h-5 w-5"
+                  mainTokenAddress={mainOutputToken}
+                  secondTokenAddress={secondOutputToken}
+                />
+              ) : (
+                <AssetLogo
+                  className="h-5 w-5"
+                  tokenAddress={outputTokenAddress}
+                />
+              )}
               <span>
                 Receive /{" "}
                 <strong>
