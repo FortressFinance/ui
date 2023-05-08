@@ -1,7 +1,6 @@
 import Link, { LinkProps } from "next/link"
 import {
-  ButtonHTMLAttributes,
-  DetailedHTMLProps,
+  ComponentPropsWithoutRef,
   FC,
   forwardRef,
   PropsWithChildren,
@@ -14,11 +13,7 @@ import Spinner from "@/components/Spinner"
 type ButtonSize = "base" | "large" | "small"
 type ButtonVariant = "base" | "plain" | "plain-negative" | "outline"
 
-export interface ButtonProps
-  extends DetailedHTMLProps<
-    ButtonHTMLAttributes<HTMLButtonElement>,
-    HTMLButtonElement
-  > {
+export interface ButtonProps extends ComponentPropsWithoutRef<"button"> {
   isLoading?: boolean
   size?: ButtonSize
   variant?: ButtonVariant

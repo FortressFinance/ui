@@ -1,7 +1,6 @@
 import { FC } from "react"
 import { FormProvider, useForm } from "react-hook-form"
-import toast from "react-hot-toast"
-import { UserRejectedRequestError } from "wagmi"
+import { shallow } from "zustand/shallow"
 
 import { parseCurrencyUnits } from "@/lib/helpers"
 import {
@@ -14,9 +13,10 @@ import {
   useTokenApproval,
   useTokenOrNative,
 } from "@/hooks"
-import { useToast } from "@/hooks/useToast"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
+
+import { useToastStore } from "@/store"
 
 import { LendingPair } from "@/constant"
 
@@ -24,7 +24,10 @@ export const LendingPairDepositForm: FC<LendingPair> = ({
   pairAddress,
   chainId,
 }) => {
-  const toastManager = useToast()
+  const [addToast, replaceToast] = useToastStore(
+    (state) => [state.addToast, state.replaceToast],
+    shallow
+  )
   const lendingPair = useLendingPair({ pairAddress, chainId })
   const asset = useTokenOrNative({
     address: lendingPair.data?.assetContract,
@@ -83,43 +86,36 @@ export const LendingPairDepositForm: FC<LendingPair> = ({
         isLoadingTransaction={approval.wait.isLoading || deposit.wait.isLoading}
         previewResultWei={preview.data?.toString()}
         onSubmit={() => {
-          const waitingForSignature = toastManager.loading(
-            "Waiting for signature..."
-          )
           if (approval.isSufficient) {
+            const action = "Lending asset deposit"
+            const toastId = addToast({ type: "startTx", action })
             deposit.write
               .writeAsync?.()
               .then((receipt) =>
-                toastManager.loading(
-                  "Waiting for transaction confirmation...",
-                  receipt.hash
-                )
+                replaceToast(toastId, {
+                  type: "waitTx",
+                  hash: receipt.hash,
+                  action,
+                })
               )
-              .catch((err) =>
-                toastManager.error(
-                  err instanceof UserRejectedRequestError
-                    ? "User rejected request"
-                    : "Error broadcasting transaction"
-                )
+              .catch((error) =>
+                replaceToast(toastId, { type: "errorWrite", error, action })
               )
-              .finally(() => toast.dismiss(waitingForSignature))
           } else {
+            const action = "Token approval"
+            const toastId = addToast({ type: "startTx", action })
             approval.write
-              .writeAsync?.()
+              .writeAsync()
               .then((receipt) =>
-                toastManager.loading(
-                  "Waiting for transaction confirmation...",
-                  receipt.hash
-                )
+                replaceToast(toastId, {
+                  type: "waitTx",
+                  hash: receipt.hash,
+                  action,
+                })
               )
-              .catch((err) =>
-                toastManager.error(
-                  err instanceof UserRejectedRequestError
-                    ? "User rejected request"
-                    : "Error broadcasting transaction"
-                )
+              .catch((error) =>
+                replaceToast(toastId, { type: "errorWrite", error, action })
               )
-              .finally(() => toast.dismiss(waitingForSignature))
           }
         }}
       />
@@ -131,7 +127,10 @@ export const LendingPairRedeem: FC<LendingPair> = ({
   pairAddress,
   chainId,
 }) => {
-  const toastManager = useToast()
+  const [addToast, replaceToast] = useToastStore(
+    (state) => [state.addToast, state.replaceToast],
+    shallow
+  )
   const lendingPair = useLendingPair({ pairAddress, chainId })
   const share = useTokenOrNative({ address: pairAddress, chainId })
 
@@ -179,25 +178,20 @@ export const LendingPairRedeem: FC<LendingPair> = ({
         isLoadingTransaction={redeem.wait.isLoading}
         previewResultWei={preview.data?.toString()}
         onSubmit={() => {
-          const waitingForSignature = toastManager.loading(
-            "Waiting for signature..."
-          )
+          const action = "Lending asset withdrawal"
+          const toastId = addToast({ type: "startTx", action })
           redeem.write
             .writeAsync?.()
             .then((receipt) =>
-              toastManager.loading(
-                "Waiting for transaction confirmation...",
-                receipt.hash
-              )
+              replaceToast(toastId, {
+                type: "waitTx",
+                hash: receipt.hash,
+                action,
+              })
             )
-            .catch((err) =>
-              toastManager.error(
-                err instanceof UserRejectedRequestError
-                  ? "User rejected request"
-                  : "Error broadcasting transaction"
-              )
+            .catch((error) =>
+              replaceToast(toastId, { type: "errorWrite", error, action })
             )
-            .finally(() => toast.dismiss(waitingForSignature))
         }}
       />
     </FormProvider>

@@ -9,7 +9,7 @@ type TokenSelectButtonProps = {
   canChange?: boolean
   chainId?: number
   tokenAddress: Address
-  onClick: MouseEventHandler<HTMLButtonElement>
+  onClick?: MouseEventHandler<HTMLButtonElement>
 }
 
 const TokenSelectButton: FC<TokenSelectButtonProps> = ({

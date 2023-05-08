@@ -1,16 +1,11 @@
 import {
-  DetailedHTMLProps,
+  ComponentPropsWithoutRef,
   FC,
   forwardRef,
-  HTMLAttributes,
   PropsWithChildren,
 } from "react"
 
 import clsxm from "@/lib/clsxm"
-
-export const TabList = forwardRef<HTMLDivElement>((props, ref) => (
-  <div className="flex gap-4 max-md:grow" ref={ref} {...props} />
-))
 
 export const TabListGroup: FC<PropsWithChildren<{ className?: string }>> = ({
   className,
@@ -28,9 +23,7 @@ export const TabListGroup: FC<PropsWithChildren<{ className?: string }>> = ({
 
 export const TabButton = forwardRef<
   HTMLButtonElement,
-  DetailedHTMLProps<HTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
-    disabled?: boolean
-  }
+  ComponentPropsWithoutRef<"button"> & { disabled?: boolean }
 >(({ children, className, ...props }, ref) => {
   return (
     <button
@@ -48,7 +41,7 @@ export const TabButton = forwardRef<
 
 export const TabContent = forwardRef<
   HTMLDivElement,
-  DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+  ComponentPropsWithoutRef<"div">
 >((props, ref) => (
   <div
     className="ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-x-0 ui-state-inactive:top-0 ui-state-inactive:animate-scale-out"

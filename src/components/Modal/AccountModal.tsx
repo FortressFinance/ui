@@ -96,11 +96,11 @@ export const AccountModal: FC = () => {
           {chain?.blockExplorers?.default.url && address && (
             <Link
               href={chain.blockExplorers.default.url + "/address/" + address}
-              className="flex items-center"
+              className="flex items-center gap-0.5"
               target="_blank"
             >
               <FortIconExternalLinkAlt className="mr-2 inline h-4 w-4" />
-              <span>View on explorer</span>
+              <span>View on {chain?.blockExplorers.default.name}</span>
             </Link>
           )}
         </div>

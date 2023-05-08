@@ -9,7 +9,6 @@ import {
 } from "wagmi"
 
 import { useActiveChainId } from "@/hooks/useActiveChainId"
-import { useToast } from "@/hooks/useToast"
 
 import { ethTokenAddress } from "@/constant/addresses"
 
@@ -26,7 +25,6 @@ export const useTokenApproval = ({
 }) => {
   const isNativeToken = token === ethTokenAddress
   const chainId = useActiveChainId()
-  const toastManager = useToast()
   const { address: owner = "0x" } = useAccount()
   const allowance = useContractRead({
     chainId,
@@ -51,16 +49,6 @@ export const useTokenApproval = ({
   })
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
-    onSettled: (receipt, error) =>
-      error
-        ? toastManager.error(
-            "Approve transaction failed.",
-            receipt?.transactionHash
-          )
-        : toastManager.success(
-            "Approve transaction done successfully.",
-            receipt?.transactionHash
-          ),
     onSuccess: () => allowance.refetch(),
   })
   return {
