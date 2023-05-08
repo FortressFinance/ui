@@ -11,13 +11,13 @@ export function useApiConcentratorUnderlyingAssets({
 }) {
   const apiQuery = useApiConcentratorStaticData()
   const targetAssetToUnderlying: Record<Address, Address[]> = {} // target to underlying
-  apiQuery.data?.map((data) => {
+  apiQuery.data?.forEach((data) => {
     const curTargetAsset = data?.target_asset?.address
     const curPrimaryAsset = data.concentrator.primaryAsset?.address
     if (
-      targetAsset !== undefined &&
+      !!targetAsset &&
+      !!primaryAsset &&
       targetAsset.toLocaleUpperCase() === curTargetAsset.toLocaleUpperCase() &&
-      primaryAsset !== undefined &&
       primaryAsset.toLocaleLowerCase() === curPrimaryAsset.toLocaleLowerCase()
     ) {
       targetAssetToUnderlying[data?.target_asset?.address] =

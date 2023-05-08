@@ -18,11 +18,9 @@ import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import {
   useActiveChainId,
   useDebouncedValue,
-  useInvalidateHoldingsVaults,
   usePreviewDeposit,
   useTokenApproval,
   useTokenOrNative,
-  useTokenOrNativeBalance,
 } from "@/hooks"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
 
@@ -60,8 +58,6 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
   const chainId = useActiveChainId()
   const expertMode = useGlobalStore((store) => store.expertMode)
 
-  const invalidateHoldingsVaults = useInvalidateHoldingsVaults()
-
   // Configure form
   const form = useForm<TokenFormValues>({
     defaultValues: {
@@ -87,13 +83,6 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     address: inputTokenAddress,
   })
 
-  const inputTokenBalance = useTokenOrNativeBalance({
-    address: inputTokenAddress,
-  })
-  const outputTokenBalance = useTokenOrNativeBalance({
-    address: defaultOutputToken,
-  })
-
   // preview redeem currently returns a value with slippage accounted for; no math is required here
   const value = parseCurrencyUnits({
     amountFormatted: amountInDebounced,
@@ -110,14 +99,6 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     enabled: !!userAddress && !inputIsEth,
   })
   const requiresApproval = inputIsEth ? false : allowance.data?.lt(value)
-
-  // TODO: We still need to track transaction confirmations in here to call this function
-  const onDepositSuccess = () => {
-    form.resetField("amountIn")
-    invalidateHoldingsVaults()
-    inputTokenBalance.refetch()
-    outputTokenBalance.refetch()
-  }
 
   // Configure approve method
   const approval = useTokenApproval({
@@ -156,7 +137,6 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
   const deposit = useContractWrite(prepareDeposit.config)
   useWaitForTransaction({
     hash: deposit.data?.hash,
-    onSuccess: () => onDepositSuccess(),
   })
 
   // DEBUG HERE
@@ -200,7 +180,6 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
   const depositUnderlying = useContractWrite(prepareDepositUnderlying.config)
   useWaitForTransaction({
     hash: depositUnderlying.data?.hash,
-    onSuccess: () => onDepositSuccess(),
   })
   // Form submit handler
   const onSubmitForm: SubmitHandler<TokenFormValues> = async () => {

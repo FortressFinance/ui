@@ -66,12 +66,10 @@ export const ConfirmTransactionModal: FC<ConfirmTransactionModalProps> = ({
   }, [modalProps.isOpen])
 
   const doubleTokens = useDoubleTokenConfig()
-  const inputTokens = doubleTokens?.[inputTokenAddress]
-  const mainInputToken = inputTokens?.[0]
-  const secondInputToken = inputTokens?.[1]
-  const outputTokens = doubleTokens?.[outputTokenAddress]
-  const mainOutputToken = outputTokens?.[0]
-  const secondOutputToken = outputTokens?.[1]
+  const [mainInputToken, secondInputToken] =
+    doubleTokens?.[inputTokenAddress] ?? []
+  const [mainOutputToken, secondOutputToken] =
+    doubleTokens?.[outputTokenAddress] ?? []
 
   return (
     <PurpleModal className="max-w-sm" {...modalProps}>
