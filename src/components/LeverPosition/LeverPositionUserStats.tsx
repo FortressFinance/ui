@@ -146,8 +146,12 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
                     <GradientText>
                       {ltvPercentage(
                         calculateLTV({
-                          borrowedAmount: adjustedBorrowAmount,
-                          collateralAmount: adjustedCollateralAmount,
+                          borrowedAmount:
+                            adjustedBorrowAmount ??
+                            pairLeverParams.data.borrowedAmount,
+                          collateralAmount:
+                            adjustedCollateralAmount ??
+                            pairLeverParams.data.collateralAmount,
                           exchangeRate: pairLeverParams.data.exchangeRate,
                           exchangePrecision:
                             pairLeverParams.data.constants?.exchangePrecision,

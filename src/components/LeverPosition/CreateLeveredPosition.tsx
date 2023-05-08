@@ -2,9 +2,9 @@ import * as Slider from "@radix-ui/react-slider"
 import { BigNumber, ethers } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
-import toast from "react-hot-toast"
 import { useDebounce } from "react-use"
-import { Address, UserRejectedRequestError } from "wagmi"
+import { Address } from "wagmi"
+import { shallow } from "zustand/shallow"
 
 import { calculateMaxLeverage } from "@/lib"
 import {
@@ -12,9 +12,10 @@ import {
   useTokenApproval,
   useTokenOrNativeBalance,
 } from "@/hooks"
-import { useToast } from "@/hooks/useToast"
 
 import Button from "@/components/Button"
+
+import { useToastStore } from "@/store"
 
 type CreateLeveredPositionProps = {
   borrowAssetAddress?: Address
@@ -41,7 +42,10 @@ export const CreateLeveredPosition: FC<CreateLeveredPositionProps> = ({
   setAdjustedCollateralAmount,
   onSuccess,
 }) => {
-  const toastManager = useToast()
+  const [addToast, replaceToast] = useToastStore(
+    (state) => [state.addToast, state.replaceToast],
+    shallow
+  )
 
   const maxLeverage = calculateMaxLeverage({
     maxLTV,
@@ -125,25 +129,20 @@ export const CreateLeveredPosition: FC<CreateLeveredPositionProps> = ({
           isLoading={approval.write.isLoading || approval.wait.isLoading}
           disabled={approval.isSufficient || leverAmount === 1 || !isDebounced}
           onClick={() => {
-            const waitingForSignature = toastManager.loading(
-              "Waiting for signature..."
-            )
+            const action = "Token approval"
+            const toastId = addToast({ type: "startTx", action })
             approval.write
               .writeAsync?.()
               .then((receipt) =>
-                toastManager.loading(
-                  "Waiting for transaction confirmation...",
-                  receipt.hash
-                )
+                replaceToast(toastId, {
+                  type: "waitTx",
+                  action,
+                  hash: receipt.hash,
+                })
               )
-              .catch((err) =>
-                toastManager.error(
-                  err instanceof UserRejectedRequestError
-                    ? "User rejected request"
-                    : "Error broadcasting transaction"
-                )
+              .catch((error) =>
+                replaceToast(toastId, { type: "errorWrite", action, error })
               )
-              .finally(() => toast.dismiss(waitingForSignature))
           }}
         >
           Approve
@@ -157,25 +156,20 @@ export const CreateLeveredPosition: FC<CreateLeveredPositionProps> = ({
           }
           disabled={!approval.isSufficient || leverAmount === 1 || !isDebounced}
           onClick={() => {
-            const waitingForSignature = toastManager.loading(
-              "Waiting for signature..."
-            )
+            const action = "Creating levered position"
+            const toastId = addToast({ type: "startTx", action })
             leverPosition.write
               .writeAsync?.()
               .then((receipt) =>
-                toastManager.loading(
-                  "Waiting for transaction confirmation...",
-                  receipt.hash
-                )
+                replaceToast(toastId, {
+                  type: "waitTx",
+                  action,
+                  hash: receipt.hash,
+                })
               )
-              .catch((err) =>
-                toastManager.error(
-                  err instanceof UserRejectedRequestError
-                    ? "User rejected request"
-                    : "Error broadcasting transaction"
-                )
+              .catch((error) =>
+                replaceToast(toastId, { type: "errorWrite", action, error })
               )
-              .finally(() => toast.dismiss(waitingForSignature))
           }}
         >
           Lever

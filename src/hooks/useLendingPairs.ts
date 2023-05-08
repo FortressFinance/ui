@@ -10,7 +10,6 @@ import {
   useWaitForTransaction,
 } from "wagmi"
 
-import { useToast } from "@/hooks/useToast"
 import { useTokenOrNativeBalance } from "@/hooks/useTokenOrNativeBalance"
 
 import { lendingPairs } from "@/constant"
@@ -143,7 +142,6 @@ export const useLendingDeposit = ({
   enabled?: boolean
   onSuccess: () => void
 }) => {
-  const toastManager = useToast()
   const { address: receiver = "0x" } = useAccount()
   const assetBalance = useTokenOrNativeBalance({ address: assetAddress })
   const shareBalance = useTokenOrNativeBalance({ address: pairAddress })
@@ -158,16 +156,6 @@ export const useLendingDeposit = ({
   const write = useContractWrite(prepare.data)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
-    onSettled: (receipt, error) =>
-      error
-        ? toastManager.error(
-            "Deposit transaction failed.",
-            receipt?.transactionHash
-          )
-        : toastManager.success(
-            "Deposit transaction done successfully.",
-            receipt?.transactionHash
-          ),
     onSuccess: () => {
       assetBalance.refetch()
       shareBalance.refetch()
@@ -192,7 +180,6 @@ export const useLendingRedeem = ({
   enabled?: boolean
   onSuccess: () => void
 }) => {
-  const toastManager = useToast()
   const { address: receiver = "0x" } = useAccount()
   const assetBalance = useTokenOrNativeBalance({ address: assetAddress })
   const shareBalance = useTokenOrNativeBalance({ address: pairAddress })
@@ -207,16 +194,6 @@ export const useLendingRedeem = ({
   const write = useContractWrite(prepare.data)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
-    onSettled: (receipt, error) =>
-      error
-        ? toastManager.error(
-            "Withdraw transaction failed.",
-            receipt?.transactionHash
-          )
-        : toastManager.success(
-            "Withdraw transaction done successfully.",
-            receipt?.transactionHash
-          ),
     onSuccess: () => {
       assetBalance.refetch()
       shareBalance.refetch()
