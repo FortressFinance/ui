@@ -245,7 +245,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
       fortLog("Depositing underlying tokens", amountInDebounced)
       const action = "Vault deposit"
       const toastId = addToast({ type: "startTx", action })
-      deposit
+      depositUnderlying
         .writeAsync?.()
         .then((receipt) => {
           // this fires after the transaction has been broadcast successfully
