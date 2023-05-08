@@ -42,9 +42,10 @@ export const ApproveToken: FC<ApproveTokenProps> = ({
       .then((receipt) =>
         replaceToast(toastId, { type: "waitTx", hash: receipt.hash, action })
       )
-      .catch((error) =>
+      .catch((error) => {
         replaceToast(toastId, { type: "errorWrite", error, action })
-      )
+        setAmountToApprove(null)
+      })
   }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
