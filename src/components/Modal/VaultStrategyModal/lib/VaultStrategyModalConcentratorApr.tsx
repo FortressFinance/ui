@@ -13,7 +13,12 @@ export const VaultStrategyModalConcentratorApr: FC<VaultProps> = (props) => {
   const data = breakdownApr.data as any
 
   if (data?.totalApr !== undefined)
-    items.push({ label: "Total APR", value: data?.totalApr, emphasis: true })
+    items.push({
+      label: "Total APR",
+      value: data?.totalApr,
+      emphasis: true,
+      disabledTooltip: true,
+    })
   if (data?.baseApr !== undefined)
     items.push({ label: "Base APR", value: data?.baseApr })
   if (data?.crvApr !== undefined)

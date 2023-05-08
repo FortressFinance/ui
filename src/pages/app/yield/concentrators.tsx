@@ -1,11 +1,12 @@
 import * as Tabs from "@radix-ui/react-tabs"
 import { NextPage } from "next"
 import { useRouter } from "next/router"
-import { FC, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import { Address } from "wagmi"
 
 import { capitalizeFirstLetter, resolvedRoute } from "@/lib/helpers"
 import { FilterCategory, ProductType, VaultType } from "@/lib/types"
+import { useActiveChainId } from "@/hooks"
 
 import { DisabledPage } from "@/components"
 import {
@@ -67,11 +68,16 @@ const filterCategories: FilterCategory[] = [
 ]
 
 const ConcentratorVaults: FC = () => {
+  const chainId = useActiveChainId()
   const [concentratorTargetAsset, setConcentratorTargetAsset] =
     useState<Address>("0x")
 
   const [activeFilterCategory, setActiveFilterCategory] =
     useState<FilterCategory>("featured")
+
+  useEffect(() => {
+    setConcentratorTargetAsset("0x")
+  }, [chainId, setConcentratorTargetAsset])
 
   return (
     <Tabs.Root

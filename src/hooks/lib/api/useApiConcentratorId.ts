@@ -4,18 +4,23 @@ import { useApiConcentratorStaticData } from "@/hooks/lib/api/useApiConcentrator
 
 export function useApiConcentratorId({
   targetAsset,
+  primaryAsset,
 }: {
-  targetAsset: Address | undefined
+  targetAsset?: Address
+  primaryAsset?: Address
 }) {
   const apiQuery = useApiConcentratorStaticData()
   const targetAssetToConcentratorId: Record<Address, number> = {} // target to concentratorId
-  apiQuery.data?.map((data) => {
+  apiQuery.data?.forEach((data) => {
     const curTargetAsset = data?.target_asset?.address
+    const curPrimaryAsset = data.concentrator.primaryAsset?.address
     if (
-      targetAsset !== undefined &&
-      targetAsset.toLocaleUpperCase() === curTargetAsset.toLocaleUpperCase()
+      !!targetAsset &&
+      !!primaryAsset &&
+      targetAsset.toLocaleUpperCase() === curTargetAsset.toLocaleUpperCase() &&
+      primaryAsset.toLocaleLowerCase() === curPrimaryAsset.toLocaleLowerCase()
     ) {
-      targetAssetToConcentratorId[curTargetAsset] =
+      targetAssetToConcentratorId[targetAsset] =
         data?.concentrator?.ybToken.concentratorId
     }
   })

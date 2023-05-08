@@ -29,12 +29,14 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
 
   useEffect(() => {
     if (
+      clientReady &&
       concentratorTargetAsset === "0x" &&
       concentratorTargetAssets.data?.length
     ) {
       setConcentratorTargetAsset(concentratorTargetAssets.data[0])
     }
   }, [
+    clientReady,
     concentratorTargetAsset,
     concentratorTargetAssets.data,
     setConcentratorTargetAsset,

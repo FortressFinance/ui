@@ -16,6 +16,21 @@ export default function useCurveVaultTotalApy({
   asset: Address
   enabled: boolean
 }) {
+  const apr = useCurveVaultTotalApr({ asset, enabled })
+
+  return {
+    ...apr,
+    data: convertToApy(apr.data),
+  }
+}
+
+export function useCurveVaultTotalApr({
+  asset,
+  enabled,
+}: {
+  asset: Address
+  enabled: boolean
+}) {
   const chainId = useActiveChainId()
   const isArbitrumFamily = chainId === 313371 || chainId === 42161
   const curveVaultMainnetTotalApr = useCurveVaultMainnetTotalApr({
@@ -29,16 +44,10 @@ export default function useCurveVaultTotalApy({
   })
 
   if (!isArbitrumFamily) {
-    return {
-      ...curveVaultMainnetTotalApr,
-      data: convertToApy(curveVaultMainnetTotalApr.data),
-    }
+    return curveVaultMainnetTotalApr
   }
 
-  return {
-    ...curveVaultArbitrumTotalApr,
-    data: convertToApy(curveVaultArbitrumTotalApr.data),
-  }
+  return curveVaultArbitrumTotalApr
 }
 
 export function useCurveVaultBreakdownApr({

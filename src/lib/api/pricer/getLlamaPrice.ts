@@ -33,3 +33,20 @@ export async function getLlamaPrice({
   const parsed = respSchema.parse(resp.data)
   return parsed.coins[llamaKey]?.price
 }
+
+const respEthSchema = z.object({
+  coins: z.object({
+    "coingecko:ethereum": z.object({
+      price: z.number(),
+      symbol: z.string(),
+    }),
+  }),
+})
+
+export async function getLlamaPriceEth() {
+  const resp = await axios.get(
+    "https://coins.llama.fi/prices/current/coingecko:ethereum"
+  )
+  const parsed = respEthSchema.parse(resp.data)
+  return parsed.coins["coingecko:ethereum"]?.price
+}

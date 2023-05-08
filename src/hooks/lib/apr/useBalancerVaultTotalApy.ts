@@ -12,13 +12,27 @@ export default function useBalancerVaultTotalApy({
   asset: Address
   enabled: boolean
 }) {
+  const apr = useBalancerVaultTotalApr({ asset, enabled })
+  return {
+    ...apr,
+    data: convertToApy(apr.data),
+  }
+}
+
+export function useBalancerVaultTotalApr({
+  asset,
+  enabled,
+}: {
+  asset: Address
+  enabled: boolean
+}) {
   const balancerVaultBreakdownApr = useBalancerVaultBreakdownApr({
     asset,
     enabled,
   })
   return {
     ...balancerVaultBreakdownApr,
-    data: convertToApy(balancerVaultBreakdownApr.data?.totalApr),
+    data: balancerVaultBreakdownApr.data?.totalApr,
   }
 }
 

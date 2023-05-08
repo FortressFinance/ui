@@ -1,12 +1,12 @@
 import { FC, MouseEventHandler } from "react"
 import { Address } from "wagmi"
 
+import { useDoubleTokenConfig } from "@/hooks/useDoubleTokenConfig"
+
 import { AssetSymbol } from "@/components/Asset"
 import { AssetDoubleLogo } from "@/components/Asset/AssetDoubleLogo"
 
 import { FortIconChevronDown } from "@/icons"
-
-import { doubleTokens } from "@/constant/tokens"
 
 type DoubleTokenSelectButtonProps = {
   canChange?: boolean
@@ -21,6 +21,7 @@ const DoubleTokenSelectButton: FC<DoubleTokenSelectButtonProps> = ({
   tokenAddress,
   onClick,
 }) => {
+  const doubleTokens = useDoubleTokenConfig()
   const tokens = doubleTokens?.[tokenAddress]
   const mainToken = tokens?.[0]
   const secondToken = tokens?.[1]
