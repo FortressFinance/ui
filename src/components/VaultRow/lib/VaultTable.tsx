@@ -50,6 +50,7 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
         <TableRow
           className="overflow-visible rounded-b-none border-b border-b-pink/30"
           showEarningsColumn={showEarningsColumn}
+          productType={productType}
         >
           <TableHeader className="text-sm">
             {productType === "concentrator" ? (
@@ -68,6 +69,12 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
           <TableHeader className="text-center text-sm">Balance</TableHeader>
           {showEarningsColumn && (
             <TableHeader className="text-center text-sm">Earnings</TableHeader>
+          )}
+          {productType === "managedVaults" && (
+            <>
+              <TableHeader className="text-center text-sm">Epoch</TableHeader>
+              <TableHeader className="text-center text-sm">Manager</TableHeader>
+            </>
           )}
           <TableHeader className="flex justify-end">
             <TxSettingsPopover />

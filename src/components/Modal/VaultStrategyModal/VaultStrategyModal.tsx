@@ -41,9 +41,13 @@ export const VaultStrategyModal: FC<
   })
   const isToken = useIsTokenVault(vaultProps.type)
 
+  const truncateString = (str?: string): string => (str ? str.slice(0, 11) : "")
   const addTokenToWallet: MouseEventHandler<HTMLButtonElement> = () => {
     if (ybToken && ybToken.address && connector && connector.watchAsset) {
-      connector.watchAsset(ybToken)
+      connector.watchAsset({
+        ...ybToken,
+        symbol: truncateString(ybToken.symbol),
+      })
     }
   }
   const label = `Add ${ybToken?.symbol} to wallet`

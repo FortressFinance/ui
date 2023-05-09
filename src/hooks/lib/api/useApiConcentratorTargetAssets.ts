@@ -17,7 +17,9 @@ export function useApiConcentratorTargetAssets(
       queryFn: () => getConcentratorStaticData({ chainId }),
       retry: false,
       select: (data) => {
-        return data.map(({ target_asset }) => target_asset.address)
+        return Array.from(
+          new Set(data.map(({ target_asset }) => target_asset.address))
+        )
       },
       onSuccess: options.onSuccess,
     }),

@@ -12,13 +12,30 @@ export default function useConcentratorTokenVaultTotalApy({
   asset: Address
   enabled: boolean
 }) {
+  const apr = useConcentratorTokenVaultTotalApr({
+    asset,
+    enabled,
+  })
+  return {
+    ...apr,
+    data: convertToApy(apr.data),
+  }
+}
+
+export function useConcentratorTokenVaultTotalApr({
+  asset,
+  enabled,
+}: {
+  asset: Address
+  enabled: boolean
+}) {
   const tokenVaultBreakdownApr = useConcentratorTokenVaultBreakdownApr({
     asset,
     enabled,
   })
   return {
     ...tokenVaultBreakdownApr,
-    data: convertToApy(tokenVaultBreakdownApr.data?.totalApr),
+    data: tokenVaultBreakdownApr.data?.totalApr,
   }
 }
 

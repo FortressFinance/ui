@@ -16,6 +16,7 @@ export function useConcentratorVault({
 }) {
   const apiQuery = useApiConcentratorVault({
     targetAsset,
+    primaryAsset,
   })
 
   // Fallback: contract requests

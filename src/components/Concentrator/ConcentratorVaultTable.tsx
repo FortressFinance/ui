@@ -125,7 +125,6 @@ const ConcentratorVaultRow: FC<ConcentratorVaultRowProps> = (props) => {
       vaultAddress={props.primaryAsset}
       productType="concentrator"
       setStrategyLink={setStrategyLink}
-      showEarningsColumn
     />
   )
 }

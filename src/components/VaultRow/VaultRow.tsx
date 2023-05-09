@@ -85,10 +85,21 @@ export const VaultRow: FC<VaultTableRowProps> = ({
         onClick={toggleVaultOpen}
         disabled={isLoading}
         showEarningsColumn={showEarningsColumn}
+        productType={props.productType}
       >
         {/* Row of vault info */}
-        <TableCell className="relative grid grid-cols-[max-content,auto,max-content] items-center gap-x-3 max-lg:-mx-3 max-lg:border-b max-lg:border-b-pink/30 max-lg:px-3 max-lg:pb-3.5 lg:pointer-events-none">
-          <AssetLogo className="flex h-12 w-12" tokenAddress={vaultAddress} />
+        <TableCell
+          className={clsxm(
+            "relative grid grid-cols-[max-content,auto,max-content] items-center gap-x-3 max-lg:-mx-3 max-lg:border-b max-lg:border-b-pink/30 max-lg:px-3 max-lg:pb-3.5 lg:pointer-events-none",
+            {
+              "grid-cols-[auto,max-content]":
+                props.productType === "managedVaults",
+            }
+          )}
+        >
+          {props.productType !== "managedVaults" && (
+            <AssetLogo className="flex h-12 w-12" tokenAddress={vaultAddress} />
+          )}
 
           <span className="line-clamp-2 max-lg:mr-8">
             <VaultName {...props} />
@@ -151,6 +162,16 @@ export const VaultRow: FC<VaultTableRowProps> = ({
           <TableCell className="pointer-events-none text-center max-lg:hidden">
             <VaultUserEarnings {...props} />
           </TableCell>
+        )}
+        {props.productType === "managedVaults" && (
+          <>
+            <TableCell className="pointer-events-none text-center max-lg:hidden">
+              <VaultUserEarnings {...props} />
+            </TableCell>
+            <TableCell className="pointer-events-none text-center max-lg:hidden">
+              <VaultUserEarnings {...props} />
+            </TableCell>
+          </>
         )}
 
         {/* Desktop: Action buttons */}

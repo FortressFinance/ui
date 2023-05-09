@@ -16,20 +16,20 @@ export type ConcentratorStaticData = {
     ybToken: {
       concentratorId: number
       address: Address
-      decimals: number
+      decimals?: number
       symbol?: string
       name?: string
     }
     primaryAsset: {
       address: Address
-      decimals: number
+      decimals?: number
       symbol?: string
       name?: string
       isLpToken?: boolean
     }
     undelyingAssets: {
       address: Address
-      decimals: number
+      decimals?: number
       symbol?: string
       name?: string
       isLpToken?: boolean

@@ -1,6 +1,7 @@
 import { FC, forwardRef, MouseEventHandler, PropsWithChildren } from "react"
 
 import clsxm from "@/lib/clsxm"
+import { ProductType } from "@/lib/types"
 
 export const Table: FC<PropsWithChildren> = ({ children }) => {
   return <div role="table">{children}</div>
@@ -14,42 +15,52 @@ type TableRowProps = TableChildProps & {
   disabled?: boolean
   onClick?: MouseEventHandler<HTMLDivElement>
   showEarningsColumn?: boolean
+  productType?: ProductType
 }
 
 export const TableRow = forwardRef<
   HTMLDivElement,
   PropsWithChildren<TableRowProps>
->(({ children, className, disabled, showEarningsColumn, onClick }, ref) => {
-  const clickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
-    if (!disabled && onClick) onClick(e)
+>(
+  (
+    { children, className, disabled, showEarningsColumn, productType, onClick },
+    ref
+  ) => {
+    const clickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+      if (!disabled && onClick) onClick(e)
+    }
+
+    return (
+      <div
+        className={clsxm(
+          "relative items-center gap-x-2 overflow-hidden rounded-lg bg-pink-900/80 p-3 backdrop-blur-md lg:grid lg:grid-cols-[4fr,1fr,1fr,1fr,3.5rem] lg:px-6",
+          { "lg:grid-cols-[4fr,1fr,1fr,1fr,1fr,3.5rem]": showEarningsColumn },
+          {
+            "lg:grid-cols-[4fr,1fr,1fr,1fr,1fr,1fr,3.5rem]":
+              productType === "managedVaults",
+          },
+          className
+        )}
+        ref={ref}
+        role="row"
+      >
+        {children}
+
+        {/* Make entire row clickable but without breaking accessibility */}
+        {!!onClick && (
+          <div
+            className={clsxm("absolute inset-0 -z-[1] block max-lg:hidden", {
+              "cursor-pointer": !disabled,
+              "cursor-wait": disabled,
+            })}
+            onClick={clickHandler}
+            aria-hidden="true"
+          />
+        )}
+      </div>
+    )
   }
-
-  return (
-    <div
-      className={clsxm(
-        "relative items-center gap-x-2 overflow-hidden rounded-lg bg-pink-900/80 p-3 backdrop-blur-md lg:grid lg:grid-cols-[4fr,1fr,1fr,1fr,3.5rem] lg:px-6",
-        { "lg:grid-cols-[4fr,1fr,1fr,1fr,1fr,3.5rem]": showEarningsColumn },
-        className
-      )}
-      ref={ref}
-      role="row"
-    >
-      {children}
-
-      {/* Make entire row clickable but without breaking accessibility */}
-      {!!onClick && (
-        <div
-          className={clsxm("absolute inset-0 -z-[1] block max-lg:hidden", {
-            "cursor-pointer": !disabled,
-            "cursor-wait": disabled,
-          })}
-          onClick={clickHandler}
-          aria-hidden="true"
-        />
-      )}
-    </div>
-  )
-})
+)
 
 export const TableBody = forwardRef<
   HTMLDivElement,

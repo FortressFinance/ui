@@ -135,7 +135,7 @@ const strategyText: { [key in ProductType]: any } = {
         <p>
           This vault accepts deposits in form of its primary asset crv3Crypto
           and any of its underlying assets mentioned below, all of which will be
-          converted to Curve LP tokens automatically.
+          converted to Fortress Compounding LP tokens automatically.
         </p>
         <p>
           Deposited assets are used to provide liquidity for Curve Finance,
@@ -163,6 +163,42 @@ const strategyText: { [key in ProductType]: any } = {
         <p>
           The TriCrypto vault contains the following underlying assets: WBTC,
           WETH, ETH, and USDT.
+        </p>
+      </>
+    ),
+    [fraxBpTokenAddress]: (
+      <>
+        <p>
+          This vault accepts deposits in form of its primary asset FRAXBP-f and
+          any of its underlying assets mentioned below, all of which will be
+          converted to Fortress Compounding LP tokens automatically.
+        </p>
+        <p>
+          Deposited assets are used to provide liquidity for Curve Finance,
+          earning swap fees plus CRV emissions for extra yield.
+        </p>
+        <p>
+          The vault auto-concentrates the accumulated rewards periodically into{" "}
+          <Link
+            href="https://docs.fortress.finance/resources/smart-contracts/glp-compounder"
+            className="flex items-center gap-3 underline underline-offset-4"
+            target="_blank"
+          >
+            the GLP Compounder.
+          </Link>
+        </p>
+        <p>
+          Investors receive vault shares as ERC20 tokens called
+          fctrFraxBP-fcGLP, representing their pro-rata share of the
+          concentrated funds.
+        </p>
+        <p>
+          Investors can use fctrFraxBP-fcGLP in other Fortress products or
+          integrated protocols.
+        </p>
+        <p>
+          The FraxBP vault contains the following underlying assets: USDC and
+          FRAX.
         </p>
       </>
     ),

@@ -12,7 +12,10 @@ export function useConcentratorUnderlyingAssets({
   targetAsset: Address
   primaryAsset: Address
 }) {
-  const apiQuery = useApiConcentratorUnderlyingAssets({ targetAsset })
+  const apiQuery = useApiConcentratorUnderlyingAssets({
+    targetAsset,
+    primaryAsset,
+  })
   const firstConcentratorVaultType = useConcentratorFirstVaultType({
     targetAsset,
   })

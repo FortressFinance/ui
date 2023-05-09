@@ -38,7 +38,10 @@ export const ManagedVaultsTable: FC<ManagedVaultsTableProps> = ({
   ]
 
   return (
-    <VaultTable label={`${displayName} Managed Vaults`} showEarningsColumn>
+    <VaultTable
+      label={`${displayName} Managed Vaults`}
+      productType="managedVaults"
+    >
       {showLoadingState ? (
         <TableLoading>Loading managed vaults...</TableLoading>
       ) : !supportedChain ? (
@@ -96,7 +99,6 @@ const ManagedVaultRow: FC<ManagedVaultRowProps> = (props) => {
       vaultAddress={props.metaVault}
       productType="managedVaults"
       setStrategyLink={setStrategyLink}
-      showEarningsColumn
     />
   )
 }

@@ -4,4 +4,9 @@ import { ChainConfig } from "@/constant/chainConfig/types"
 
 export const mainnetConfig: ChainConfig = {
   registryAddress: ethers.constants.AddressZero,
+  fctrTriCryptoFcGlpTokenAddress: ethers.constants.AddressZero,
+  fcTriCryptoTokenAddress: ethers.constants.AddressZero,
+  fcGlpTokenAddress: ethers.constants.AddressZero,
+  fctrFraxBPFcGlpTokenAddress: ethers.constants.AddressZero,
+  fallbackType: {},
 }

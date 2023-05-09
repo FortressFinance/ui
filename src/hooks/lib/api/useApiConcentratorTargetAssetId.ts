@@ -9,14 +9,13 @@ export function useApiConcentratorTargetAssetId({
 }) {
   const apiQuery = useApiConcentratorStaticData()
   const targetAssetToId: Record<Address, number> = {} // target to targetId
-  apiQuery.data?.map((data) => {
+  apiQuery.data?.forEach((data) => {
     const curTargetAsset = data?.target_asset?.address
     if (
-      targetAsset !== undefined &&
+      !!targetAsset &&
       targetAsset.toLocaleUpperCase() === curTargetAsset.toLocaleUpperCase()
     ) {
-      targetAssetToId[data?.target_asset?.address] =
-        data?.target_asset?.targetAssetId
+      targetAssetToId[targetAsset] = data?.target_asset?.targetAssetId
     }
   })
 
