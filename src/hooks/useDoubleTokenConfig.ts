@@ -2,8 +2,6 @@ import { Address } from "wagmi"
 
 import { useActiveChainConfig } from "@/hooks/useActiveChainConfig"
 
-import { fraxBpTokenAddress } from "@/constant/addresses"
-
 export const useDoubleTokenConfig = () => {
   const chainConfig = useActiveChainConfig()
   const doubleTokens: { [key: Address]: [Address, Address] } = {
@@ -12,7 +10,7 @@ export const useDoubleTokenConfig = () => {
       chainConfig.fcGlpTokenAddress,
     ],
     [chainConfig.fctrFraxBPFcGlpTokenAddress]: [
-      fraxBpTokenAddress,
+      chainConfig.fctrFraxBPTokenAddress,
       chainConfig.fcGlpTokenAddress,
     ],
   }
