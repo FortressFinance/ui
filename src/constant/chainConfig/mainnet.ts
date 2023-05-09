@@ -8,5 +8,6 @@ export const mainnetConfig: ChainConfig = {
   fcTriCryptoTokenAddress: ethers.constants.AddressZero,
   fcGlpTokenAddress: ethers.constants.AddressZero,
   fctrFraxBPFcGlpTokenAddress: ethers.constants.AddressZero,
+  fctrFraxBPTokenAddress: ethers.constants.AddressZero,
   fallbackType: {},
 }
