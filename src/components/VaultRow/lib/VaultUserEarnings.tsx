@@ -29,7 +29,10 @@ export const VaultUserEarnings: FC<VaultProps> = (props) => {
     earnings.data?.earned ?? "0",
     token.data?.decimals ?? 18
   )
-  const earnedUSD = Number(earnedFormatted ?? "0") * (tokenPriceUsd ?? 0)
+  let earnedUSD = earnings.data.earnedUSD
+  if (!!earnedUSD || earnedUSD == 0) {
+    earnedUSD = Number(earnedFormatted ?? "0") * (tokenPriceUsd ?? 0)
+  }
 
   return isConnected ? (
     <div className="lg:grid lg:grid-rows-2">
@@ -46,7 +49,7 @@ export const VaultUserEarnings: FC<VaultProps> = (props) => {
         <Skeleton isLoading={isLoading || isLoadingTokenPriceUsd}>
           {formatUsd({
             abbreviate: true,
-            amount: earnings.data.earnedUSD ?? earnedUSD,
+            amount: earnedUSD,
           })}
         </Skeleton>
       </div>
