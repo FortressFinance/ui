@@ -63,7 +63,7 @@ export const VaultStrategyModal: FC<
       isOpen={isOpen}
       onClose={onClose}
     >
-      {vaultProps.asset && vaultProps.type && vaultProps.vaultAddress && (
+      {vaultProps.asset && vaultProps.type && vaultProps.ybTokenAddress && (
         <>
           <PurpleModalHeader className="flex justify-between space-x-4">
             <div className="flex space-x-4">
@@ -78,11 +78,11 @@ export const VaultStrategyModal: FC<
                 </Tooltip>
               )}
               {chain?.blockExplorers?.default.url &&
-                vaultProps.vaultAddress && (
+                vaultProps.ybTokenAddress && (
                   <Tooltip label="View contract">
                     <Link
                       className="h-6 w-6 p-[1px]"
-                      href={`${chain.blockExplorers.default.url}/address/${vaultProps.vaultAddress}`}
+                      href={`${chain.blockExplorers.default.url}/address/${vaultProps.ybTokenAddress}`}
                       target="_blank"
                     >
                       <FortIconExternalLink className="h-full w-full" />

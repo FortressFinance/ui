@@ -19,7 +19,7 @@ export const VaultUserEarnings: FC<VaultProps> = (props) => {
 
   return isConnected ? (
     <div className="lg:grid lg:grid-rows-2">
-      <div>
+      <div className="max-lg:hidden">
         <Skeleton isLoading={isLoading}>
           {formatCurrencyUnits({
             abbreviate: true,
@@ -28,7 +28,7 @@ export const VaultUserEarnings: FC<VaultProps> = (props) => {
           })}
         </Skeleton>
       </div>
-      <div className="text-xs max-lg:hidden">
+      <div className="text-xs max-lg:text-sm">
         <Skeleton isLoading={isLoading}>
           {formatUsd({ abbreviate: true, amount: earnings.data.earnedUSD })}
         </Skeleton>
