@@ -1,9 +1,15 @@
+import { formatUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
 import { useAccount } from "wagmi"
 
 import { formatCurrencyUnits, formatUsd } from "@/lib/helpers/formatCurrency"
 import { VaultProps } from "@/lib/types"
-import { useTokenOrNative, useVaultPoolId, useVaultUserEarnings } from "@/hooks"
+import {
+  useTokenOrNative,
+  useTokenPriceUsd,
+  useVaultPoolId,
+  useVaultUserEarnings,
+} from "@/hooks"
 
 import Skeleton from "@/components/Skeleton"
 
@@ -16,11 +22,19 @@ export const VaultUserEarnings: FC<VaultProps> = (props) => {
   const token = useTokenOrNative({ address: props.asset })
   const { isConnected } = useAccount()
   const isLoading = poolId.isLoading || earnings.isLoading
+  const { data: tokenPriceUsd, isLoading: isLoadingTokenPriceUsd } =
+    useTokenPriceUsd({ asset: props.asset })
+
+  const earnedFormatted = formatUnits(
+    earnings.data?.earned ?? "0",
+    token.data?.decimals ?? 18
+  )
+  const earnedUSD = Number(earnedFormatted ?? "0") * (tokenPriceUsd ?? 0)
 
   return isConnected ? (
     <div className="lg:grid lg:grid-rows-2">
       <div className="max-lg:hidden">
-        <Skeleton isLoading={isLoading}>
+        <Skeleton isLoading={isLoading || isLoadingTokenPriceUsd}>
           {formatCurrencyUnits({
             abbreviate: true,
             amountWei: earnings.data.earned,
@@ -29,8 +43,11 @@ export const VaultUserEarnings: FC<VaultProps> = (props) => {
         </Skeleton>
       </div>
       <div className="text-xs max-lg:text-sm">
-        <Skeleton isLoading={isLoading}>
-          {formatUsd({ abbreviate: true, amount: earnings.data.earnedUSD })}
+        <Skeleton isLoading={isLoading || isLoadingTokenPriceUsd}>
+          {formatUsd({
+            abbreviate: true,
+            amount: earnings.data.earnedUSD ?? earnedUSD,
+          })}
         </Skeleton>
       </div>
     </div>
