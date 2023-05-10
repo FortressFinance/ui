@@ -18,11 +18,11 @@ export const ConcentratorVaultUserBalance: FC<VaultProps> = (props) => {
 
   return (
     <div className={clsxm("lg:grid", { "lg:grid-rows-2": !!balance })}>
-      <div>
+      <div className="max-lg:hidden">
         <AssetBalance address={concentrator?.data?.ybTokenAddress} abbreviate />
       </div>
       {balance && (
-        <div className="text-xs max-lg:hidden">
+        <div className="text-xs max-lg:text-base">
           <AssetBalanceUsd
             asset={props.vaultAddress}
             address={concentrator?.data?.ybTokenAddress}
