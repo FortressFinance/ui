@@ -9,7 +9,6 @@ import { resolvedRoute } from "@/lib/helpers"
 import { VaultProps } from "@/lib/types"
 import { useVault } from "@/hooks"
 
-import { AssetLogo } from "@/components/Asset"
 import { ButtonLink } from "@/components/Button"
 import {
   CompounderVaultDepositForm,
@@ -21,13 +20,15 @@ import {
 } from "@/components/Concentrator"
 import { TableCell, TableRow } from "@/components/Table"
 import { GradientText } from "@/components/Typography"
+import { VaultNameCell } from "@/components/VaultRow"
 import {
   VaultApy,
-  VaultName,
+  VaultEpoch,
   VaultTvl,
   VaultUserBalance,
   VaultUserEarnings,
 } from "@/components/VaultRow/lib"
+import { VaultManager } from "@/components/VaultRow/lib/VaultManager"
 
 import { FortIconChevronDownCircle } from "@/icons"
 
@@ -56,7 +57,6 @@ export const VaultRow: FC<VaultTableRowProps> = ({
   setStrategyLink,
   ...props
 }) => {
-  const isCompounderProduct = props.productType === "compounder"
   const router = useRouter()
   const { pathname, query } = router
   const { isLoading } = useVault(props)
@@ -97,13 +97,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
             }
           )}
         >
-          {props.productType !== "managedVaults" && (
-            <AssetLogo className="flex h-12 w-12" tokenAddress={vaultAddress} />
-          )}
-
-          <span className="line-clamp-2 max-lg:mr-8">
-            <VaultName {...props} />
-          </span>
+          <VaultNameCell {...props} />
 
           {/* Large: strategy button */}
           <ButtonLink
@@ -158,7 +152,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
         <TableCell className="pointer-events-none text-center max-lg:hidden">
           <VaultUserBalance {...props} />
         </TableCell>
-        {isCompounderProduct && (
+        {props.productType === "compounder" && (
           <TableCell className="pointer-events-none text-center max-lg:hidden">
             <VaultUserEarnings {...props} />
           </TableCell>
@@ -166,10 +160,10 @@ export const VaultRow: FC<VaultTableRowProps> = ({
         {props.productType === "managedVaults" && (
           <>
             <TableCell className="pointer-events-none text-center max-lg:hidden">
-              <VaultUserEarnings {...props} />
+              <VaultEpoch />
             </TableCell>
             <TableCell className="pointer-events-none text-center max-lg:hidden">
-              <VaultUserEarnings {...props} />
+              <VaultManager />
             </TableCell>
           </>
         )}
@@ -200,7 +194,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
         <Accordion.Content className="col-span-full overflow-hidden ui-state-closed:animate-accordion-close ui-state-open:animate-accordion-open max-lg:-mx-3">
           {/* Desktop: forms */}
           <div className="mt-6 grid grid-cols-2 gap-4 max-lg:hidden">
-            {isCompounderProduct ? (
+            {props.productType === "compounder" ? (
               <>
                 <CompounderVaultDepositForm {...props} />
                 <CompounderVaultWithdrawForm {...props} />
@@ -231,14 +225,14 @@ export const VaultRow: FC<VaultTableRowProps> = ({
                 </Tabs.Trigger>
               </Tabs.List>
               <Tabs.Content value="deposit">
-                {isCompounderProduct ? (
+                {props.productType === "compounder" ? (
                   <CompounderVaultDepositForm {...props} />
                 ) : (
                   <ConcentratorVaultDepositForm {...props} />
                 )}
               </Tabs.Content>
               <Tabs.Content value="withdraw">
-                {isCompounderProduct ? (
+                {props.productType === "compounder" ? (
                   <CompounderVaultWithdrawForm {...props} />
                 ) : (
                   <ConcentratorVaultWithdrawForm {...props} />
@@ -250,27 +244,63 @@ export const VaultRow: FC<VaultTableRowProps> = ({
 
         {/* Mobile: APY, TVL, Balance */}
         <TableCell className="-mx-3 border-b border-b-pink/30 px-3 py-3 lg:hidden">
-          <dl className="grid grid-cols-4 gap-x-3 text-center">
-            <dt className="row-start-2 text-xs text-pink-100/60">APY</dt>
-            <dd className="text-sm font-medium text-pink-100">
-              <VaultApy {...props} />
-            </dd>
-            <dt className="row-start-2 text-xs text-pink-100/60">TVL</dt>
-            <dd className="text-sm font-medium text-pink-100">
-              <VaultTvl {...props} />
-            </dd>
-            <dt className="row-start-2 text-xs text-pink-100/60">Balance</dt>
-            <dd className="text-sm font-medium text-pink-100">
-              <VaultUserBalance {...props} />
-            </dd>
-            {isCompounderProduct && (
-              <>
+          <dl
+            className={clsxm(
+              "grid gap-x-3 text-center",
+              { "grid-cols-4": props.productType === "compounder" },
+              { "grid-cols-3": props.productType === "concentrator" },
+              {
+                "auto-cols-auto grid-flow-col":
+                  props.productType === "managedVaults",
+              }
+            )}
+          >
+            <div className="grid grid-rows-2">
+              <dt className="row-start-2 text-xs text-pink-100/60">APY</dt>
+              <dd className="text-sm font-medium text-pink-100">
+                <VaultApy {...props} />
+              </dd>
+            </div>
+            <div className="grid grid-rows-2">
+              <dt className="row-start-2 text-xs text-pink-100/60">TVL</dt>
+              <dd className="text-sm font-medium text-pink-100">
+                <VaultTvl {...props} />
+              </dd>
+            </div>
+            <div className="grid grid-rows-2">
+              <dt className="row-start-2 text-xs text-pink-100/60">Balance</dt>
+              <dd className="text-sm font-medium text-pink-100">
+                <VaultUserBalance {...props} />
+              </dd>
+            </div>
+            {props.productType === "compounder" && (
+              <div className="grid grid-rows-2">
                 <dt className="row-start-2 text-xs text-pink-100/60">
                   Earnings
                 </dt>
                 <dd className="text-sm font-medium text-pink-100">
                   <VaultUserEarnings {...props} />
                 </dd>
+              </div>
+            )}
+            {props.productType === "managedVaults" && (
+              <>
+                <div className="grid grid-rows-2">
+                  <dt className="row-start-2 text-xs text-pink-100/60">
+                    Epoch
+                  </dt>
+                  <dd className="text-sm font-medium text-pink-100">
+                    <VaultEpoch />
+                  </dd>
+                </div>
+                <div className="grid grid-rows-2">
+                  <dt className="row-start-2 text-xs text-pink-100/60">
+                    Manager
+                  </dt>
+                  <dd className="text-sm font-medium text-pink-100">
+                    <VaultManager />
+                  </dd>
+                </div>
               </>
             )}
           </dl>

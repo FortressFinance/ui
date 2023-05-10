@@ -36,7 +36,7 @@ export const TableRow = forwardRef<
           "relative items-center gap-x-2 overflow-hidden rounded-lg bg-pink-900/80 p-3 backdrop-blur-md lg:grid lg:grid-cols-[4fr,1fr,1fr,1fr,3.5rem] lg:px-6",
           { "lg:grid-cols-[4fr,1fr,1fr,1fr,1fr,3.5rem]": showEarningsColumn },
           {
-            "lg:grid-cols-[4fr,1fr,1fr,1fr,1fr,1fr,3.5rem]":
+            "lg:grid-cols-[4fr,1fr,1fr,1fr,1.5fr,1.5fr,3.5rem]":
               productType === "managedVaults",
           },
           className

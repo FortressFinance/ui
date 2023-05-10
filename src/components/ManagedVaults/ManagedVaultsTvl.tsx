@@ -7,8 +7,8 @@ import Skeleton from "@/components/Skeleton"
 
 export const ManagedVaultsTvl: FC = () => {
   const data = {
-    tvl: "0",
-    usdTvl: 0,
+    tvl: "210000000000000000000",
+    usdTvl: 31000,
   }
 
   return (

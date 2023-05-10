@@ -72,7 +72,9 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
           )}
           {productType === "managedVaults" && (
             <>
-              <TableHeader className="text-center text-sm">Epoch</TableHeader>
+              <TableHeader className="text-center text-sm">
+                Epoch duration
+              </TableHeader>
               <TableHeader className="text-center text-sm">Manager</TableHeader>
             </>
           )}
