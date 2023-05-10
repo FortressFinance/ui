@@ -14,13 +14,13 @@ export const CompounderVaultTvl: FC<VaultProps> = (props) => {
 
   return (
     <div className={clsxm("lg:grid", { "lg:grid-rows-2": !!data })}>
-      <div>
+      <div className="max-lg:hidden">
         <Skeleton isLoading={poolId.isLoading || tvlData.isLoading}>
           {formatCurrencyUnits({ abbreviate: true, amountWei: data.tvl })}
         </Skeleton>
       </div>
       {data.usdTvl && (
-        <div className="text-xs max-lg:hidden">
+        <div className="text-xs max-lg:text-base">
           <Skeleton isLoading={poolId.isLoading || tvlData.isLoading}>
             {formatUsd({ abbreviate: true, amount: data.usdTvl })}
           </Skeleton>
