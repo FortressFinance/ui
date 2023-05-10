@@ -17,7 +17,7 @@ export const CompounderVaultUserBalance: FC<VaultProps> = (props) => {
         <AssetBalance address={props.vaultAddress} abbreviate />
       </div>
       {balance && (
-        <div className="text-xs max-lg:text-base">
+        <div className="text-xs max-lg:text-sm">
           <AssetBalanceUsd
             asset={props.asset}
             address={props.vaultAddress}

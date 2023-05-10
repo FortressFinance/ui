@@ -28,7 +28,7 @@ export const VaultUserEarnings: FC<VaultProps> = (props) => {
           })}
         </Skeleton>
       </div>
-      <div className="text-xs max-lg:text-base">
+      <div className="text-xs max-lg:text-sm">
         <Skeleton isLoading={isLoading}>
           {formatUsd({ abbreviate: true, amount: earnings.data.earnedUSD })}
         </Skeleton>

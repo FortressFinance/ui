@@ -19,7 +19,7 @@ export const ConcentratorVaultTvl: FC<VaultProps> = (props) => {
         </Skeleton>
       </div>
       {data.usdTvl && (
-        <div className="text-xs max-lg:text-base">
+        <div className="text-xs max-lg:text-sm">
           <Skeleton isLoading={tvlData.isLoading}>
             {formatUsd({ abbreviate: true, amount: data.usdTvl })}
           </Skeleton>

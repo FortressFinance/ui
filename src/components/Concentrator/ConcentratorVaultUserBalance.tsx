@@ -22,7 +22,7 @@ export const ConcentratorVaultUserBalance: FC<VaultProps> = (props) => {
         <AssetBalance address={concentrator?.data?.ybTokenAddress} abbreviate />
       </div>
       {balance && (
-        <div className="text-xs max-lg:text-base">
+        <div className="text-xs max-lg:text-sm">
           <AssetBalanceUsd
             asset={props.vaultAddress}
             address={concentrator?.data?.ybTokenAddress}
