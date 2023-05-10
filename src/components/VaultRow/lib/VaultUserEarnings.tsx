@@ -29,10 +29,10 @@ export const VaultUserEarnings: FC<VaultProps> = (props) => {
     earnings.data?.earned ?? "0",
     token.data?.decimals ?? 18
   )
-  let earnedUSD = earnings.data.earnedUSD
-  if (!!earnedUSD || earnedUSD == 0) {
-    earnedUSD = Number(earnedFormatted ?? "0") * (tokenPriceUsd ?? 0)
-  }
+  const earnedUSD =
+    !!earnings.data.earnedUSD || earnings.data.earnedUSD == 0
+      ? earnings.data.earnedUSD
+      : Number(earnedFormatted ?? "0") * (tokenPriceUsd ?? 0)
 
   return isConnected ? (
     <div className="lg:grid lg:grid-rows-2">
