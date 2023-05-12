@@ -88,7 +88,7 @@ const LendingPairDetail: NextPage<LendingPair> = (lendingPair) => {
                   <div className="inline-flex gap-2 font-mono lg:text-lg">
                     <AssetBalance
                       address={lendingPair.pairAddress}
-                      abbreviate
+                      maximumFractionDigits={6}
                     />
                     <AssetSymbol
                       address={lendingPair.pairAddress}
@@ -194,7 +194,7 @@ const UserAssetsLent: FC<LendingPair> = ({ pairAddress, chainId }) => {
         ? formatCurrencyUnits({
             amountWei: assetsLent.data?.toString(),
             decimals: asset.data?.decimals,
-            abbreviate: true,
+            maximumFractionDigits: 6,
           })
         : "—"}
     </Skeleton>

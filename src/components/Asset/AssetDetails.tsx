@@ -52,13 +52,13 @@ export const AssetName: FC<AssetDetailsProps> = ({
 }
 
 type AssetBalanceProps = AssetDetailsProps & {
-  abbreviate?: boolean
+  maximumFractionDigits?: number
 }
 
 export const AssetBalance: FC<AssetBalanceProps> = ({
   address,
-  abbreviate,
   chainId,
+  maximumFractionDigits,
 }) => {
   const { isConnected } = useAccount()
   const { data: balance, isLoading } = useTokenOrNativeBalance({
@@ -69,17 +69,18 @@ export const AssetBalance: FC<AssetBalanceProps> = ({
     <Skeleton isLoading={isLoading}>
       {isConnected
         ? formatCurrencyUnits({
-            abbreviate,
             amountWei: balance?.value?.toString(),
             decimals: balance?.decimals,
+            maximumFractionDigits,
           })
         : "—"}
     </Skeleton>
   )
 }
 
-type AssetBalanceUsdProps = AssetBalanceProps & {
+type AssetBalanceUsdProps = AssetDetailsProps & {
   asset?: Address
+  abbreviate?: boolean
 }
 
 export const AssetBalanceUsd: FC<AssetBalanceUsdProps> = ({

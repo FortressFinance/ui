@@ -3,20 +3,26 @@ import { formatUnits } from "ethers/lib/utils.js"
 import { localeNumber } from "@/lib/helpers"
 
 export const formatCurrencyUnits = ({
-  abbreviate = false,
   amountWei = "0",
   decimals = 18,
+  maximumFractionDigits,
 }: {
-  abbreviate?: boolean
   amountWei?: string
   decimals?: number
-}) =>
-  abbreviate
-    ? localeNumber(Number(formatUnits(amountWei, decimals)), {
-        compact: true,
-        maximumFractionDigits: 2,
-      })
-    : formatUnits(amountWei, decimals)
+  maximumFractionDigits?: number
+}) => {
+  if (maximumFractionDigits !== undefined) {
+    const formatted = formatUnits(amountWei, decimals)
+    return formatted.startsWith("-")
+      ? "0"
+      : localeNumber(Number(formatted), {
+          compact: true,
+          maximumFractionDigits,
+        })
+  }
+  const formatted = formatUnits(amountWei, decimals)
+  return formatted.startsWith("-") ? "0" : formatted
+}
 
 export const formatUsd = ({
   abbreviate = false,

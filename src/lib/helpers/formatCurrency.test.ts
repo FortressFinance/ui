@@ -3,35 +3,47 @@ import { formatCurrencyUnits, formatUsd } from "@/lib/helpers/formatCurrency"
 describe("formatCurrencyUnits", () => {
   test.each([
     {
-      abbreviate: undefined,
       amountWei: "1000000000000000000000",
+      decimals: undefined,
+      maximumFractionDigits: undefined,
       expected: "1000.0",
     },
     {
-      abbreviate: undefined,
       amountWei: "6000000000",
       decimals: 6,
+      maximumFractionDigits: undefined,
       expected: "6000.0",
     },
     {
-      abbreviate: false,
       amountWei: "1000000000000000000000",
+      decimals: undefined,
+      maximumFractionDigits: undefined,
       expected: "1000.0",
     },
     {
-      abbreviate: false,
       amountWei: "6000000000",
       decimals: 6,
+      maximumFractionDigits: undefined,
       expected: "6000.0",
     },
-    { abbreviate: true, amountWei: "1000000000000000000000", expected: "1K" },
-    { abbreviate: true, amountWei: "6000000000", decimals: 6, expected: "6K" },
+    {
+      amountWei: "1000000000000000000000",
+      decimals: undefined,
+      maximumFractionDigits: 2,
+      expected: "1K",
+    },
+    {
+      amountWei: "6000000000",
+      decimals: 6,
+      maximumFractionDigits: 2,
+      expected: "6K",
+    },
   ])(
-    "it returns $expected when passed abbreviate: $abbreviate, amountWei: $amountWei, decimals: $decimals",
-    ({ abbreviate, amountWei, decimals, expected }) =>
-      expect(formatCurrencyUnits({ abbreviate, amountWei, decimals })).toBe(
-        expected
-      )
+    "it returns $expected when passed amountWei: $amountWei, decimals: $decimals, maximumFractionDigits: $maximumFractionDigits",
+    ({ amountWei, decimals, maximumFractionDigits, expected }) =>
+      expect(
+        formatCurrencyUnits({ amountWei, decimals, maximumFractionDigits })
+      ).toBe(expected)
   )
 })
 

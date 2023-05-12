@@ -74,7 +74,10 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
           </dd>
           <dt className="text-xs font-medium text-white/80">Balance</dt>
           <dd className="text-right text-xs font-medium text-white/80">
-            <AssetBalance address={concentratorTargetAsset} abbreviate />{" "}
+            <AssetBalance
+              address={concentratorTargetAsset}
+              maximumFractionDigits={6}
+            />{" "}
             <AssetSymbol address={concentratorTargetAsset} />
           </dd>
           <dt className="text-sm font-semibold leading-relaxed">
