@@ -16,6 +16,7 @@ import { VaultStrategyModalAmmApr } from "@/components/Modal/VaultStrategyModal/
 import { VaultStrategyModalConcentratorApr } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalConcentratorApr"
 import { VaultStrategyModalConcentratorRewardApr as VaultStrategyModalConcentratorRewardApy } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalConcentratorRewardApy"
 import { VaultStrategyModalTokenApr } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalTokenApr"
+import { VaultStrategyLeftPanel } from "@/components/Modal/VaultStrategyModal/VaultStrategyLeftPanel"
 import Skeleton from "@/components/Skeleton"
 import Tooltip from "@/components/Tooltip"
 import { VaultRowPropsWithProduct } from "@/components/VaultRow"
@@ -26,12 +27,10 @@ import {
   FortIconExternalLink,
 } from "@/icons"
 
-import strategyText from "@/constant/strategyText"
-
 export const VaultStrategyModal: FC<
   VaultRowPropsWithProduct & ModalBaseProps
 > = ({ isOpen, onClose, ...vaultProps }) => {
-  const isCompounderProduct = vaultProps.productType === "compounder"
+  const productType = vaultProps.productType
   const { connector } = useAccount()
   const fees = useVaultFees(vaultProps)
   const { chain } = useNetwork()
@@ -41,6 +40,7 @@ export const VaultStrategyModal: FC<
   })
   const isToken = useIsTokenVault(vaultProps.type)
 
+  // limit the token name to 11 char max
   const truncateString = (str?: string): string => (str ? str.slice(0, 11) : "")
   const addTokenToWallet: MouseEventHandler<HTMLButtonElement> = () => {
     if (ybToken && ybToken.address && connector && connector.watchAsset) {
@@ -51,11 +51,6 @@ export const VaultStrategyModal: FC<
     }
   }
   const label = `Add ${ybToken?.symbol} to wallet`
-
-  const strategyTextValue =
-    strategyText[vaultProps.productType]?.[
-      isCompounderProduct ? vaultProps.asset : vaultProps.vaultAddress
-    ]
 
   return (
     <PurpleModal
@@ -98,16 +93,7 @@ export const VaultStrategyModal: FC<
           </PurpleModalHeader>
 
           <PurpleModalContent className="grid grid-cols-1 divide-pink-800 p-0 md:grid-cols-[3fr,2fr] md:divide-x md:p-0 lg:grid-cols-[2fr,1fr]">
-            {/* Vault description */}
-            <div className="max-md:row-start-2">
-              <h1 className="border-b border-pink-800 p-3 text-xs font-semibold uppercase text-pink-300 max-md:border-t max-md:text-center md:px-5">
-                Vault description
-              </h1>
-
-              <div className="space-y-3 p-4 pb-5 leading-relaxed text-pink-50 max-md:text-sm md:px-5">
-                {strategyTextValue ?? "No description available"}
-              </div>
-            </div>
+            <VaultStrategyLeftPanel {...vaultProps} />
 
             {/* APR */}
             <div className="sm:grid sm:grid-cols-2 sm:divide-x sm:divide-pink-800 md:block md:divide-x-0">
@@ -116,7 +102,7 @@ export const VaultStrategyModal: FC<
                   APR
                 </h1>
                 <div className="p-4 pb-5 md:px-5">
-                  {isCompounderProduct ? (
+                  {productType === "compounder" ? (
                     isToken ? (
                       <VaultStrategyModalTokenApr {...vaultProps} />
                     ) : (
@@ -127,7 +113,7 @@ export const VaultStrategyModal: FC<
                   )}
                 </div>
               </div>
-              {!isCompounderProduct && (
+              {productType === "concentrator" && (
                 <div>
                   <h1 className="border-b border-pink-800 p-3 text-xs font-semibold uppercase text-pink-300 max-md:text-center max-sm:border-t md:border-t md:px-5">
                     Reward APY
