@@ -34,7 +34,7 @@ export const LendingPairRow: FC<LendingPair> = (lendingPair) => {
 
       {/* Desktop stats */}
       <TableCell className="pointer-events-none text-center max-lg:hidden">
-        <LendingPairAPY {...lendingPair} />
+        <LendingPairAPY apyType="lend" {...lendingPair} />
       </TableCell>
       <TableCell className="pointer-events-none text-center max-lg:hidden">
         <LendingPairUtilization {...lendingPair} />
@@ -52,7 +52,7 @@ export const LendingPairRow: FC<LendingPair> = (lendingPair) => {
         <dl className="grid grid-cols-3 gap-x-3 text-center">
           <dt className="row-start-2 text-xs text-pink-100/60">APY</dt>
           <dd className="text-sm font-medium text-pink-100">
-            <LendingPairAPY {...lendingPair} />
+            <LendingPairAPY apyType="lend" {...lendingPair} />
           </dd>
           <dt className="row-start-2 text-xs text-pink-100/60">Utilization</dt>
           <dd className="text-sm font-medium text-pink-100">
