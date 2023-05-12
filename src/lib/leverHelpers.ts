@@ -1,25 +1,17 @@
 import { BigNumber } from "ethers"
 
 export const calculateLTV = ({
-  borrowedAmount = BigNumber.from(0),
+  borrowedAmountAsCollateral = BigNumber.from(0),
   collateralAmount = BigNumber.from(0),
-  exchangeRate = BigNumber.from(0),
-  exchangePrecision = BigNumber.from(1),
   ltvPrecision = BigNumber.from(0),
 }: {
-  borrowedAmount?: BigNumber
+  borrowedAmountAsCollateral?: BigNumber
   collateralAmount?: BigNumber
-  exchangeRate?: BigNumber
-  exchangePrecision?: BigNumber
   ltvPrecision?: BigNumber
 }) =>
   collateralAmount.lte(0)
     ? BigNumber.from(0)
-    : borrowedAmount
-        .mul(exchangeRate)
-        .div(exchangePrecision)
-        .mul(ltvPrecision)
-        .div(collateralAmount)
+    : borrowedAmountAsCollateral.mul(ltvPrecision).div(collateralAmount)
 
 export const ltvPercentage = (
   ltv = BigNumber.from(0),
@@ -64,3 +56,23 @@ export const calculateBorrowAPY = ({
 
 export const calculateLendAPY = ({ borrowAPY = 0, utilizationRate = 0 }) =>
   borrowAPY * utilizationRate
+
+export const calculateMaxBorrowAmount = ({
+  collateralAmountAsAsset = BigNumber.from(0),
+  maxLTV = BigNumber.from(0),
+  ltvPrecision = BigNumber.from(1),
+}) => collateralAmountAsAsset.mul(maxLTV).div(ltvPrecision)
+
+export const calculateAvailableCredit = ({
+  borrowedAmount = BigNumber.from(0),
+  maxBorrowAmount = BigNumber.from(0),
+}) => maxBorrowAmount.sub(borrowedAmount)
+
+export const calculateLiquidationPrice = ({
+  borrowedAmount = BigNumber.from(1),
+  maxBorrowAmount = BigNumber.from(1),
+  exchangePrecision = BigNumber.from(1),
+}) =>
+  maxBorrowAmount.gt(0)
+    ? borrowedAmount.mul(exchangePrecision).div(maxBorrowAmount)
+    : BigNumber.from(1)

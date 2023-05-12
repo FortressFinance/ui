@@ -14,7 +14,7 @@ export const CompounderVaultUserBalance: FC<VaultProps> = (props) => {
   return (
     <div className={clsxm("lg:grid", { "lg:grid-rows-2": !!balance })}>
       <div className="max-lg:hidden">
-        <AssetBalance address={props.vaultAddress} abbreviate />
+        <AssetBalance address={props.vaultAddress} maximumFractionDigits={2} />
       </div>
       {balance && (
         <div className="text-xs max-lg:text-sm">

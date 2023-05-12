@@ -43,7 +43,7 @@ export const LendingPairRow: FC<LendingPair> = (lendingPair) => {
         <AssetBalance
           address={lendingPair.pairAddress}
           chainId={lendingPair.chainId}
-          abbreviate
+          maximumFractionDigits={2}
         />
       </TableCell>
 
@@ -63,7 +63,7 @@ export const LendingPairRow: FC<LendingPair> = (lendingPair) => {
             <AssetBalance
               address={lendingPair.pairAddress}
               chainId={lendingPair.chainId}
-              abbreviate
+              maximumFractionDigits={2}
             />
           </dd>
         </dl>

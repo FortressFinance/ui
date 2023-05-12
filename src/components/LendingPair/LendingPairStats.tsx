@@ -69,7 +69,6 @@ export const LendingPairStats: FC<LendingPairStatsProps> = ({
         <div className="flex items-center justify-between gap-3 lg:gap-6">
           <div className="text-sm uppercase text-white/75">Exchange rate</div>
           <div className="inline-flex gap-2 font-mono lg:text-lg">
-            1 <AssetSymbol address={lendingPair.data?.collateralContract} /> ={" "}
             <CollateralExchangeRate {...props} />
             <AssetSymbol address={lendingPair.data?.assetContract} />
           </div>
@@ -91,7 +90,7 @@ const TotalBorrowed: FC<LendingPair> = ({ pairAddress, chainId }) => {
       {formatCurrencyUnits({
         amountWei: pairLeverParams.data.totalBorrowAmount?.toString(),
         decimals: asset.data?.decimals,
-        abbreviate: true,
+        maximumFractionDigits: 6,
       })}
     </Skeleton>
   )
@@ -111,7 +110,7 @@ const AssetsAvailable: FC<LendingPair> = ({ pairAddress, chainId }) => {
           ?.sub(pairLeverParams.data.totalBorrowAmount ?? 0)
           .toString(),
         decimals: asset.data?.decimals,
-        abbreviate: true,
+        maximumFractionDigits: 6,
       })}
     </Skeleton>
   )
@@ -141,7 +140,7 @@ const CollateralExchangeRate: FC<LendingPair> = ({ pairAddress, chainId }) => {
       {formatCurrencyUnits({
         amountWei: pairLeverParams.data.exchangeRate?.toString(),
         decimals: asset.data?.decimals,
-        abbreviate: true,
+        maximumFractionDigits: 6,
       })}
     </Skeleton>
   )

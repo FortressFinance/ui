@@ -3,7 +3,15 @@ import { FC } from "react"
 import { FiArrowRight } from "react-icons/fi"
 import { useAccount } from "wagmi"
 
-import { calculateLTV, ltvPercentage } from "@/lib"
+import {
+  assetToCollateral,
+  calculateAvailableCredit,
+  calculateLiquidationPrice,
+  calculateLTV,
+  calculateMaxBorrowAmount,
+  collateralToAsset,
+  ltvPercentage,
+} from "@/lib"
 import { formatCurrencyUnits } from "@/lib/helpers"
 import {
   useClientReady,
@@ -46,10 +54,148 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
     address: lendingPair.data?.collateralContract,
   })
 
+  const [borrowedAmountAsCollateral, adjustedBorrowedAmountAsCollateral] = [
+    assetToCollateral(
+      pairLeverParams.data.borrowedAmount,
+      pairLeverParams.data.exchangeRate,
+      pairLeverParams.data.constants?.exchangePrecision
+    ),
+    assetToCollateral(
+      adjustedBorrowAmount ?? pairLeverParams.data.borrowedAmount,
+      pairLeverParams.data.exchangeRate,
+      pairLeverParams.data.constants?.exchangePrecision
+    ),
+  ]
+  const [collateralAmountAsAsset, adjustedCollateralAmountAsAsset] = [
+    collateralToAsset(
+      pairLeverParams.data.collateralAmount,
+      pairLeverParams.data.exchangeRate,
+      pairLeverParams.data.constants?.exchangePrecision
+    ),
+    collateralToAsset(
+      adjustedCollateralAmount ?? pairLeverParams.data.collateralAmount,
+      pairLeverParams.data.exchangeRate,
+      pairLeverParams.data.constants?.exchangePrecision
+    ),
+  ]
+  const [maxBorrowAmount, adjustedMaxBorrowAmount] = [
+    calculateMaxBorrowAmount({
+      collateralAmountAsAsset,
+      maxLTV: pairLeverParams.data.maxLTV,
+      ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+    }),
+    calculateMaxBorrowAmount({
+      collateralAmountAsAsset: adjustedCollateralAmountAsAsset,
+      maxLTV: pairLeverParams.data.maxLTV,
+      ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+    }),
+  ]
+  const [LTV, adjustedLTV] = [
+    calculateLTV({
+      borrowedAmountAsCollateral,
+      collateralAmount: pairLeverParams.data.collateralAmount,
+      ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+    }),
+    calculateLTV({
+      borrowedAmountAsCollateral: adjustedBorrowedAmountAsCollateral,
+      collateralAmount:
+        adjustedCollateralAmount ?? pairLeverParams.data.collateralAmount,
+      ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+    }),
+  ]
+  const [liquidationPrice, adjustedLiquidationPrice] = [
+    calculateLiquidationPrice({
+      borrowedAmount: pairLeverParams.data.borrowedAmount,
+      maxBorrowAmount,
+      exchangePrecision: pairLeverParams.data.constants?.exchangePrecision,
+    }),
+    calculateLiquidationPrice({
+      borrowedAmount:
+        adjustedBorrowAmount ?? pairLeverParams.data.borrowedAmount,
+      maxBorrowAmount: adjustedMaxBorrowAmount,
+      exchangePrecision: pairLeverParams.data.constants?.exchangePrecision,
+    }),
+  ]
+  const [availableCredit, adjustedAvailableCredit] = [
+    calculateAvailableCredit({
+      borrowedAmount: pairLeverParams.data.borrowedAmount,
+      maxBorrowAmount,
+    }),
+    calculateAvailableCredit({
+      borrowedAmount:
+        adjustedBorrowAmount ?? pairLeverParams.data.borrowedAmount,
+      maxBorrowAmount: adjustedMaxBorrowAmount,
+    }),
+  ]
+
   return (
     <>
       <h2 className="mb-5 font-display text-2xl lg:text-3xl">Your position</h2>
       <div className="space-y-3">
+        <div className="flex items-center justify-between gap-3 lg:gap-6">
+          <div className="text-sm uppercase text-white/75">LTV</div>
+          <div className="inline-flex gap-2 font-mono lg:text-lg">
+            {isClientReady && isConnected ? (
+              <>
+                <span>
+                  {ltvPercentage(
+                    LTV,
+                    pairLeverParams.data.constants?.ltvPrecision
+                  )}
+                </span>
+                {(adjustedBorrowAmount || adjustedCollateralAmount) && (
+                  <span className="inline-flex items-center gap-2 font-medium text-orange">
+                    <FiArrowRight />
+                    <GradientText>
+                      {ltvPercentage(
+                        adjustedLTV,
+                        pairLeverParams.data.constants?.ltvPrecision
+                      )}
+                    </GradientText>
+                  </span>
+                )}
+              </>
+            ) : (
+              "—"
+            )}
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-3 lg:gap-6">
+          <div className="text-sm uppercase text-white/75">
+            Liquidation price
+          </div>
+          <div className="inline-flex gap-2 font-mono lg:text-lg">
+            {isClientReady && isConnected ? (
+              <>
+                <span>
+                  {formatCurrencyUnits({
+                    amountWei: liquidationPrice.toString(),
+                    decimals: borrowAsset.data?.decimals,
+                    maximumFractionDigits: 6,
+                  })}
+                </span>
+                {(adjustedBorrowAmount || adjustedCollateralAmount) && (
+                  <span className="inline-flex items-center gap-2 font-medium text-orange">
+                    <FiArrowRight />
+                    <GradientText>
+                      {formatCurrencyUnits({
+                        amountWei: adjustedLiquidationPrice.toString(),
+                        decimals: borrowAsset.data?.decimals,
+                        maximumFractionDigits: 6,
+                      })}
+                    </GradientText>
+                  </span>
+                )}
+              </>
+            ) : (
+              "—"
+            )}
+            <AssetSymbol
+              address={lendingPair.data?.assetContract}
+              chainId={props.chainId}
+            />
+          </div>
+        </div>
         <div className="flex items-center justify-between gap-3 lg:gap-6">
           <div className="text-sm uppercase text-white/75">Assets borrowed</div>
           <div className="inline-flex gap-2 font-mono lg:text-lg">
@@ -59,7 +205,7 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
                   {formatCurrencyUnits({
                     amountWei: pairLeverParams.data.borrowedAmount?.toString(),
                     decimals: borrowAsset.data?.decimals,
-                    abbreviate: true,
+                    maximumFractionDigits: 6,
                   })}
                 </span>
                 {adjustedBorrowAmount && (
@@ -69,7 +215,7 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
                       {formatCurrencyUnits({
                         amountWei: adjustedBorrowAmount.toString(),
                         decimals: borrowAsset.data?.decimals,
-                        abbreviate: true,
+                        maximumFractionDigits: 6,
                       })}
                     </GradientText>
                   </span>
@@ -96,7 +242,7 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
                     amountWei:
                       pairLeverParams.data.collateralAmount?.toString(),
                     decimals: collateralAsset.data?.decimals,
-                    abbreviate: true,
+                    maximumFractionDigits: 6,
                   })}
                 </span>
                 {adjustedCollateralAmount && (
@@ -104,9 +250,11 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
                     <FiArrowRight />
                     <GradientText>
                       {formatCurrencyUnits({
-                        amountWei: adjustedCollateralAmount.toString(),
+                        amountWei: adjustedCollateralAmount
+                          ? adjustedCollateralAmount.toString()
+                          : pairLeverParams.data.collateralAmount?.toString(),
                         decimals: collateralAsset.data?.decimals,
-                        abbreviate: true,
+                        maximumFractionDigits: 6,
                       })}
                     </GradientText>
                   </span>
@@ -122,44 +270,28 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
           </div>
         </div>
         <div className="flex items-center justify-between gap-3 lg:gap-6">
-          <div className="text-sm uppercase text-white/75">LTV</div>
+          <div className="text-sm uppercase text-white/75">
+            Available credit
+          </div>
           <div className="inline-flex gap-2 font-mono lg:text-lg">
             {isClientReady && isConnected ? (
               <>
                 <span>
-                  {ltvPercentage(
-                    calculateLTV({
-                      borrowedAmount: pairLeverParams.data.borrowedAmount,
-                      collateralAmount: pairLeverParams.data.collateralAmount,
-                      exchangeRate: pairLeverParams.data.exchangeRate,
-                      exchangePrecision:
-                        pairLeverParams.data.constants?.exchangePrecision,
-                      ltvPrecision:
-                        pairLeverParams.data.constants?.ltvPrecision,
-                    }),
-                    pairLeverParams.data.constants?.ltvPrecision
-                  )}
+                  {formatCurrencyUnits({
+                    amountWei: availableCredit.toString(),
+                    decimals: borrowAsset.data?.decimals,
+                    maximumFractionDigits: 6,
+                  })}
                 </span>
                 {(adjustedBorrowAmount || adjustedCollateralAmount) && (
                   <span className="inline-flex items-center gap-2 font-medium text-orange">
                     <FiArrowRight />
                     <GradientText>
-                      {ltvPercentage(
-                        calculateLTV({
-                          borrowedAmount:
-                            adjustedBorrowAmount ??
-                            pairLeverParams.data.borrowedAmount,
-                          collateralAmount:
-                            adjustedCollateralAmount ??
-                            pairLeverParams.data.collateralAmount,
-                          exchangeRate: pairLeverParams.data.exchangeRate,
-                          exchangePrecision:
-                            pairLeverParams.data.constants?.exchangePrecision,
-                          ltvPrecision:
-                            pairLeverParams.data.constants?.ltvPrecision,
-                        }),
-                        pairLeverParams.data.constants?.ltvPrecision
-                      )}
+                      {formatCurrencyUnits({
+                        amountWei: adjustedAvailableCredit.toString(),
+                        decimals: borrowAsset.data?.decimals,
+                        maximumFractionDigits: 6,
+                      })}
                     </GradientText>
                   </span>
                 )}
@@ -167,46 +299,10 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
             ) : (
               "—"
             )}
-          </div>
-        </div>
-        <div className="flex items-center justify-between gap-3 lg:gap-6">
-          <div className="text-sm uppercase text-white/75">
-            Liquidation price
-          </div>
-          <div className="inline-flex gap-2 font-mono lg:text-lg">
-            {isClientReady && isConnected ? (
-              <>
-                <span>TODO</span>
-                {(adjustedBorrowAmount || adjustedCollateralAmount) && (
-                  <span className="inline-flex items-center gap-2 font-medium text-orange">
-                    <FiArrowRight />
-                    <GradientText>TODO</GradientText>
-                  </span>
-                )}
-              </>
-            ) : (
-              "—"
-            )}
-          </div>
-        </div>
-        <div className="flex items-center justify-between gap-3 lg:gap-6">
-          <div className="text-sm uppercase text-white/75">
-            Available credit
-          </div>
-          <div className="inline-flex gap-2 font-mono lg:text-lg">
-            {isClientReady && isConnected ? (
-              <>
-                <span>TODO</span>
-                {(adjustedBorrowAmount || adjustedCollateralAmount) && (
-                  <span className="inline-flex items-center gap-2 font-medium text-orange">
-                    <FiArrowRight />
-                    <GradientText>TODO</GradientText>
-                  </span>
-                )}
-              </>
-            ) : (
-              "—"
-            )}
+            <AssetSymbol
+              address={lendingPair.data?.assetContract}
+              chainId={props.chainId}
+            />
           </div>
         </div>
       </div>
