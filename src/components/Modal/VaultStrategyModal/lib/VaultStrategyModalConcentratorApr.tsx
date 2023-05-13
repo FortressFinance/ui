@@ -12,31 +12,21 @@ export const VaultStrategyModalConcentratorApr: FC<VaultProps> = (props) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = breakdownApr.data as any
 
-  if (data?.totalApr !== undefined)
-    items.push({
-      label: "Total APR",
-      value: data?.totalApr,
-      emphasis: true,
-      disabledTooltip: true,
-    })
-  if (data?.baseApr !== undefined)
-    items.push({ label: "Base APR", value: data?.baseApr })
-  if (data?.crvApr !== undefined)
-    items.push({ label: "CRV APR", value: data?.crvApr })
-  if (data?.cvxApr !== undefined)
-    items.push({ label: "CVX APR", value: data?.cvxApr })
-  if (data?.extraRewardsApr !== undefined)
-    items.push({ label: "Extra Rewards APR", value: data?.extraRewardsApr })
-  if (data?.BALApr !== undefined)
-    items.push({ label: "BAL APR", value: data?.BALApr })
-  if (data?.swapFeeApr !== undefined)
-    items.push({ label: "Swap Fee APR", value: data?.swapFeeApr })
-  if (data?.AuraApr !== undefined)
-    items.push({ label: "Aura APR", value: data?.AuraApr })
-  if (data?.GMXApr !== undefined)
-    items.push({ label: "GMX APR", value: data?.GMXApr })
-  if (data?.ETHApr !== undefined)
-    items.push({ label: "ETH APR", value: data?.ETHApr })
+  items.push({
+    label: "Total APR",
+    value: data?.totalApr,
+    emphasis: true,
+    disabledTooltip: true,
+  })
+  items.push({ label: "Base APR", value: data?.baseApy ?? data?.baseApr })
+  items.push({ label: "CRV APR", value: data?.crvApy ?? data?.crvApr })
+  items.push({ label: "CVX APR", value: data?.cvxApy ?? data?.cvxApr })
+  items.push({ label: "Extra Rewards APR", value: data?.extraRewardsApr })
+  items.push({ label: "BAL APR", value: data?.BALApr })
+  items.push({ label: "Swap Fee APR", value: data?.swapFeeApr })
+  items.push({ label: "Aura APR", value: data?.AuraApr })
+  items.push({ label: "GMX APR", value: data?.GMXApr })
+  items.push({ label: "ETH APR", value: data?.ETHApr })
 
   return (
     <VaultStrategyModalDefinitionList

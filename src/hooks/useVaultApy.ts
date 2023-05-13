@@ -1,3 +1,4 @@
+import { convertToApr } from "@/lib/api/vaults/convertToApy"
 import { VaultProps } from "@/lib/types"
 import useTokenVaultTotalApy, {
   useTokenVaultTotalApr,
@@ -56,7 +57,8 @@ export function useVaultBaseApr({ asset }: VaultProps) {
   const data = vaultAprFallback.data as any
   return {
     ...vaultAprFallback,
-    data: data?.baseApy,
+    data:
+      data?.baseApy !== undefined ? convertToApr(data?.baseApy) : data?.baseApr,
   }
 }
 
@@ -89,7 +91,8 @@ export function useTokenVaultCrvApr({ asset, type }: VaultProps) {
 
   return {
     ...vaultAprFallback,
-    data: data?.crvApy,
+    data:
+      data?.crvApy !== undefined ? convertToApr(data?.crvApy) : data?.crvApr,
   }
 }
 
@@ -104,7 +107,8 @@ export function useVaultCrvApr({ asset }: VaultProps) {
 
   return {
     ...vaultAprFallback,
-    data: data?.crvApy,
+    data:
+      data?.crvApy !== undefined ? convertToApr(data?.crvApy) : data?.crvApr,
   }
 }
 
@@ -136,7 +140,8 @@ export function useTokenVaultCvxApr({ asset, type }: VaultProps) {
   const data = vaultAprFallback.data as any
   return {
     ...vaultAprFallback,
-    data: data?.cvxApy,
+    data:
+      data?.cvxApy !== undefined ? convertToApr(data?.cvxApy) : data?.cvxApr,
   }
 }
 
@@ -150,7 +155,8 @@ export function useVaultCvxApr({ asset }: VaultProps) {
   const data = vaultAprFallback.data as any
   return {
     ...vaultAprFallback,
-    data: data?.cvxApy,
+    data:
+      data?.cvxApy !== undefined ? convertToApr(data?.cvxApy) : data?.cvxApr,
   }
 }
 
