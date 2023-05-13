@@ -59,5 +59,7 @@ function findApiConcentratorForPrimaryAsset(
   data: ConcentratorStaticData[] | undefined,
   primaryAsset: Address | undefined
 ) {
-  return data?.find((v) => v.concentrator.primaryAsset.address === primaryAsset)
+  return data?.find(
+    (v) => v.concentrator?.primaryAsset?.address === primaryAsset
+  )
 }

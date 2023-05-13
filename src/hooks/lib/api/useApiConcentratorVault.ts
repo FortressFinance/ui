@@ -13,11 +13,13 @@ export function useApiConcentratorVault({
   const targetAssetToYbToken: Record<Address, Set<Address>> = {} // target to primaryKey
   apiQuery.data?.forEach((data) => {
     const curTargetAsset = data?.target_asset?.address
-    const curPrimaryAsset = data.concentrator.primaryAsset?.address
+    const curPrimaryAsset = data.concentrator?.primaryAsset?.address
     if (
       !!targetAssetToYbToken &&
       !!targetAsset &&
       !!primaryAsset &&
+      !!curTargetAsset &&
+      !!curPrimaryAsset &&
       targetAsset.toLocaleUpperCase() === curTargetAsset.toLocaleUpperCase() &&
       primaryAsset.toLocaleLowerCase() === curPrimaryAsset.toLocaleLowerCase()
     ) {
