@@ -93,7 +93,10 @@ export function useConcentratorClaim({
     error: prepareWrite.error || writeClaim.error,
     isError: prepareWrite.isError || writeClaim.isError,
     isLoading:
-      prepareWrite.isLoading || writeClaim.isLoading || writeClaim.isLoading,
+      prepareWrite.isLoading ||
+      writeClaim.isLoading ||
+      writeClaim.isLoading ||
+      rewardsBalance.isLoading,
     write: writeExecute,
   }
 }

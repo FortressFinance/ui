@@ -241,6 +241,7 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
       isLoading={
         concentratorTargetAssetsIsLoading ||
         concentratorsList.isLoading ||
+        rewardsBalance.isLoading ||
         claim.isLoading ||
         !isReady
       }
