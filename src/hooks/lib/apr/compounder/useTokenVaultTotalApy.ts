@@ -1,3 +1,5 @@
+import { Address } from "wagmi"
+
 import { convertToApy } from "@/lib/api/vaults/convertToApy"
 import { VaultDynamicProps } from "@/lib/types"
 import { useActiveChainId } from "@/hooks"
@@ -5,6 +7,20 @@ import useTokenVaultArbitrumTotalApr from "@/hooks/lib/apr/compounder/useTokenVa
 import useTokenVaultMainnetTotalApr from "@/hooks/lib/apr/compounder/useTokenVaultMainnetTotalApr"
 
 export default function useTokenVaultTotalApy({
+  asset,
+  enabled,
+}: {
+  asset: Address
+  enabled: boolean
+}) {
+  const apr = useTokenVaultTotalApr({ asset, enabled })
+  return {
+    ...apr,
+    data: convertToApy(apr.data),
+  }
+}
+
+export function useTokenVaultTotalApr({
   asset,
   enabled,
 }: {
@@ -24,13 +40,7 @@ export default function useTokenVaultTotalApy({
   })
 
   if (!isArbitrumFamily) {
-    return {
-      ...tokenVaultMainnetTotalApr,
-      data: convertToApy(tokenVaultMainnetTotalApr.data),
-    }
+    return tokenVaultMainnetTotalApr
   }
-  return {
-    ...tokenVaultArbitrumTotalApr,
-    data: convertToApy(tokenVaultArbitrumTotalApr.data),
-  }
+  return tokenVaultArbitrumTotalApr
 }
