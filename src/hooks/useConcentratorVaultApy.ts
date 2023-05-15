@@ -31,7 +31,7 @@ export function useConcentratorVaultApy({
   })
   const concentratorTokenVaultTotalApy = useConcentratorTokenVaultTotalApy({
     asset: primaryAsset,
-    enabled: shouldTokenFallback ?? false,
+    enabled: !!shouldTokenFallback,
   })
 
   if (primaryAsset === "0x") {

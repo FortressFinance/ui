@@ -16,15 +16,15 @@ import {
 import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalDefinitionList"
 
 export const VaultStrategyModalTokenApr: FC<VaultProps> = (props) => {
-  const totalApy = useVaultApy({ ...props })
-  const totalApr = useVaultTotalApr({ ...props })
-  const balApr = useVaultBalApr({ ...props })
-  const auraApr = useVaultAuraApr({ ...props })
-  const crvApr = useTokenVaultCrvApr({ ...props })
-  const cvxApr = useTokenVaultCvxApr({ ...props })
-  const gmxApr = useVaultGmxApr({ ...props })
-  const ethApr = useVaultEthApr({ ...props })
-  const extraRewardsApr = useVaultExtraApr({ ...props })
+  const totalApy = useVaultApy(props)
+  const totalApr = useVaultTotalApr(props)
+  const balApr = useVaultBalApr(props)
+  const auraApr = useVaultAuraApr(props)
+  const crvApr = useTokenVaultCrvApr(props)
+  const cvxApr = useTokenVaultCvxApr(props)
+  const gmxApr = useVaultGmxApr(props)
+  const ethApr = useVaultEthApr(props)
+  const extraRewardsApr = useVaultExtraApr(props)
 
   return (
     <VaultStrategyModalDefinitionList

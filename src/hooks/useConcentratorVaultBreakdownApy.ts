@@ -26,7 +26,7 @@ export function useConcentratorVaultBreakdownApy({
   })
   const tokenVaultBreakdownApr = useConcentratorTokenVaultBreakdownApr({
     asset: primaryAsset,
-    enabled: shouldTokenFallback ?? false,
+    enabled: !!shouldTokenFallback,
   })
 
   if (primaryAsset === "0x") {
