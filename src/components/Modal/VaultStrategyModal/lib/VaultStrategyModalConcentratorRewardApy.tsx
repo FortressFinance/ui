@@ -28,7 +28,6 @@ export const VaultStrategyModalConcentratorRewardApr: FC<VaultProps> = (
       value: convertToApy(data?.totalApr),
       emphasis: true,
     },
-    ,
     { label: "Base APR", value: data?.baseApr },
     { label: "CRV APR", value: data?.crvApr },
     { label: "CVX APR", value: data?.cvxApr },
@@ -43,14 +42,7 @@ export const VaultStrategyModalConcentratorRewardApr: FC<VaultProps> = (
   return (
     <VaultStrategyModalDefinitionList
       isLoading={breakdownApy.isLoading}
-      items={
-        items as Array<{
-          label: string
-          value?: number
-          emphasis?: boolean
-          disabledTooltip?: boolean
-        }>
-      }
+      items={items}
     />
   )
 }

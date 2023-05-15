@@ -19,7 +19,6 @@ export const VaultStrategyModalConcentratorApr: FC<VaultProps> = (props) => {
       emphasis: true,
       disabledTooltip: true,
     },
-    ,
     { label: "Base APR", value: data?.baseApy ?? data?.baseApr },
     { label: "CRV APR", value: data?.crvApy ?? data?.crvApr },
     { label: "CVX APR", value: data?.cvxApy ?? data?.cvxApr },
@@ -34,14 +33,7 @@ export const VaultStrategyModalConcentratorApr: FC<VaultProps> = (props) => {
   return (
     <VaultStrategyModalDefinitionList
       isLoading={breakdownApr.isLoading}
-      items={
-        items as Array<{
-          label: string
-          value?: number
-          emphasis?: boolean
-          disabledTooltip?: boolean
-        }>
-      }
+      items={items}
     />
   )
 }
