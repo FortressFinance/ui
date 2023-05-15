@@ -55,12 +55,9 @@ export function useConcentratorClaim({
   const rewardsBalance = useConcentratorPendingReward({
     ybTokenList: ybTokenList ?? [],
   })
-  const ybTokenListWithRewards: Address[] = []
-  rewardsBalance.data?.forEach((reward, index) => {
-    if (reward.gt(0)) {
-      ybTokenListWithRewards.push(ybTokenList[index])
-    }
-  })
+  const ybTokenListWithRewards = ybTokenList.filter((_ybToken, index) =>
+    rewardsBalance.data?.[index]?.gt(0)
+  )
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
   const prepareWrite = usePrepareContractWrite({
