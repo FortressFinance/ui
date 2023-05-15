@@ -40,7 +40,7 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
         <div>
           <Tooltip label="The accumulated rewards are periodically invested into this vault. All accrued rewards can be claimed at any time, even if further rewards are not accruing anymore.">
             <span>
-              <h1 className="float-left mr-1 text-sm">Concentrator</h1>
+              <h1 className="float-left mr-1 text-sm">Target Asset</h1>
               <BiInfoCircle className="h-5 w-5 cursor-pointer" />
             </span>
           </Tooltip>

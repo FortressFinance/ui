@@ -9,8 +9,8 @@ export function useVaultFees({
 }: VaultRowPropsWithProduct) {
   const isCompounderProduct = productType === "compounder"
 
-  const compounderVaultFees = useCompounderVaultFees({ ...vaultProps })
-  const concentratorVaultFees = useConcentratorVaultFees({ ...vaultProps })
+  const compounderVaultFees = useCompounderVaultFees(vaultProps)
+  const concentratorVaultFees = useConcentratorVaultFees(vaultProps)
 
   if (isCompounderProduct) {
     return compounderVaultFees

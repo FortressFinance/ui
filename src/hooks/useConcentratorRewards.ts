@@ -52,6 +52,15 @@ export function useConcentratorClaim({
     (state) => [state.addToast, state.replaceToast],
     shallow
   )
+  const rewardsBalance = useConcentratorPendingReward({
+    ybTokenList: ybTokenList ?? [],
+  })
+  const ybTokenListWithRewards: Address[] = []
+  rewardsBalance.data?.forEach((reward, index) => {
+    if (reward.gt(0)) {
+      ybTokenListWithRewards.push(ybTokenList[index])
+    }
+  })
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
   const prepareWrite = usePrepareContractWrite({
@@ -59,8 +68,11 @@ export function useConcentratorClaim({
     chainId,
     abi: MultiClaimer,
     functionName: "multiClaim",
-    args: [ybTokenList, userAddress ?? "0x"],
-    enabled: !!userAddress && ybTokenList.length > 0 && targetAsset !== "0x",
+    args: [ybTokenListWithRewards, userAddress ?? "0x"],
+    enabled:
+      !!userAddress &&
+      ybTokenListWithRewards.length > 0 &&
+      targetAsset !== "0x",
   })
   const writeClaim = useContractWrite(prepareWrite.config)
   useWaitForTransaction({ hash: writeClaim.data?.hash })
