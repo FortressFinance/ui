@@ -1,6 +1,6 @@
 import { Address } from "wagmi"
 
-import { convertToApy } from "@/lib/api/vaults/convertToApy"
+import { convertToApr, convertToApy } from "@/lib/api/vaults/convertToApy"
 import { useActiveChainId } from "@/hooks"
 import useCurveVaultArbitrumTotalApr, {
   useCurveVaultArbitrumBreakdownApr,
@@ -73,5 +73,13 @@ export function useCurveVaultBreakdownApr({
     return curveVaultMainnetBreakdownApr
   }
 
-  return curveVaultArbitrumBreakdownApr
+  return {
+    ...curveVaultArbitrumBreakdownApr,
+    data: {
+      baseApr: convertToApr(curveVaultArbitrumBreakdownApr.data?.baseApy),
+      crvApr: convertToApr(curveVaultArbitrumBreakdownApr.data?.crvApy),
+      cvxApr: convertToApr(curveVaultArbitrumBreakdownApr.data?.cvxApy),
+      totalApr: convertToApr(curveVaultArbitrumBreakdownApr.data?.totalApy),
+    },
+  }
 }
