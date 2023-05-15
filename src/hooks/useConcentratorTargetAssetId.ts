@@ -24,7 +24,8 @@ export function useConcentratorTargetAssetId({
     let relevantIndex = -1
     targetAssets.data?.map((curTargetAsset, index) => {
       if (
-        targetAsset !== undefined &&
+        !!targetAsset &&
+        !!curTargetAsset &&
         targetAsset.toLocaleUpperCase() === curTargetAsset.toLocaleUpperCase()
       ) {
         relevantIndex = index
