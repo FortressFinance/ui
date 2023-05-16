@@ -10,7 +10,7 @@ import {
 } from "wagmi"
 import { shallow } from "zustand/shallow"
 
-import { useActiveChainId } from "@/hooks"
+import { useActiveChainId, useTokenOrNativeBalance } from "@/hooks"
 
 import { useToastStore } from "@/store"
 
@@ -48,6 +48,8 @@ export function useConcentratorClaim({
   targetAsset,
   ybTokenList,
 }: ConcentratorRewardArgs) {
+  const chainId = useActiveChainId()
+  const { address: userAddress } = useAccount()
   const [addToast, replaceToast] = useToastStore(
     (state) => [state.addToast, state.replaceToast],
     shallow
@@ -55,11 +57,17 @@ export function useConcentratorClaim({
   const rewardsBalance = useConcentratorPendingReward({
     ybTokenList: ybTokenList ?? [],
   })
+  const balance = useTokenOrNativeBalance({
+    address: targetAsset,
+    chainId,
+  })
+  const onClaimSuccess = () => {
+    rewardsBalance.refetch()
+    balance.refetch()
+  }
   const ybTokenListWithRewards = ybTokenList.filter((_ybToken, index) =>
     rewardsBalance.data?.[index]?.gt(0)
   )
-  const chainId = useActiveChainId()
-  const { address: userAddress } = useAccount()
   const prepareWrite = usePrepareContractWrite({
     address: multiClaimAddress,
     chainId,
@@ -72,7 +80,10 @@ export function useConcentratorClaim({
       targetAsset !== "0x",
   })
   const writeClaim = useContractWrite(prepareWrite.config)
-  useWaitForTransaction({ hash: writeClaim.data?.hash })
+  useWaitForTransaction({
+    hash: writeClaim.data?.hash,
+    onSuccess: () => onClaimSuccess(),
+  })
   const writeExecute = useCallback(() => {
     const action = "Claim"
     const toastId = addToast({ type: "startTx", action })
@@ -93,7 +104,8 @@ export function useConcentratorClaim({
       prepareWrite.isLoading ||
       writeClaim.isLoading ||
       writeClaim.isLoading ||
-      rewardsBalance.isLoading,
+      rewardsBalance.isLoading ||
+      balance.isLoading,
     write: writeExecute,
   }
 }
