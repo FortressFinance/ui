@@ -17,6 +17,8 @@ export function useApiConcentratorId({
     if (
       !!targetAsset &&
       !!primaryAsset &&
+      !!curTargetAsset &&
+      !!curPrimaryAsset &&
       targetAsset.toLocaleUpperCase() === curTargetAsset.toLocaleUpperCase() &&
       primaryAsset.toLocaleLowerCase() === curPrimaryAsset.toLocaleLowerCase()
     ) {
