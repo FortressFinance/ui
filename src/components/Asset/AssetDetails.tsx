@@ -89,6 +89,7 @@ export const AssetBalanceUsd: FC<AssetBalanceUsdProps> = ({
   abbreviate,
   chainId,
 }) => {
+  const { isConnected } = useAccount()
   const { data: balance, isLoading } = useTokenOrNativeBalance({
     address,
     chainId,
@@ -97,7 +98,7 @@ export const AssetBalanceUsd: FC<AssetBalanceUsdProps> = ({
     useTokenPriceUsd({ asset })
   return (
     <Skeleton isLoading={isLoading || isLoadingTokenPriceUsd}>
-      {address
+      {address && isConnected
         ? formatUsd({
             abbreviate,
             amount: Number(balance?.formatted ?? "0") * (tokenPriceUsd ?? 0),

@@ -220,7 +220,13 @@ export const VaultRow: FC<VaultTableRowProps> = ({
 
         {/* Mobile: APY, TVL, Balance */}
         <TableCell className="-mx-3 border-b border-b-pink/30 px-3 py-3 lg:hidden">
-          <dl className="grid grid-cols-4 gap-x-3 text-center">
+          <dl
+            className={clsxm(
+              "grid gap-x-3 text-center",
+              { "grid-cols-4": props.productType === "compounder" },
+              { "grid-cols-3": props.productType === "concentrator" }
+            )}
+          >
             <dt className="row-start-2 text-xs text-pink-100/60">APY</dt>
             <dd className="text-sm font-medium text-pink-100">
               <VaultApy {...props} />
