@@ -8,10 +8,7 @@ import clsxm from "@/lib/clsxm"
 import { resolvedRoute } from "@/lib/helpers"
 import { VaultProps } from "@/lib/types"
 import { useVault, useVaultYbtokenAddress } from "@/hooks"
-import { useDoubleTokenConfig } from "@/hooks/useDoubleTokenConfig"
 
-import { AssetLogo } from "@/components/Asset"
-import { AssetDoubleLogo } from "@/components/Asset/AssetDoubleLogo"
 import { ButtonLink } from "@/components/Button"
 import {
   CompounderVaultDepositForm,
@@ -23,9 +20,9 @@ import {
 } from "@/components/Concentrator"
 import { TableCell, TableRow } from "@/components/Table"
 import { GradientText } from "@/components/Typography"
+import { VaultNameCell } from "@/components/VaultRow"
 import {
   VaultApy,
-  VaultName,
   VaultTvl,
   VaultUserBalance,
   VaultUserEarnings,
@@ -76,10 +73,6 @@ export const VaultRow: FC<VaultTableRowProps> = ({
     )
   }
 
-  const doubleTokens = useDoubleTokenConfig()
-  const [mainInputToken, secondInputToken] =
-    doubleTokens?.[ybTokenAddress] ?? []
-
   return (
     <Accordion.Item value={vaultAddress} asChild>
       <TableRow
@@ -90,19 +83,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
       >
         {/* Row of vault info */}
         <TableCell className="relative grid grid-cols-[max-content,auto,max-content] items-center gap-x-3 max-lg:-mx-3 max-lg:border-b max-lg:border-b-pink/30 max-lg:px-3 max-lg:pb-3.5 lg:pointer-events-none">
-          {props.productType === "concentrator" ? (
-            <AssetDoubleLogo
-              className="flex h-12 w-12"
-              mainTokenAddress={mainInputToken}
-              secondTokenAddress={secondInputToken}
-            />
-          ) : (
-            <AssetLogo className="flex h-12 w-12" tokenAddress={vaultAddress} />
-          )}
-
-          <span className="line-clamp-2 max-lg:mr-8">
-            <VaultName {...props} />
-          </span>
+          <VaultNameCell {...props} ybTokenAddress={ybTokenAddress} />
 
           {/* Large: strategy button */}
           <ButtonLink
