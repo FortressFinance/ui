@@ -18,3 +18,5 @@ export const glpRewardsDistributorAddress: Address =
   "0x5C04a12EB54A093c396f61355c6dA0B15890150d"
 export const glpTokenAddress: Address =
   "0x5402B5F40310bDED796c7D0F3FF6683f5C0cFfdf"
+export const multiClaimAddress: Address =
+  "0x259c2B9F14Ef98620d529feEf6d0D22269fDfbeD"

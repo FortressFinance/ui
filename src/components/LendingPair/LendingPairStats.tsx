@@ -5,13 +5,23 @@ import { formatCurrencyUnits } from "@/lib/helpers"
 import { useLendingPair, usePairLeverParams, useTokenOrNative } from "@/hooks"
 
 import { AssetSymbol } from "@/components/Asset"
-import { LendingPairAPY } from "@/components/LendingPair/LendingPairAPY"
+import {
+  LendingPairAPY,
+  LendingPairAPYType,
+} from "@/components/LendingPair/LendingPairAPY"
 import { LendingPairUtilization } from "@/components/LendingPair/LendingPairUtilization"
 import Skeleton from "@/components/Skeleton"
 
 import { LendingPair } from "@/constant"
 
-export const LendingPairStats: FC<LendingPair> = (props) => {
+type LendingPairStatsProps = LendingPair & {
+  apyType: LendingPairAPYType
+}
+
+export const LendingPairStats: FC<LendingPairStatsProps> = ({
+  apyType,
+  ...props
+}) => {
   const lendingPair = useLendingPair({
     pairAddress: props.pairAddress,
     chainId: props.chainId,
@@ -49,15 +59,16 @@ export const LendingPairStats: FC<LendingPair> = (props) => {
           </div>
         </div>
         <div className="flex items-center justify-between gap-3 lg:gap-6">
-          <div className="text-sm uppercase text-white/75">APY</div>
+          <div className="text-sm uppercase text-white/75">
+            {apyType === "borrow" ? "Borrow" : "Lend"} APY
+          </div>
           <div className="inline-flex gap-2 font-mono lg:text-lg">
-            <LendingPairAPY {...props} />
+            <LendingPairAPY apyType={apyType} {...props} />
           </div>
         </div>
         <div className="flex items-center justify-between gap-3 lg:gap-6">
           <div className="text-sm uppercase text-white/75">Exchange rate</div>
           <div className="inline-flex gap-2 font-mono lg:text-lg">
-            1 <AssetSymbol address={lendingPair.data?.collateralContract} /> ={" "}
             <CollateralExchangeRate {...props} />
             <AssetSymbol address={lendingPair.data?.assetContract} />
           </div>
@@ -79,7 +90,7 @@ const TotalBorrowed: FC<LendingPair> = ({ pairAddress, chainId }) => {
       {formatCurrencyUnits({
         amountWei: pairLeverParams.data.totalBorrowAmount?.toString(),
         decimals: asset.data?.decimals,
-        abbreviate: true,
+        maximumFractionDigits: 6,
       })}
     </Skeleton>
   )
@@ -99,7 +110,7 @@ const AssetsAvailable: FC<LendingPair> = ({ pairAddress, chainId }) => {
           ?.sub(pairLeverParams.data.totalBorrowAmount ?? 0)
           .toString(),
         decimals: asset.data?.decimals,
-        abbreviate: true,
+        maximumFractionDigits: 6,
       })}
     </Skeleton>
   )
@@ -129,7 +140,7 @@ const CollateralExchangeRate: FC<LendingPair> = ({ pairAddress, chainId }) => {
       {formatCurrencyUnits({
         amountWei: pairLeverParams.data.exchangeRate?.toString(),
         decimals: asset.data?.decimals,
-        abbreviate: true,
+        maximumFractionDigits: 6,
       })}
     </Skeleton>
   )

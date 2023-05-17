@@ -2,36 +2,33 @@ import { FC } from "react"
 
 import { VaultProps } from "@/lib/types"
 import {
+  useTokenVaultCrvApr,
+  useTokenVaultCvxApr,
   useVaultApy,
   useVaultAuraApr,
   useVaultBalApr,
-  useVaultCrvApr,
-  useVaultCvxApr,
   useVaultEthApr,
   useVaultExtraApr,
   useVaultGmxApr,
-  useVaultPoolId,
   useVaultTotalApr,
 } from "@/hooks"
 
 import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalDefinitionList"
 
 export const VaultStrategyModalTokenApr: FC<VaultProps> = (props) => {
-  const { data: poolId, ...poolIdQuery } = useVaultPoolId(props)
-  const totalApy = useVaultApy({ ...props, poolId })
-  const totalApr = useVaultTotalApr({ ...props, poolId })
-  const balApr = useVaultBalApr({ ...props, poolId })
-  const auraApr = useVaultAuraApr({ ...props, poolId })
-  const crvApr = useVaultCrvApr({ ...props, poolId })
-  const cvxApr = useVaultCvxApr({ ...props, poolId })
-  const gmxApr = useVaultGmxApr({ ...props, poolId })
-  const ethApr = useVaultEthApr({ ...props, poolId })
-  const extraRewardsApr = useVaultExtraApr({ ...props, poolId })
+  const totalApy = useVaultApy(props)
+  const totalApr = useVaultTotalApr(props)
+  const balApr = useVaultBalApr(props)
+  const auraApr = useVaultAuraApr(props)
+  const crvApr = useTokenVaultCrvApr(props)
+  const cvxApr = useTokenVaultCvxApr(props)
+  const gmxApr = useVaultGmxApr(props)
+  const ethApr = useVaultEthApr(props)
+  const extraRewardsApr = useVaultExtraApr(props)
 
   return (
     <VaultStrategyModalDefinitionList
       isLoading={[
-        poolIdQuery,
         totalApy,
         totalApr,
         balApr,

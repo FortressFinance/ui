@@ -15,7 +15,10 @@ export const ConcentratorVaultTvl: FC<VaultProps> = (props) => {
     <div className={clsxm("lg:grid", { "lg:grid-rows-2": !!data })}>
       <div className="max-lg:hidden">
         <Skeleton isLoading={tvlData.isLoading}>
-          {formatCurrencyUnits({ abbreviate: true, amountWei: data.tvl })}
+          {formatCurrencyUnits({
+            amountWei: data.tvl,
+            maximumFractionDigits: 2,
+          })}
         </Skeleton>
       </div>
       {data.usdTvl && (

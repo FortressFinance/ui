@@ -23,10 +23,10 @@ export function useApiConcentratorVault({
       targetAsset.toLocaleUpperCase() === curTargetAsset.toLocaleUpperCase() &&
       primaryAsset.toLocaleLowerCase() === curPrimaryAsset.toLocaleLowerCase()
     ) {
-      if (!targetAssetToYbToken[curTargetAsset]) {
-        targetAssetToYbToken[curTargetAsset] = new Set()
+      if (!targetAssetToYbToken[targetAsset]) {
+        targetAssetToYbToken[targetAsset] = new Set()
       }
-      targetAssetToYbToken[curTargetAsset].add(
+      targetAssetToYbToken[targetAsset].add(
         data?.concentrator?.ybToken?.address
       )
     }

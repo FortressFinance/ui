@@ -158,15 +158,9 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
           )
         )
         setAdjustedCollateralAmount(
-          collateralAmountSignificant.sub(
-            isRepayingWithCollateral
-              ? repaymentAmount
-              : assetToCollateral(
-                  repaymentAmount,
-                  pairLeverParams.data.exchangeRate,
-                  pairLeverParams.data.constants?.exchangePrecision
-                )
-          )
+          isRepayingWithCollateral
+            ? collateralAmountSignificant.sub(repaymentAmount)
+            : undefined
         )
       }
       setIsDebouncing(false)
@@ -288,7 +282,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
                   ? borrowAssetBalance.data?.value.toString()
                   : pairLeverParams.data.collateralAmount?.toString(),
                 decimals: activeRepaymentAsset?.decimals,
-                abbreviate: true,
+                maximumFractionDigits: 6,
               })}
             </span>
           </div>

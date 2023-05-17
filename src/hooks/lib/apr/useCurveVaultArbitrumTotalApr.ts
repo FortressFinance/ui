@@ -2,6 +2,7 @@ import axios from "axios"
 import { Address, useQuery } from "wagmi"
 import { z } from "zod"
 
+import { convertToApr } from "@/lib/api/vaults/convertToApy"
 import { useActiveChainId } from "@/hooks"
 
 import {
@@ -29,7 +30,7 @@ export default function useCurveVaultArbitrumTotalApr({
 
   return {
     ...breakdownApr,
-    data: !breakdownApr.data ? 0 : breakdownApr.data.totalApr,
+    data: !breakdownApr.data ? 0 : convertToApr(breakdownApr.data.totalApy),
   }
 }
 
@@ -83,6 +84,6 @@ async function getCurveArbitrumApi(poolCurveAddress: Address) {
     baseApy,
     crvApy,
     cvxApy,
-    totalApr: baseApy + crvApy + cvxApy,
+    totalApy: baseApy + crvApy + cvxApy,
   }
 }

@@ -13,6 +13,7 @@ export function useApiConcentratorTargetAssetId({
     const curTargetAsset = data?.target_asset?.address
     if (
       !!targetAsset &&
+      !!curTargetAsset &&
       targetAsset.toLocaleUpperCase() === curTargetAsset.toLocaleUpperCase()
     ) {
       targetAssetToId[targetAsset] = data?.target_asset?.targetAssetId

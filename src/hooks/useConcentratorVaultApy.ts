@@ -1,12 +1,9 @@
 import { concentratorConvertToApy } from "@/lib/api/vaults/convertToApy"
 import { VaultProps } from "@/lib/types"
-import { useApiConcentratorDynamic } from "@/hooks/lib/api/useApiConcentratorDynamic"
 import useConcentratorTokenVaultTotalApy from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultTotalApy"
 import useBalancerVaultTotalApy from "@/hooks/lib/apr/useBalancerVaultTotalApy"
 import useCurveVaultTotalApy from "@/hooks/lib/apr/useCurveVaultTotalApy"
 import { useConcentratorFallbackApr } from "@/hooks/useConcentratorApy"
-import { useConcentratorId } from "@/hooks/useConcentratorId"
-import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAssetId"
 import {
   useShouldUseCurveFallback,
   useShouldUseTokenFallback,
@@ -15,32 +12,14 @@ import {
 export function useConcentratorVaultApy({
   asset: targetAsset,
   vaultAddress: primaryAsset,
-  type,
 }: VaultProps) {
   const shouldCurveFallback = useShouldUseCurveFallback(primaryAsset)
   const shouldTokenFallback = useShouldUseTokenFallback(primaryAsset)
 
-  const { data: targetAssetId, isLoading: targetAssetIdIsLoading } =
-    useConcentratorTargetAssetId({ targetAsset })
-  const { data: concentratorId, isLoading: concentratorIdIsLoading } =
-    useConcentratorId({
-      primaryAsset,
-      targetAsset,
-    })
-
   const compounderApr = useConcentratorFallbackApr({ targetAsset })
 
-  const apiQuery = useApiConcentratorDynamic({
-    targetAssetId,
-    concentratorId,
-    type,
-  })
-
-  const isCurveFallbackEnabled =
-    apiQuery.isError && shouldCurveFallback && !shouldTokenFallback
-  const isBalancerFallbackEnabled =
-    apiQuery.isError && !shouldCurveFallback && !shouldTokenFallback
-  const isTokenFallbackEnabled = apiQuery.isError && shouldTokenFallback
+  const isCurveFallbackEnabled = shouldCurveFallback && !shouldTokenFallback
+  const isBalancerFallbackEnabled = !shouldCurveFallback && !shouldTokenFallback
 
   const concentratorCurveVaultTotalApy = useCurveVaultTotalApy({
     asset: primaryAsset,
@@ -52,7 +31,7 @@ export function useConcentratorVaultApy({
   })
   const concentratorTokenVaultTotalApy = useConcentratorTokenVaultTotalApy({
     asset: primaryAsset,
-    enabled: isTokenFallbackEnabled ?? false,
+    enabled: !!shouldTokenFallback,
   })
 
   if (primaryAsset === "0x") {
@@ -82,20 +61,11 @@ export function useConcentratorVaultApy({
     }
   }
 
-  if (isTokenFallbackEnabled) {
-    return {
-      ...concentratorTokenVaultTotalApy,
-      data: concentratorConvertToApy(
-        concentratorTokenVaultTotalApy.data,
-        compounderApr.data
-      ),
-    }
-  }
-
   return {
-    ...apiQuery,
-    isLoading:
-      targetAssetIdIsLoading || concentratorIdIsLoading || apiQuery.isLoading,
-    data: apiQuery.data?.APY.totalAPY,
+    ...concentratorTokenVaultTotalApy,
+    data: concentratorConvertToApy(
+      concentratorTokenVaultTotalApy.data,
+      compounderApr.data
+    ),
   }
 }

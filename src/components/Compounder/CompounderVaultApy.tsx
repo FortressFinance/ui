@@ -2,16 +2,15 @@ import { FC } from "react"
 
 import { formatPercentage } from "@/lib/helpers/formatPercentage"
 import { VaultProps } from "@/lib/types"
-import { useVaultApy, useVaultPoolId } from "@/hooks"
+import { useVaultApy } from "@/hooks"
 
 import Skeleton from "@/components/Skeleton"
 
 export const CompounderVaultApy: FC<VaultProps> = (props) => {
-  const poolId = useVaultPoolId(props)
-  const totalApy = useVaultApy({ ...props, poolId: poolId.data })
+  const totalApy = useVaultApy(props)
 
   return (
-    <Skeleton isLoading={poolId.isLoading || totalApy.isLoading}>
+    <Skeleton isLoading={totalApy.isLoading}>
       {formatPercentage(totalApy.data)}
     </Skeleton>
   )

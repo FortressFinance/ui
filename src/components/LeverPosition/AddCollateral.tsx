@@ -192,7 +192,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
               {formatCurrencyUnits({
                 amountWei: collateralAssetBalance.data?.value.toString(),
                 decimals: collateralAssetBalance.data?.decimals,
-                abbreviate: true,
+                maximumFractionDigits: 6,
               })}
             </span>
             <button

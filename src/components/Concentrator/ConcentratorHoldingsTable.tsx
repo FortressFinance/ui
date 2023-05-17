@@ -40,7 +40,7 @@ const ConcentratorHoldingsTable: FC = () => {
     !ready
 
   return (
-    <VaultTable label="Holdings" productType="concentrator">
+    <VaultTable label="Holdings">
       {!isConnected ? (
         <TableDisconnected heading="Oops! It looks like you are not connected...">
           Connect your wallet to start exploring our Vaults.

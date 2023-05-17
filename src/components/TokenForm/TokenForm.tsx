@@ -225,7 +225,7 @@ const TokenForm: FC<TokenFormProps> = ({
             <AssetBalance
               address={inputTokenAddress}
               chainId={chainId}
-              abbreviate
+              maximumFractionDigits={6}
             />
           </span>
           <button

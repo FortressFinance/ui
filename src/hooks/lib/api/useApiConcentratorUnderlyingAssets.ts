@@ -17,10 +17,12 @@ export function useApiConcentratorUnderlyingAssets({
     if (
       !!targetAsset &&
       !!primaryAsset &&
+      !!curTargetAsset &&
+      !!curPrimaryAsset &&
       targetAsset.toLocaleUpperCase() === curTargetAsset.toLocaleUpperCase() &&
       primaryAsset.toLocaleLowerCase() === curPrimaryAsset.toLocaleLowerCase()
     ) {
-      targetAssetToUnderlying[data?.target_asset?.address] =
+      targetAssetToUnderlying[targetAsset] =
         data?.concentrator?.undelyingAssets?.map((x) => x.address)
     }
   })

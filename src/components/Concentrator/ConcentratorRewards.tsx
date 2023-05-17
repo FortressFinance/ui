@@ -1,9 +1,9 @@
 import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
 import { BiInfoCircle } from "react-icons/bi"
-import { Address } from "wagmi"
+import { Address, useAccount } from "wagmi"
 
-import { formatPercentage, formatUsd } from "@/lib/helpers"
+import { formatCurrencyUnits, formatPercentage, formatUsd } from "@/lib/helpers"
 import {
   useClientReady,
   useConcentratorApy,
@@ -12,7 +12,6 @@ import {
   useConcentratorFirstVaultType,
   useConcentratorPendingReward,
   useConcentratorTargetAssets,
-  useConcentratorVault,
   useConcentratorVaultList,
   useFirstConcentrator,
   useListConcentrators,
@@ -41,7 +40,7 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
         <div>
           <Tooltip label="The accumulated rewards are periodically invested into this vault. All accrued rewards can be claimed at any time, even if further rewards are not accruing anymore.">
             <span>
-              <h1 className="float-left mr-1 text-sm">Concentrator</h1>
+              <h1 className="float-left mr-1 text-sm">Target Asset</h1>
               <BiInfoCircle className="h-5 w-5 cursor-pointer" />
             </span>
           </Tooltip>
@@ -74,7 +73,10 @@ export const ConcentratorRewards: FC<ConcentratorRewardsProps> = ({
           </dd>
           <dt className="text-xs font-medium text-white/80">Balance</dt>
           <dd className="text-right text-xs font-medium text-white/80">
-            <AssetBalance address={concentratorTargetAsset} abbreviate />{" "}
+            <AssetBalance
+              address={concentratorTargetAsset}
+              maximumFractionDigits={6}
+            />{" "}
             <AssetSymbol address={concentratorTargetAsset} />
           </dd>
           <dt className="text-sm font-semibold leading-relaxed">
@@ -151,50 +153,7 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
   concentratorTargetAsset,
 }) => {
   const isReady = useClientReady()
-  const {
-    data: concentratorTargetAssets,
-    isLoading: concentratorTargetAssetsIsLoading,
-  } = useConcentratorTargetAssets()
-  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
-  const firstConcentrator = useFirstConcentrator({
-    concentratorsList,
-    concentratorTargetAsset,
-  })
-  const concentrator = useConcentratorVault({
-    targetAsset: concentratorTargetAsset,
-    primaryAsset: firstConcentrator?.vaultAssetAddress,
-    type: firstConcentrator?.vaultType,
-  })
-  const rewardsBalance = useConcentratorPendingReward({
-    ybTokenList: [concentrator.data?.ybTokenAddress],
-  })
-  const rewardToken = useTokenOrNative({
-    address: concentrator.data?.rewardTokenAddress,
-  })
-  const formatted = ethers.utils.formatUnits(
-    rewardsBalance.data?.[0] ?? BigNumber.from(0),
-    rewardToken.data?.decimals ?? 18
-  )
-  return (
-    <Skeleton
-      isLoading={
-        concentratorTargetAssetsIsLoading ||
-        concentratorsList.isLoading ||
-        concentrator.isLoading ||
-        rewardsBalance.isLoading ||
-        rewardToken.isLoading ||
-        !isReady
-      }
-    >
-      {formatted}
-    </Skeleton>
-  )
-}
-
-const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
-  concentratorTargetAsset,
-}) => {
-  const isReady = useClientReady()
+  const { isConnected } = useAccount()
   const {
     data: concentratorTargetAssets,
     isLoading: concentratorTargetAssetsIsLoading,
@@ -203,12 +162,63 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
   const firstConcentratorVaultType = useConcentratorFirstVaultType({
     targetAsset: concentratorTargetAsset,
   })
-  const primaryAssetList = concentratorsList.data?.map(
-    (x) => x.vaultAssetAddress
-  )
   const ybTokenList = useConcentratorVaultList({
     targetAsset: concentratorTargetAsset,
-    primaryAssetList: primaryAssetList ?? [],
+    primaryAssetList:
+      concentratorsList.data?.map((x) => x.vaultAssetAddress) ?? [],
+    type: firstConcentratorVaultType ?? "balancer",
+  })
+  const ybTokenListNonZero = ybTokenList.data?.filter(
+    (x) => x !== ethers.constants.AddressZero
+  )
+  const rewardsBalance = useConcentratorPendingReward({
+    ybTokenList: ybTokenListNonZero ?? [],
+  })
+  const rewardToken = useTokenOrNative({
+    address: concentratorTargetAsset,
+  })
+  const totalRewards = rewardsBalance.data?.reduce(
+    (accumulator, currentValue) => accumulator.add(currentValue),
+    BigNumber.from(0)
+  )
+  return (
+    <Skeleton
+      isLoading={
+        concentratorTargetAssetsIsLoading ||
+        concentratorsList.isLoading ||
+        rewardsBalance.isLoading ||
+        rewardToken.isLoading ||
+        !isReady
+      }
+    >
+      {isConnected
+        ? formatCurrencyUnits({
+            amountWei: (totalRewards ?? BigNumber.from(0)).toString(),
+            decimals: rewardToken.data?.decimals ?? 18,
+            maximumFractionDigits: 4,
+          })
+        : "—"}
+    </Skeleton>
+  )
+}
+
+const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
+  concentratorTargetAsset,
+}) => {
+  const isReady = useClientReady()
+  const { isConnected } = useAccount()
+  const {
+    data: concentratorTargetAssets,
+    isLoading: concentratorTargetAssetsIsLoading,
+  } = useConcentratorTargetAssets()
+  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
+  const firstConcentratorVaultType = useConcentratorFirstVaultType({
+    targetAsset: concentratorTargetAsset,
+  })
+  const ybTokenList = useConcentratorVaultList({
+    targetAsset: concentratorTargetAsset,
+    primaryAssetList:
+      concentratorsList.data?.map((x) => x.vaultAssetAddress) ?? [],
     type: firstConcentratorVaultType ?? "balancer",
   })
   const ybTokenListNonZero = ybTokenList.data?.filter(
@@ -221,13 +231,20 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
   const rewardsBalance = useConcentratorPendingReward({
     ybTokenList: ybTokenListNonZero ?? [],
   })
+  const totalRewards = rewardsBalance.data?.reduce(
+    (accumulator, currentValue) => accumulator.add(currentValue),
+    BigNumber.from(0)
+  )
   return (
     <Button
       className="mt-4 w-full py-2"
-      disabled={rewardsBalance.data?.every((q) => q.eq(0)) || !isReady}
+      disabled={
+        !totalRewards || totalRewards.eq("0") || !isReady || !isConnected
+      }
       isLoading={
         concentratorTargetAssetsIsLoading ||
         concentratorsList.isLoading ||
+        rewardsBalance.isLoading ||
         claim.isLoading ||
         !isReady
       }

@@ -177,7 +177,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
               {formatCurrencyUnits({
                 amountWei: collateralAmountSignificant.toString(),
                 decimals: collateralAssetBalance.data?.decimals,
-                abbreviate: true,
+                maximumFractionDigits: 6,
               })}
             </span>
             <button
@@ -188,7 +188,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
                   formatCurrencyUnits({
                     amountWei: collateralAmountSignificant.toString(),
                     decimals: collateralAssetBalance.data?.decimals,
-                    abbreviate: true,
+                    maximumFractionDigits: 6,
                   })
                 )
               }

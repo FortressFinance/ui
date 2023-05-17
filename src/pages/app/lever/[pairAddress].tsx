@@ -93,7 +93,7 @@ const LeverPairDetail: NextPage<LendingPair> = (lendingPair) => {
                 />
               </div>
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
-                <LendingPairStats {...lendingPair} />
+                <LendingPairStats apyType="borrow" {...lendingPair} />
               </div>
             </div>
           </main>
