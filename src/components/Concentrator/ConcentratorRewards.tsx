@@ -153,6 +153,7 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
   concentratorTargetAsset,
 }) => {
   const isReady = useClientReady()
+  const { isConnected } = useAccount()
   const {
     data: concentratorTargetAssets,
     isLoading: concentratorTargetAssetsIsLoading,
@@ -190,11 +191,13 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
         !isReady
       }
     >
-      {formatCurrencyUnits({
-        amountWei: (totalRewards ?? BigNumber.from(0)).toString(),
-        decimals: rewardToken.data?.decimals ?? 18,
-        maximumFractionDigits: 4,
-      })}
+      {isConnected
+        ? formatCurrencyUnits({
+            amountWei: (totalRewards ?? BigNumber.from(0)).toString(),
+            decimals: rewardToken.data?.decimals ?? 18,
+            maximumFractionDigits: 4,
+          })
+        : "—"}
     </Skeleton>
   )
 }
