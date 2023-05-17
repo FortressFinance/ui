@@ -15,7 +15,10 @@ export const ManagedVaultsTvl: FC = () => {
     <div className={clsxm("lg:grid", { "lg:grid-rows-2": !!data })}>
       <div>
         <Skeleton isLoading={false}>
-          {formatCurrencyUnits({ abbreviate: true, amountWei: data.tvl })}
+          {formatCurrencyUnits({
+            amountWei: data.tvl,
+            maximumFractionDigits: 2,
+          })}
         </Skeleton>
       </div>
       {data.usdTvl && (
