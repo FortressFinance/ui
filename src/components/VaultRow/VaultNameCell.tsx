@@ -35,7 +35,7 @@ export const VaultNameCell: FC<VaultRowPropsWithProduct> = (props) => {
       />
 
       <span className="line-clamp-2 max-lg:mr-8">
-        <VaultName {...props} vaultAddress={mainInputToken} />
+        <VaultName {...props} vaultAddress={ybTokenAddress} />
       </span>
     </>
   )
