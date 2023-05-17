@@ -11,9 +11,9 @@ export const VaultNameCell: FC<VaultRowPropsWithProduct> = (props) => {
   const doubleTokens = useDoubleTokenConfig()
   const producType = props.productType
   const vaultAddress = props.vaultAddress
-  const ybTokenAddress = props.ybTokenAddress
+  const ybTokenAddress = props.ybTokenAddress ?? "0x"
   const [mainInputToken, secondInputToken] =
-    doubleTokens?.[ybTokenAddress ?? "0x"] ?? []
+    doubleTokens?.[ybTokenAddress] ?? []
 
   if (producType === "compounder") {
     return (
