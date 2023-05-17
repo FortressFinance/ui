@@ -9,10 +9,11 @@ import Tooltip from "@/components/Tooltip"
 export const ManagedVaultsActivityTable: FC = () => {
   return (
     <>
-      <div className="relative items-center gap-x-2 overflow-hidden border-b border-pink-300 p-3 text-xs font-semibold uppercase text-pink-300 backdrop-blur-md lg:grid lg:grid-cols-[1fr,1fr,1fr] lg:px-6">
+      <div className="relative grid grid-cols-[1fr,1fr,1fr] items-center overflow-hidden border-b border-pink-800 p-3 text-center text-xs font-semibold uppercase text-pink-300 backdrop-blur-md max-md:grid-cols-[auto,130px,80px] max-md:gap-x-1 lg:gap-x-2 lg:px-6">
         <span>Timestamp</span>
         <span>Events</span>
-        <span>Blockchain Explorer</span>
+        <span className="max-md:hidden">Blockchain Explorer</span>
+        <span className="lg:hidden">Explorer</span>
       </div>
       <ManagedVaultsActivityRow />
     </>
@@ -31,17 +32,29 @@ const ManagedVaultsActivityRow: FC = () => {
   const results: any = []
   activities.forEach((activity) => {
     results.push(
-      <div className="items-center gap-x-2 border-b border-pink-300 p-3 text-sm font-normal text-pink-200 lg:grid lg:grid-cols-[1fr,1fr,1fr] lg:px-6">
-        <span>{formatDate(activity.timestamp, "medium", "short")}</span>
+      <div className="grid grid-cols-[1fr,1fr,1fr] items-center border-b border-pink-800 p-3 text-sm font-normal text-pink-200 max-md:grid-cols-[auto,130px,80px] max-md:gap-x-1 lg:gap-x-2 lg:px-6">
+        <span className="max-md:hidden">
+          {formatDate(activity.timestamp, "medium", "short")}
+        </span>
+        <span className="lg:hidden">
+          {formatDate(activity.timestamp, "short", "short")}
+        </span>
         <span>
           <Tooltip label="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu cursus lorem, et viverra mi. Cras ornare, ante in fringilla dignissim, ligula lectus finibus libero, in volutpat erat ipsum ut felis.">
             <span>
-              <div className="float-left mr-1">{activity.events}</div>
+              <div className="float-left mr-1 text-center">
+                {activity.events}
+              </div>
               <BsQuestionCircle className="float-left mt-[2px] h-4 w-4 cursor-pointer" />
             </span>
           </Tooltip>
         </span>
-        <span>{shortenAddress(activity.explorer)}</span>
+        <span className="max-md:hidden">
+          {shortenAddress(activity.explorer)}
+        </span>
+        <span className="lg:hidden">
+          {shortenAddress(activity.explorer, 2)}
+        </span>
       </div>
     )
   })

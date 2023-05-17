@@ -9,17 +9,17 @@ export const ManagedVaultsLeftPanel: FC = () => {
     <div className="max-md:row-start-2">
       <Tabs.Root className="flex w-full flex-col" defaultValue="tabDescription">
         <Tabs.List
-          className="flex shrink-0 border-b border-pink-800"
+          className="flex shrink-0 border-b border-pink-800 max-sm:border-t md:border-t"
           aria-label="Vault description"
         >
           <Tabs.Trigger
-            className="flex h-[41px] p-3 text-xs font-semibold uppercase text-pink-300 ui-state-active:border-b ui-state-active:border-pink-300 max-md:border-t max-md:text-center md:px-5"
+            className="h-[41px] p-3 text-xs font-semibold uppercase text-pink-300 ui-state-active:border-b ui-state-active:border-pink-400 ui-state-active:bg-pink/10 max-md:w-1/2 max-md:text-center md:px-5"
             value="tabDescription"
           >
             Vault description
           </Tabs.Trigger>
           <Tabs.Trigger
-            className="flex h-[41px] p-3 text-xs font-semibold uppercase text-pink-300 ui-state-active:border-b ui-state-active:border-pink-300 max-md:border-t max-md:text-center md:px-5"
+            className="h-[41px] p-3 text-xs font-semibold uppercase text-pink-300 ui-state-active:border-b ui-state-active:border-pink-400 ui-state-active:bg-pink/10 max-md:w-1/2 max-md:text-center md:px-5"
             value="tabActivity"
           >
             Activity
