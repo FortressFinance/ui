@@ -5,7 +5,7 @@ import { FC, useEffect, useState } from "react"
 import { Address } from "wagmi"
 
 import { capitalizeFirstLetter, resolvedRoute } from "@/lib/helpers"
-import { FilterCategory, ProductType, VaultType } from "@/lib/types"
+import { FilterCategory, VaultProductType, VaultType } from "@/lib/types"
 import { useActiveChainId } from "@/hooks"
 
 import { DisabledPage } from "@/components"
@@ -50,7 +50,7 @@ const Concentrators: NextPage = () => {
           type={type as VaultType}
           vaultAddress={vaultAddress as Address}
           ybTokenAddress={ybTokenAddress as Address}
-          productType={productType as ProductType}
+          productType={productType as VaultProductType}
         />
       </Layout>
     </DisabledPage>

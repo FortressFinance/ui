@@ -42,6 +42,11 @@ export const collateralToAsset = (
 export const addSlippage = (amount = BigNumber.from(0), slippage: number) =>
   amount.add(amount.div(1 / slippage))
 
+export const calculateAssetsAvailable = ({
+  totalAssets = BigNumber.from(0),
+  totalBorrowAmount = BigNumber.from(0),
+}) => totalAssets.sub(totalBorrowAmount)
+
 export const calculateUtilizationRate = ({
   totalAssets = BigNumber.from(1),
   totalBorrowAmount = BigNumber.from(0),

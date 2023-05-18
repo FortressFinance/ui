@@ -2,16 +2,19 @@ import { FC } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { shallow } from "zustand/shallow"
 
+import { calculateAssetsAvailable } from "@/lib"
 import { parseCurrencyUnits } from "@/lib/helpers"
 import {
+  useConvertToShares,
   useDebouncedValue,
   useLendingDeposit,
   useLendingDepositPreview,
   useLendingPair,
   useLendingRedeem,
   useLendingRedeemPreview,
+  usePairLeverParams,
   useTokenApproval,
-  useTokenOrNative,
+  useTokenOrNativeBalance,
 } from "@/hooks"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
@@ -29,7 +32,8 @@ export const LendingPairDepositForm: FC<LendingPair> = ({
     shallow
   )
   const lendingPair = useLendingPair({ pairAddress, chainId })
-  const asset = useTokenOrNative({
+  const pairLeverParams = usePairLeverParams({ pairAddress, chainId })
+  const asset = useTokenOrNativeBalance({
     address: lendingPair.data?.assetContract,
     chainId,
   })
@@ -71,6 +75,9 @@ export const LendingPairDepositForm: FC<LendingPair> = ({
     enabled: form.formState.isValid && approval.isSufficient,
     onSuccess: () => {
       form.resetField("amountIn")
+      asset.refetch()
+      lendingPair.refetch()
+      pairLeverParams.refetch()
     },
   })
 
@@ -85,6 +92,7 @@ export const LendingPairDepositForm: FC<LendingPair> = ({
         isLoadingPreview={preview.isLoading}
         isLoadingTransaction={approval.wait.isLoading || deposit.wait.isLoading}
         previewResultWei={preview.data?.toString()}
+        productType="lending"
         onSubmit={() => {
           if (approval.isSufficient) {
             const action = "Lending asset deposit"
@@ -132,7 +140,8 @@ export const LendingPairRedeem: FC<LendingPair> = ({
     shallow
   )
   const lendingPair = useLendingPair({ pairAddress, chainId })
-  const share = useTokenOrNative({ address: pairAddress, chainId })
+  const pairLeverParams = usePairLeverParams({ pairAddress, chainId })
+  const share = useTokenOrNativeBalance({ address: pairAddress, chainId })
 
   const form = useForm<TokenFormValues>({
     defaultValues: {
@@ -163,12 +172,28 @@ export const LendingPairRedeem: FC<LendingPair> = ({
     assetAddress: lendingPair.data?.assetContract,
     amount: redeemValue,
     enabled: form.formState.isValid,
-    onSuccess: () => form.resetField("amountIn"),
+    onSuccess: () => {
+      form.resetField("amountIn")
+      share.refetch()
+      lendingPair.refetch()
+      pairLeverParams.refetch()
+    },
+  })
+
+  const maxSharesAvailableToWithdraw = useConvertToShares({
+    amount: calculateAssetsAvailable({
+      totalAssets: pairLeverParams.data.totalAssets,
+      totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
+    }),
+    totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
+    totalBorrowShares: pairLeverParams.data.totalBorrowShares,
+    pairAddress,
   })
 
   return (
     <FormProvider {...form}>
       <TokenForm
+        isWithdraw
         asset={lendingPair.data?.assetContract}
         chainId={chainId}
         submitText="Withdraw"
@@ -176,7 +201,9 @@ export const LendingPairRedeem: FC<LendingPair> = ({
         isError={preview.isError || redeem.prepare.isError}
         isLoadingPreview={preview.isLoading}
         isLoadingTransaction={redeem.wait.isLoading}
+        maxAssetAmountLimit={maxSharesAvailableToWithdraw.data}
         previewResultWei={preview.data?.toString()}
+        productType="lending"
         onSubmit={() => {
           const action = "Lending asset withdrawal"
           const toastId = addToast({ type: "startTx", action })
