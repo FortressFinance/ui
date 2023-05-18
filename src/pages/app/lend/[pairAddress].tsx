@@ -105,7 +105,7 @@ const LendingPairDetail: NextPage<LendingPair> = (lendingPair) => {
 
           <aside>
             <div className="rounded-lg bg-pink-900/80 p-3 backdrop-blur-md">
-              <Tabs.Root defaultValue="deposit">
+              <Tabs.Root defaultValue="deposit" className="relative">
                 <Tabs.List className="-mx-3 -mt-3 divide-x divide-pink/30 border-b border-pink/30">
                   <Tabs.Trigger
                     value="deposit"
@@ -120,12 +120,20 @@ const LendingPairDetail: NextPage<LendingPair> = (lendingPair) => {
                     Withdraw
                   </Tabs.Trigger>
                 </Tabs.List>
-                <Tabs.Content value="deposit" className="pt-3">
-                  <LendingPairDepositForm {...lendingPair} />
-                </Tabs.Content>
-                <Tabs.Content value="withdraw" className="pt-3">
-                  <LendingPairRedeem {...lendingPair} />
-                </Tabs.Content>
+                <div className="relative overflow-hidden">
+                  <Tabs.Content
+                    value="deposit"
+                    className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out"
+                  >
+                    <LendingPairDepositForm {...lendingPair} />
+                  </Tabs.Content>
+                  <Tabs.Content
+                    value="withdraw"
+                    className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out"
+                  >
+                    <LendingPairRedeem {...lendingPair} />
+                  </Tabs.Content>
+                </div>
               </Tabs.Root>
             </div>
           </aside>

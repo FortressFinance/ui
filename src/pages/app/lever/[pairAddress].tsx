@@ -228,49 +228,60 @@ const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
           Remove collateral
         </Tabs.Trigger>
       </Tabs.List>
-      <Tabs.Content className="pt-3 lg:pt-6" value="repay">
-        <RepayLeverPosition
-          chainId={chainId}
-          borrowAmountSignificant={borrowAmountSignificant}
-          borrowAssetAddress={lendingPair.data?.assetContract}
-          borrowAssetBalance={borrowAssetBalance}
-          collateralAmountSignificant={collateralAmountSignificant}
-          collateralAssetAddress={lendingPair.data?.collateralContract}
-          collateralAssetBalance={collateralAssetBalance}
-          isUpdatingAmounts={isUpdatingAmounts}
-          setAdjustedBorrowAmount={setAdjustedBorrowAmount}
-          setAdjustedCollateralAmount={setAdjustedCollateralAmount}
-          setIsUpdatingAmounts={setIsUpdatingAmounts}
-          pairAddress={pairAddress}
-          onSuccess={onSuccess}
-        />
-      </Tabs.Content>
-      <Tabs.Content className="pt-3 lg:pt-6" value="addCollateral">
-        <AddCollateral
-          chainId={chainId}
-          collateralAssetAddress={lendingPair.data?.collateralContract}
-          collateralAssetBalance={collateralAssetBalance}
-          collateralAmountSignificant={collateralAmountSignificant}
-          isUpdatingAmounts={isUpdatingAmounts}
-          setAdjustedCollateralAmount={setAdjustedCollateralAmount}
-          setIsUpdatingAmounts={setIsUpdatingAmounts}
-          pairAddress={pairAddress}
-          onSuccess={onSuccess}
-        />
-      </Tabs.Content>
-      <Tabs.Content className="pt-3 lg:pt-6" value="removeCollateral">
-        <RemoveCollateral
-          chainId={chainId}
-          collateralAssetAddress={lendingPair.data?.collateralContract}
-          collateralAssetBalance={collateralAssetBalance}
-          collateralAmountSignificant={collateralAmountSignificant}
-          isUpdatingAmounts={isUpdatingAmounts}
-          setAdjustedCollateralAmount={setAdjustedCollateralAmount}
-          setIsUpdatingAmounts={setIsUpdatingAmounts}
-          pairAddress={pairAddress}
-          onSuccess={onSuccess}
-        />
-      </Tabs.Content>
+      <div className="relative overflow-hidden">
+        <Tabs.Content
+          className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6"
+          value="repay"
+        >
+          <RepayLeverPosition
+            chainId={chainId}
+            borrowAmountSignificant={borrowAmountSignificant}
+            borrowAssetAddress={lendingPair.data?.assetContract}
+            borrowAssetBalance={borrowAssetBalance}
+            collateralAmountSignificant={collateralAmountSignificant}
+            collateralAssetAddress={lendingPair.data?.collateralContract}
+            collateralAssetBalance={collateralAssetBalance}
+            isUpdatingAmounts={isUpdatingAmounts}
+            setAdjustedBorrowAmount={setAdjustedBorrowAmount}
+            setAdjustedCollateralAmount={setAdjustedCollateralAmount}
+            setIsUpdatingAmounts={setIsUpdatingAmounts}
+            pairAddress={pairAddress}
+            onSuccess={onSuccess}
+          />
+        </Tabs.Content>
+        <Tabs.Content
+          className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6"
+          value="addCollateral"
+        >
+          <AddCollateral
+            chainId={chainId}
+            collateralAssetAddress={lendingPair.data?.collateralContract}
+            collateralAssetBalance={collateralAssetBalance}
+            collateralAmountSignificant={collateralAmountSignificant}
+            isUpdatingAmounts={isUpdatingAmounts}
+            setAdjustedCollateralAmount={setAdjustedCollateralAmount}
+            setIsUpdatingAmounts={setIsUpdatingAmounts}
+            pairAddress={pairAddress}
+            onSuccess={onSuccess}
+          />
+        </Tabs.Content>
+        <Tabs.Content
+          className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6"
+          value="removeCollateral"
+        >
+          <RemoveCollateral
+            chainId={chainId}
+            collateralAssetAddress={lendingPair.data?.collateralContract}
+            collateralAssetBalance={collateralAssetBalance}
+            collateralAmountSignificant={collateralAmountSignificant}
+            isUpdatingAmounts={isUpdatingAmounts}
+            setAdjustedCollateralAmount={setAdjustedCollateralAmount}
+            setIsUpdatingAmounts={setIsUpdatingAmounts}
+            pairAddress={pairAddress}
+            onSuccess={onSuccess}
+          />
+        </Tabs.Content>
+      </div>
     </Tabs.Root>
   )
 }
