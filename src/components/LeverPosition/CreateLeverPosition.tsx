@@ -155,14 +155,18 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     amount: collateralAmount,
     spender: pairAddress,
     token: borrowAssetAddress,
-    enabled: collateralAmount.gt(0),
+    enabled: !isUpdatingAmounts && collateralAmount.gt(0),
   })
   const leverPosition = useLeverPosition({
     borrowAmount: adjustedBorrowAmount,
     borrowAssetAddress,
     collateralAmount,
     minAmount: BigNumber.from(1),
-    enabled: leverAmount > 1 && approval.isSufficient && !isUpdatingAmounts,
+    enabled:
+      !isUpdatingAmounts &&
+      leverAmount > 1 &&
+      approval.isSufficient &&
+      !isUpdatingAmounts,
     pairAddress,
     onSuccess,
   })
@@ -285,7 +289,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
           ))}
         </ToggleGroup.Root>
 
-        {isClientReady ? (
+        {isClientReady && form.formState.isDirty ? (
           approval.isSufficient ? (
             <Button
               type="submit"
@@ -293,7 +297,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
               disabled={isSubmitDisabled}
               isLoading={isLeverPositionLoading}
             >
-              {leverPosition.prepare.isError ? "Error" : "Lever position"}
+              Lever position
             </Button>
           ) : (
             <ApproveToken

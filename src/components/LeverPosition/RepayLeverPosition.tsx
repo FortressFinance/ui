@@ -98,11 +98,11 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     : borrowAssetBalance.data?.value ?? BigNumber.from(0)
   const maximumAmountRepayable = isRepayingWithCollateral
     ? assetToCollateral(
-        borrowAmountSignificant,
+        pairLeverParams.data.borrowedAmount,
         pairLeverParams.data.exchangeRate,
         pairLeverParams.data.constants?.exchangePrecision
       )
-    : borrowAmountSignificant
+    : pairLeverParams.data.borrowedAmount ?? BigNumber.from(0)
 
   const {
     field: { onChange: onChangeAmount, ...amountField },
@@ -119,10 +119,10 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
             amountFormatted: amount,
             decimals: activeRepaymentAsset?.decimals,
           })
-          return parsedAmount.gt(activeRepaymentBalanceAmount)
+          return parsedAmount.gt(maximumAmountRepayable)
+            ? "Exceeds maximum repayable"
+            : parsedAmount.gt(activeRepaymentBalanceAmount)
             ? "Insufficient balance"
-            : parsedAmount.gt(maximumAmountRepayable)
-            ? "Amount exceeds maximum"
             : undefined
         },
       },
@@ -182,11 +182,13 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     amount: repaymentAmount,
     spender: pairAddress,
     token: borrowAssetAddress,
-    enabled: !isRepayingWithCollateral && repaymentAmount.gt(0),
+    enabled:
+      !isUpdatingAmounts && !isRepayingWithCollateral && repaymentAmount.gt(0),
   })
   const sharesToRepay = useConvertToShares({
     amount: repaymentAmount,
-    enabled: !isRepayingWithCollateral && approval.isSufficient,
+    enabled:
+      !isUpdatingAmounts && !isRepayingWithCollateral && approval.isSufficient,
     totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
     totalBorrowShares: pairLeverParams.data.totalBorrowShares,
     pairAddress,
@@ -194,6 +196,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   const repayAsset = useRepayAsset({
     shares: sharesToRepay.data,
     enabled:
+      !isUpdatingAmounts &&
       !isRepayingWithCollateral &&
       approval.isSufficient &&
       form.formState.isValid,
@@ -207,6 +210,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     // minAmount: repaymentAmountMin,
     minAmount: BigNumber.from(0),
     enabled:
+      !isUpdatingAmounts &&
       isRepayingWithCollateral &&
       repaymentAmount.gt(0) &&
       repaymentAmountMin.gt(0) &&
@@ -369,31 +373,37 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
           </ToggleGroup.Item>
         </ToggleGroup.Root>
 
-        {isClientReady ? (
-          isRepayingWithCollateral ? (
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isSubmitDisabled}
-              isLoading={isRepayLoading}
-            >
-              {repay.prepare.isError ? "Error" : "Repay with collateral"}
-            </Button>
-          ) : approval.isSufficient ? (
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isSubmitDisabled}
-              isLoading={isRepayLoading}
-            >
-              {repay.prepare.isError ? "Error" : "Repay"}
-            </Button>
+        {isClientReady && form.formState.isDirty ? (
+          form.formState.isValid ? (
+            isRepayingWithCollateral ? (
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isSubmitDisabled}
+                isLoading={isRepayLoading}
+              >
+                Repay with collateral
+              </Button>
+            ) : approval.isSufficient ? (
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isSubmitDisabled}
+                isLoading={isRepayLoading}
+              >
+                Repay
+              </Button>
+            ) : (
+              <ApproveToken
+                amount={repaymentAmount}
+                approval={approval}
+                disabled={isSubmitDisabled}
+              />
+            )
           ) : (
-            <ApproveToken
-              amount={repaymentAmount}
-              approval={approval}
-              disabled={isSubmitDisabled}
-            />
+            <Button className="w-full" disabled>
+              {form.formState.errors.amount?.message ?? "Error"}
+            </Button>
           )
         ) : (
           <Button className="w-full" disabled>

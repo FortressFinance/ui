@@ -133,7 +133,8 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
 
   const removeCollateral = useRemoveCollateral({
     collateralAmount: removedAmount,
-    enabled: removedAmount.gt(0) && form.formState.isValid,
+    enabled:
+      !isUpdatingAmounts && removedAmount.gt(0) && form.formState.isValid,
     pairAddress,
     onSuccess,
   })
@@ -190,7 +191,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
 
           <div className="relative z-[1] col-span-full col-start-1 row-start-2 px-4 pb-4 text-left align-bottom text-xs">
             <span className="text-pink-100">
-              Collateral available:{" "}
+              Collateral withdrawable:{" "}
               {formatCurrencyUnits({
                 amountWei: maxCollateralWithdrawable.toString(),
                 decimals: collateralAssetBalance.data?.decimals,
