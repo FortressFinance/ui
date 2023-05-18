@@ -12,6 +12,7 @@ import {
   collateralToAsset,
   ltvPercentage,
 } from "@/lib"
+import clsxm from "@/lib/clsxm"
 import { formatCurrencyUnits } from "@/lib/helpers"
 import {
   useClientReady,
@@ -28,11 +29,13 @@ import { LendingPair } from "@/constant"
 type LeverPositionUserStatsProps = LendingPair & {
   adjustedBorrowAmount?: BigNumber
   adjustedCollateralAmount?: BigNumber
+  isUpdatingAmounts: boolean
 }
 
 export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
   adjustedBorrowAmount,
   adjustedCollateralAmount,
+  isUpdatingAmounts,
   ...props
 }) => {
   const isClientReady = useClientReady()
@@ -134,7 +137,11 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-3 lg:gap-6">
           <div className="text-sm uppercase text-white/75">LTV</div>
-          <div className="inline-flex gap-2 font-mono lg:text-lg">
+          <div
+            className={clsxm("inline-flex gap-2 font-mono lg:text-lg", {
+              "animate-pulse": isUpdatingAmounts,
+            })}
+          >
             {isClientReady && isConnected ? (
               <>
                 <span>
@@ -164,7 +171,11 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
           <div className="text-sm uppercase text-white/75">
             Liquidation price
           </div>
-          <div className="inline-flex gap-2 font-mono lg:text-lg">
+          <div
+            className={clsxm("inline-flex gap-2 font-mono lg:text-lg", {
+              "animate-pulse": isUpdatingAmounts,
+            })}
+          >
             {isClientReady && isConnected ? (
               <>
                 <span>
@@ -198,7 +209,11 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
         </div>
         <div className="flex items-center justify-between gap-3 lg:gap-6">
           <div className="text-sm uppercase text-white/75">Assets borrowed</div>
-          <div className="inline-flex gap-2 font-mono lg:text-lg">
+          <div
+            className={clsxm("inline-flex gap-2 font-mono lg:text-lg", {
+              "animate-pulse": isUpdatingAmounts,
+            })}
+          >
             {isClientReady && isConnected ? (
               <>
                 <span>
@@ -234,7 +249,11 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
           <div className="text-sm uppercase text-white/75">
             Collateral deposited
           </div>
-          <div className="inline-flex gap-2 font-mono lg:text-lg">
+          <div
+            className={clsxm("inline-flex gap-2 font-mono lg:text-lg", {
+              "animate-pulse": isUpdatingAmounts,
+            })}
+          >
             {isClientReady && isConnected ? (
               <>
                 <span>
@@ -273,7 +292,11 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
           <div className="text-sm uppercase text-white/75">
             Available credit
           </div>
-          <div className="inline-flex gap-2 font-mono lg:text-lg">
+          <div
+            className={clsxm("inline-flex gap-2 font-mono lg:text-lg", {
+              "animate-pulse": isUpdatingAmounts,
+            })}
+          >
             {isClientReady && isConnected ? (
               <>
                 <span>

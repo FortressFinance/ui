@@ -89,6 +89,10 @@ module.exports = {
           "0%": { height: "var(--radix-accordion-content-height)", opacity: 1 },
           "100%": { height: 0, opacity: 0 },
         },
+        pulse: {
+          "0%, 100%": { opacity: 0.9 },
+          "50%": { opacity: 0.45 },
+        },
       },
       animation: {
         "fade-in": "fade-in 200ms ease-in-out",
@@ -99,6 +103,7 @@ module.exports = {
         "slide-out-right": "slide-out-right 200ms ease-in-out",
         "accordion-open": "accordion-open 200ms ease-in-out",
         "accordion-close": "accordion-close 200ms ease-in-out",
+        pulse: "pulse 1200ms cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
     },
   },
