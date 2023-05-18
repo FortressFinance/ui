@@ -225,7 +225,7 @@ export const useAddCollateral = ({
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
-    onSettled: () => onSuccess,
+    onSuccess,
   })
   return { prepare, write, wait }
 }

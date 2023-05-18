@@ -33,10 +33,12 @@ type RepayLeverPositionProps = {
   collateralAssetAddress?: Address
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
   collateralAmountSignificant: BigNumber
+  isUpdatingAmounts: boolean
   setAdjustedBorrowAmount: Dispatch<SetStateAction<BigNumber | undefined>>
   setAdjustedCollateralAmount: Dispatch<SetStateAction<BigNumber | undefined>>
-  onSuccess: () => void
+  setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
   pairAddress: Address
+  onSuccess: () => void
 }
 
 type RepayLeverPositionFormValues = {
@@ -54,10 +56,12 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   collateralAssetAddress,
   collateralAssetBalance,
   collateralAmountSignificant,
+  isUpdatingAmounts,
   setAdjustedBorrowAmount,
   setAdjustedCollateralAmount,
-  onSuccess,
+  setIsUpdatingAmounts,
   pairAddress,
+  onSuccess: _onSuccess,
 }) => {
   const isClientReady = useClientReady()
   const [addToast, replaceToast] = useToastStore(
@@ -92,13 +96,14 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   const activeRepaymentBalanceAmount = isRepayingWithCollateral
     ? collateralAmountSignificant ?? BigNumber.from(0)
     : borrowAssetBalance.data?.value ?? BigNumber.from(0)
+
   const maximumAmountRepayable = isRepayingWithCollateral
     ? assetToCollateral(
-        borrowAmountSignificant,
+        pairLeverParams.data.borrowedAmount,
         pairLeverParams.data.exchangeRate,
         pairLeverParams.data.constants?.exchangePrecision
       )
-    : borrowAmountSignificant
+    : pairLeverParams.data.borrowedAmount ?? BigNumber.from(0)
 
   const {
     field: { onChange: onChangeAmount, ...amountField },
@@ -115,10 +120,10 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
             amountFormatted: amount,
             decimals: activeRepaymentAsset?.decimals,
           })
-          return parsedAmount.gt(activeRepaymentBalanceAmount)
+          return parsedAmount.gt(maximumAmountRepayable)
+            ? "Exceeds maximum repayable"
+            : parsedAmount.gt(activeRepaymentBalanceAmount)
             ? "Insufficient balance"
-            : parsedAmount.gt(maximumAmountRepayable)
-            ? "Amount exceeds maximum"
             : undefined
         },
       },
@@ -131,9 +136,6 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") // $& means the whole matched string
   }
 
-  // The debounceReady() callback won't always trigger a render...
-  // In combination with react-hook-form, it's best to just track debounce status manually for consistent behavior
-  const [isDebouncing, setIsDebouncing] = useState(false)
   useDebounce(
     () => {
       if (!Number(amount)) {
@@ -163,10 +165,10 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
             : undefined
         )
       }
-      setIsDebouncing(false)
+      setIsUpdatingAmounts(false)
     },
     500,
-    [form.getValues("amount"), asset, selectedPreset]
+    [amount, asset, selectedPreset]
   )
 
   useEffect(() => {
@@ -177,15 +179,22 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const onSuccess = () => {
+    _onSuccess()
+    form.reset({ amount: "" })
+  }
+
   const approval = useTokenApproval({
     amount: repaymentAmount,
     spender: pairAddress,
     token: borrowAssetAddress,
-    enabled: !isRepayingWithCollateral && repaymentAmount.gt(0),
+    enabled:
+      !isUpdatingAmounts && !isRepayingWithCollateral && repaymentAmount.gt(0),
   })
   const sharesToRepay = useConvertToShares({
     amount: repaymentAmount,
-    enabled: !isRepayingWithCollateral && approval.isSufficient,
+    enabled:
+      !isUpdatingAmounts && !isRepayingWithCollateral && approval.isSufficient,
     totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
     totalBorrowShares: pairLeverParams.data.totalBorrowShares,
     pairAddress,
@@ -193,6 +202,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   const repayAsset = useRepayAsset({
     shares: sharesToRepay.data,
     enabled:
+      !isUpdatingAmounts &&
       !isRepayingWithCollateral &&
       approval.isSufficient &&
       form.formState.isValid,
@@ -202,8 +212,11 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   const repayAssetWithCollateral = useRepayAssetWithCollateral({
     borrowAssetAddress: borrowAssetAddress,
     collateralAmount: repaymentAmount,
-    minAmount: repaymentAmountMin,
+    // TODO: Need a working method to calculate this value
+    // minAmount: repaymentAmountMin,
+    minAmount: BigNumber.from(0),
     enabled:
+      !isUpdatingAmounts &&
       isRepayingWithCollateral &&
       repaymentAmount.gt(0) &&
       repaymentAmountMin.gt(0) &&
@@ -214,7 +227,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   const repay = isRepayingWithCollateral ? repayAssetWithCollateral : repayAsset
 
   const isSubmitDisabled =
-    isDebouncing ||
+    isUpdatingAmounts ||
     form.formState.isValidating ||
     !form.formState.isValid ||
     repay.prepare.isError
@@ -237,148 +250,135 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   }
 
   return (
-    <>
-      <form onSubmit={form.handleSubmit(submitRepayment)}>
-        <div className="grid w-full grid-cols-[1fr,auto] grid-rows-[1fr,auto]">
-          <input
-            {...amountField}
-            className="peer relative z-[2] col-start-1 row-start-1 block w-full text-ellipsis bg-transparent px-4 pb-2.5 pt-4 text-2xl placeholder-pink-100/50 focus:outline-none md:text-4xl"
-            inputMode="decimal"
-            autoComplete="off"
-            autoCorrect="off"
-            type="text"
-            spellCheck="false"
-            placeholder="0.0"
-            onChange={(event) => {
-              const amount = event.target.value
-              const formatted = amount.replace(/,/g, ".")
-              if (
-                formatted === "" ||
-                inputRegex.test(escapeRegExp(formatted))
-              ) {
-                setIsDebouncing(true)
-                setSelectedPreset("")
-                onChangeAmount(formatted)
-              }
-            }}
-          />
-
-          <div className="relative z-[1] col-start-2 row-start-1 flex items-center justify-self-end pr-4">
-            <TokenSelectButton
-              canChange
-              chainId={chainId}
-              tokenAddress={asset}
-              onClick={() => setIsTokenSelectModalOpen(true)}
-            />
-          </div>
-
-          <div className="relative z-[1] col-span-full col-start-1 row-start-2 px-4 pb-4 text-left align-bottom text-xs">
-            <span className="text-pink-100">
-              {isRepayingWithCollateral
-                ? "Collateral available: "
-                : "Balance: "}
-              {formatCurrencyUnits({
-                amountWei: isRepayingWithCollateral
-                  ? borrowAssetBalance.data?.value.toString()
-                  : pairLeverParams.data.collateralAmount?.toString(),
-                decimals: activeRepaymentAsset?.decimals,
-                maximumFractionDigits: 6,
-              })}
-            </span>
-          </div>
-
-          <div
-            className="col-span-full col-start-1 row-span-full row-start-1 rounded bg-pink-100/10 ring-1 ring-inset ring-transparent peer-hover:ring-pink-100/10 peer-focus:ring-pink-100/30"
-            aria-hidden="true"
-          />
-
-          <TokenSelectModal
-            isOpen={isTokenSelectModalOpen}
-            onClose={() => setIsTokenSelectModalOpen(false)}
-            controller={assetField}
-            onChangeToken={() => {
-              form.setValue("amount", "")
+    <form onSubmit={form.handleSubmit(submitRepayment)}>
+      <div className="grid w-full grid-cols-[1fr,auto] grid-rows-[1fr,auto]">
+        <input
+          {...amountField}
+          className="peer relative z-[2] col-start-1 row-start-1 block w-full text-ellipsis bg-transparent px-4 pb-2.5 pt-4 text-2xl placeholder-pink-100/50 focus:outline-none md:text-4xl"
+          inputMode="decimal"
+          autoComplete="off"
+          autoCorrect="off"
+          type="text"
+          spellCheck="false"
+          placeholder="0.0"
+          onChange={(event) => {
+            const amount = event.target.value
+            const formatted = amount.replace(/,/g, ".")
+            if (formatted === "" || inputRegex.test(escapeRegExp(formatted))) {
+              setIsUpdatingAmounts(true)
               setSelectedPreset("")
-            }}
-            title="Repayment options"
-            tokens={[
-              { address: borrowAssetAddress, badge: "Asset" },
-              { address: collateralAssetAddress, badge: "Collateral" },
-            ]}
+              onChangeAmount(formatted)
+            }
+          }}
+        />
+
+        <div className="relative z-[1] col-start-2 row-start-1 flex items-center justify-self-end pr-4">
+          <TokenSelectButton
+            canChange
+            chainId={chainId}
+            tokenAddress={asset}
+            onClick={() => setIsTokenSelectModalOpen(true)}
           />
         </div>
 
-        <div className="mt-3 flex items-center gap-3">
-          <ToggleGroup.Root
-            type="single"
-            className="flex h-12 w-1/2 shrink-0 justify-center gap-1.5"
-            disabled={repay.write.isLoading || repay.wait.isLoading}
-            value={selectedPreset}
-            onValueChange={(value) => {
-              setIsDebouncing(true)
-              if (value) {
-                const repaymentAmount = maximumAmountRepayable
-                  .mul(BigNumber.from(value))
-                  .div(100)
-                form.setValue(
-                  "amount",
-                  formatCurrencyUnits({
-                    amountWei: addSlippage(
-                      repaymentAmount,
-                      SLIPPAGE * 10
-                    ).toString(),
-                    decimals: activeRepaymentAsset?.decimals,
-                  }),
-                  {
-                    shouldDirty: true,
-                    shouldTouch: true,
-                    shouldValidate: true,
-                  }
-                )
-                setRepaymentAmountMin(repaymentAmount)
-                setSelectedPreset(value)
-              } else {
-                form.setValue("amount", "")
-                setRepaymentAmountMin(BigNumber.from(0))
-                setSelectedPreset("")
-              }
-            }}
-          >
-            <ToggleGroup.Item value="25" asChild>
-              <Button
-                variant="outline"
-                className="w-1/4 text-sm ui-state-on:bg-pink/50"
-              >
-                25%
-              </Button>
-            </ToggleGroup.Item>
-            <ToggleGroup.Item value="50" asChild>
-              <Button
-                variant="outline"
-                className="w-1/4 text-sm ui-state-on:bg-pink/50"
-              >
-                50%
-              </Button>
-            </ToggleGroup.Item>
-            <ToggleGroup.Item value="75" asChild>
-              <Button
-                variant="outline"
-                className="w-1/4 text-sm ui-state-on:bg-pink/50"
-              >
-                75%
-              </Button>
-            </ToggleGroup.Item>
-            <ToggleGroup.Item value="100" asChild>
-              <Button
-                variant="outline"
-                className="w-1/4 text-sm ui-state-on:bg-pink/50"
-              >
-                100%
-              </Button>
-            </ToggleGroup.Item>
-          </ToggleGroup.Root>
+        <div className="relative z-[1] col-span-full col-start-1 row-start-2 px-4 pb-4 text-left align-bottom text-xs">
+          <span className="text-pink-100">
+            {isRepayingWithCollateral ? "Collateral available: " : "Balance: "}
+            {formatCurrencyUnits({
+              amountWei: activeRepaymentBalanceAmount.toString(),
+              decimals: activeRepaymentAsset?.decimals,
+              maximumFractionDigits: 6,
+            })}
+          </span>
+        </div>
 
-          {isClientReady ? (
+        <div
+          className="col-span-full col-start-1 row-span-full row-start-1 rounded bg-pink-100/10 ring-1 ring-inset ring-transparent peer-hover:ring-pink-100/10 peer-focus:ring-pink-100/30"
+          aria-hidden="true"
+        />
+
+        <TokenSelectModal
+          isOpen={isTokenSelectModalOpen}
+          onClose={() => setIsTokenSelectModalOpen(false)}
+          controller={assetField}
+          onChangeToken={() => {
+            form.setValue("amount", "")
+            setSelectedPreset("")
+          }}
+          title="Repayment options"
+          tokens={[
+            { address: borrowAssetAddress, badge: "Asset" },
+            { address: collateralAssetAddress, badge: "Collateral" },
+          ]}
+        />
+      </div>
+
+      <div className="mt-3 flex items-center gap-3">
+        <ToggleGroup.Root
+          type="single"
+          className="flex h-12 w-1/2 shrink-0 justify-center gap-1.5"
+          disabled={repay.write.isLoading || repay.wait.isLoading}
+          value={selectedPreset}
+          onValueChange={(value) => {
+            setIsUpdatingAmounts(true)
+            if (value) {
+              const repaymentAmount = maximumAmountRepayable
+                .mul(BigNumber.from(value))
+                .div(100)
+              onChangeAmount(
+                formatCurrencyUnits({
+                  amountWei: addSlippage(
+                    repaymentAmount,
+                    SLIPPAGE * 10
+                  ).toString(),
+                  decimals: activeRepaymentAsset?.decimals,
+                })
+              )
+              setRepaymentAmountMin(repaymentAmount)
+              setSelectedPreset(value)
+            } else {
+              onChangeAmount("")
+              setRepaymentAmountMin(BigNumber.from(0))
+              setSelectedPreset("")
+            }
+          }}
+        >
+          <ToggleGroup.Item value="25" asChild>
+            <Button
+              variant="outline"
+              className="w-1/4 text-sm ui-state-on:bg-pink/50"
+            >
+              25%
+            </Button>
+          </ToggleGroup.Item>
+          <ToggleGroup.Item value="50" asChild>
+            <Button
+              variant="outline"
+              className="w-1/4 text-sm ui-state-on:bg-pink/50"
+            >
+              50%
+            </Button>
+          </ToggleGroup.Item>
+          <ToggleGroup.Item value="75" asChild>
+            <Button
+              variant="outline"
+              className="w-1/4 text-sm ui-state-on:bg-pink/50"
+            >
+              75%
+            </Button>
+          </ToggleGroup.Item>
+          <ToggleGroup.Item value="100" asChild>
+            <Button
+              variant="outline"
+              className="w-1/4 text-sm ui-state-on:bg-pink/50"
+            >
+              100%
+            </Button>
+          </ToggleGroup.Item>
+        </ToggleGroup.Root>
+
+        {isClientReady && form.formState.isDirty ? (
+          form.formState.isValid ? (
             isRepayingWithCollateral ? (
               <Button
                 type="submit"
@@ -386,7 +386,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
                 disabled={isSubmitDisabled}
                 isLoading={isRepayLoading}
               >
-                {repay.prepare.isError ? "Error" : "Repay with collateral"}
+                Repay with collateral
               </Button>
             ) : approval.isSufficient ? (
               <Button
@@ -395,7 +395,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
                 disabled={isSubmitDisabled}
                 isLoading={isRepayLoading}
               >
-                {repay.prepare.isError ? "Error" : "Repay"}
+                Repay
               </Button>
             ) : (
               <ApproveToken
@@ -406,11 +406,15 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
             )
           ) : (
             <Button className="w-full" disabled>
-              Repay
+              {form.formState.errors.amount?.message ?? "Error"}
             </Button>
-          )}
-        </div>
-      </form>
-    </>
+          )
+        ) : (
+          <Button className="w-full" disabled>
+            Repay
+          </Button>
+        )}
+      </div>
+    </form>
   )
 }
