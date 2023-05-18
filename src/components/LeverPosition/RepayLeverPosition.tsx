@@ -317,25 +317,19 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
               const repaymentAmount = maximumAmountRepayable
                 .mul(BigNumber.from(value))
                 .div(100)
-              form.setValue(
-                "amount",
+              onChangeAmount(
                 formatCurrencyUnits({
                   amountWei: addSlippage(
                     repaymentAmount,
                     SLIPPAGE * 10
                   ).toString(),
                   decimals: activeRepaymentAsset?.decimals,
-                }),
-                {
-                  shouldDirty: true,
-                  shouldTouch: true,
-                  shouldValidate: true,
-                }
+                })
               )
               setRepaymentAmountMin(repaymentAmount)
               setSelectedPreset(value)
             } else {
-              form.setValue("amount", "")
+              onChangeAmount("")
               setRepaymentAmountMin(BigNumber.from(0))
               setSelectedPreset("")
             }

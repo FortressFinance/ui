@@ -198,18 +198,23 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
               })}
             </span>
             <button
-              className="ml-1.5 cursor-pointer rounded border border-orange-400 px-2 py-1 font-semibold text-pink-100"
-              onClick={() =>
-                form.setValue(
-                  "amount",
+              className="ml-1.5 -translate-y-[1px] rounded px-1.5 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
+              onClick={() => {
+                onChangeAmount(
                   formatCurrencyUnits({
                     amountWei: maxCollateralWithdrawable.toString(),
                     decimals: collateralAssetBalance.data?.decimals,
-                  }),
-                  { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+                  })
                 )
+                setIsUpdatingAmounts(true)
+              }}
+              disabled={
+                !isClientReady ||
+                !isConnected ||
+                isUpdatingAmounts ||
+                maxCollateralWithdrawable.eq(0) ||
+                maxCollateralWithdrawable.eq(removedAmount)
               }
-              disabled={!isClientReady || !isConnected}
               type="button"
             >
               Max
