@@ -76,3 +76,13 @@ export const calculateLiquidationPrice = ({
   maxBorrowAmount.gt(0)
     ? borrowedAmount.mul(exchangePrecision).div(maxBorrowAmount)
     : BigNumber.from(1)
+
+export const calculateMinCollateralRequired = ({
+  borrowedAmountAsCollateral = BigNumber.from(1),
+  maxLTV = BigNumber.from(1),
+  ltvPrecision = BigNumber.from(1),
+}) =>
+  borrowedAmountAsCollateral
+    .mul(ltvPrecision)
+    .div(maxLTV)
+    .add(ltvPrecision.mul(1_000_000_000_000))

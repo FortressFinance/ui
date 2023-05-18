@@ -5,9 +5,11 @@ import { useDebounce } from "react-use"
 import { Address, useAccount } from "wagmi"
 import { shallow } from "zustand/shallow"
 
+import { assetToCollateral, calculateMinCollateralRequired } from "@/lib"
 import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
 import {
   useClientReady,
+  usePairLeverParams,
   useRemoveCollateral,
   useTokenOrNativeBalance,
 } from "@/hooks"
@@ -51,6 +53,8 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
     shallow
   )
 
+  const pairLeverParams = usePairLeverParams({ chainId, pairAddress })
+
   const [removedAmount, setRemovedAmount] = useState<BigNumber>(
     BigNumber.from(0)
   )
@@ -62,6 +66,18 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
   })
 
   const amount = form.watch("amount")
+  const minCollateralRequired = calculateMinCollateralRequired({
+    borrowedAmountAsCollateral: assetToCollateral(
+      pairLeverParams.data.borrowedAmount,
+      pairLeverParams.data.exchangeRate,
+      pairLeverParams.data.constants?.exchangePrecision
+    ),
+    maxLTV: pairLeverParams.data.maxLTV,
+    ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+  })
+  const maxCollateralWithdrawable = collateralAmountSignificant.sub(
+    minCollateralRequired ?? BigNumber.from(0)
+  )
 
   const {
     field: { onChange: onChangeAmount, ...amountField },
@@ -77,7 +93,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
           parseCurrencyUnits({
             amountFormatted: amount,
             decimals: collateralAssetBalance.data?.decimals,
-          }).lte(collateralAmountSignificant),
+          }).lte(maxCollateralWithdrawable),
       },
     },
   })
@@ -176,7 +192,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
             <span className="text-pink-100">
               Collateral available:{" "}
               {formatCurrencyUnits({
-                amountWei: collateralAmountSignificant.toString(),
+                amountWei: maxCollateralWithdrawable.toString(),
                 decimals: collateralAssetBalance.data?.decimals,
                 maximumFractionDigits: 6,
               })}
@@ -187,9 +203,8 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
                 form.setValue(
                   "amount",
                   formatCurrencyUnits({
-                    amountWei: collateralAmountSignificant.toString(),
+                    amountWei: maxCollateralWithdrawable.toString(),
                     decimals: collateralAssetBalance.data?.decimals,
-                    maximumFractionDigits: 6,
                   }),
                   { shouldDirty: true, shouldTouch: true, shouldValidate: true }
                 )
