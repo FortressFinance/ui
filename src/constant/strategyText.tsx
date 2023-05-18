@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import { ProductType } from "@/lib/types"
+import { VaultProductType } from "@/lib/types"
 
 import {
   crvTriCryptoTokenAddress,
@@ -10,7 +10,7 @@ import {
 } from "@/constant/addresses"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const strategyText: { [key in ProductType]: any } = {
+const strategyText: { [key in VaultProductType]: any } = {
   compounder: {
     [glpTokenAddress]: (
       <>
