@@ -183,7 +183,8 @@ const TokenForm: FC<TokenFormProps> = ({
 
         {/* inputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-1 flex items-start justify-self-end pr-4 pt-4">
-          {productType === "concentrator" && isWithdraw ? (
+          {(productType === "concentrator" || productType === "lending") &&
+          isWithdraw ? (
             <DoubleTokenSelectButton
               canChange={!isWithdraw && tokenAddresses.length > 1}
               chainId={chainId}
@@ -216,7 +217,8 @@ const TokenForm: FC<TokenFormProps> = ({
         </div>
         {/* outputToken select button */}
         <div className="relative z-[1] col-start-2 row-start-2 flex items-start space-x-1 justify-self-end pb-4 pr-4">
-          {productType === "concentrator" && !isWithdraw ? (
+          {(productType === "concentrator" || productType === "lending") &&
+          !isWithdraw ? (
             <DoubleTokenSelectButton
               canChange={isWithdraw && tokenAddresses.length > 1}
               chainId={chainId}
@@ -243,7 +245,7 @@ const TokenForm: FC<TokenFormProps> = ({
                     decimals: inputTokenBalanceOrShare?.decimals,
                     maximumFractionDigits: 4,
                   })}{" "}
-                  available
+                  avail.
                 </span>{" "}
                 <span className="opacity-70">
                   (

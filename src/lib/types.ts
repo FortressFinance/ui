@@ -2,7 +2,7 @@ import { Address } from "wagmi"
 
 import { CompounderVaultStaticData } from "@/lib/api/vaults"
 
-export type ProductType = "compounder" | "concentrator"
+export type ProductType = "compounder" | "concentrator" | "lending"
 
 export type VaultType = "balancer" | "curve" | "token"
 

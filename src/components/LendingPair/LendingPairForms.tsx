@@ -88,6 +88,7 @@ export const LendingPairDepositForm: FC<LendingPair> = ({
         isLoadingPreview={preview.isLoading}
         isLoadingTransaction={approval.wait.isLoading || deposit.wait.isLoading}
         previewResultWei={preview.data?.toString()}
+        productType="lending"
         onSubmit={() => {
           if (approval.isSufficient) {
             const action = "Lending asset deposit"
@@ -183,6 +184,7 @@ export const LendingPairRedeem: FC<LendingPair> = ({
   return (
     <FormProvider {...form}>
       <TokenForm
+        isWithdraw
         asset={lendingPair.data?.assetContract}
         chainId={chainId}
         submitText="Withdraw"
@@ -192,6 +194,7 @@ export const LendingPairRedeem: FC<LendingPair> = ({
         isLoadingTransaction={redeem.wait.isLoading}
         maxAssetAmountLimit={maxSharesAvailableToWithdraw.data}
         previewResultWei={preview.data?.toString()}
+        productType="lending"
         onSubmit={() => {
           const action = "Lending asset withdrawal"
           const toastId = addToast({ type: "startTx", action })

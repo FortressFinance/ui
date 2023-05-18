@@ -9,5 +9,7 @@ export type ChainConfig = {
   fcGlpTokenAddress: Address
   fctrFraxBPFcGlpTokenAddress: Address
   fctrFraxBPTokenAddress: Address
+  fFraxFcGlpTokenAddress: Address
+  fraxTokenAddress: Address
   fallbackType: Record<Address, VaultType>
 }
