@@ -208,6 +208,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
             if (formatted === "" || inputRegex.test(escapeRegExp(formatted))) {
               setIsUpdatingAmounts(true)
               onChangeAmount(formatted)
+              if (formatted === "") leverAmountField.onChange(1)
             }
           }}
         />
