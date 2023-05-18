@@ -44,7 +44,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
   setAdjustedCollateralAmount,
   setIsUpdatingAmounts,
   pairAddress,
-  onSuccess,
+  onSuccess: _onSuccess,
 }) => {
   const isClientReady = useClientReady()
   const { isConnected } = useAccount()
@@ -130,6 +130,11 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const onSuccess = () => {
+    _onSuccess()
+    form.reset({ amount: "" })
+  }
 
   const removeCollateral = useRemoveCollateral({
     collateralAmount: removedAmount,

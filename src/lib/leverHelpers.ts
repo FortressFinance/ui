@@ -85,4 +85,5 @@ export const calculateMinCollateralRequired = ({
   borrowedAmountAsCollateral
     .mul(ltvPrecision)
     .div(maxLTV)
-    .add(ltvPrecision.mul(1_000_000_000_000))
+    .add(borrowedAmountAsCollateral.mul(ltvPrecision).div(9_000_000))
+// .add(ltvPrecision.mul(10_000_000))

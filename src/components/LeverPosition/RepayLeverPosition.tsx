@@ -61,7 +61,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   setAdjustedCollateralAmount,
   setIsUpdatingAmounts,
   pairAddress,
-  onSuccess,
+  onSuccess: _onSuccess,
 }) => {
   const isClientReady = useClientReady()
   const [addToast, replaceToast] = useToastStore(
@@ -96,6 +96,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   const activeRepaymentBalanceAmount = isRepayingWithCollateral
     ? collateralAmountSignificant ?? BigNumber.from(0)
     : borrowAssetBalance.data?.value ?? BigNumber.from(0)
+
   const maximumAmountRepayable = isRepayingWithCollateral
     ? assetToCollateral(
         pairLeverParams.data.borrowedAmount,
@@ -177,6 +178,11 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const onSuccess = () => {
+    _onSuccess()
+    form.reset({ amount: "" })
+  }
 
   const approval = useTokenApproval({
     amount: repaymentAmount,
@@ -279,9 +285,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
           <span className="text-pink-100">
             {isRepayingWithCollateral ? "Collateral available: " : "Balance: "}
             {formatCurrencyUnits({
-              amountWei: isRepayingWithCollateral
-                ? borrowAssetBalance.data?.value.toString()
-                : pairLeverParams.data.collateralAmount?.toString(),
+              amountWei: activeRepaymentBalanceAmount.toString(),
               decimals: activeRepaymentAsset?.decimals,
               maximumFractionDigits: 6,
             })}

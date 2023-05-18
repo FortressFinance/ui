@@ -44,7 +44,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
   setAdjustedCollateralAmount,
   setIsUpdatingAmounts,
   pairAddress,
-  onSuccess,
+  onSuccess: _onSuccess,
 }) => {
   const isClientReady = useClientReady()
   const { isConnected } = useAccount()
@@ -107,7 +107,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
       setIsUpdatingAmounts(false)
     },
     500,
-    [form.getValues("amount")]
+    [amount]
   )
 
   useEffect(() => {
@@ -116,6 +116,11 @@ export const AddCollateral: FC<AddCollateralProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const onSuccess = () => {
+    _onSuccess()
+    form.reset({ amount: "" })
+  }
 
   const approval = useTokenApproval({
     amount: addedAmount,

@@ -170,11 +170,7 @@ const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
   // when lending data is refetched, borrowAmountSignificant will change value, causing UI flashing to occur
   // we don't want to change the view unless the condition has truly changed and is not just undefined during refetch
   useEffect(() => {
-    if (
-      isClientReady &&
-      !!pairLeverParams.data.borrowedAmount &&
-      !!pairLeverParams.data.collateralAmount
-    ) {
+    if (isClientReady) {
       if (borrowAmountSignificant.gt(0) || collateralAmountSignificant.gt(0)) {
         if (mode === "create") setMode("manage")
       } else if (mode === "manage") {

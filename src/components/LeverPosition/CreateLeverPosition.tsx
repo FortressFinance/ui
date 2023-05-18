@@ -52,7 +52,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
   setAdjustedCollateralAmount,
   setIsUpdatingAmounts,
   pairAddress,
-  onSuccess,
+  onSuccess: _onSuccess,
 }) => {
   const isClientReady = useClientReady()
   const { isConnected } = useAccount()
@@ -153,6 +153,11 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     500,
     [amount, leverAmount]
   )
+
+  const onSuccess = () => {
+    _onSuccess()
+    form.reset({ amount: "", leverAmount: 1 })
+  }
 
   const approval = useTokenApproval({
     amount: collateralAmount,
