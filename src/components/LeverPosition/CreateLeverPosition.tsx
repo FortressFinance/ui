@@ -207,7 +207,6 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
             const formatted = amount.replace(/,/g, ".")
             if (formatted === "" || inputRegex.test(escapeRegExp(formatted))) {
               setIsUpdatingAmounts(true)
-              // setSelectedPreset("")
               onChangeAmount(formatted)
             }
           }}
