@@ -14,7 +14,7 @@ import {
   useLendingRedeemPreview,
   usePairLeverParams,
   useTokenApproval,
-  useTokenOrNative,
+  useTokenOrNativeBalance,
 } from "@/hooks"
 
 import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
@@ -32,7 +32,8 @@ export const LendingPairDepositForm: FC<LendingPair> = ({
     shallow
   )
   const lendingPair = useLendingPair({ pairAddress, chainId })
-  const asset = useTokenOrNative({
+  const pairLeverParams = usePairLeverParams({ pairAddress, chainId })
+  const asset = useTokenOrNativeBalance({
     address: lendingPair.data?.assetContract,
     chainId,
   })
@@ -74,6 +75,9 @@ export const LendingPairDepositForm: FC<LendingPair> = ({
     enabled: form.formState.isValid && approval.isSufficient,
     onSuccess: () => {
       form.resetField("amountIn")
+      asset.refetch()
+      lendingPair.refetch()
+      pairLeverParams.refetch()
     },
   })
 
@@ -137,7 +141,7 @@ export const LendingPairRedeem: FC<LendingPair> = ({
   )
   const lendingPair = useLendingPair({ pairAddress, chainId })
   const pairLeverParams = usePairLeverParams({ pairAddress, chainId })
-  const share = useTokenOrNative({ address: pairAddress, chainId })
+  const share = useTokenOrNativeBalance({ address: pairAddress, chainId })
 
   const form = useForm<TokenFormValues>({
     defaultValues: {
@@ -168,7 +172,12 @@ export const LendingPairRedeem: FC<LendingPair> = ({
     assetAddress: lendingPair.data?.assetContract,
     amount: redeemValue,
     enabled: form.formState.isValid,
-    onSuccess: () => form.resetField("amountIn"),
+    onSuccess: () => {
+      form.resetField("amountIn")
+      share.refetch()
+      lendingPair.refetch()
+      pairLeverParams.refetch()
+    },
   })
 
   const maxSharesAvailableToWithdraw = useConvertToShares({
