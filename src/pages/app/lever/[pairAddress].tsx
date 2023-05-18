@@ -20,7 +20,7 @@ import Layout from "@/components/Layout"
 import { LendingPairStats } from "@/components/LendingPair"
 import {
   AddCollateral,
-  CreateLeveredPosition,
+  CreateLeverPosition,
   LeverPairs,
   LeverPositionUserStats,
   RemoveCollateral,
@@ -49,6 +49,7 @@ export const getStaticProps: GetStaticProps = (context) => {
 }
 
 const LeverPairDetail: NextPage<LendingPair> = (lendingPair) => {
+  const [isUpdatingAmounts, setIsUpdatingAmounts] = useState(false)
   const [adjustedBorrowAmount, setAdjustedBorrowAmount] = useState<BigNumber>()
   const [adjustedCollateralAmount, setAdjustedCollateralAmount] =
     useState<BigNumber>()
@@ -81,8 +82,10 @@ const LeverPairDetail: NextPage<LendingPair> = (lendingPair) => {
                 <ActiveLeverControls
                   {...lendingPair}
                   adjustedBorrowAmount={adjustedBorrowAmount}
+                  isUpdatingAmounts={isUpdatingAmounts}
                   setAdjustedBorrowAmount={setAdjustedBorrowAmount}
                   setAdjustedCollateralAmount={setAdjustedCollateralAmount}
+                  setIsUpdatingAmounts={setIsUpdatingAmounts}
                 />
               </div>
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
@@ -90,6 +93,7 @@ const LeverPairDetail: NextPage<LendingPair> = (lendingPair) => {
                   {...lendingPair}
                   adjustedBorrowAmount={adjustedBorrowAmount}
                   adjustedCollateralAmount={adjustedCollateralAmount}
+                  isUpdatingAmounts={isUpdatingAmounts}
                 />
               </div>
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
@@ -125,16 +129,20 @@ const LeverPairHeading: FC<LendingPair> = ({
 
 type ActiveLeverControlsProps = LendingPair & {
   adjustedBorrowAmount?: BigNumber
+  isUpdatingAmounts: boolean
   setAdjustedBorrowAmount: Dispatch<SetStateAction<BigNumber | undefined>>
   setAdjustedCollateralAmount: Dispatch<SetStateAction<BigNumber | undefined>>
+  setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
 }
 
 const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
   chainId,
   pairAddress,
   adjustedBorrowAmount,
+  isUpdatingAmounts,
   setAdjustedBorrowAmount,
   setAdjustedCollateralAmount,
+  setIsUpdatingAmounts,
 }) => {
   const isClientReady = useClientReady()
   const lendingPair = useLendingPair({ chainId, pairAddress })
@@ -194,10 +202,12 @@ const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
             collateralAmountSignificant={collateralAmountSignificant}
             collateralAssetAddress={lendingPair.data?.collateralContract}
             collateralAssetBalance={collateralAssetBalance}
+            isUpdatingAmounts={isUpdatingAmounts}
             setAdjustedBorrowAmount={setAdjustedBorrowAmount}
             setAdjustedCollateralAmount={setAdjustedCollateralAmount}
-            onSuccess={onSuccess}
+            setIsUpdatingAmounts={setIsUpdatingAmounts}
             pairAddress={pairAddress}
+            onSuccess={onSuccess}
           />
         </Tabs.Content>
         <Tabs.Content className="pt-3 lg:pt-6" value="addCollateral">
@@ -206,9 +216,11 @@ const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
             collateralAssetAddress={lendingPair.data?.collateralContract}
             collateralAssetBalance={collateralAssetBalance}
             collateralAmountSignificant={collateralAmountSignificant}
+            isUpdatingAmounts={isUpdatingAmounts}
             setAdjustedCollateralAmount={setAdjustedCollateralAmount}
-            onSuccess={onSuccess}
+            setIsUpdatingAmounts={setIsUpdatingAmounts}
             pairAddress={pairAddress}
+            onSuccess={onSuccess}
           />
         </Tabs.Content>
         <Tabs.Content className="pt-3 lg:pt-6" value="removeCollateral">
@@ -217,23 +229,26 @@ const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
             collateralAssetAddress={lendingPair.data?.collateralContract}
             collateralAssetBalance={collateralAssetBalance}
             collateralAmountSignificant={collateralAmountSignificant}
+            isUpdatingAmounts={isUpdatingAmounts}
             setAdjustedCollateralAmount={setAdjustedCollateralAmount}
-            onSuccess={onSuccess}
+            setIsUpdatingAmounts={setIsUpdatingAmounts}
             pairAddress={pairAddress}
+            onSuccess={onSuccess}
           />
         </Tabs.Content>
       </Tabs.Root>
     ) : (
-      <CreateLeveredPosition
+      <CreateLeverPosition
+        chainId={chainId}
         borrowAssetAddress={lendingPair.data?.assetContract}
-        collateralAssetBalance={collateralAssetBalance}
         collateralAssetAddress={lendingPair.data?.collateralContract}
-        ltvPrecision={pairLeverParams.data.constants?.ltvPrecision}
-        maxLTV={pairLeverParams.data.maxLTV}
-        pairAddress={pairAddress}
+        collateralAssetBalance={collateralAssetBalance}
         adjustedBorrowAmount={adjustedBorrowAmount}
+        isUpdatingAmounts={isUpdatingAmounts}
         setAdjustedBorrowAmount={setAdjustedBorrowAmount}
         setAdjustedCollateralAmount={setAdjustedCollateralAmount}
+        setIsUpdatingAmounts={setIsUpdatingAmounts}
+        pairAddress={pairAddress}
         onSuccess={onSuccess}
       />
     )

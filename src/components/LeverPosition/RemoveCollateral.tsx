@@ -22,9 +22,11 @@ type RemoveCollateralProps = {
   collateralAssetAddress?: Address
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
   collateralAmountSignificant: BigNumber
+  isUpdatingAmounts: boolean
   setAdjustedCollateralAmount: Dispatch<SetStateAction<BigNumber | undefined>>
-  onSuccess: () => void
+  setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
   pairAddress: Address
+  onSuccess: () => void
 }
 
 type AddCollateralFormValues = {
@@ -36,9 +38,11 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
   collateralAssetAddress,
   collateralAssetBalance,
   collateralAmountSignificant,
+  isUpdatingAmounts,
   setAdjustedCollateralAmount,
-  onSuccess,
+  setIsUpdatingAmounts,
   pairAddress,
+  onSuccess,
 }) => {
   const isClientReady = useClientReady()
   const { isConnected } = useAccount()
@@ -83,9 +87,6 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") // $& means the whole matched string
   }
 
-  // The debounceReady() callback won't always trigger a render...
-  // In combination with react-hook-form, it's best to just track debounce status manually for consistent behavior
-  const [isDebouncing, setIsDebouncing] = useState(false)
   useDebounce(
     () => {
       if (!Number(amount)) {
@@ -101,7 +102,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
           collateralAmountSignificant.sub(removedAmount)
         )
       }
-      setIsDebouncing(false)
+      setIsUpdatingAmounts(false)
     },
     500,
     [form.getValues("amount")]
@@ -158,7 +159,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
                 formatted === "" ||
                 inputRegex.test(escapeRegExp(formatted))
               ) {
-                setIsDebouncing(true)
+                setIsUpdatingAmounts(true)
                 onChangeAmount(formatted)
               }
             }}
@@ -189,7 +190,8 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
                     amountWei: collateralAmountSignificant.toString(),
                     decimals: collateralAssetBalance.data?.decimals,
                     maximumFractionDigits: 6,
-                  })
+                  }),
+                  { shouldDirty: true, shouldTouch: true, shouldValidate: true }
                 )
               }
               disabled={!isClientReady || !isConnected}
@@ -211,7 +213,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
             className="w-full"
             disabled={
               !isClientReady ||
-              isDebouncing ||
+              isUpdatingAmounts ||
               form.formState.isValidating ||
               !form.formState.isValid ||
               removeCollateral.prepare.isError
