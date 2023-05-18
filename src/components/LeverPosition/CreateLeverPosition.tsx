@@ -66,6 +66,9 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     maxLTV: pairLeverParams.data.maxLTV,
     ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
   })
+  const leverageOptionsList = isClientReady
+    ? Array(Math.floor(maxLeverage) - 1)
+    : Array(4)
 
   const [collateralAmount, setCollateralAmount] = useState<BigNumber>(
     BigNumber.from(0)
@@ -227,11 +230,13 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
         <div className="relative z-[1] col-span-full col-start-1 row-start-2 px-4 pb-4 text-left align-bottom text-xs">
           <span className="text-pink-100">
             Collateral available:{" "}
-            {formatCurrencyUnits({
-              amountWei: collateralAssetBalance.data?.value.toString(),
-              decimals: collateralAssetBalance.data?.decimals,
-              maximumFractionDigits: 6,
-            })}
+            {isClientReady && isConnected
+              ? formatCurrencyUnits({
+                  amountWei: collateralAssetBalance.data?.value.toString(),
+                  decimals: collateralAssetBalance.data?.decimals,
+                  maximumFractionDigits: 6,
+                })
+              : "—"}
           </span>
           <button
             className="ml-1.5 cursor-pointer rounded border border-orange-400 px-2 py-1 font-semibold text-pink-100"
@@ -273,7 +278,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
             leverAmountField.onChange(value ? Number(value) : 1)
           }}
         >
-          {Array.from(Array(Math.floor(maxLeverage) - 1)).map((_, index) => (
+          {Array.from(leverageOptionsList).map((_, index) => (
             <ToggleGroup.Item
               key={`lever-preset-${index}`}
               value={String(index + 2)}
@@ -289,7 +294,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
           ))}
         </ToggleGroup.Root>
 
-        {isClientReady && form.formState.isDirty ? (
+        {isClientReady && isConnected && form.formState.isDirty ? (
           approval.isSufficient ? (
             <Button
               type="submit"
