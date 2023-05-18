@@ -276,7 +276,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
             >
               <Button
                 variant="outline"
-                className="w-1/4 text-sm ui-state-on:bg-pink/50"
+                className="w-full text-sm ui-state-on:bg-pink/50"
               >
                 {index + 2}x
               </Button>
