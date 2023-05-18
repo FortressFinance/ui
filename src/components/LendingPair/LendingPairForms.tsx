@@ -2,14 +2,17 @@ import { FC } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { shallow } from "zustand/shallow"
 
+import { calculateAssetsAvailable } from "@/lib"
 import { parseCurrencyUnits } from "@/lib/helpers"
 import {
+  useConvertToShares,
   useDebouncedValue,
   useLendingDeposit,
   useLendingDepositPreview,
   useLendingPair,
   useLendingRedeem,
   useLendingRedeemPreview,
+  usePairLeverParams,
   useTokenApproval,
   useTokenOrNative,
 } from "@/hooks"
@@ -132,6 +135,7 @@ export const LendingPairRedeem: FC<LendingPair> = ({
     shallow
   )
   const lendingPair = useLendingPair({ pairAddress, chainId })
+  const pairLeverParams = usePairLeverParams({ pairAddress, chainId })
   const share = useTokenOrNative({ address: pairAddress, chainId })
 
   const form = useForm<TokenFormValues>({
@@ -166,6 +170,16 @@ export const LendingPairRedeem: FC<LendingPair> = ({
     onSuccess: () => form.resetField("amountIn"),
   })
 
+  const maxSharesAvailableToWithdraw = useConvertToShares({
+    amount: calculateAssetsAvailable({
+      totalAssets: pairLeverParams.data.totalAssets,
+      totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
+    }),
+    totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
+    totalBorrowShares: pairLeverParams.data.totalBorrowShares,
+    pairAddress,
+  })
+
   return (
     <FormProvider {...form}>
       <TokenForm
@@ -176,6 +190,7 @@ export const LendingPairRedeem: FC<LendingPair> = ({
         isError={preview.isError || redeem.prepare.isError}
         isLoadingPreview={preview.isLoading}
         isLoadingTransaction={redeem.wait.isLoading}
+        maxAssetAmountLimit={maxSharesAvailableToWithdraw.data}
         previewResultWei={preview.data?.toString()}
         onSubmit={() => {
           const action = "Lending asset withdrawal"

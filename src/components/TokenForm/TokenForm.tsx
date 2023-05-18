@@ -1,3 +1,4 @@
+import { BigNumber } from "ethers"
 import { FC, useState } from "react"
 import React from "react"
 import {
@@ -35,6 +36,7 @@ type TokenFormProps = {
   isLoadingPreview: boolean
   isLoadingTransaction: boolean
   isWithdraw?: boolean
+  maxAssetAmountLimit?: BigNumber
   previewResultWei?: string
   productType?: ProductType
   onSubmit: SubmitHandler<TokenFormValues>
@@ -58,6 +60,7 @@ const TokenForm: FC<TokenFormProps> = ({
   isLoadingPreview,
   isLoadingTransaction,
   isWithdraw = false,
+  maxAssetAmountLimit,
   previewResultWei,
   productType,
   onSubmit,
@@ -82,14 +85,6 @@ const TokenForm: FC<TokenFormProps> = ({
     if (amountIn !== "") form.trigger("amountIn")
   }
 
-  const onClickMax = () => {
-    form.setValue("amountIn", inputTokenBalanceOrShare?.formatted ?? "0.0", {
-      shouldDirty: true,
-      shouldValidate: true,
-      shouldTouch: true,
-    })
-  }
-
   const { isConnected } = useAccount()
   const {
     data: inputTokenBalanceOrShare,
@@ -107,10 +102,29 @@ const TokenForm: FC<TokenFormProps> = ({
     chainId,
   })
 
+  const maxAvailable = maxAssetAmountLimit
+    ? inputTokenBalanceOrShare?.value?.gt(maxAssetAmountLimit)
+      ? maxAssetAmountLimit
+      : inputTokenBalanceOrShare?.value
+    : inputTokenBalanceOrShare?.value
   const showMaxBtn =
     isClientReady &&
     inputTokenBalanceOrShare?.value?.gt(0) &&
     inputTokenBalanceOrShare?.formatted !== amountIn
+  const onClickMax = () => {
+    form.setValue(
+      "amountIn",
+      formatCurrencyUnits({
+        amountWei: maxAvailable?.toString(),
+        decimals: inputTokenBalanceOrShare?.decimals,
+      }) ?? "0.0",
+      {
+        shouldDirty: true,
+        shouldValidate: true,
+        shouldTouch: true,
+      }
+    )
+  }
 
   const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
   const escapeRegExp = (string: string): string => {
@@ -133,7 +147,7 @@ const TokenForm: FC<TokenFormProps> = ({
                 const isValid = parseCurrencyUnits({
                   amountFormatted: amount,
                   decimals: inputToken?.decimals,
-                }).lte(inputTokenBalanceOrShare?.value ?? 0)
+                }).lte(maxAvailable ?? 0)
                 return isValid ? undefined : "Insufficient balance"
               },
             },
@@ -221,12 +235,36 @@ const TokenForm: FC<TokenFormProps> = ({
 
         <div className="relative z-[1] col-span-full col-start-1 row-start-3 h-[38px] px-4 pb-3 text-left align-bottom text-xs">
           <span className="text-pink-100">
-            {!isWithdraw ? "Balance: " : "Share: "}
-            <AssetBalance
-              address={inputTokenAddress}
-              chainId={chainId}
-              maximumFractionDigits={6}
-            />
+            {maxAvailable?.lt(inputTokenBalanceOrShare?.value ?? 0) ? (
+              <>
+                <span>
+                  {formatCurrencyUnits({
+                    amountWei: maxAvailable?.toString(),
+                    decimals: inputTokenBalanceOrShare?.decimals,
+                    maximumFractionDigits: 4,
+                  })}{" "}
+                  available
+                </span>{" "}
+                <span className="opacity-70">
+                  (
+                  {formatCurrencyUnits({
+                    amountWei: inputTokenBalanceOrShare?.value?.toString(),
+                    decimals: inputTokenBalanceOrShare?.decimals,
+                    maximumFractionDigits: 4,
+                  })}
+                  )
+                </span>
+              </>
+            ) : (
+              <>
+                {!isWithdraw ? "Balance: " : "Share: "}
+                <AssetBalance
+                  address={inputTokenAddress}
+                  chainId={chainId}
+                  maximumFractionDigits={6}
+                />
+              </>
+            )}
           </span>
           <button
             className="ml-1.5 cursor-pointer rounded border border-orange-400 px-2 py-1 font-semibold text-pink-100"
