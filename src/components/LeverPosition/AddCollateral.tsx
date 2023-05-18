@@ -44,7 +44,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
   setAdjustedCollateralAmount,
   setIsUpdatingAmounts,
   pairAddress,
-  onSuccess,
+  onSuccess: _onSuccess,
 }) => {
   const isClientReady = useClientReady()
   const { isConnected } = useAccount()
@@ -107,7 +107,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
       setIsUpdatingAmounts(false)
     },
     500,
-    [form.getValues("amount")]
+    [amount]
   )
 
   useEffect(() => {
@@ -117,16 +117,24 @@ export const AddCollateral: FC<AddCollateralProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const onSuccess = () => {
+    _onSuccess()
+    form.reset({ amount: "" })
+  }
+
   const approval = useTokenApproval({
     amount: addedAmount,
     spender: pairAddress,
     token: collateralAssetAddress,
-    enabled: addedAmount.gt(0) && form.formState.isValid,
+    enabled: !isUpdatingAmounts && addedAmount.gt(0) && form.formState.isValid,
   })
   const addCollateral = useAddCollateral({
     collateralAmount: addedAmount,
     enabled:
-      approval.isSufficient && addedAmount.gt(0) && form.formState.isValid,
+      !isUpdatingAmounts &&
+      approval.isSufficient &&
+      addedAmount.gt(0) &&
+      form.formState.isValid,
     pairAddress,
     onSuccess,
   })
@@ -197,14 +205,18 @@ export const AddCollateral: FC<AddCollateralProps> = ({
               })}
             </span>
             <button
-              className="ml-1.5 cursor-pointer rounded border border-orange-400 px-2 py-1 font-semibold text-pink-100"
-              onClick={() =>
-                form.setValue(
-                  "amount",
-                  collateralAssetBalance.data?.formatted ?? ""
-                )
+              className="ml-1.5 -translate-y-[1px] rounded px-1.5 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
+              onClick={() => {
+                onChangeAmount(collateralAssetBalance.data?.formatted ?? "")
+                setIsUpdatingAmounts(true)
+              }}
+              disabled={
+                !isClientReady ||
+                !isConnected ||
+                isUpdatingAmounts ||
+                collateralAssetBalance.data?.value.eq(addedAmount) ||
+                collateralAssetBalance.data?.value.eq(0)
               }
-              disabled={!isClientReady || !isConnected}
               type="button"
             >
               Max
@@ -218,26 +230,32 @@ export const AddCollateral: FC<AddCollateralProps> = ({
         </div>
 
         <div className="mt-3 flex items-center gap-3">
-          {isClientReady ? (
-            approval.isSufficient ? (
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isSubmitDisabled}
-                isLoading={
-                  addCollateral.prepare.isLoading ||
-                  addCollateral.write.isLoading ||
-                  addCollateral.wait.isLoading
-                }
-              >
-                {addCollateral.prepare.isError ? "Error" : "Add collateral"}
-              </Button>
+          {isClientReady && form.formState.isDirty ? (
+            form.formState.isValid ? (
+              approval.isSufficient ? (
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitDisabled}
+                  isLoading={
+                    addCollateral.prepare.isLoading ||
+                    addCollateral.write.isLoading ||
+                    addCollateral.wait.isLoading
+                  }
+                >
+                  Add collateral
+                </Button>
+              ) : (
+                <ApproveToken
+                  amount={addedAmount}
+                  approval={approval}
+                  disabled={isSubmitDisabled}
+                />
+              )
             ) : (
-              <ApproveToken
-                amount={addedAmount}
-                approval={approval}
-                disabled={isSubmitDisabled}
-              />
+              <Button className="w-full" disabled>
+                {form.formState.errors.amount?.message ?? "Hmm..."}
+              </Button>
             )
           ) : (
             <Button className="w-full" disabled>

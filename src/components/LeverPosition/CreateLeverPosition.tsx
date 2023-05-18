@@ -52,7 +52,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
   setAdjustedCollateralAmount,
   setIsUpdatingAmounts,
   pairAddress,
-  onSuccess,
+  onSuccess: _onSuccess,
 }) => {
   const isClientReady = useClientReady()
   const { isConnected } = useAccount()
@@ -66,6 +66,9 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     maxLTV: pairLeverParams.data.maxLTV,
     ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
   })
+  const leverageOptionsList = isClientReady
+    ? Array(Math.floor(maxLeverage) - 1)
+    : Array(4)
 
   const [collateralAmount, setCollateralAmount] = useState<BigNumber>(
     BigNumber.from(0)
@@ -151,18 +154,27 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     [amount, leverAmount]
   )
 
+  const onSuccess = () => {
+    _onSuccess()
+    form.reset({ amount: "", leverAmount: 1 })
+  }
+
   const approval = useTokenApproval({
     amount: collateralAmount,
     spender: pairAddress,
     token: borrowAssetAddress,
-    enabled: collateralAmount.gt(0),
+    enabled: !isUpdatingAmounts && collateralAmount.gt(0),
   })
   const leverPosition = useLeverPosition({
     borrowAmount: adjustedBorrowAmount,
     borrowAssetAddress,
     collateralAmount,
     minAmount: BigNumber.from(1),
-    enabled: leverAmount > 1 && approval.isSufficient && !isUpdatingAmounts,
+    enabled:
+      !isUpdatingAmounts &&
+      leverAmount > 1 &&
+      approval.isSufficient &&
+      !isUpdatingAmounts,
     pairAddress,
     onSuccess,
   })
@@ -223,11 +235,13 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
         <div className="relative z-[1] col-span-full col-start-1 row-start-2 px-4 pb-4 text-left align-bottom text-xs">
           <span className="text-pink-100">
             Collateral available:{" "}
-            {formatCurrencyUnits({
-              amountWei: collateralAssetBalance.data?.value.toString(),
-              decimals: collateralAssetBalance.data?.decimals,
-              maximumFractionDigits: 6,
-            })}
+            {isClientReady && isConnected
+              ? formatCurrencyUnits({
+                  amountWei: collateralAssetBalance.data?.value.toString(),
+                  decimals: collateralAssetBalance.data?.decimals,
+                  maximumFractionDigits: 6,
+                })
+              : "—"}
           </span>
           <button
             className="ml-1.5 cursor-pointer rounded border border-orange-400 px-2 py-1 font-semibold text-pink-100"
@@ -269,7 +283,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
             leverAmountField.onChange(value ? Number(value) : 1)
           }}
         >
-          {Array.from(Array(Math.floor(maxLeverage) - 1)).map((_, index) => (
+          {Array.from(leverageOptionsList).map((_, index) => (
             <ToggleGroup.Item
               key={`lever-preset-${index}`}
               value={String(index + 2)}
@@ -285,7 +299,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
           ))}
         </ToggleGroup.Root>
 
-        {isClientReady ? (
+        {isClientReady && isConnected && form.formState.isDirty ? (
           approval.isSufficient ? (
             <Button
               type="submit"
@@ -293,7 +307,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
               disabled={isSubmitDisabled}
               isLoading={isLeverPositionLoading}
             >
-              {leverPosition.prepare.isError ? "Error" : "Lever position"}
+              Lever position
             </Button>
           ) : (
             <ApproveToken
