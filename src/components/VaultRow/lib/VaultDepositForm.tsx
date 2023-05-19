@@ -11,7 +11,6 @@ import {
 } from "wagmi"
 import { shallow } from "zustand/shallow"
 
-import { fortLog } from "@/lib/fortLog"
 import { parseCurrencyUnits } from "@/lib/helpers"
 import isEthTokenAddress from "@/lib/isEthTokenAddress"
 import {
@@ -204,7 +203,6 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
 
   const onConfirmTransactionDetails = () => {
     if (enableDeposit) {
-      fortLog("Depositing", amountInDebounced)
       const action = "Vault deposit"
       const toastId = addToast({ type: "startTx", action })
       deposit
@@ -218,7 +216,6 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
           replaceToast(toastId, { type: "errorWrite", error, action })
         )
     } else if (enableDepositUnderlying) {
-      fortLog("Depositing underlying tokens", amountInDebounced)
       const action = "Vault deposit"
       const toastId = addToast({ type: "startTx", action })
       depositUnderlying

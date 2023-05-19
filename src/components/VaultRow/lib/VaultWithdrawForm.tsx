@@ -8,7 +8,6 @@ import {
 } from "wagmi"
 import { shallow } from "zustand/shallow"
 
-import { fortLog } from "@/lib/fortLog"
 import { parseCurrencyUnits } from "@/lib/helpers"
 import {
   useActiveChainId,
@@ -154,7 +153,6 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
 
   const onConfirmTransactionDetails = () => {
     if (enableRedeem) {
-      fortLog("Redeeming", amountInDebounced)
       const action = "Vault withdrawal"
       const toastId = addToast({ type: "startTx", action })
       redeem
@@ -168,7 +166,6 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
           replaceToast(toastId, { type: "errorWrite", error, action })
         )
     } else if (enableRedeemUnderlying) {
-      fortLog("Redeeming underlying tokens", amountInDebounced)
       const action = "Vault withdrawal"
       const toastId = addToast({ type: "startTx", action })
       redeemUnderlying
