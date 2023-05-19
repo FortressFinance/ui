@@ -1,12 +1,8 @@
 import { QueryFunctionContext, UseQueryOptions } from "@tanstack/react-query"
-import {
-  Address,
-  FetchEnsNameArgs,
-  FetchEnsNameResult,
-  getPublicClient,
-} from "@wagmi/core"
-import { getAddress } from "viem"
-import { useQuery } from "wagmi"
+import { Address, FetchEnsNameArgs, FetchEnsNameResult } from "@wagmi/core"
+import * as process from "process"
+import { createPublicClient, getAddress, http } from "viem"
+import { mainnet, useQuery } from "wagmi"
 
 // ? custom, mainnet ens lookup; adapted from:
 // * @wagmi/core/src/actions/ens/fetchEnsName.ts
@@ -65,6 +61,11 @@ async function fetchMainnetEnsName({
   address: Address | undefined
 }): Promise<FetchMainnetEnsNameResult> {
   if (!address) throw new Error("address is required")
-  const publicClient = getPublicClient({ chainId: 1 })
+  const publicClient = createPublicClient({
+    chain: mainnet,
+    transport: http(
+      `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
+    ),
+  })
   return publicClient.getEnsName({ address: getAddress(address) })
 }
