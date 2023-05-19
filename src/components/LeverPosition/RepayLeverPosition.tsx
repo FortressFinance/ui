@@ -3,6 +3,7 @@ import { BigNumber } from "ethers"
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
 import { SubmitHandler, useController, useForm } from "react-hook-form"
 import { useDebounce } from "react-use"
+import { useAccount } from "wagmi"
 import { shallow } from "zustand/shallow"
 
 import { addSlippage, assetToCollateral, collateralToAsset } from "@/lib"
@@ -64,6 +65,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   onSuccess: _onSuccess,
 }) => {
   const isClientReady = useClientReady()
+  const { isConnected } = useAccount()
   const [addToast, replaceToast] = useToastStore(
     (state) => [state.addToast, state.replaceToast],
     shallow
@@ -290,6 +292,28 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
               maximumFractionDigits: 6,
             })}
           </span>
+          <button
+            className="ml-1.5 -translate-y-[1px] rounded px-1.5 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
+            onClick={() => {
+              onChangeAmount(
+                formatCurrencyUnits({
+                  amountWei: activeRepaymentBalanceAmount.toString(),
+                  decimals: activeRepaymentAsset?.decimals,
+                })
+              )
+              setIsUpdatingAmounts(true)
+            }}
+            disabled={
+              !isClientReady ||
+              !isConnected ||
+              isUpdatingAmounts ||
+              activeRepaymentBalanceAmount.eq(0) ||
+              activeRepaymentBalanceAmount.eq(repaymentAmount)
+            }
+            type="button"
+          >
+            Max
+          </button>
         </div>
 
         <div
