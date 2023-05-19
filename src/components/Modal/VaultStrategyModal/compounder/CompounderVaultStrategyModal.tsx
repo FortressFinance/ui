@@ -4,7 +4,7 @@ import { FC, MouseEventHandler } from "react"
 import { BiInfoCircle } from "react-icons/bi"
 import { useAccount, useNetwork } from "wagmi"
 
-import { formatPercentage } from "@/lib/helpers/formatPercentage"
+import { formatPercentage } from "@/lib/helpers"
 import { useIsTokenVault, useTokenOrNative, useVaultFees } from "@/hooks"
 
 import { ModalBaseProps } from "@/components/Modal/lib/ModalBase"
@@ -12,11 +12,10 @@ import PurpleModal, {
   PurpleModalContent,
   PurpleModalHeader,
 } from "@/components/Modal/lib/PurpleModal"
-import { VaultStrategyModalAmmApr } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalAmmApr"
-import { VaultStrategyModalConcentratorApr } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalConcentratorApr"
-import { VaultStrategyModalConcentratorRewardApr as VaultStrategyModalConcentratorRewardApy } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalConcentratorRewardApy"
-import { VaultStrategyModalTokenApr } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalTokenApr"
-import { VaultStrategyLeftPanel } from "@/components/Modal/VaultStrategyModal/VaultStrategyLeftPanel"
+import {
+  VaultStrategyModalAmmApr,
+  VaultStrategyModalTokenApr,
+} from "@/components/Modal/VaultStrategyModal"
 import Skeleton from "@/components/Skeleton"
 import Tooltip from "@/components/Tooltip"
 import { VaultRowPropsWithProduct } from "@/components/VaultRow"
@@ -27,18 +26,23 @@ import {
   FortIconExternalLink,
 } from "@/icons"
 
-export const VaultStrategyModal: FC<
+import strategyText from "@/constant/strategyText"
+
+export const CompounderVaultStrategyModal: FC<
   VaultRowPropsWithProduct & ModalBaseProps
 > = ({ isOpen, onClose, ...vaultProps }) => {
-  const productType = vaultProps.productType
   const { connector } = useAccount()
-  const fees = useVaultFees(vaultProps)
   const { chain } = useNetwork()
+
+  const productType = vaultProps.productType
+  const strategyTextValue = strategyText[productType]?.[vaultProps.asset]
+
+  const fees = useVaultFees(vaultProps)
+  const isToken = useIsTokenVault(vaultProps.type)
 
   const { data: ybToken } = useTokenOrNative({
     address: vaultProps.ybTokenAddress ?? "0x",
   })
-  const isToken = useIsTokenVault(vaultProps.type)
 
   // limit the token name to 11 char max
   const truncateString = (str?: string): string => (str ? str.slice(0, 11) : "")
@@ -93,38 +97,31 @@ export const VaultStrategyModal: FC<
           </PurpleModalHeader>
 
           <PurpleModalContent className="grid grid-cols-1 divide-pink-800 p-0 md:grid-cols-[3fr,2fr] md:divide-x md:p-0 lg:grid-cols-[2fr,1fr]">
-            <VaultStrategyLeftPanel {...vaultProps} />
+            {/* Vault description */}
+            <div className="max-md:row-start-2">
+              <h1 className="border-b border-pink-800 p-3 text-xs font-semibold uppercase text-pink-300 max-md:border-t max-md:text-center md:px-5">
+                Vault description
+              </h1>
+
+              <div className="space-y-3 p-4 pb-5 leading-relaxed text-pink-50 max-md:text-sm md:px-5">
+                {strategyTextValue ?? "No description available"}
+              </div>
+            </div>
 
             {/* APR */}
             <div className="sm:grid sm:grid-cols-2 sm:divide-x sm:divide-pink-800 md:block md:divide-x-0">
               <div>
                 <h1 className="border-b border-pink-800 p-3 text-xs font-semibold uppercase text-pink-300 max-md:text-center md:px-5">
-                  {vaultProps.productType === "concentrator"
-                    ? "Concentrator APR"
-                    : "APR"}
+                  APR{" "}
                 </h1>
                 <div className="p-4 pb-5 md:px-5">
-                  {productType === "compounder" ? (
-                    isToken ? (
-                      <VaultStrategyModalTokenApr {...vaultProps} />
-                    ) : (
-                      <VaultStrategyModalAmmApr {...vaultProps} />
-                    )
+                  {isToken ? (
+                    <VaultStrategyModalTokenApr {...vaultProps} />
                   ) : (
-                    <VaultStrategyModalConcentratorApr {...vaultProps} />
+                    <VaultStrategyModalAmmApr {...vaultProps} />
                   )}
                 </div>
               </div>
-              {productType === "concentrator" && (
-                <div>
-                  <h1 className="border-b border-pink-800 p-3 text-xs font-semibold uppercase text-pink-300 max-md:text-center max-sm:border-t md:border-t md:px-5">
-                    Target Asset APY
-                  </h1>
-                  <div className="p-4 pb-5 md:px-5">
-                    <VaultStrategyModalConcentratorRewardApy {...vaultProps} />
-                  </div>
-                </div>
-              )}
 
               {/* Fees */}
               <div>
