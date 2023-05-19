@@ -123,7 +123,7 @@ export const ManagedVaultsStrategyModal: FC<
               </Tabs.Root>
             </div>
 
-            <div className="max-md:row-start-2">
+            <div className="md:block md:divide-x-0">
               <Tabs.Root className="flex w-full flex-col" defaultValue="tabApr">
                 <Tabs.List
                   className="flex shrink-0 border-b border-pink-800 max-sm:border-t md:border-t"
@@ -142,7 +142,7 @@ export const ManagedVaultsStrategyModal: FC<
                     Fees
                   </Tabs.Trigger>
                   <Tabs.Trigger
-                    className="h-[41px] w-1/3 p-3 text-xs font-semibold uppercase text-pink-300 ui-state-active:border-b ui-state-active:border-pink-400 ui-state-active:bg-pink/10 max-md:text-center md:px-5"
+                    className="h-[41px] w-[auto] p-3 text-xs font-semibold uppercase text-pink-300 ui-state-active:border-b ui-state-active:border-pink-400 ui-state-active:bg-pink/10 max-md:text-center md:px-5"
                     value="tabAllocations"
                   >
                     Allocations
@@ -155,13 +155,13 @@ export const ManagedVaultsStrategyModal: FC<
                   fgdg
                 </Tabs.Content>
                 <Tabs.Content
-                  className="space-y-3 py-4 pb-5 leading-relaxed text-pink-50 max-md:text-sm"
+                  className="space-y-3 py-4 pb-5 leading-relaxed text-pink-50 max-md:text-sm md:px-5"
                   value="tabFees"
                 >
                   ddsfsdf
                 </Tabs.Content>
                 <Tabs.Content
-                  className="space-y-3 py-4 pb-5 leading-relaxed text-pink-50 max-md:text-sm"
+                  className="space-y-3 py-4 pb-5 leading-relaxed text-pink-50 max-md:text-sm md:px-5"
                   value="tabAllocations"
                 >
                   dfsfds
