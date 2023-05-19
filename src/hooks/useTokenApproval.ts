@@ -39,7 +39,6 @@ export const useTokenApproval = ({
       enabled,
   })
   const write = useContractWrite({
-    mode: "recklesslyUnprepared",
     chainId,
     address: token,
     abi: erc20ABI,
@@ -48,6 +47,7 @@ export const useTokenApproval = ({
   })
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
+    // TODO: wagmiv1 onSuccess
     onSuccess: () => allowance.refetch(),
   })
   return {

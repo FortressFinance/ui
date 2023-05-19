@@ -161,7 +161,7 @@ export const useLendingDeposit = ({
     args: [amount, receiver],
     enabled: !!chainId && amount > 0 && receiver !== "0x" && enabled,
   })
-  const write = useContractWrite(prepare.data)
+  const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
     onSuccess: () => {
@@ -199,7 +199,7 @@ export const useLendingRedeem = ({
     args: [amount, receiver, receiver],
     enabled: !!chainId && amount > 0 && receiver !== "0x" && enabled,
   })
-  const write = useContractWrite(prepare.data)
+  const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
     onSuccess: () => {

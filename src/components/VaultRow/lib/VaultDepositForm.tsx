@@ -1,4 +1,3 @@
-import { ethers } from "ethers"
 import { FC, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
@@ -34,6 +33,8 @@ import TokenForm, { TokenFormValues } from "@/components/TokenForm/TokenForm"
 import { VaultRowPropsWithProduct } from "@/components/VaultRow/VaultRow"
 
 import { useGlobalStore, useToastStore } from "@/store"
+
+import { maxUint256 } from "@/constant"
 
 export type VaultDepositWithdrawProps = VaultRowPropsWithProduct & {
   defaultInputToken: Address
@@ -121,7 +122,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
 
   // Configure approve method
   const approval = useTokenApproval({
-    amount: ethers.constants.MaxUint256,
+    amount: maxUint256,
     spender: defaultOutputToken,
     token: inputTokenAddress,
     enabled: !!requiresApproval,
@@ -156,33 +157,9 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
   const deposit = useContractWrite(prepareDeposit.config)
   useWaitForTransaction({
     hash: deposit.data?.hash,
+    // TODO: wagmiv1 onSuccess
     onSuccess: () => onDepositSuccess(),
   })
-
-  // DEBUG HERE
-  // mock prepare object so the form allows you to submit
-  // const prepareDepositUnderlying = { isError: false, isLoading: false }
-  // you can't set variables in react without using state, so I moved the state into the extract hook
-  // when you have the hash for debugging, you call the returned func with it
-  // const extractSolidityError = useExtractSolidityError()
-  // to make this work without failing before actually submitting it, you have to recklessly set the args when executing the call
-  // removed args here
-  // const debugDepositUnderlying = useContractWrite({
-  //   ...vaultContract,
-  //   mode: "recklesslyUnprepared",
-  //   functionName: "depositUnderlying",
-  //   args: [
-  //     inputTokenAddress,
-  //     userAddress ?? "0x",
-  //     value,
-  //     BigNumber.from(previewDeposit.data?.minAmountWei ?? "0"),
-  //   ],
-  //   overrides: { value: inputIsEth ? value : BigNumber.from(0) },
-  //   onSettled: (receipt, error) => {
-  //     console.log(">>>>>>>>", receipt?.hash)
-  //     extractSolidityError(receipt?.hash)
-  //   },
-  // })
 
   // Configure depositUnderlying method
   const prepareDepositUnderlying = usePrepareContractWrite({
