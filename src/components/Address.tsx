@@ -1,6 +1,7 @@
 import { FC } from "react"
 import { Address } from "wagmi"
 
+import { shortenAddress } from "@/lib/helpers"
 import { useMainnetEnsName } from "@/hooks"
 
 type AddressProps = {
@@ -15,9 +16,7 @@ const Address: FC<AddressProps> = ({ children: address }) => {
   return ensName ? (
     <>{ensName}</>
   ) : address ? (
-    <>
-      {address.substring(0, 6)}...{address.substring(address.length - 4)}
-    </>
+    <>{shortenAddress(address)}</>
   ) : null
 }
 

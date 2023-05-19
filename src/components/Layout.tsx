@@ -25,7 +25,11 @@ import { TxSettingsPopover } from "@/components/TxSettingsPopover"
 
 import { FortIconClose, FortIconHamburger } from "@/icons"
 
-import { DISABLE_CONCENTRATORS, DISABLE_LENDING } from "@/constant/env"
+import {
+  DISABLE_CONCENTRATORS,
+  DISABLE_LENDING,
+  DISABLE_MANAGED_VAULTS,
+} from "@/constant/env"
 
 import FortressLogoAnimated from "~/images/fortress-animated-logo.gif"
 import FortressBackground from "~/images/fortress-background.gif"
@@ -93,6 +97,24 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                               {...resolvedRoute("/app/yield/concentrators")}
                             >
                               Concentrators
+                            </DropdownMenuItemLink>
+                          </NavigationMenu.Link>
+                        )}
+                        {DISABLE_MANAGED_VAULTS ? (
+                          <span className="flex cursor-not-allowed items-center px-3 py-2.5">
+                            <span className="whitespace-nowrap opacity-50">
+                              Managed Vaults
+                            </span>
+                            <span className="ml-1 grow-0 whitespace-nowrap rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/80">
+                              Coming soon
+                            </span>
+                          </span>
+                        ) : (
+                          <NavigationMenu.Link asChild>
+                            <DropdownMenuItemLink
+                              {...resolvedRoute("/app/yield/managed-vaults")}
+                            >
+                              Managed Vaults
                             </DropdownMenuItemLink>
                           </NavigationMenu.Link>
                         )}
@@ -219,6 +241,28 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                             )}
                           >
                             Concentrators
+                          </Link>
+                        )}
+                        {DISABLE_MANAGED_VAULTS ? (
+                          <span className="flex items-center gap-1 rounded px-3 py-2.5 text-lg font-medium text-white/20">
+                            <span>Managed Vaults</span>
+                            <span className="ml-1 grow-0 whitespace-nowrap rounded bg-pink-200/20 px-1 py-0.5 text-[9px] uppercase leading-tight text-pink-100/60">
+                              Coming soon
+                            </span>
+                          </span>
+                        ) : (
+                          <Link
+                            {...resolvedRoute("/app/yield/managed-vaults")}
+                            className={clsxm(
+                              "block rounded px-3 py-2.5 text-lg font-medium text-white/80",
+                              {
+                                "bg-gradient-to-r from-orange-400/20 to-orange-400/5 text-white ring-1 ring-inset ring-orange-400/20":
+                                  router.pathname ===
+                                  "/app/yield/managed-vaults",
+                              }
+                            )}
+                          >
+                            Managed Vaults
                           </Link>
                         )}
                       </div>

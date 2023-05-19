@@ -1,3 +1,4 @@
+export * from "./ConcentratorHoldingsTable"
 export * from "./ConcentratorMenu"
 export * from "./ConcentratorRewards"
 export * from "./ConcentratorVaultApy"
