@@ -1,7 +1,7 @@
 import { ToastProvider } from "@radix-ui/react-toast"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { FC, PropsWithChildren } from "react"
-import { configureChains, createClient, WagmiConfig } from "wagmi"
+import { configureChains, createConfig, WagmiConfig } from "wagmi"
 import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet"
 import { InjectedConnector } from "wagmi/connectors/injected"
 import { MetaMaskConnector } from "wagmi/connectors/metaMask"
@@ -9,15 +9,15 @@ import { WalletConnectLegacyConnector } from "wagmi/connectors/walletConnectLega
 
 import { enabledNetworks } from "@/lib/wagmi"
 
-const { chains, provider, webSocketProvider } = configureChains(
+const { chains, publicClient, webSocketPublicClient } = configureChains(
   enabledNetworks.chains,
   enabledNetworks.providers
 )
 
-const wagmiClient = createClient({
+const config = createConfig({
   autoConnect: true,
-  provider,
-  webSocketProvider,
+  publicClient,
+  webSocketPublicClient,
   connectors: [
     new MetaMaskConnector({
       chains,
@@ -51,7 +51,7 @@ const AppProviders: FC<PropsWithChildren> = ({ children }) => {
   return (
     <ToastProvider>
       <QueryClientProvider client={queryClient}>
-        <WagmiConfig client={wagmiClient}>{children}</WagmiConfig>
+        <WagmiConfig config={config}>{children}</WagmiConfig>
       </QueryClientProvider>
     </ToastProvider>
   )
