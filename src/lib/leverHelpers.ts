@@ -72,6 +72,4 @@ export const calculateMinCollateralRequired = ({
   borrowedAmountAsCollateral = 1n,
   maxLTV = 1n,
   ltvPrecision = 1n,
-}) =>
-  (borrowedAmountAsCollateral * ltvPrecision) / maxLTV +
-  (borrowedAmountAsCollateral * ltvPrecision) / 9_000_000n
+}) => (borrowedAmountAsCollateral * ltvPrecision) / maxLTV
