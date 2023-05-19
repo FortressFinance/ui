@@ -1,5 +1,6 @@
 import { BigNumber, ethers } from "ethers"
 import { parseUnits } from "ethers/lib/utils.js"
+import { zeroAddress } from "viem"
 import {
   Address,
   useAccount,
@@ -142,9 +143,9 @@ export const usePairLeverParams = ({
     abi: FortressLendingPair,
     functionName: "convertToAssets",
     args: [
-      accounting.data?.totalBorrowAmount ?? BigNumber.from(0),
-      accounting.data?.totalBorrowShares ?? BigNumber.from(0),
-      accounting.data?.userBorrowShares ?? BigNumber.from(0),
+      accounting.data?.totalBorrowAmount ?? BigInt(0),
+      accounting.data?.totalBorrowShares ?? BigInt(0),
+      accounting.data?.userBorrowShares ?? BigInt(0),
       true,
     ],
     enabled:
@@ -175,19 +176,19 @@ export const usePairLeverParams = ({
 }
 
 export const useLeverPosition = ({
-  borrowAmount = BigNumber.from(0),
-  borrowAssetAddress = ethers.constants.AddressZero,
-  collateralAmount = BigNumber.from(0),
+  borrowAmount = BigInt(0),
+  borrowAssetAddress = zeroAddress,
+  collateralAmount = BigInt(0),
   enabled = true,
   minAmount,
   pairAddress,
   onSuccess,
 }: {
-  borrowAmount?: BigNumber
+  borrowAmount?: bigint
   borrowAssetAddress?: Address
-  collateralAmount?: BigNumber
+  collateralAmount?: bigint
   enabled?: boolean
-  minAmount: BigNumber
+  minAmount: bigint
   pairAddress: Address
   onSuccess?: () => void
 }) => {
@@ -198,7 +199,7 @@ export const useLeverPosition = ({
     abi: FortressLendingPair,
     functionName: "leveragePosition",
     args: [borrowAmount, collateralAmount, minAmount, borrowAssetAddress],
-    enabled: borrowAmount.gt(0) && collateralAmount.gt(0) && enabled,
+    enabled: borrowAmount > 0 && collateralAmount > 0 && enabled,
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -209,12 +210,12 @@ export const useLeverPosition = ({
 }
 
 export const useAddCollateral = ({
-  collateralAmount = BigNumber.from(0),
+  collateralAmount = BigInt(0),
   enabled = true,
   pairAddress,
   onSuccess,
 }: {
-  collateralAmount?: BigNumber
+  collateralAmount?: bigint
   enabled?: boolean
   pairAddress: Address
   onSuccess?: () => void
@@ -227,7 +228,7 @@ export const useAddCollateral = ({
     abi: FortressLendingPair,
     functionName: "addCollateral",
     args: [collateralAmount, borrower],
-    enabled: collateralAmount.gt(0) && borrower !== "0x" && enabled,
+    enabled: collateralAmount > 0 && borrower !== "0x" && enabled,
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -238,12 +239,12 @@ export const useAddCollateral = ({
 }
 
 export const useRemoveCollateral = ({
-  collateralAmount = BigNumber.from(0),
+  collateralAmount = BigInt(0),
   enabled = true,
   pairAddress,
   onSuccess,
 }: {
-  collateralAmount?: BigNumber
+  collateralAmount?: bigint
   enabled?: boolean
   pairAddress: Address
   onSuccess?: () => void
@@ -256,7 +257,7 @@ export const useRemoveCollateral = ({
     abi: FortressLendingPair,
     functionName: "removeCollateral",
     args: [collateralAmount, borrower],
-    enabled: collateralAmount.gt(0) && borrower !== "0x" && enabled,
+    enabled: collateralAmount > 0 && borrower !== "0x" && enabled,
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -267,12 +268,12 @@ export const useRemoveCollateral = ({
 }
 
 export const useRepayAsset = ({
-  shares = BigNumber.from(0),
+  shares = BigInt(0),
   enabled = true,
   pairAddress,
   onSuccess,
 }: {
-  shares?: BigNumber
+  shares?: bigint
   enabled?: boolean
   pairAddress: Address
   onSuccess?: () => void
@@ -285,7 +286,7 @@ export const useRepayAsset = ({
     abi: FortressLendingPair,
     functionName: "repayAsset",
     args: [shares, borrower],
-    enabled: enabled && shares.gt(0) && borrower !== "0x",
+    enabled: enabled && shares > 0 && borrower !== "0x",
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -297,15 +298,15 @@ export const useRepayAsset = ({
 
 export const useRepayAssetWithCollateral = ({
   borrowAssetAddress = "0x",
-  collateralAmount = BigNumber.from(0),
-  minAmount = BigNumber.from(0),
+  collateralAmount = BigInt(0),
+  minAmount = BigInt(0),
   enabled = true,
   pairAddress,
   onSuccess,
 }: {
   borrowAssetAddress?: Address
-  collateralAmount?: BigNumber
-  minAmount?: BigNumber
+  collateralAmount?: bigint
+  minAmount?: bigint
   enabled?: boolean
   pairAddress: Address
   onSuccess?: () => void
@@ -317,7 +318,7 @@ export const useRepayAssetWithCollateral = ({
     abi: FortressLendingPair,
     functionName: "repayAssetWithCollateral",
     args: [collateralAmount, minAmount, borrowAssetAddress],
-    enabled: enabled && collateralAmount.gt(0) && borrowAssetAddress !== "0x",
+    enabled: enabled && collateralAmount > 0 && borrowAssetAddress !== "0x",
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -341,16 +342,16 @@ export const useSignificantLeverAmount = ({
 }
 
 export const useConvertToShares = ({
-  amount = BigNumber.from(0),
+  amount = BigInt(0),
   enabled = true,
-  totalBorrowAmount = BigNumber.from(0),
-  totalBorrowShares = BigNumber.from(0),
+  totalBorrowAmount = BigInt(0),
+  totalBorrowShares = BigInt(0),
   pairAddress,
 }: {
-  amount?: BigNumber
+  amount?: bigint
   enabled?: boolean
-  totalBorrowAmount?: BigNumber
-  totalBorrowShares?: BigNumber
+  totalBorrowAmount?: bigint
+  totalBorrowShares?: bigint
   pairAddress: Address
 }) => {
   const chainId = useActiveChainId()
@@ -360,19 +361,19 @@ export const useConvertToShares = ({
     abi: FortressLendingPair,
     functionName: "convertToShares",
     args: [totalBorrowAmount, totalBorrowShares, amount, false],
-    enabled: enabled && amount.gt(0),
+    enabled: enabled && amount > 0,
   })
 }
 
 export const useConvertToAssets = ({
-  shares = BigNumber.from(0),
-  totalBorrowAmount = BigNumber.from(0),
-  totalBorrowShares = BigNumber.from(0),
+  shares = BigInt(0),
+  totalBorrowAmount = BigInt(0),
+  totalBorrowShares = BigInt(0),
   pairAddress,
 }: {
-  shares?: BigNumber
-  totalBorrowAmount?: BigNumber
-  totalBorrowShares?: BigNumber
+  shares?: bigint
+  totalBorrowAmount?: bigint
+  totalBorrowShares?: bigint
   pairAddress: Address
 }) => {
   const chainId = useActiveChainId()
@@ -382,6 +383,6 @@ export const useConvertToAssets = ({
     abi: FortressLendingPair,
     functionName: "convertToAssets",
     args: [totalBorrowAmount, totalBorrowShares, shares, false],
-    enabled: shares.gt(0),
+    enabled: shares > 0,
   })
 }

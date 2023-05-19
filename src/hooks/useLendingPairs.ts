@@ -144,7 +144,7 @@ export const useLendingDeposit = ({
   enabled = true,
   onSuccess,
 }: {
-  amount: BigNumber
+  amount: bigint
   assetAddress?: Address
   chainId: number
   pairAddress: Address
@@ -160,7 +160,7 @@ export const useLendingDeposit = ({
     abi: FortressLendingPair,
     functionName: "deposit",
     args: [amount, receiver],
-    enabled: !!chainId && amount.gt(0) && receiver !== "0x" && enabled,
+    enabled: !!chainId && amount > 0 && receiver !== "0x" && enabled,
   })
   const write = useContractWrite(prepare.data)
   const wait = useWaitForTransaction({
@@ -182,7 +182,7 @@ export const useLendingRedeem = ({
   enabled = true,
   onSuccess,
 }: {
-  amount: BigNumber
+  amount: bigint
   assetAddress?: Address
   chainId: number
   pairAddress: Address
@@ -198,7 +198,7 @@ export const useLendingRedeem = ({
     abi: FortressLendingPair,
     functionName: "redeem",
     args: [amount, receiver, receiver],
-    enabled: !!chainId && amount.gt(0) && receiver !== "0x" && enabled,
+    enabled: !!chainId && amount > 0 && receiver !== "0x" && enabled,
   })
   const write = useContractWrite(prepare.data)
   const wait = useWaitForTransaction({

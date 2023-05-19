@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from "ethers"
+import { ethers } from "ethers"
 import { FC, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
@@ -193,9 +193,9 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
       inputTokenAddress,
       userAddress ?? "0x",
       value,
-      BigNumber.from(previewDeposit.data?.minAmountWei ?? "0"),
+      BigInt(previewDeposit.data?.minAmountWei ?? 0),
     ],
-    overrides: { value: inputIsEth ? value : BigNumber.from(0) },
+    value: inputIsEth ? value : BigInt(0),
   })
   const depositUnderlying = useContractWrite(prepareDepositUnderlying.config)
   useWaitForTransaction({

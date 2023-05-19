@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers"
 import {
   Address,
   erc20ABI,
@@ -18,7 +17,7 @@ export const useTokenApproval = ({
   token = "0x",
   enabled,
 }: {
-  amount: BigNumber
+  amount: bigint
   spender?: Address
   token?: Address
   enabled: boolean
@@ -33,7 +32,7 @@ export const useTokenApproval = ({
     functionName: "allowance",
     args: [owner, spender],
     enabled:
-      amount.gt(0) &&
+      amount > 0 &&
       spender !== "0x" &&
       token !== "0x" &&
       !isNativeToken &&

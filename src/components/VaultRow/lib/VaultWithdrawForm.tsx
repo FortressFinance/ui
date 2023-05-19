@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers"
 import { FC, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
@@ -134,7 +133,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
       userAddress ?? "0x",
       userAddress ?? "0x",
       value,
-      BigNumber.from(previewRedeem.data?.minAmountWei ?? "0"),
+      BigInt(previewRedeem.data?.minAmountWei ?? "0"),
     ],
   })
   const redeemUnderlying = useContractWrite(prepareRedeemUnderlying.config)
