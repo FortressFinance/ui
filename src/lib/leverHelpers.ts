@@ -29,9 +29,6 @@ export const collateralToAsset = (
   exchangePrecision = 1n
 ) => (amount * exchangeRate) / exchangePrecision
 
-export const addSlippage = (amount = 0n, slippage: number) =>
-  amount + amount / BigInt(1 / slippage)
-
 export const calculateAssetsAvailable = ({
   totalAssets = 0n,
   totalBorrowAmount = 0n,
