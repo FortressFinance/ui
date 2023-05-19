@@ -117,12 +117,10 @@ const HoldingsRow: FC<HoldingsRowProps> = ({
     })
   }
 
-  if (!concentrator.data?.ybTokenAddress || holdingsVaults.isLoading)
+  if (concentrator.isLoading || holdingsVaults.isLoading)
     return <TableLoading>Loading holdings...</TableLoading>
 
-  return holdingsVaults.data?.vaults?.includes(
-    concentrator.data.ybTokenAddress
-  ) ? (
+  return holdingsVaults.data?.vaults?.includes(targetAsset) ? (
     <VaultRow
       {...props}
       asset={targetAsset}
