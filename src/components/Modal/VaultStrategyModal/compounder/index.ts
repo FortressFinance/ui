@@ -1,1 +1,1 @@
-export * from "./CompounderRightPanel"
+export * from "./CompounderVaultStrategyModal"

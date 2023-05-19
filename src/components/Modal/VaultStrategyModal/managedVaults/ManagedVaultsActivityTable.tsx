@@ -28,35 +28,36 @@ const ManagedVaultsActivityRow: FC = () => {
     explorer: "0xf164fC0Ec4E93095b804a4795bBe1e041497b92a",
   }))
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const results: any = []
-  activities.forEach((activity) => {
-    results.push(
-      <div className="grid grid-cols-[1fr,1fr,1fr] items-center border-b border-pink-800 p-3 text-xs font-normal max-md:grid-cols-[auto,130px,80px] max-md:gap-x-1 lg:gap-x-2 lg:px-6">
-        <span className="flex justify-center max-md:hidden">
-          {formatDate(activity.timestamp, "medium", "short")}
-        </span>
-        <span className="flex justify-center lg:hidden">
-          {formatDate(activity.timestamp, "short", "short")}
-        </span>
-        <span className="flex justify-center">
-          <Tooltip label="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu cursus lorem, et viverra mi. Cras ornare, ante in fringilla dignissim, ligula lectus finibus libero, in volutpat erat ipsum ut felis.">
-            <span>
-              <div className="float-left mr-1 text-center">
-                {activity.events}
-              </div>
-              <BsQuestionCircle className="float-left mt-[2px] h-4 w-4 cursor-pointer" />
+  return (
+    <div className="max-h-[350px] w-full overflow-y-scroll">
+      {activities.map((activity) => (
+        <>
+          <div className="grid grid-cols-[1fr,1fr,1fr] items-center border-b border-pink-800 p-3 text-xs font-normal max-md:grid-cols-[auto,130px,80px] max-md:gap-x-1 lg:gap-x-2 lg:px-6">
+            <span className="flex justify-center max-md:hidden">
+              {formatDate(activity.timestamp, "medium", "short")}
             </span>
-          </Tooltip>
-        </span>
-        <span className="flex justify-center max-md:hidden">
-          {shortenAddress(activity.explorer)}
-        </span>
-        <span className="flex justify-center lg:hidden">
-          {shortenAddress(activity.explorer, 2)}
-        </span>
-      </div>
-    )
-  })
-  return <div className="max-h-[350px] w-full overflow-y-scroll">{results}</div>
+            <span className="flex justify-center lg:hidden">
+              {formatDate(activity.timestamp, "short", "short")}
+            </span>
+            <span className="flex justify-center">
+              <Tooltip label="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu cursus lorem, et viverra mi. Cras ornare, ante in fringilla dignissim, ligula lectus finibus libero, in volutpat erat ipsum ut felis.">
+                <span>
+                  <div className="float-left mr-1 text-center">
+                    {activity.events}
+                  </div>
+                  <BsQuestionCircle className="float-left mt-[2px] h-4 w-4 cursor-pointer" />
+                </span>
+              </Tooltip>
+            </span>
+            <span className="flex justify-center max-md:hidden">
+              {shortenAddress(activity.explorer)}
+            </span>
+            <span className="flex justify-center lg:hidden">
+              {shortenAddress(activity.explorer, 2)}
+            </span>
+          </div>
+        </>
+      ))}
+    </div>
+  )
 }

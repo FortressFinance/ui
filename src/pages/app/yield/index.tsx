@@ -9,7 +9,7 @@ import { VaultProductType, VaultType } from "@/lib/types"
 import { CompounderVaultTable } from "@/components/Compounder"
 import CompounderHoldingsTable from "@/components/Compounder/CompounderHoldingsTable"
 import Layout from "@/components/Layout"
-import { VaultStrategyModal } from "@/components/Modal"
+import { CompounderVaultStrategyModal } from "@/components/Modal"
 import Seo from "@/components/Seo"
 import { TabButton, TabContent, TabListGroup } from "@/components/Tabs"
 
@@ -104,7 +104,7 @@ const Yield: NextPage = () => {
         </Tabs.Root>
       </main>
 
-      <VaultStrategyModal
+      <CompounderVaultStrategyModal
         isOpen={!!router.query.asset}
         onClose={() => {
           const link = resolvedRoute(pathname, { category, vaultAddress })

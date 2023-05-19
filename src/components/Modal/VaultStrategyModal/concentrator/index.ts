@@ -1,1 +1,1 @@
-export * from "./ConcentratorRightPanel"
+export * from "./ConcentratorVaultStrategyModal"
