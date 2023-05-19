@@ -1,8 +1,7 @@
-import { ethers } from "ethers"
-import { Address } from "wagmi"
+import { zeroAddress } from "viem"
+import { Address, useContractRead } from "wagmi"
 
 import { useApiConcentratorTargetAssets } from "@/hooks/lib/api/useApiConcentratorTargetAssets"
-import { useFallbackRead } from "@/hooks/lib/useFallbackRequest"
 import { useRegistryContract } from "@/hooks/lib/useRegistryContract"
 
 ///
@@ -14,27 +13,16 @@ export function useConcentratorTargetAssets(
   } = {}
 ) {
   const apiQuery = useApiConcentratorTargetAssets(options)
-
-  const targetAssets = useFallbackRead(
-    {
-      ...useRegistryContract(),
-      functionName: "concentratorTargetAssets",
-      select: (data) =>
-        Array.from(
-          new Set(data.filter((x) => x !== ethers.constants.AddressZero))
-        ),
-      onSuccess: options.onSuccess,
-      enabled: apiQuery.isError,
-    },
-    []
-  )
-
-  if (apiQuery.isError) {
-    return {
-      ...targetAssets,
-      data: targetAssets.data,
-    }
-  }
-
-  return apiQuery
+  const targetAssets = useContractRead({
+    ...useRegistryContract(),
+    functionName: "concentratorTargetAssets",
+    select: (data) =>
+      Array.from(new Set(data.filter((x) => x !== zeroAddress))),
+    // TODO: wagmiv1 onSuccess
+    onSuccess: options.onSuccess,
+    enabled: apiQuery.isError,
+  })
+  return apiQuery.isError
+    ? { ...targetAssets, data: targetAssets.data }
+    : apiQuery
 }

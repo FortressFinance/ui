@@ -28,7 +28,7 @@ export function useConcentratorPendingReward({
 }) {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
-  const rewards = useContractReads({
+  return useContractReads({
     contracts: ybTokenList.map((ybToken) => ({
       address: ybToken,
       chainId,
@@ -37,10 +37,8 @@ export function useConcentratorPendingReward({
       args: [userAddress ?? "0x"],
     })),
     enabled: !!userAddress && ybTokenList.length > 0,
-    select: (results) =>
-      results.map((item) => (item.result ?? BigInt(0)) as bigint),
+    select: (results) => results.map((item) => (item.result ?? 0n) as bigint),
   })
-  return rewards
 }
 
 export function useConcentratorClaim({
@@ -64,8 +62,8 @@ export function useConcentratorClaim({
     rewardsBalance.refetch()
     balance.refetch()
   }
-  const ybTokenListWithRewards = ybTokenList.filter((_ybToken, index) =>
-    rewardsBalance.data?.[index]?.gt(0)
+  const ybTokenListWithRewards = ybTokenList.filter(
+    (_ybToken, index) => (rewardsBalance.data?.[index] ?? 0n) > 0
   )
   const prepareWrite = usePrepareContractWrite({
     address: multiClaimAddress,

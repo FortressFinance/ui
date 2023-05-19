@@ -1,5 +1,4 @@
 import * as ToggleGroup from "@radix-ui/react-toggle-group"
-import { BigNumber } from "ethers"
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
 import { SubmitHandler, useController, useForm } from "react-hook-form"
 import { useDebounce } from "react-use"
@@ -28,15 +27,15 @@ import { useToastStore } from "@/store"
 
 type RepayLeverPositionProps = {
   chainId: number
-  borrowAmountSignificant: BigNumber
+  borrowAmountSignificant: bigint
   borrowAssetAddress?: Address
   borrowAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
   collateralAssetAddress?: Address
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
-  collateralAmountSignificant: BigNumber
+  collateralAmountSignificant: bigint
   isUpdatingAmounts: boolean
-  setAdjustedBorrowAmount: Dispatch<SetStateAction<BigNumber | undefined>>
-  setAdjustedCollateralAmount: Dispatch<SetStateAction<BigNumber | undefined>>
+  setAdjustedBorrowAmount: Dispatch<SetStateAction<bigint | undefined>>
+  setAdjustedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
   setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
   pairAddress: Address
   onSuccess: () => void
@@ -75,12 +74,8 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
 
   const [selectedPreset, setSelectedPreset] = useState<string>("")
   const [isTokenSelectModalOpen, setIsTokenSelectModalOpen] = useState(false)
-  const [repaymentAmount, setRepaymentAmount] = useState<BigNumber>(
-    BigNumber.from(0)
-  )
-  const [repaymentAmountMin, setRepaymentAmountMin] = useState<BigNumber>(
-    BigNumber.from(0)
-  )
+  const [repaymentAmount, setRepaymentAmount] = useState<bigint>(0n)
+  const [repaymentAmountMin, setRepaymentAmountMin] = useState<bigint>(0n)
 
   const form = useForm<RepayLeverPositionFormValues>({
     values: { amount: "", asset: borrowAssetAddress },
@@ -96,8 +91,8 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     ? collateralAssetBalance.data
     : borrowAssetBalance.data
   const activeRepaymentBalanceAmount = isRepayingWithCollateral
-    ? collateralAmountSignificant ?? BigNumber.from(0)
-    : borrowAssetBalance.data?.value ?? BigNumber.from(0)
+    ? collateralAmountSignificant ?? 0n
+    : borrowAssetBalance.data?.value ?? 0n
 
   const maximumAmountRepayable = isRepayingWithCollateral
     ? assetToCollateral(
@@ -105,7 +100,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
         pairLeverParams.data.exchangeRate,
         pairLeverParams.data.constants?.exchangePrecision
       )
-    : pairLeverParams.data.borrowedAmount ?? BigNumber.from(0)
+    : pairLeverParams.data.borrowedAmount ?? 0n
 
   const {
     field: { onChange: onChangeAmount, ...amountField },
@@ -122,9 +117,9 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
             amountFormatted: amount,
             decimals: activeRepaymentAsset?.decimals,
           })
-          return parsedAmount.gt(maximumAmountRepayable)
+          return parsedAmount > maximumAmountRepayable
             ? "Exceeds maximum repayable"
-            : parsedAmount.gt(activeRepaymentBalanceAmount)
+            : parsedAmount > activeRepaymentBalanceAmount
             ? "Insufficient balance"
             : undefined
         },
@@ -141,7 +136,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   useDebounce(
     () => {
       if (!Number(amount)) {
-        setRepaymentAmount(BigNumber.from(0))
+        setRepaymentAmount(0n)
         setAdjustedBorrowAmount(undefined)
         setAdjustedCollateralAmount(undefined)
       } else {
@@ -151,19 +146,18 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
         })
         setRepaymentAmount(repaymentAmount)
         setAdjustedBorrowAmount(
-          borrowAmountSignificant.sub(
-            isRepayingWithCollateral
+          borrowAmountSignificant -
+            (isRepayingWithCollateral
               ? collateralToAsset(
                   repaymentAmount,
                   pairLeverParams.data.exchangeRate,
                   pairLeverParams.data.constants?.exchangePrecision
                 )
-              : repaymentAmount
-          )
+              : repaymentAmount)
         )
         setAdjustedCollateralAmount(
           isRepayingWithCollateral
-            ? collateralAmountSignificant.sub(repaymentAmount)
+            ? collateralAmountSignificant - repaymentAmount
             : undefined
         )
       }
@@ -191,7 +185,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     spender: pairAddress,
     token: borrowAssetAddress,
     enabled:
-      !isUpdatingAmounts && !isRepayingWithCollateral && repaymentAmount.gt(0),
+      !isUpdatingAmounts && !isRepayingWithCollateral && repaymentAmount > 0,
   })
   const sharesToRepay = useConvertToShares({
     amount: repaymentAmount,
@@ -216,12 +210,12 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     collateralAmount: repaymentAmount,
     // TODO: Need a working method to calculate this value
     // minAmount: repaymentAmountMin,
-    minAmount: BigNumber.from(0),
+    minAmount: 0n,
     enabled:
       !isUpdatingAmounts &&
       isRepayingWithCollateral &&
-      repaymentAmount.gt(0) &&
-      repaymentAmountMin.gt(0) &&
+      repaymentAmount > 0 &&
+      repaymentAmountMin > 0 &&
       form.formState.isValid,
     pairAddress,
     onSuccess,
@@ -307,8 +301,8 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
               !isClientReady ||
               !isConnected ||
               isUpdatingAmounts ||
-              activeRepaymentBalanceAmount.eq(0) ||
-              activeRepaymentBalanceAmount.eq(repaymentAmount)
+              activeRepaymentBalanceAmount === 0n ||
+              activeRepaymentBalanceAmount === repaymentAmount
             }
             type="button"
           >
@@ -346,9 +340,8 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
           onValueChange={(value) => {
             setIsUpdatingAmounts(true)
             if (value) {
-              const repaymentAmount = maximumAmountRepayable
-                .mul(BigNumber.from(value))
-                .div(100)
+              const repaymentAmount =
+                (maximumAmountRepayable * BigInt(value)) / 100n
               onChangeAmount(
                 formatCurrencyUnits({
                   amountWei: addSlippage(
@@ -362,7 +355,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
               setSelectedPreset(value)
             } else {
               onChangeAmount("")
-              setRepaymentAmountMin(BigNumber.from(0))
+              setRepaymentAmountMin(0n)
               setSelectedPreset("")
             }
           }}

@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers"
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
 import { useController, useForm } from "react-hook-form"
 import { useDebounce } from "react-use"
@@ -23,9 +22,9 @@ type RemoveCollateralProps = {
   chainId: number
   collateralAssetAddress?: Address
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
-  collateralAmountSignificant: BigNumber
+  collateralAmountSignificant: bigint
   isUpdatingAmounts: boolean
-  setAdjustedCollateralAmount: Dispatch<SetStateAction<BigNumber | undefined>>
+  setAdjustedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
   setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
   pairAddress: Address
   onSuccess: () => void
@@ -55,9 +54,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
 
   const pairLeverParams = usePairLeverParams({ chainId, pairAddress })
 
-  const [removedAmount, setRemovedAmount] = useState<BigNumber>(
-    BigNumber.from(0)
-  )
+  const [removedAmount, setRemovedAmount] = useState<bigint>(0n)
 
   const form = useForm<AddCollateralFormValues>({
     values: { amount: "" },
@@ -75,9 +72,8 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
     maxLTV: pairLeverParams.data.maxLTV,
     ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
   })
-  const maxCollateralWithdrawable = collateralAmountSignificant.sub(
-    minCollateralRequired ?? BigNumber.from(0)
-  )
+  const maxCollateralWithdrawable =
+    collateralAmountSignificant - minCollateralRequired
 
   const {
     field: { onChange: onChangeAmount, ...amountField },
@@ -93,7 +89,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
           parseCurrencyUnits({
             amountFormatted: amount,
             decimals: collateralAssetBalance.data?.decimals,
-          }).lte(maxCollateralWithdrawable),
+          }) <= maxCollateralWithdrawable,
       },
     },
   })
@@ -106,7 +102,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
   useDebounce(
     () => {
       if (!Number(amount)) {
-        setRemovedAmount(BigNumber.from(0))
+        setRemovedAmount(0n)
         setAdjustedCollateralAmount(undefined)
       } else {
         const removedAmount = parseCurrencyUnits({
@@ -114,9 +110,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
           decimals: collateralAssetBalance.data?.decimals,
         })
         setRemovedAmount(removedAmount)
-        setAdjustedCollateralAmount(
-          collateralAmountSignificant.sub(removedAmount)
-        )
+        setAdjustedCollateralAmount(collateralAmountSignificant - removedAmount)
       }
       setIsUpdatingAmounts(false)
     },
@@ -138,8 +132,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
 
   const removeCollateral = useRemoveCollateral({
     collateralAmount: removedAmount,
-    enabled:
-      !isUpdatingAmounts && removedAmount.gt(0) && form.formState.isValid,
+    enabled: !isUpdatingAmounts && removedAmount > 0 && form.formState.isValid,
     pairAddress,
     onSuccess,
   })
@@ -218,8 +211,8 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
                 !isClientReady ||
                 !isConnected ||
                 isUpdatingAmounts ||
-                maxCollateralWithdrawable.eq(0) ||
-                maxCollateralWithdrawable.eq(removedAmount)
+                maxCollateralWithdrawable === 0n ||
+                maxCollateralWithdrawable === removedAmount
               }
               type="button"
             >

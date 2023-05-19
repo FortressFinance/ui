@@ -97,7 +97,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
     chainId,
     token: outputTokenAddress,
     amount: value.toString(),
-    enabled: value.gt(0),
+    enabled: value > 0,
   })
 
   const vaultContract = useVaultContract(defaultInputToken)
@@ -106,7 +106,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
     !form.formState.isValidating &&
     form.formState.isValid &&
     !previewRedeem.isFetching &&
-    value.gt(0)
+    value > 0
   const enableRedeem = enablePrepareTx && outputIsLp
   const enableRedeemUnderlying = enablePrepareTx && !outputIsLp
 

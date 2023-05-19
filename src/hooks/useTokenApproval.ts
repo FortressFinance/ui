@@ -51,7 +51,9 @@ export const useTokenApproval = ({
     onSuccess: () => allowance.refetch(),
   })
   return {
-    isSufficient: isNativeToken ? true : allowance.data?.gte(amount) ?? false,
+    isSufficient: isNativeToken
+      ? true
+      : (allowance.data ?? 0) >= amount ?? false,
     allowance,
     write,
     wait,

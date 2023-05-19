@@ -1,5 +1,5 @@
-import { formatUnits } from "ethers/lib/utils.js"
 import { FC } from "react"
+import { formatUnits } from "viem"
 import { useAccount } from "wagmi"
 
 import { formatCurrencyUnits, formatUsd } from "@/lib/helpers/formatCurrency"
@@ -26,7 +26,7 @@ export const VaultUserEarnings: FC<VaultProps> = (props) => {
     useTokenPriceUsd({ asset: props.asset })
 
   const earnedFormatted = formatUnits(
-    earnings.data?.earned ?? "0",
+    BigInt(earnings.data?.earned ?? "0"),
     token.data?.decimals ?? 18
   )
   const earnedUSD =

@@ -110,7 +110,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     args: [userAddress ?? "0x", defaultOutputToken],
     enabled: !!userAddress && !inputIsEth,
   })
-  const requiresApproval = inputIsEth ? false : allowance.data?.lt(value)
+  const requiresApproval = inputIsEth ? false : (allowance.data ?? 0n) < value
 
   // TODO: We still need to track transaction confirmations in here to call this function
   const onDepositSuccess = () => {
@@ -133,7 +133,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     chainId,
     token: inputTokenAddress,
     amount: value.toString(),
-    enabled: value.gt(0),
+    enabled: value > 0,
   })
 
   const vaultContract = useVaultContract(defaultOutputToken)
@@ -142,7 +142,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     !form.formState.isValidating &&
     form.formState.isValid &&
     !previewDeposit.isFetching &&
-    value.gt(0)
+    value > 0
   const enableDeposit = enablePrepareTx && !requiresApproval && inputIsLp
   const enableDepositUnderlying =
     enablePrepareTx && !requiresApproval && !inputIsLp
@@ -172,7 +172,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
       value,
       BigInt(previewDeposit.data?.minAmountWei ?? 0),
     ],
-    value: inputIsEth ? value : BigInt(0),
+    value: inputIsEth ? value : 0n,
   })
   const depositUnderlying = useContractWrite(prepareDepositUnderlying.config)
   useWaitForTransaction({

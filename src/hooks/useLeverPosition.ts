@@ -1,6 +1,4 @@
-import { BigNumber } from "ethers"
-import { parseUnits } from "ethers/lib/utils.js"
-import { zeroAddress } from "viem"
+import { parseUnits, zeroAddress } from "viem"
 import {
   Address,
   useAccount,
@@ -143,9 +141,9 @@ export const usePairLeverParams = ({
     abi: FortressLendingPair,
     functionName: "convertToAssets",
     args: [
-      accounting.data?.totalBorrowAmount ?? BigInt(0),
-      accounting.data?.totalBorrowShares ?? BigInt(0),
-      accounting.data?.userBorrowShares ?? BigInt(0),
+      accounting.data?.totalBorrowAmount ?? 0n,
+      accounting.data?.totalBorrowShares ?? 0n,
+      accounting.data?.userBorrowShares ?? 0n,
       true,
     ],
     enabled:
@@ -176,9 +174,9 @@ export const usePairLeverParams = ({
 }
 
 export const useLeverPosition = ({
-  borrowAmount = BigInt(0),
+  borrowAmount = 0n,
   borrowAssetAddress = zeroAddress,
-  collateralAmount = BigInt(0),
+  collateralAmount = 0n,
   enabled = true,
   minAmount,
   pairAddress,
@@ -211,7 +209,7 @@ export const useLeverPosition = ({
 }
 
 export const useAddCollateral = ({
-  collateralAmount = BigInt(0),
+  collateralAmount = 0n,
   enabled = true,
   pairAddress,
   onSuccess,
@@ -241,7 +239,7 @@ export const useAddCollateral = ({
 }
 
 export const useRemoveCollateral = ({
-  collateralAmount = BigInt(0),
+  collateralAmount = 0n,
   enabled = true,
   pairAddress,
   onSuccess,
@@ -271,7 +269,7 @@ export const useRemoveCollateral = ({
 }
 
 export const useRepayAsset = ({
-  shares = BigInt(0),
+  shares = 0n,
   enabled = true,
   pairAddress,
   onSuccess,
@@ -302,8 +300,8 @@ export const useRepayAsset = ({
 
 export const useRepayAssetWithCollateral = ({
   borrowAssetAddress = "0x",
-  collateralAmount = BigInt(0),
-  minAmount = BigInt(0),
+  collateralAmount = 0n,
+  minAmount = 0n,
   enabled = true,
   pairAddress,
   onSuccess,
@@ -334,23 +332,21 @@ export const useRepayAssetWithCollateral = ({
 }
 
 export const useSignificantLeverAmount = ({
-  amount = BigNumber.from(0),
+  amount = 0n,
   assetAddress = "0x",
 }: {
-  amount?: BigNumber
+  amount?: bigint
   assetAddress?: Address
 }) => {
   const asset = useTokenOrNative({ address: assetAddress })
-  return amount.gt(parseUnits("0.0001", asset.data?.decimals ?? 18))
-    ? amount
-    : BigNumber.from(0)
+  return amount > parseUnits("0.0001", asset.data?.decimals ?? 18) ? amount : 0n
 }
 
 export const useConvertToShares = ({
-  amount = BigInt(0),
+  amount = 0n,
   enabled = true,
-  totalBorrowAmount = BigInt(0),
-  totalBorrowShares = BigInt(0),
+  totalBorrowAmount = 0n,
+  totalBorrowShares = 0n,
   pairAddress,
 }: {
   amount?: bigint
@@ -371,9 +367,9 @@ export const useConvertToShares = ({
 }
 
 export const useConvertToAssets = ({
-  shares = BigInt(0),
-  totalBorrowAmount = BigInt(0),
-  totalBorrowShares = BigInt(0),
+  shares = 0n,
+  totalBorrowAmount = 0n,
+  totalBorrowShares = 0n,
   pairAddress,
 }: {
   shares?: bigint

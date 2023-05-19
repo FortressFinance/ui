@@ -70,14 +70,12 @@ const ARBITRUM_FORK_ENABLED =
   ) || process.env.NODE_ENV === "test"
 
 const fortressForkProvider = ({
-  priority,
+  apiKey: _apiKey,
 }: {
   apiKey: string
-  priority: number
 }): ChainProviderFn =>
   jsonRpcProvider({
     rpc: (chain) => ({ http: chain.rpcUrls.default.http[0] }),
-    priority,
   })
 
 const networks = [
@@ -147,10 +145,7 @@ export const enabledNetworks: EnabledNetworks = networks.reduce(
         if (!provider.apiKey || enabledProviderIds.includes(provider.id))
           continue
         networkProviders.push(
-          provider.chainProviderFn({
-            apiKey: provider.apiKey,
-            priority: provider.priority,
-          })
+          provider.chainProviderFn({ apiKey: provider.apiKey })
         )
       }
 

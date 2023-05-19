@@ -1,4 +1,4 @@
-import { parseUnits } from "ethers/lib/utils.js"
+import { parseUnits } from "viem"
 
 import { parseCurrencyUnits } from "@/lib/helpers/parseCurrency"
 

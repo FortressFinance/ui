@@ -1,4 +1,4 @@
-import { formatUnits } from "ethers/lib/utils.js"
+import { formatUnits } from "viem"
 
 import { localeNumber } from "@/lib/helpers"
 
@@ -12,7 +12,7 @@ export const formatCurrencyUnits = ({
   maximumFractionDigits?: number
 }) => {
   if (maximumFractionDigits !== undefined) {
-    const formatted = formatUnits(amountWei, decimals)
+    const formatted = formatUnits(BigInt(amountWei), decimals)
     return formatted.startsWith("-")
       ? "0"
       : localeNumber(Number(formatted), {
@@ -20,7 +20,7 @@ export const formatCurrencyUnits = ({
           maximumFractionDigits,
         })
   }
-  const formatted = formatUnits(amountWei, decimals)
+  const formatted = formatUnits(BigInt(amountWei), decimals)
   return formatted.startsWith("-") ? "0" : formatted
 }
 

@@ -1,6 +1,11 @@
 import { QueryFunctionContext, UseQueryOptions } from "@tanstack/react-query"
-import { Address, FetchEnsNameArgs, FetchEnsNameResult } from "@wagmi/core"
-import { ethers } from "ethers"
+import {
+  Address,
+  FetchEnsNameArgs,
+  FetchEnsNameResult,
+  getPublicClient,
+} from "@wagmi/core"
+import { getAddress } from "viem"
 import { useQuery } from "wagmi"
 
 // ? custom, mainnet ens lookup; adapted from:
@@ -60,9 +65,6 @@ async function fetchMainnetEnsName({
   address: Address | undefined
 }): Promise<FetchMainnetEnsNameResult> {
   if (!address) throw new Error("address is required")
-  const provider = new ethers.providers.AlchemyProvider(
-    1,
-    process.env.NEXT_PUBLIC_ALCHEMY_KEY_MAINNET
-  )
-  return await provider.lookupAddress(address)
+  const publicClient = getPublicClient({ chainId: 1 })
+  return publicClient.getEnsName({ address: getAddress(address) })
 }
