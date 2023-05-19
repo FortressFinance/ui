@@ -75,7 +75,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   const [selectedPreset, setSelectedPreset] = useState<string>("")
   const [isTokenSelectModalOpen, setIsTokenSelectModalOpen] = useState(false)
   const [repaymentAmount, setRepaymentAmount] = useState<bigint>(0n)
-  const [repaymentAmountMin, setRepaymentAmountMin] = useState<bigint>(0n)
+  const [_repaymentAmountMin, setRepaymentAmountMin] = useState<bigint>(0n)
 
   const form = useForm<RepayLeverPositionFormValues>({
     values: { amount: "", asset: borrowAssetAddress },
@@ -208,14 +208,14 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   const repayAssetWithCollateral = useRepayAssetWithCollateral({
     borrowAssetAddress: borrowAssetAddress,
     collateralAmount: repaymentAmount,
-    // TODO: Need a working method to calculate this value
-    // minAmount: repaymentAmountMin,
+    // TODO: lever Need a working method to calculate this value
     minAmount: 0n,
     enabled:
       !isUpdatingAmounts &&
       isRepayingWithCollateral &&
       repaymentAmount > 0 &&
-      repaymentAmountMin > 0 &&
+      // TODO: lever This is not working currently because repaymentAmountMin is only set when using the preset options
+      // repaymentAmountMin > 0 &&
       form.formState.isValid,
     pairAddress,
     onSuccess,
