@@ -77,16 +77,25 @@ export const usePairLeverParams = ({
       },
     ],
     enabled: !!chainId && !!pairAddress,
-    select: ([
-      maxLTV,
-      [
+    select: (results) => {
+      const [
+        { result: maxLTV },
+        { result: currentRateInfo },
+        { result: exchangeRateInfo },
+        { result: constants },
+        { result: totalAssets },
+        { result: totalBorrow },
+        { result: userBorrowShares },
+        { result: userCollateralBalance },
+      ] = results
+      const [
         currRateLastBlock,
         currRateFeeToProtocolRate,
         currRateLastTimestamp,
         currRateRatePerSec,
-      ],
-      [exRateLastTimestamp, exRateExchangeRate],
-      [
+      ] = currentRateInfo ?? []
+      const [exRateLastTimestamp, exRateExchangeRate] = exchangeRateInfo ?? []
+      const [
         ltvPrecision,
         liqPrecision,
         utilPrecision,
@@ -95,39 +104,37 @@ export const usePairLeverParams = ({
         defaultInt,
         defaultProtocolFee,
         maxProtocolFee,
-      ],
-      totalAssets,
-      [totalBorrowAmount, totalBorrowShares],
-      userBorrowShares,
-      userCollateralBalance,
-    ]) => ({
-      constants: {
-        ltvPrecision,
-        liqPrecision,
-        utilPrecision,
-        feePrecision,
-        exchangePrecision,
-        defaultInt,
-        defaultProtocolFee,
-        maxProtocolFee,
-      },
-      currentRateInfo: {
-        lastBlock: currRateLastBlock,
-        feeToProtocolRate: currRateFeeToProtocolRate,
-        lastTimestamp: currRateLastTimestamp,
-        ratePerSec: currRateRatePerSec,
-      },
-      exchangeRate: {
-        lastTimestamp: exRateLastTimestamp,
-        exchangeRate: exRateExchangeRate,
-      },
-      maxLTV,
-      totalAssets,
-      totalBorrowAmount,
-      totalBorrowShares,
-      userBorrowShares,
-      userCollateralBalance,
-    }),
+      ] = constants ?? []
+      const [totalBorrowAmount, totalBorrowShares] = totalBorrow ?? []
+      return {
+        constants: {
+          ltvPrecision,
+          liqPrecision,
+          utilPrecision,
+          feePrecision,
+          exchangePrecision,
+          defaultInt,
+          defaultProtocolFee,
+          maxProtocolFee,
+        },
+        currentRateInfo: {
+          lastBlock: currRateLastBlock,
+          feeToProtocolRate: currRateFeeToProtocolRate,
+          lastTimestamp: currRateLastTimestamp,
+          ratePerSec: currRateRatePerSec,
+        },
+        exchangeRate: {
+          lastTimestamp: exRateLastTimestamp,
+          exchangeRate: exRateExchangeRate,
+        },
+        maxLTV,
+        totalAssets,
+        totalBorrowAmount,
+        totalBorrowShares,
+        userBorrowShares,
+        userCollateralBalance,
+      }
+    },
   })
   const borrowedAmount = useContractRead({
     chainId,

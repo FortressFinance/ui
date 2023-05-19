@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers"
 import { useCallback } from "react"
 import {
   Address,
@@ -29,17 +28,17 @@ export function useConcentratorPendingReward({
 }) {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
-  const contracts = ybTokenList.map((ybToken) => ({
-    address: ybToken,
-    chainId,
-    abi: AMMConcentratorBase,
-    functionName: "pendingReward",
-    args: [userAddress ?? "0x"],
-  }))
   const rewards = useContractReads({
-    contracts: contracts,
+    contracts: ybTokenList.map((ybToken) => ({
+      address: ybToken,
+      chainId,
+      abi: AMMConcentratorBase,
+      functionName: "pendingReward",
+      args: [userAddress ?? "0x"],
+    })),
     enabled: !!userAddress && ybTokenList.length > 0,
-    select: (data) => data.map((reward) => BigNumber.from(reward ?? 0)),
+    select: (results) =>
+      results.map((item) => (item.result ?? BigInt(0)) as bigint),
   })
   return rewards
 }
