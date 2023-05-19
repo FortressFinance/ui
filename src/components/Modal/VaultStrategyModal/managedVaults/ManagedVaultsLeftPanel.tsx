@@ -13,13 +13,13 @@ export const ManagedVaultsLeftPanel: FC = () => {
           aria-label="Vault description"
         >
           <Tabs.Trigger
-            className="h-[41px] p-3 text-xs font-semibold uppercase text-pink-300 ui-state-active:border-b ui-state-active:border-pink-400 ui-state-active:bg-pink/10 max-md:w-1/2 max-md:text-center md:px-5"
+            className="h-[41px] w-1/2 p-3 text-xs font-semibold uppercase text-pink-300 ui-state-active:border-b ui-state-active:border-pink-400 ui-state-active:bg-pink/10 max-md:text-center md:px-5"
             value="tabDescription"
           >
             Vault description
           </Tabs.Trigger>
           <Tabs.Trigger
-            className="h-[41px] p-3 text-xs font-semibold uppercase text-pink-300 ui-state-active:border-b ui-state-active:border-pink-400 ui-state-active:bg-pink/10 max-md:w-1/2 max-md:text-center md:px-5"
+            className="h-[41px] w-1/2 p-3 text-xs font-semibold uppercase text-pink-300 ui-state-active:border-b ui-state-active:border-pink-400 ui-state-active:bg-pink/10 max-md:text-center md:px-5"
             value="tabActivity"
           >
             Activity
