@@ -9,6 +9,7 @@ import {
 } from "react"
 
 import { resolvedRoute } from "@/lib/helpers"
+import { ProductType } from "@/lib/types"
 
 import { Table, TableBody, TableHeader, TableRow } from "@/components/Table"
 import { TxSettingsPopover } from "@/components/TxSettingsPopover"
@@ -17,12 +18,14 @@ import { VaultTableRowProps } from "@/components/VaultRow/VaultRow"
 type VaultTableProps = {
   label: string
   showEarningsColumn?: boolean
+  productType?: ProductType
 }
 
 export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
   children,
   label,
   showEarningsColumn,
+  productType,
 }) => {
   const router = useRouter()
   const {
@@ -45,6 +48,7 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
         <TableRow
           className="overflow-visible rounded-b-none border-b border-b-pink/30"
           showEarningsColumn={showEarningsColumn}
+          productType={productType}
         >
           <TableHeader className="text-sm">{label}</TableHeader>
           <TableHeader className="text-center text-sm">APY</TableHeader>
@@ -52,6 +56,14 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
           <TableHeader className="text-center text-sm">Balance</TableHeader>
           {showEarningsColumn && (
             <TableHeader className="text-center text-sm">Earnings</TableHeader>
+          )}
+          {productType === "managedVaults" && (
+            <>
+              <TableHeader className="text-center text-sm">
+                Epoch duration
+              </TableHeader>
+              <TableHeader className="text-center text-sm">Manager</TableHeader>
+            </>
           )}
           <TableHeader className="flex justify-end">
             <TxSettingsPopover />

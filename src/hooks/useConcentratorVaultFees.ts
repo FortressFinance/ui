@@ -3,9 +3,9 @@ import { Address, useContractRead } from "wagmi"
 
 import { ConcentratorStaticData } from "@/lib/api/concentrators"
 import { VaultProps } from "@/lib/types"
+import { useConcentratorVaultYbtokenAddress } from "@/hooks"
 import { useApiConcentratorStaticData } from "@/hooks/lib/api/useApiConcentratorStaticData"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
-import { useVaultYbtokenAddress } from "@/hooks/useVaultYbtokenAddress"
 
 // TODO: Implement full fees support
 const HARDCODED_FEES = { depositFee: "0", managementFee: "0" }
@@ -17,10 +17,9 @@ export function useConcentratorVaultFees({ asset, vaultAddress }: VaultProps) {
     vaultAddress
   )
 
-  const ybTokenAddress = useVaultYbtokenAddress({
-    asset,
-    vaultAddress,
-    productType: "concentrator",
+  const ybTokenAddress = useConcentratorVaultYbtokenAddress({
+    targetAsset: asset,
+    primaryAsset: vaultAddress,
   })
   const vaultContract = useVaultContract(ybTokenAddress)
   const fallbackRequest = useContractRead({
@@ -54,5 +53,7 @@ function findApiConcentratorForPrimaryAsset(
   data: ConcentratorStaticData[] | undefined,
   primaryAsset: Address | undefined
 ) {
-  return data?.find((v) => v.concentrator.primaryAsset.address === primaryAsset)
+  return data?.find(
+    (v) => v.concentrator?.primaryAsset?.address === primaryAsset
+  )
 }

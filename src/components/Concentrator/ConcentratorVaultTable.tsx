@@ -1,13 +1,14 @@
 import { FC } from "react"
 import { Address } from "wagmi"
 
-import { capitalizeFirstLetter } from "@/lib/helpers"
-import { FilterCategory } from "@/lib/types"
+import { capitalizeFirstLetter, resolvedRoute } from "@/lib/helpers"
+import { FilterCategory, VaultType } from "@/lib/types"
 import { enabledNetworks } from "@/lib/wagmi"
 import {
   useActiveChainId,
   useClientReady,
   useConcentratorTargetAssets,
+  useConcentratorVaultYbtokenAddress,
   useFilteredConcentrators,
   useListConcentrators,
 } from "@/hooks"
@@ -74,16 +75,56 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
             },
             i
           ) => (
-            <VaultRow
+            <ConcentratorVaultRow
               key={`concentrator-${i}`}
-              asset={concentratorTargetAsset}
+              targetAsset={concentratorTargetAsset}
               type={vaultType}
-              vaultAddress={primaryAsset}
-              productType="concentrator"
+              primaryAsset={primaryAsset}
             />
           )
         )
       )}
     </VaultTable>
+  )
+}
+
+type ConcentratorVaultRowProps = {
+  targetAsset: Address
+  primaryAsset: Address
+  type: VaultType
+}
+
+const ConcentratorVaultRow: FC<ConcentratorVaultRowProps> = (props) => {
+  const ybTokenAddress = useConcentratorVaultYbtokenAddress({
+    primaryAsset: props.primaryAsset,
+    targetAsset: props.targetAsset,
+  })
+  const setStrategyLink = ({
+    pathname,
+    category,
+  }: {
+    pathname: string
+    category?: string | string[]
+  }) => {
+    return resolvedRoute(pathname, {
+      category: category,
+      asset: props.targetAsset,
+      type: props.type,
+      vaultAddress: props.primaryAsset,
+      productType: "concentrator",
+      ybTokenAddress: ybTokenAddress,
+    })
+  }
+
+  if (!ybTokenAddress) return <TableLoading>Loading vaults...</TableLoading>
+  return (
+    <VaultRow
+      {...props}
+      asset={props.targetAsset}
+      type={props.type}
+      vaultAddress={props.primaryAsset}
+      productType="concentrator"
+      setStrategyLink={setStrategyLink}
+    />
   )
 }

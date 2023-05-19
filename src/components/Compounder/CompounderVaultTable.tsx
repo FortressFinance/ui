@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { Address } from "wagmi"
 
-import { capitalizeFirstLetter } from "@/lib/helpers"
+import { capitalizeFirstLetter, resolvedRoute } from "@/lib/helpers"
 import { FilterCategory, VaultType } from "@/lib/types"
 import { enabledNetworks } from "@/lib/wagmi"
 import {
@@ -77,6 +77,24 @@ type CompounderVaultRowProps = {
 
 const CompounderVaultRow: FC<CompounderVaultRowProps> = (props) => {
   const vaultAddress = useCompounderVault(props)
+
+  const setStrategyLink = ({
+    pathname,
+    category,
+  }: {
+    pathname: string
+    category?: string | string[]
+  }) => {
+    return resolvedRoute(pathname, {
+      category: category,
+      asset: props.vaultAssetAddress,
+      type: props.vaultType,
+      productType: "compounder",
+      vaultAddress: vaultAddress.data?.ybTokenAddress,
+      ybTokenAddress: vaultAddress.data?.ybTokenAddress,
+    })
+  }
+
   if (!vaultAddress.data?.ybTokenAddress)
     return <TableLoading>Loading vaults...</TableLoading>
   return (
@@ -86,6 +104,7 @@ const CompounderVaultRow: FC<CompounderVaultRowProps> = (props) => {
       type={props.vaultType}
       vaultAddress={vaultAddress.data?.ybTokenAddress}
       productType="compounder"
+      setStrategyLink={setStrategyLink}
       showEarningsColumn
     />
   )

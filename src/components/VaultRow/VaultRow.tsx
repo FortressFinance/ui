@@ -7,7 +7,7 @@ import { Address } from "wagmi"
 import clsxm from "@/lib/clsxm"
 import { resolvedRoute } from "@/lib/helpers"
 import { VaultProps } from "@/lib/types"
-import { useVault, useVaultYbtokenAddress } from "@/hooks"
+import { useVault } from "@/hooks"
 
 import { ButtonLink } from "@/components/Button"
 import {
@@ -23,44 +23,49 @@ import { GradientText } from "@/components/Typography"
 import { VaultNameCell } from "@/components/VaultRow"
 import {
   VaultApy,
+  VaultEpoch,
   VaultTvl,
   VaultUserBalance,
   VaultUserEarnings,
 } from "@/components/VaultRow/lib"
+import { VaultManager } from "@/components/VaultRow/lib/VaultManager"
 
 import { FortIconChevronDownCircle } from "@/icons"
 
 export type VaultRowPropsWithProduct =
   | ({ productType: "compounder"; ybTokenAddress?: Address } & VaultProps)
   | ({ productType: "concentrator"; ybTokenAddress?: Address } & VaultProps)
+  | ({ productType: "managedVaults"; ybTokenAddress?: Address } & VaultProps)
 
 export type VaultTableRowProps = VaultRowPropsWithProduct & {
   activeVault?: string
   setActiveVault?: (activeVault: string | undefined) => void
   showEarningsColumn?: boolean
+  setStrategyLink: ({
+    pathname,
+    category,
+  }: {
+    pathname: string
+    category?: string | string[]
+  }) => ReturnType<typeof resolvedRoute>
 }
 
 export const VaultRow: FC<VaultTableRowProps> = ({
   activeVault,
   setActiveVault,
   showEarningsColumn = false,
+  setStrategyLink,
   ...props
 }) => {
-  const isCompounderProduct = props.productType === "compounder"
   const router = useRouter()
   const { pathname, query } = router
   const { isLoading } = useVault(props)
 
-  const ybTokenAddress = useVaultYbtokenAddress(props)
   const vaultAddress = props.vaultAddress
 
-  const vaultStrategyLink = resolvedRoute(pathname, {
+  const vaultStrategyLink = setStrategyLink({
+    pathname,
     category: query.category,
-    asset: props.asset,
-    type: props.type,
-    vaultAddress: props.vaultAddress,
-    productType: props.productType,
-    ybTokenAddress: ybTokenAddress,
   })
 
   const toggleVaultOpen: MouseEventHandler<
@@ -80,10 +85,19 @@ export const VaultRow: FC<VaultTableRowProps> = ({
         onClick={toggleVaultOpen}
         disabled={isLoading}
         showEarningsColumn={showEarningsColumn}
+        productType={props.productType}
       >
         {/* Row of vault info */}
-        <TableCell className="relative grid grid-cols-[max-content,auto,max-content] items-center gap-x-3 max-lg:-mx-3 max-lg:border-b max-lg:border-b-pink/30 max-lg:px-3 max-lg:pb-3.5 lg:pointer-events-none">
-          <VaultNameCell {...props} ybTokenAddress={ybTokenAddress} />
+        <TableCell
+          className={clsxm(
+            "relative grid grid-cols-[max-content,auto,max-content] items-center gap-x-3 max-lg:-mx-3 max-lg:border-b max-lg:border-b-pink/30 max-lg:px-3 max-lg:pb-3.5 lg:pointer-events-none",
+            {
+              "grid-cols-[auto,max-content]":
+                props.productType === "managedVaults",
+            }
+          )}
+        >
+          <VaultNameCell {...props} />
 
           {/* Large: strategy button */}
           <ButtonLink
@@ -138,10 +152,20 @@ export const VaultRow: FC<VaultTableRowProps> = ({
         <TableCell className="pointer-events-none text-center max-lg:hidden">
           <VaultUserBalance {...props} />
         </TableCell>
-        {isCompounderProduct && (
+        {props.productType === "compounder" && (
           <TableCell className="pointer-events-none text-center max-lg:hidden">
             <VaultUserEarnings {...props} />
           </TableCell>
+        )}
+        {props.productType === "managedVaults" && (
+          <>
+            <TableCell className="pointer-events-none text-center max-lg:hidden">
+              <VaultEpoch />
+            </TableCell>
+            <TableCell className="pointer-events-none text-center max-lg:hidden">
+              <VaultManager />
+            </TableCell>
+          </>
         )}
 
         {/* Desktop: Action buttons */}
@@ -170,7 +194,7 @@ export const VaultRow: FC<VaultTableRowProps> = ({
         <Accordion.Content className="col-span-full overflow-hidden ui-state-closed:animate-accordion-close ui-state-open:animate-accordion-open max-lg:-mx-3">
           {/* Desktop: forms */}
           <div className="mt-6 grid grid-cols-2 gap-4 max-lg:hidden">
-            {isCompounderProduct ? (
+            {props.productType === "compounder" ? (
               <>
                 <CompounderVaultDepositForm {...props} />
                 <CompounderVaultWithdrawForm {...props} />
@@ -201,14 +225,14 @@ export const VaultRow: FC<VaultTableRowProps> = ({
                 </Tabs.Trigger>
               </Tabs.List>
               <Tabs.Content value="deposit">
-                {isCompounderProduct ? (
+                {props.productType === "compounder" ? (
                   <CompounderVaultDepositForm {...props} />
                 ) : (
                   <ConcentratorVaultDepositForm {...props} />
                 )}
               </Tabs.Content>
               <Tabs.Content value="withdraw">
-                {isCompounderProduct ? (
+                {props.productType === "compounder" ? (
                   <CompounderVaultWithdrawForm {...props} />
                 ) : (
                   <ConcentratorVaultWithdrawForm {...props} />
@@ -224,29 +248,59 @@ export const VaultRow: FC<VaultTableRowProps> = ({
             className={clsxm(
               "grid gap-x-3 text-center",
               { "grid-cols-4": props.productType === "compounder" },
-              { "grid-cols-3": props.productType === "concentrator" }
+              { "grid-cols-3": props.productType === "concentrator" },
+              {
+                "auto-cols-auto grid-flow-col":
+                  props.productType === "managedVaults",
+              }
             )}
           >
-            <dt className="row-start-2 text-xs text-pink-100/60">APY</dt>
-            <dd className="text-sm font-medium text-pink-100">
-              <VaultApy {...props} />
-            </dd>
-            <dt className="row-start-2 text-xs text-pink-100/60">TVL</dt>
-            <dd className="text-sm font-medium text-pink-100">
-              <VaultTvl {...props} />
-            </dd>
-            <dt className="row-start-2 text-xs text-pink-100/60">Balance</dt>
-            <dd className="text-sm font-medium text-pink-100">
-              <VaultUserBalance {...props} />
-            </dd>
-            {isCompounderProduct && (
-              <>
+            <div className="grid grid-rows-2">
+              <dt className="row-start-2 text-xs text-pink-100/60">APY</dt>
+              <dd className="text-sm font-medium text-pink-100">
+                <VaultApy {...props} />
+              </dd>
+            </div>
+            <div className="grid grid-rows-2">
+              <dt className="row-start-2 text-xs text-pink-100/60">TVL</dt>
+              <dd className="text-sm font-medium text-pink-100">
+                <VaultTvl {...props} />
+              </dd>
+            </div>
+            <div className="grid grid-rows-2">
+              <dt className="row-start-2 text-xs text-pink-100/60">Balance</dt>
+              <dd className="text-sm font-medium text-pink-100">
+                <VaultUserBalance {...props} />
+              </dd>
+            </div>
+            {props.productType === "compounder" && (
+              <div className="grid grid-rows-2">
                 <dt className="row-start-2 text-xs text-pink-100/60">
                   Earnings
                 </dt>
                 <dd className="text-sm font-medium text-pink-100">
                   <VaultUserEarnings {...props} />
                 </dd>
+              </div>
+            )}
+            {props.productType === "managedVaults" && (
+              <>
+                <div className="grid grid-rows-2">
+                  <dt className="row-start-2 text-xs text-pink-100/60">
+                    Epoch
+                  </dt>
+                  <dd className="text-sm font-medium text-pink-100">
+                    <VaultEpoch />
+                  </dd>
+                </div>
+                <div className="grid grid-rows-2">
+                  <dt className="row-start-2 text-xs text-pink-100/60">
+                    Manager
+                  </dt>
+                  <dd className="text-sm font-medium text-pink-100">
+                    <VaultManager />
+                  </dd>
+                </div>
               </>
             )}
           </dl>
