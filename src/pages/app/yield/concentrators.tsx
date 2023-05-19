@@ -16,7 +16,7 @@ import {
 } from "@/components/Concentrator"
 import ConcentratorHoldingsTable from "@/components/Concentrator/ConcentratorHoldingsTable"
 import Layout from "@/components/Layout"
-import { VaultStrategyModal } from "@/components/Modal"
+import { ConcentratorVaultStrategyModal } from "@/components/Modal"
 import Seo from "@/components/Seo"
 import { TabButton, TabContent, TabListGroup } from "@/components/Tabs"
 
@@ -40,7 +40,7 @@ const Concentrators: NextPage = () => {
           {/* Child component because we need queryClient to retrieve vaults */}
           <ConcentratorVaults />
         </main>
-        <VaultStrategyModal
+        <ConcentratorVaultStrategyModal
           isOpen={!!router.query.asset}
           onClose={() => {
             const link = resolvedRoute(pathname, { category, vaultAddress })

@@ -8,7 +8,7 @@ import { VaultProductType } from "@/lib/types"
 import { DisabledPage } from "@/components"
 import Layout from "@/components/Layout"
 import { ManagedVaultsTable } from "@/components/ManagedVaults"
-import { VaultStrategyModal } from "@/components/Modal"
+import { ManagedVaultsStrategyModal } from "@/components/Modal/VaultStrategyModal"
 import Seo from "@/components/Seo"
 import { TabButton, TabContent, TabListGroup } from "@/components/Tabs"
 
@@ -77,7 +77,7 @@ const ManagedVaults: NextPage = () => {
           </Tabs.Root>
         </main>
 
-        <VaultStrategyModal
+        <ManagedVaultsStrategyModal
           isOpen={!!router.query.asset}
           onClose={() => {
             const link = resolvedRoute(pathname, { category })
