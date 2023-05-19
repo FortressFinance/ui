@@ -146,7 +146,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
     <>
       <form
         onSubmit={form.handleSubmit(() => {
-          const action = "Depositing additional collateral"
+          const action = "Collateral removal"
           const toastId = addToast({ type: "startTx", action })
           removeCollateral.write
             .writeAsync?.()

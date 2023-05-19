@@ -186,7 +186,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     leverPosition.wait.isLoading
 
   const submitPosition: SubmitHandler<CreateLeverPositionFormValues> = () => {
-    const action = "Creating levered position"
+    const action = "Levered position creation"
     const toastId = addToast({ type: "startTx", action })
     leverPosition.write
       .writeAsync?.()
