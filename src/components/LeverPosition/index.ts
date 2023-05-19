@@ -1,5 +1,5 @@
 export * from "./AddCollateral"
-export * from "./CreateLeveredPosition"
+export * from "./CreateLeverPosition"
 export * from "./LeverPairs"
 export * from "./LeverPositionUserStats"
 export * from "./RemoveCollateral"

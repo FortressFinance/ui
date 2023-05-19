@@ -3,7 +3,7 @@ import { NextPage } from "next"
 import { useRouter } from "next/router"
 
 import { resolvedRoute } from "@/lib/helpers"
-import { ProductType } from "@/lib/types"
+import { VaultProductType } from "@/lib/types"
 
 import { DisabledPage } from "@/components"
 import Layout from "@/components/Layout"
@@ -87,7 +87,7 @@ const ManagedVaults: NextPage = () => {
           type="curve" // stupid stuff - MetaVault doesn't care about it
           vaultAddress="0x"
           ybTokenAddress="0x"
-          productType={productType as ProductType}
+          productType={productType as VaultProductType}
         />
       </Layout>
     </DisabledPage>

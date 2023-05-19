@@ -1,6 +1,6 @@
 import { FC } from "react"
 
-import { ltvPercentage } from "@/lib"
+import { calculateAssetsAvailable, ltvPercentage } from "@/lib"
 import { formatCurrencyUnits } from "@/lib/helpers"
 import { useLendingPair, usePairLeverParams, useTokenOrNative } from "@/hooks"
 
@@ -106,9 +106,10 @@ const AssetsAvailable: FC<LendingPair> = ({ pairAddress, chainId }) => {
   return (
     <Skeleton isLoading={pairLeverParams.isLoading} loadingText="...">
       {formatCurrencyUnits({
-        amountWei: pairLeverParams.data.totalAssets
-          ?.sub(pairLeverParams.data.totalBorrowAmount ?? 0)
-          .toString(),
+        amountWei: calculateAssetsAvailable({
+          totalAssets: pairLeverParams.data.totalAssets,
+          totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
+        }).toString(),
         decimals: asset.data?.decimals,
         maximumFractionDigits: 6,
       })}
