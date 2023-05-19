@@ -23,7 +23,7 @@ export const usePairLeverParams = ({
   pairAddress: Address
   chainId?: number
 }) => {
-  const { address: userAddress = ethers.constants.AddressZero } = useAccount()
+  const { address: userAddress = zeroAddress } = useAccount()
   const accounting = useContractReads({
     contracts: [
       {
@@ -204,6 +204,7 @@ export const useLeverPosition = ({
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
+    // TODO: wagmiv1 onSuccess
     onSuccess,
   })
   return { prepare, write, wait }
@@ -233,6 +234,7 @@ export const useAddCollateral = ({
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
+    // TODO: wagmiv1 onSuccess
     onSuccess,
   })
   return { prepare, write, wait }
@@ -262,6 +264,7 @@ export const useRemoveCollateral = ({
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
+    // TODO: wagmiv1 onSuccess
     onSuccess,
   })
   return { prepare, write, wait }
@@ -291,6 +294,7 @@ export const useRepayAsset = ({
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
+    // TODO: wagmiv1 onSuccess
     onSuccess,
   })
   return { prepare, write, wait }
@@ -323,6 +327,7 @@ export const useRepayAssetWithCollateral = ({
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
+    // TODO: wagmiv1 onSuccess
     onSuccess,
   })
   return { prepare, write, wait }
