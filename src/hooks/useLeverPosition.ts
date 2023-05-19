@@ -358,6 +358,7 @@ export const useConvertToShares = ({
     functionName: "convertToShares",
     args: [totalBorrowAmount, totalBorrowShares, amount, false],
     enabled: enabled && amount > 0,
+    cacheOnBlock: true,
   })
 }
 
@@ -380,5 +381,6 @@ export const useConvertToAssets = ({
     functionName: "convertToAssets",
     args: [totalBorrowAmount, totalBorrowShares, shares, false],
     enabled: shares > 0,
+    cacheOnBlock: true,
   })
 }
