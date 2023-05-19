@@ -36,6 +36,7 @@ export const formatUsd = ({
     abbreviate
       ? {
           compact: true,
+          minimumFractionDigits: amount > 999 ? 0 : 2,
           maximumFractionDigits: 2,
         }
       : {
