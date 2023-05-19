@@ -5,9 +5,11 @@ import { useDebounce } from "react-use"
 import { Address, useAccount } from "wagmi"
 import { shallow } from "zustand/shallow"
 
+import { assetToCollateral, calculateMinCollateralRequired } from "@/lib"
 import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
 import {
   useClientReady,
+  usePairLeverParams,
   useRemoveCollateral,
   useTokenOrNativeBalance,
 } from "@/hooks"
@@ -22,9 +24,11 @@ type RemoveCollateralProps = {
   collateralAssetAddress?: Address
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
   collateralAmountSignificant: BigNumber
+  isUpdatingAmounts: boolean
   setAdjustedCollateralAmount: Dispatch<SetStateAction<BigNumber | undefined>>
-  onSuccess: () => void
+  setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
   pairAddress: Address
+  onSuccess: () => void
 }
 
 type AddCollateralFormValues = {
@@ -36,9 +40,11 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
   collateralAssetAddress,
   collateralAssetBalance,
   collateralAmountSignificant,
+  isUpdatingAmounts,
   setAdjustedCollateralAmount,
-  onSuccess,
+  setIsUpdatingAmounts,
   pairAddress,
+  onSuccess: _onSuccess,
 }) => {
   const isClientReady = useClientReady()
   const { isConnected } = useAccount()
@@ -46,6 +52,8 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
     (state) => [state.addToast, state.replaceToast],
     shallow
   )
+
+  const pairLeverParams = usePairLeverParams({ chainId, pairAddress })
 
   const [removedAmount, setRemovedAmount] = useState<BigNumber>(
     BigNumber.from(0)
@@ -58,6 +66,18 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
   })
 
   const amount = form.watch("amount")
+  const minCollateralRequired = calculateMinCollateralRequired({
+    borrowedAmountAsCollateral: assetToCollateral(
+      pairLeverParams.data.borrowedAmount,
+      pairLeverParams.data.exchangeRate,
+      pairLeverParams.data.constants?.exchangePrecision
+    ),
+    maxLTV: pairLeverParams.data.maxLTV,
+    ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+  })
+  const maxCollateralWithdrawable = collateralAmountSignificant.sub(
+    minCollateralRequired ?? BigNumber.from(0)
+  )
 
   const {
     field: { onChange: onChangeAmount, ...amountField },
@@ -73,7 +93,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
           parseCurrencyUnits({
             amountFormatted: amount,
             decimals: collateralAssetBalance.data?.decimals,
-          }).lte(collateralAmountSignificant),
+          }).lte(maxCollateralWithdrawable),
       },
     },
   })
@@ -83,9 +103,6 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") // $& means the whole matched string
   }
 
-  // The debounceReady() callback won't always trigger a render...
-  // In combination with react-hook-form, it's best to just track debounce status manually for consistent behavior
-  const [isDebouncing, setIsDebouncing] = useState(false)
   useDebounce(
     () => {
       if (!Number(amount)) {
@@ -101,7 +118,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
           collateralAmountSignificant.sub(removedAmount)
         )
       }
-      setIsDebouncing(false)
+      setIsUpdatingAmounts(false)
     },
     500,
     [form.getValues("amount")]
@@ -114,9 +131,15 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const onSuccess = () => {
+    _onSuccess()
+    form.reset({ amount: "" })
+  }
+
   const removeCollateral = useRemoveCollateral({
     collateralAmount: removedAmount,
-    enabled: removedAmount.gt(0) && form.formState.isValid,
+    enabled:
+      !isUpdatingAmounts && removedAmount.gt(0) && form.formState.isValid,
     pairAddress,
     onSuccess,
   })
@@ -158,7 +181,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
                 formatted === "" ||
                 inputRegex.test(escapeRegExp(formatted))
               ) {
-                setIsDebouncing(true)
+                setIsUpdatingAmounts(true)
                 onChangeAmount(formatted)
               }
             }}
@@ -173,26 +196,31 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
 
           <div className="relative z-[1] col-span-full col-start-1 row-start-2 px-4 pb-4 text-left align-bottom text-xs">
             <span className="text-pink-100">
-              Collateral available:{" "}
+              Collateral withdrawable:{" "}
               {formatCurrencyUnits({
-                amountWei: collateralAmountSignificant.toString(),
+                amountWei: maxCollateralWithdrawable.toString(),
                 decimals: collateralAssetBalance.data?.decimals,
                 maximumFractionDigits: 6,
               })}
             </span>
             <button
-              className="ml-1.5 cursor-pointer rounded border border-orange-400 px-2 py-1 font-semibold text-pink-100"
-              onClick={() =>
-                form.setValue(
-                  "amount",
+              className="ml-1.5 -translate-y-[1px] rounded px-1.5 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
+              onClick={() => {
+                onChangeAmount(
                   formatCurrencyUnits({
-                    amountWei: collateralAmountSignificant.toString(),
+                    amountWei: maxCollateralWithdrawable.toString(),
                     decimals: collateralAssetBalance.data?.decimals,
-                    maximumFractionDigits: 6,
                   })
                 )
+                setIsUpdatingAmounts(true)
+              }}
+              disabled={
+                !isClientReady ||
+                !isConnected ||
+                isUpdatingAmounts ||
+                maxCollateralWithdrawable.eq(0) ||
+                maxCollateralWithdrawable.eq(removedAmount)
               }
-              disabled={!isClientReady || !isConnected}
               type="button"
             >
               Max
@@ -211,7 +239,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
             className="w-full"
             disabled={
               !isClientReady ||
-              isDebouncing ||
+              isUpdatingAmounts ||
               form.formState.isValidating ||
               !form.formState.isValid ||
               removeCollateral.prepare.isError

@@ -9,7 +9,11 @@ export const VaultName: FC<VaultProps> = (props) => {
   const vault = useVault(props)
 
   return (
-    <Skeleton isLoading={vault.isLoading} loadingText="Loading vault">
+    <Skeleton
+      isLoading={vault.isLoading}
+      loadingText="Loading vault"
+      className="float-left"
+    >
       {vault.data?.name}
     </Skeleton>
   )

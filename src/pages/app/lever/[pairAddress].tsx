@@ -2,7 +2,7 @@ import * as Tabs from "@radix-ui/react-tabs"
 import { BigNumber } from "ethers"
 import { GetStaticPaths, GetStaticProps, NextPage } from "next"
 import Link from "next/link"
-import { Dispatch, FC, SetStateAction, useState } from "react"
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
 import { FiArrowLeft } from "react-icons/fi"
 
 import { resolvedRoute } from "@/lib/helpers"
@@ -20,7 +20,7 @@ import Layout from "@/components/Layout"
 import { LendingPairStats } from "@/components/LendingPair"
 import {
   AddCollateral,
-  CreateLeveredPosition,
+  CreateLeverPosition,
   LeverPairs,
   LeverPositionUserStats,
   RemoveCollateral,
@@ -49,6 +49,7 @@ export const getStaticProps: GetStaticProps = (context) => {
 }
 
 const LeverPairDetail: NextPage<LendingPair> = (lendingPair) => {
+  const [isUpdatingAmounts, setIsUpdatingAmounts] = useState(false)
   const [adjustedBorrowAmount, setAdjustedBorrowAmount] = useState<BigNumber>()
   const [adjustedCollateralAmount, setAdjustedCollateralAmount] =
     useState<BigNumber>()
@@ -81,8 +82,10 @@ const LeverPairDetail: NextPage<LendingPair> = (lendingPair) => {
                 <ActiveLeverControls
                   {...lendingPair}
                   adjustedBorrowAmount={adjustedBorrowAmount}
+                  isUpdatingAmounts={isUpdatingAmounts}
                   setAdjustedBorrowAmount={setAdjustedBorrowAmount}
                   setAdjustedCollateralAmount={setAdjustedCollateralAmount}
+                  setIsUpdatingAmounts={setIsUpdatingAmounts}
                 />
               </div>
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
@@ -90,6 +93,7 @@ const LeverPairDetail: NextPage<LendingPair> = (lendingPair) => {
                   {...lendingPair}
                   adjustedBorrowAmount={adjustedBorrowAmount}
                   adjustedCollateralAmount={adjustedCollateralAmount}
+                  isUpdatingAmounts={isUpdatingAmounts}
                 />
               </div>
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
@@ -125,17 +129,23 @@ const LeverPairHeading: FC<LendingPair> = ({
 
 type ActiveLeverControlsProps = LendingPair & {
   adjustedBorrowAmount?: BigNumber
+  isUpdatingAmounts: boolean
   setAdjustedBorrowAmount: Dispatch<SetStateAction<BigNumber | undefined>>
   setAdjustedCollateralAmount: Dispatch<SetStateAction<BigNumber | undefined>>
+  setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
 }
 
 const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
   chainId,
   pairAddress,
   adjustedBorrowAmount,
+  isUpdatingAmounts,
   setAdjustedBorrowAmount,
   setAdjustedCollateralAmount,
+  setIsUpdatingAmounts,
 }) => {
+  const [mode, setMode] = useState<"create" | "manage">("create")
+
   const isClientReady = useClientReady()
   const lendingPair = useLendingPair({ chainId, pairAddress })
   const pairLeverParams = usePairLeverParams({ chainId, pairAddress })
@@ -156,36 +166,73 @@ const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
     chainId,
   })
 
+  // manually manage the active mode
+  // when lending data is refetched, borrowAmountSignificant will change value, causing UI flashing to occur
+  // we don't want to change the view unless the condition has truly changed and is not just undefined during refetch
+  useEffect(() => {
+    if (isClientReady) {
+      if (borrowAmountSignificant.gt(0) || collateralAmountSignificant.gt(0)) {
+        if (mode === "create") setMode("manage")
+      } else if (mode === "manage") {
+        setMode("create")
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    isClientReady,
+    borrowAmountSignificant,
+    collateralAmountSignificant,
+    pairLeverParams.data.borrowedAmount,
+    pairLeverParams.data.collateralAmount,
+  ])
+
   const onSuccess = () => {
     pairLeverParams.refetch()
     borrowAssetBalance.refetch()
     collateralAssetBalance.refetch()
   }
 
-  return isClientReady ? (
-    borrowAmountSignificant.gt(0) ? (
-      <Tabs.Root defaultValue="repay">
-        <Tabs.List className="-mx-3 -mt-4 flex divide-x divide-pink/30 border-b border-pink/30 lg:-mx-6 lg:-mt-6">
-          <Tabs.Trigger
-            value="repay"
-            className="transition-color h-14 w-1/3 px-3 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
-          >
-            Repay
-          </Tabs.Trigger>
-          <Tabs.Trigger
-            value="addCollateral"
-            className="transition-color h-14 w-1/3 px-3 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
-          >
-            Add collateral
-          </Tabs.Trigger>
-          <Tabs.Trigger
-            value="removeCollateral"
-            className="transition-color h-14 w-1/3 px-3 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
-          >
-            Remove collateral
-          </Tabs.Trigger>
-        </Tabs.List>
-        <Tabs.Content className="pt-3 lg:pt-6" value="repay">
+  return mode === "create" ? (
+    <CreateLeverPosition
+      chainId={chainId}
+      borrowAssetAddress={lendingPair.data?.assetContract}
+      collateralAssetAddress={lendingPair.data?.collateralContract}
+      collateralAssetBalance={collateralAssetBalance}
+      adjustedBorrowAmount={adjustedBorrowAmount}
+      isUpdatingAmounts={isUpdatingAmounts}
+      setAdjustedBorrowAmount={setAdjustedBorrowAmount}
+      setAdjustedCollateralAmount={setAdjustedCollateralAmount}
+      setIsUpdatingAmounts={setIsUpdatingAmounts}
+      pairAddress={pairAddress}
+      onSuccess={onSuccess}
+    />
+  ) : (
+    <Tabs.Root defaultValue="repay">
+      <Tabs.List className="-mx-3 -mt-4 flex divide-x divide-pink/30 border-b border-pink/30 lg:-mx-6 lg:-mt-6">
+        <Tabs.Trigger
+          value="repay"
+          className="transition-color h-14 w-1/3 px-3 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
+        >
+          Repay
+        </Tabs.Trigger>
+        <Tabs.Trigger
+          value="addCollateral"
+          className="transition-color h-14 w-1/3 px-3 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
+        >
+          Add collateral
+        </Tabs.Trigger>
+        <Tabs.Trigger
+          value="removeCollateral"
+          className="transition-color h-14 w-1/3 px-3 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
+        >
+          Remove collateral
+        </Tabs.Trigger>
+      </Tabs.List>
+      <div className="relative overflow-hidden">
+        <Tabs.Content
+          className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6"
+          value="repay"
+        >
           <RepayLeverPosition
             chainId={chainId}
             borrowAmountSignificant={borrowAmountSignificant}
@@ -194,48 +241,47 @@ const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
             collateralAmountSignificant={collateralAmountSignificant}
             collateralAssetAddress={lendingPair.data?.collateralContract}
             collateralAssetBalance={collateralAssetBalance}
+            isUpdatingAmounts={isUpdatingAmounts}
             setAdjustedBorrowAmount={setAdjustedBorrowAmount}
             setAdjustedCollateralAmount={setAdjustedCollateralAmount}
-            onSuccess={onSuccess}
+            setIsUpdatingAmounts={setIsUpdatingAmounts}
             pairAddress={pairAddress}
+            onSuccess={onSuccess}
           />
         </Tabs.Content>
-        <Tabs.Content className="pt-3 lg:pt-6" value="addCollateral">
+        <Tabs.Content
+          className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6"
+          value="addCollateral"
+        >
           <AddCollateral
             chainId={chainId}
             collateralAssetAddress={lendingPair.data?.collateralContract}
             collateralAssetBalance={collateralAssetBalance}
             collateralAmountSignificant={collateralAmountSignificant}
+            isUpdatingAmounts={isUpdatingAmounts}
             setAdjustedCollateralAmount={setAdjustedCollateralAmount}
-            onSuccess={onSuccess}
+            setIsUpdatingAmounts={setIsUpdatingAmounts}
             pairAddress={pairAddress}
+            onSuccess={onSuccess}
           />
         </Tabs.Content>
-        <Tabs.Content className="pt-3 lg:pt-6" value="removeCollateral">
+        <Tabs.Content
+          className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6"
+          value="removeCollateral"
+        >
           <RemoveCollateral
             chainId={chainId}
             collateralAssetAddress={lendingPair.data?.collateralContract}
             collateralAssetBalance={collateralAssetBalance}
             collateralAmountSignificant={collateralAmountSignificant}
+            isUpdatingAmounts={isUpdatingAmounts}
             setAdjustedCollateralAmount={setAdjustedCollateralAmount}
-            onSuccess={onSuccess}
+            setIsUpdatingAmounts={setIsUpdatingAmounts}
             pairAddress={pairAddress}
+            onSuccess={onSuccess}
           />
         </Tabs.Content>
-      </Tabs.Root>
-    ) : (
-      <CreateLeveredPosition
-        borrowAssetAddress={lendingPair.data?.assetContract}
-        collateralAssetBalance={collateralAssetBalance}
-        collateralAssetAddress={lendingPair.data?.collateralContract}
-        ltvPrecision={pairLeverParams.data.constants?.ltvPrecision}
-        maxLTV={pairLeverParams.data.maxLTV}
-        pairAddress={pairAddress}
-        adjustedBorrowAmount={adjustedBorrowAmount}
-        setAdjustedBorrowAmount={setAdjustedBorrowAmount}
-        setAdjustedCollateralAmount={setAdjustedCollateralAmount}
-        onSuccess={onSuccess}
-      />
-    )
-  ) : null
+      </div>
+    </Tabs.Root>
+  )
 }

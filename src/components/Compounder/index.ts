@@ -1,3 +1,4 @@
+export * from "./CompounderHoldingsTable"
 export * from "./CompounderVaultApy"
 export * from "./CompounderVaultDepositForm"
 export * from "./CompounderVaultTable"

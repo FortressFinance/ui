@@ -42,6 +42,11 @@ export const collateralToAsset = (
 export const addSlippage = (amount = BigNumber.from(0), slippage: number) =>
   amount.add(amount.div(1 / slippage))
 
+export const calculateAssetsAvailable = ({
+  totalAssets = BigNumber.from(0),
+  totalBorrowAmount = BigNumber.from(0),
+}) => totalAssets.sub(totalBorrowAmount)
+
 export const calculateUtilizationRate = ({
   totalAssets = BigNumber.from(1),
   totalBorrowAmount = BigNumber.from(0),
@@ -76,3 +81,14 @@ export const calculateLiquidationPrice = ({
   maxBorrowAmount.gt(0)
     ? borrowedAmount.mul(exchangePrecision).div(maxBorrowAmount)
     : BigNumber.from(1)
+
+export const calculateMinCollateralRequired = ({
+  borrowedAmountAsCollateral = BigNumber.from(1),
+  maxLTV = BigNumber.from(1),
+  ltvPrecision = BigNumber.from(1),
+}) =>
+  borrowedAmountAsCollateral
+    .mul(ltvPrecision)
+    .div(maxLTV)
+    .add(borrowedAmountAsCollateral.mul(ltvPrecision).div(9_000_000))
+// .add(ltvPrecision.mul(10_000_000))

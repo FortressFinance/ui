@@ -9,5 +9,7 @@ export const mainnetConfig: ChainConfig = {
   fcGlpTokenAddress: ethers.constants.AddressZero,
   fctrFraxBPFcGlpTokenAddress: ethers.constants.AddressZero,
   fctrFraxBPTokenAddress: ethers.constants.AddressZero,
+  fFraxFcGlpTokenAddress: ethers.constants.AddressZero,
+  fraxTokenAddress: "0x853d955aCEf822Db058eb8505911ED77F175b99e",
   fallbackType: {},
 }
