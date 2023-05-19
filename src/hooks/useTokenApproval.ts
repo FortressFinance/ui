@@ -47,7 +47,6 @@ export const useTokenApproval = ({
   })
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
-    // TODO: wagmiv1 onSuccess
     onSuccess: () => allowance.refetch(),
   })
   return {

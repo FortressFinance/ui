@@ -157,7 +157,6 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
   const deposit = useContractWrite(prepareDeposit.config)
   useWaitForTransaction({
     hash: deposit.data?.hash,
-    // TODO: wagmiv1 onSuccess
     onSuccess: () => onDepositSuccess(),
   })
 
@@ -177,7 +176,6 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
   const depositUnderlying = useContractWrite(prepareDepositUnderlying.config)
   useWaitForTransaction({
     hash: depositUnderlying.data?.hash,
-    // TODO: wagmiv1 onSuccess
     onSuccess: () => onDepositSuccess(),
   })
   // Form submit handler

@@ -20,7 +20,6 @@ export function useTokenOrNativeBalance({
     chainId: chainId ?? activeChainId,
     token: isEth ? undefined : address,
     enabled: address !== "0x",
-    // TODO: wagmiv1 - research alternative to using onSuccess
     onSuccess,
   })
 }

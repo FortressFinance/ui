@@ -79,7 +79,6 @@ export function useConcentratorClaim({
   const writeClaim = useContractWrite(prepareWrite.config)
   useWaitForTransaction({
     hash: writeClaim.data?.hash,
-    // TODO: wagmiv1 onSuccess
     onSuccess: () => onClaimSuccess(),
   })
   const writeExecute = useCallback(() => {

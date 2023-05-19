@@ -18,7 +18,6 @@ export function useConcentratorTargetAssets(
     functionName: "concentratorTargetAssets",
     select: (data) =>
       Array.from(new Set(data.filter((x) => x !== zeroAddress))),
-    // TODO: wagmiv1 onSuccess
     onSuccess: options.onSuccess,
     enabled: apiQuery.isError,
   })

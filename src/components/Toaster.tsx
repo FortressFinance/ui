@@ -102,7 +102,6 @@ const Toast: FC<Toast> = (toast) => {
   useWaitForTransaction({
     hash: waitForTxEnabled ? toast.hash : "0x",
     enabled: waitForTxEnabled,
-    // TODO: wagmiv1 onSuccess
     onSuccess: (receipt) =>
       replaceToast(toast.id, {
         type: "successTx",

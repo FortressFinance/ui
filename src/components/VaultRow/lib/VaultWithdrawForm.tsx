@@ -120,7 +120,6 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
   const redeem = useContractWrite(prepareRedeem.config)
   const waitRedeem = useWaitForTransaction({
     hash: redeem.data?.hash,
-    // TODO: wagmiv1 onSuccess
     onSuccess: () => onWithdrawSuccess(),
   })
 
@@ -140,7 +139,6 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
   const redeemUnderlying = useContractWrite(prepareRedeemUnderlying.config)
   const waitRedeemUnderlying = useWaitForTransaction({
     hash: redeemUnderlying.data?.hash,
-    // TODO: wagmiv1 onSuccess
     onSuccess: () => onWithdrawSuccess(),
   })
 

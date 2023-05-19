@@ -164,7 +164,6 @@ export const useLendingDeposit = ({
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
-    // TODO: wagmiv1 onSuccess
     onSuccess: () => {
       assetBalance.refetch()
       shareBalance.refetch()
@@ -203,7 +202,6 @@ export const useLendingRedeem = ({
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
-    // TODO: wagmiv1 onSuccess
     onSuccess: () => {
       assetBalance.refetch()
       shareBalance.refetch()
