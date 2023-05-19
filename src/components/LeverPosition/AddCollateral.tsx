@@ -247,6 +247,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
                   amount={addedAmount}
                   approval={approval}
                   disabled={isSubmitDisabled}
+                  spender={pairAddress}
                 />
               )
             ) : (

@@ -1,5 +1,6 @@
 import React, { FC, useEffect } from "react"
 import { BiInfinite } from "react-icons/bi"
+import { Address } from "wagmi"
 import { shallow } from "zustand/shallow"
 
 import { useTokenApproval } from "@/hooks"
@@ -13,13 +14,15 @@ import { maxUint256 } from "@/constant"
 type ApproveTokenProps = {
   amount: bigint
   approval: ReturnType<typeof useTokenApproval>
-  disabled: boolean
+  disabled?: boolean
+  spender: Address
 }
 
 export const ApproveToken: FC<ApproveTokenProps> = ({
   amount,
   approval,
-  disabled,
+  disabled = false,
+  spender,
 }) => {
   const [addToast, replaceToast] = useToastStore(
     (state) => [state.addToast, state.replaceToast],
@@ -39,7 +42,7 @@ export const ApproveToken: FC<ApproveTokenProps> = ({
     const action = "Token approval"
     const toastId = addToast({ type: "startTx", action })
     approval.write
-      .writeAsync()
+      .writeAsync({ args: [spender, amountToApprove] })
       .then((receipt) =>
         replaceToast(toastId, { type: "waitTx", hash: receipt.hash, action })
       )

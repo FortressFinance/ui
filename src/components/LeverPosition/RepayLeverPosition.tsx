@@ -418,7 +418,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
               <ApproveToken
                 amount={repaymentAmount}
                 approval={approval}
-                disabled={isSubmitDisabled}
+                spender={pairAddress}
               />
             )
           ) : (

@@ -157,7 +157,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
   const approval = useTokenApproval({
     amount: collateralAmount,
     spender: pairAddress,
-    token: borrowAssetAddress,
+    token: collateralAssetAddress,
     enabled: !isUpdatingAmounts && collateralAmount > 0,
   })
   const leverPosition = useLeverPosition({
@@ -310,6 +310,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
               amount={collateralAmount}
               approval={approval}
               disabled={isSubmitDisabled}
+              spender={pairAddress}
             />
           )
         ) : (
