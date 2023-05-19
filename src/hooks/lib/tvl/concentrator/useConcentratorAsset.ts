@@ -1,25 +1,21 @@
-import { BigNumber } from "ethers"
 import { Address, useContractRead } from "wagmi"
 
 import { useConcentratorContract } from "@/hooks/lib/useConcentratorContract"
 
-export default function useConcentratorAsset({
+// TODO: This is not used anywhere. Should it be deleted?
+
+export const useConcentratorAsset = ({
   ybToken,
   share,
   enabled,
 }: {
   ybToken: Address
-  share: BigNumber
+  share: bigint
   enabled: boolean
-}) {
-  const concentratorContract = useConcentratorContract(ybToken)
-
-  const assetQuery = useContractRead({
-    ...concentratorContract,
+}) =>
+  useContractRead({
+    ...useConcentratorContract(ybToken),
     functionName: "convertToAssets",
     args: [share],
     enabled: enabled,
   })
-
-  return assetQuery
-}

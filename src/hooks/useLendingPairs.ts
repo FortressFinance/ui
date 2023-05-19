@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers"
 import _ from "lodash"
 import {
   Address,
@@ -100,7 +99,7 @@ export const useLendingDepositPreview = ({
   pairAddress,
   enabled = true,
 }: {
-  amount: BigNumber
+  amount: bigint
   chainId: number
   pairAddress: Address
   enabled?: boolean
@@ -121,7 +120,7 @@ export const useLendingRedeemPreview = ({
   pairAddress,
   enabled = true,
 }: {
-  amount: BigNumber
+  amount: bigint
   chainId: number
   pairAddress: Address
   enabled?: boolean
