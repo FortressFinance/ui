@@ -1,7 +1,13 @@
 import { ToastProvider } from "@radix-ui/react-toast"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { noopStorage } from "@wagmi/core"
 import { FC, PropsWithChildren } from "react"
-import { configureChains, createConfig, WagmiConfig } from "wagmi"
+import {
+  configureChains,
+  createConfig,
+  createStorage,
+  WagmiConfig,
+} from "wagmi"
 import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet"
 import { InjectedConnector } from "wagmi/connectors/injected"
 import { MetaMaskConnector } from "wagmi/connectors/metaMask"
@@ -35,6 +41,13 @@ const config = createConfig({
       options: { appName: "Fortress Finance" },
     }),
   ],
+  storage: createStorage({
+    storage:
+      typeof window !== "undefined" && window.localStorage
+        ? window.localStorage
+        : noopStorage,
+    key: "fortress-v1",
+  }),
 })
 
 const queryClient = new QueryClient({
