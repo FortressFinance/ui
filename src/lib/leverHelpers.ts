@@ -1,94 +1,80 @@
-import { BigNumber } from "ethers"
-
 export const calculateLTV = ({
-  borrowedAmountAsCollateral = BigNumber.from(0),
-  collateralAmount = BigNumber.from(0),
-  ltvPrecision = BigNumber.from(0),
+  borrowedAmountAsCollateral = 0n,
+  collateralAmount = 0n,
+  ltvPrecision = 0n,
 }: {
-  borrowedAmountAsCollateral?: BigNumber
-  collateralAmount?: BigNumber
-  ltvPrecision?: BigNumber
+  borrowedAmountAsCollateral?: bigint
+  collateralAmount?: bigint
+  ltvPrecision?: bigint
 }) =>
-  collateralAmount.lte(0)
-    ? BigNumber.from(0)
-    : borrowedAmountAsCollateral.mul(ltvPrecision).div(collateralAmount)
+  collateralAmount <= 0
+    ? 0n
+    : (borrowedAmountAsCollateral * ltvPrecision) / collateralAmount
 
-export const ltvPercentage = (
-  ltv = BigNumber.from(0),
-  ltvPrecision = BigNumber.from(100)
-) => ltv.div(ltvPrecision.div(100)).toNumber().toFixed(2) + "%"
+export const ltvPercentage = (ltv = 0n, ltvPrecision = 100n) =>
+  Number(ltv / (ltvPrecision / 100n)).toFixed(2) + "%"
 
-export const calculateMaxLeverage = ({
-  maxLTV = BigNumber.from(0),
-  ltvPrecision = BigNumber.from(1),
-}) =>
-  BigNumber.from(1)
-    .mul(ltvPrecision)
-    .div(BigNumber.from(1).mul(ltvPrecision).sub(maxLTV))
-    .toNumber()
+export const calculateMaxLeverage = ({ maxLTV = 0n, ltvPrecision = 1n }) =>
+  Number((1n * ltvPrecision) / (1n * ltvPrecision - maxLTV))
 
 export const assetToCollateral = (
-  amount = BigNumber.from(0),
-  exchangeRate = BigNumber.from(1),
-  exchangePrecision = BigNumber.from(1)
-) => amount.mul(exchangePrecision).div(exchangeRate)
+  amount = 0n,
+  exchangeRate = 1n,
+  exchangePrecision = 1n
+) => (amount * exchangePrecision) / exchangeRate
 
 export const collateralToAsset = (
-  amount = BigNumber.from(0),
-  exchangeRate = BigNumber.from(1),
-  exchangePrecision = BigNumber.from(1)
-) => amount.mul(exchangeRate).div(exchangePrecision)
+  amount = 0n,
+  exchangeRate = 1n,
+  exchangePrecision = 1n
+) => (amount * exchangeRate) / exchangePrecision
 
-export const addSlippage = (amount = BigNumber.from(0), slippage: number) =>
-  amount.add(amount.div(1 / slippage))
+export const addSlippage = (amount = 0n, slippage: number) =>
+  amount + amount / BigInt(1 / slippage)
 
 export const calculateAssetsAvailable = ({
-  totalAssets = BigNumber.from(0),
-  totalBorrowAmount = BigNumber.from(0),
-}) => totalAssets.sub(totalBorrowAmount)
+  totalAssets = 0n,
+  totalBorrowAmount = 0n,
+}) => totalAssets - totalBorrowAmount
 
 export const calculateUtilizationRate = ({
-  totalAssets = BigNumber.from(1),
-  totalBorrowAmount = BigNumber.from(0),
-  utilPrecision = BigNumber.from(1),
+  totalAssets = 1n,
+  totalBorrowAmount = 0n,
+  utilPrecision = 1n,
 }) =>
-  totalBorrowAmount.mul(utilPrecision).div(totalAssets).toNumber() /
-  utilPrecision.toNumber()
+  Number((totalBorrowAmount * utilPrecision) / totalAssets) /
+  Number(utilPrecision)
 
-export const calculateBorrowAPY = ({
-  interestRatePerSecond = BigNumber.from(0),
-}) => (1 + interestRatePerSecond.toNumber() / 1e18) ** (365 * 24 * 60 * 60) - 1
+export const calculateBorrowAPY = ({ interestRatePerSecond = 0n }) =>
+  (1 + Number(interestRatePerSecond) / 1e18) ** (365 * 24 * 60 * 60) - 1
 
 export const calculateLendAPY = ({ borrowAPY = 0, utilizationRate = 0 }) =>
   borrowAPY * utilizationRate
 
 export const calculateMaxBorrowAmount = ({
-  collateralAmountAsAsset = BigNumber.from(0),
-  maxLTV = BigNumber.from(0),
-  ltvPrecision = BigNumber.from(1),
-}) => collateralAmountAsAsset.mul(maxLTV).div(ltvPrecision)
+  collateralAmountAsAsset = 0n,
+  maxLTV = 0n,
+  ltvPrecision = 1n,
+}) => (collateralAmountAsAsset * maxLTV) / ltvPrecision
 
 export const calculateAvailableCredit = ({
-  borrowedAmount = BigNumber.from(0),
-  maxBorrowAmount = BigNumber.from(0),
-}) => maxBorrowAmount.sub(borrowedAmount)
+  borrowedAmount = 0n,
+  maxBorrowAmount = 0n,
+}) => maxBorrowAmount - borrowedAmount
 
 export const calculateLiquidationPrice = ({
-  borrowedAmount = BigNumber.from(1),
-  maxBorrowAmount = BigNumber.from(1),
-  exchangePrecision = BigNumber.from(1),
+  borrowedAmount = 1n,
+  maxBorrowAmount = 1n,
+  exchangePrecision = 1n,
 }) =>
-  maxBorrowAmount.gt(0)
-    ? borrowedAmount.mul(exchangePrecision).div(maxBorrowAmount)
-    : BigNumber.from(1)
+  maxBorrowAmount > 0
+    ? (borrowedAmount * exchangePrecision) / maxBorrowAmount
+    : 1n
 
 export const calculateMinCollateralRequired = ({
-  borrowedAmountAsCollateral = BigNumber.from(1),
-  maxLTV = BigNumber.from(1),
-  ltvPrecision = BigNumber.from(1),
+  borrowedAmountAsCollateral = 1n,
+  maxLTV = 1n,
+  ltvPrecision = 1n,
 }) =>
-  borrowedAmountAsCollateral
-    .mul(ltvPrecision)
-    .div(maxLTV)
-    .add(borrowedAmountAsCollateral.mul(ltvPrecision).div(9_000_000))
-// .add(ltvPrecision.mul(10_000_000))
+  (borrowedAmountAsCollateral * ltvPrecision) / maxLTV +
+  (borrowedAmountAsCollateral * ltvPrecision) / 9_000_000n

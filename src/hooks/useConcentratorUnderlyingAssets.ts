@@ -1,7 +1,6 @@
-import { Address } from "wagmi"
+import { Address, useContractRead } from "wagmi"
 
 import { useApiConcentratorUnderlyingAssets } from "@/hooks/lib/api/useApiConcentratorUnderlyingAssets"
-import { useFallbackRead } from "@/hooks/lib/useFallbackRequest"
 import { useRegistryContract } from "@/hooks/lib/useRegistryContract"
 import { useConcentratorFirstVaultType } from "@/hooks/useConcentratorFirstVaultType"
 
@@ -19,19 +18,11 @@ export function useConcentratorUnderlyingAssets({
   const firstConcentratorVaultType = useConcentratorFirstVaultType({
     targetAsset,
   })
-  const underlyingAssets = useFallbackRead(
-    {
-      ...useRegistryContract(),
-      functionName: "getConcentratorUnderlyingAssets",
-      args: [firstConcentratorVaultType === "curve", targetAsset, primaryAsset],
-      enabled: apiQuery.isError,
-    },
-    []
-  )
-
-  if (apiQuery.isError) {
-    return underlyingAssets
-  }
-
-  return apiQuery
+  const underlyingAssets = useContractRead({
+    ...useRegistryContract(),
+    functionName: "getConcentratorUnderlyingAssets",
+    args: [firstConcentratorVaultType === "curve", targetAsset, primaryAsset],
+    enabled: apiQuery.isError,
+  })
+  return apiQuery.isError ? underlyingAssets : apiQuery
 }

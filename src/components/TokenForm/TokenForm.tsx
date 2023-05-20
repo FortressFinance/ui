@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers"
 import { FC, useState } from "react"
 import React from "react"
 import {
@@ -36,7 +35,7 @@ type TokenFormProps = {
   isLoadingPreview: boolean
   isLoadingTransaction: boolean
   isWithdraw?: boolean
-  maxAssetAmountLimit?: BigNumber
+  maxAssetAmountLimit?: bigint
   previewResultWei?: string
   productType?: ProductType
   onSubmit: SubmitHandler<TokenFormValues>
@@ -103,13 +102,13 @@ const TokenForm: FC<TokenFormProps> = ({
   })
 
   const maxAvailable = maxAssetAmountLimit
-    ? inputTokenBalanceOrShare?.value?.gt(maxAssetAmountLimit)
+    ? (inputTokenBalanceOrShare?.value ?? 0) > maxAssetAmountLimit
       ? maxAssetAmountLimit
       : inputTokenBalanceOrShare?.value
     : inputTokenBalanceOrShare?.value
   const showMaxBtn =
     isClientReady &&
-    inputTokenBalanceOrShare?.value?.gt(0) &&
+    (inputTokenBalanceOrShare?.value ?? 0) > 0n &&
     inputTokenBalanceOrShare?.formatted !== amountIn
   const onClickMax = () => {
     form.setValue(
@@ -144,10 +143,11 @@ const TokenForm: FC<TokenFormProps> = ({
             validate: {
               positive: (amount) => Number(amount) > 0 || "Enter an amount",
               lessThanBalance: (amount) => {
-                const isValid = parseCurrencyUnits({
-                  amountFormatted: amount,
-                  decimals: inputToken?.decimals,
-                }).lte(maxAvailable ?? 0)
+                const isValid =
+                  parseCurrencyUnits({
+                    amountFormatted: amount,
+                    decimals: inputToken?.decimals,
+                  }) <= (maxAvailable ?? 0)
                 return isValid ? undefined : "Insufficient balance"
               },
             },
@@ -237,7 +237,7 @@ const TokenForm: FC<TokenFormProps> = ({
 
         <div className="relative z-[1] col-span-full col-start-1 row-start-3 h-[38px] px-4 pb-3 text-left align-bottom text-xs">
           <span className="text-pink-100">
-            {maxAvailable?.lt(inputTokenBalanceOrShare?.value ?? 0) ? (
+            {(maxAvailable ?? 0) < (inputTokenBalanceOrShare?.value ?? 0) ? (
               <>
                 <span>
                   {formatCurrencyUnits({

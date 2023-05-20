@@ -1,5 +1,4 @@
 import * as ToggleGroup from "@radix-ui/react-toggle-group"
-import { BigNumber } from "ethers"
 import React, { Dispatch, FC, SetStateAction, useState } from "react"
 import { SubmitHandler, useController, useForm } from "react-hook-form"
 import { useDebounce } from "react-use"
@@ -27,10 +26,10 @@ type CreateLeverPositionProps = {
   borrowAssetAddress?: Address
   collateralAssetAddress?: Address
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
-  adjustedBorrowAmount?: BigNumber
+  adjustedBorrowAmount?: bigint
   isUpdatingAmounts: boolean
-  setAdjustedBorrowAmount: Dispatch<SetStateAction<BigNumber | undefined>>
-  setAdjustedCollateralAmount: Dispatch<SetStateAction<BigNumber | undefined>>
+  setAdjustedBorrowAmount: Dispatch<SetStateAction<bigint | undefined>>
+  setAdjustedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
   setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
   pairAddress: Address
   onSuccess: () => void
@@ -70,9 +69,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     ? Array(Math.floor(maxLeverage) - 1)
     : Array(4)
 
-  const [collateralAmount, setCollateralAmount] = useState<BigNumber>(
-    BigNumber.from(0)
-  )
+  const [collateralAmount, setCollateralAmount] = useState<bigint>(0n)
 
   const form = useForm<CreateLeverPositionFormValues>({
     values: { amount: "", leverAmount: 1 },
@@ -82,8 +79,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
 
   const amount = form.watch("amount")
   const leverAmount = form.watch("leverAmount")
-  const availableAmount =
-    collateralAssetBalance.data?.value ?? BigNumber.from(0)
+  const availableAmount = collateralAssetBalance.data?.value ?? 0n
 
   const {
     field: { onChange: onChangeAmount, ...amountField },
@@ -100,7 +96,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
             amountFormatted: amount,
             decimals: collateralAssetBalance.data?.decimals,
           })
-          return parsedAmount.gt(availableAmount)
+          return parsedAmount > availableAmount
             ? "Insufficient balance"
             : undefined
         },
@@ -127,7 +123,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
   useDebounce(
     () => {
       if (!Number(amount)) {
-        setCollateralAmount(BigNumber.from(0))
+        setCollateralAmount(0n)
         setAdjustedBorrowAmount(undefined)
         setAdjustedCollateralAmount(undefined)
       } else {
@@ -135,13 +131,12 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
           amountFormatted: amount,
           decimals: collateralAssetBalance.data?.decimals,
         })
-        const leveredCollateralAmount = collateralAmount
-          .mul(BigNumber.from(Math.floor(leverAmount * 100)))
-          .div(100)
+        const leveredCollateralAmount =
+          (collateralAmount * BigInt(Math.floor(leverAmount * 100))) / 100n
         setCollateralAmount(collateralAmount)
         setAdjustedBorrowAmount(
           leverAmount > 1
-            ? leveredCollateralAmount?.sub(collateralAmount)
+            ? leveredCollateralAmount - collateralAmount
             : undefined
         )
         setAdjustedCollateralAmount(
@@ -163,13 +158,14 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     amount: collateralAmount,
     spender: pairAddress,
     token: borrowAssetAddress,
-    enabled: !isUpdatingAmounts && collateralAmount.gt(0),
+    enabled: !isUpdatingAmounts && collateralAmount > 0,
   })
   const leverPosition = useLeverPosition({
     borrowAmount: adjustedBorrowAmount,
     borrowAssetAddress,
     collateralAmount,
-    minAmount: BigNumber.from(1),
+    // TODO: lever minAmount
+    minAmount: 1n,
     enabled:
       !isUpdatingAmounts &&
       leverAmount > 1 &&
@@ -273,7 +269,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
           type="single"
           className="flex h-12 w-1/2 shrink-0 justify-center gap-1.5"
           disabled={
-            collateralAmount.eq(0) ||
+            collateralAmount === 0n ||
             leverPosition.write.isLoading ||
             leverPosition.wait.isLoading
           }

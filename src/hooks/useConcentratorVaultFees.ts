@@ -1,11 +1,10 @@
-import { formatUnits } from "ethers/lib/utils.js"
-import { Address } from "wagmi"
+import { formatUnits } from "viem"
+import { Address, useContractRead } from "wagmi"
 
 import { ConcentratorStaticData } from "@/lib/api/concentrators"
 import { VaultProps } from "@/lib/types"
 import { useConcentratorVaultYbtokenAddress } from "@/hooks"
 import { useApiConcentratorStaticData } from "@/hooks/lib/api/useApiConcentratorStaticData"
-import { useFallbackRead } from "@/hooks/lib/useFallbackRequest"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
 
 // TODO: Implement full fees support
@@ -23,36 +22,31 @@ export function useConcentratorVaultFees({ asset, vaultAddress }: VaultProps) {
     primaryAsset: vaultAddress,
   })
   const vaultContract = useVaultContract(ybTokenAddress)
-  const fallbackRequest = useFallbackRead(
-    {
-      ...vaultContract,
-      enabled: apiConcentratorStaticData.isError,
-      functionName: "fees",
-      select: ([
-        platformFeePercentage,
-        _harvestBountyPercentage,
-        withdrawFeePercentage,
-      ]) => ({
-        ...HARDCODED_FEES,
-        platformFee: formatUnits(platformFeePercentage, 9),
-        withdrawFee: formatUnits(withdrawFeePercentage, 9),
-      }),
-    },
-    []
-  )
-
-  if (apiConcentratorStaticData.isError) {
-    return fallbackRequest
-  }
-
-  return {
-    ...apiConcentratorStaticData,
-    data: {
+  const fallbackRequest = useContractRead({
+    ...vaultContract,
+    enabled: apiConcentratorStaticData.isError,
+    functionName: "fees",
+    select: ([
+      platformFeePercentage,
+      _harvestBountyPercentage,
+      withdrawFeePercentage,
+    ]) => ({
       ...HARDCODED_FEES,
-      platformFee: matchedVault?.concentrator?.platformFee,
-      withdrawFee: matchedVault?.concentrator?.withdrawalFee,
-    },
-  }
+      platformFee: formatUnits(platformFeePercentage, 9),
+      withdrawFee: formatUnits(withdrawFeePercentage, 9),
+    }),
+  })
+
+  return apiConcentratorStaticData.isError
+    ? fallbackRequest
+    : {
+        ...apiConcentratorStaticData,
+        data: {
+          ...HARDCODED_FEES,
+          platformFee: matchedVault?.concentrator?.platformFee,
+          withdrawFee: matchedVault?.concentrator?.withdrawalFee,
+        },
+      }
 }
 
 function findApiConcentratorForPrimaryAsset(

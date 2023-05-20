@@ -1,5 +1,4 @@
-import { BigNumber, ethers } from "ethers"
-import { parseUnits } from "ethers/lib/utils.js"
+import { parseUnits, zeroAddress } from "viem"
 import {
   Address,
   useAccount,
@@ -22,7 +21,7 @@ export const usePairLeverParams = ({
   pairAddress: Address
   chainId?: number
 }) => {
-  const { address: userAddress = ethers.constants.AddressZero } = useAccount()
+  const { address: userAddress = zeroAddress } = useAccount()
   const accounting = useContractReads({
     contracts: [
       {
@@ -77,16 +76,25 @@ export const usePairLeverParams = ({
       },
     ],
     enabled: !!chainId && !!pairAddress,
-    select: ([
-      maxLTV,
-      [
+    select: (results) => {
+      const [
+        { result: maxLTV },
+        { result: currentRateInfo },
+        { result: exchangeRateInfo },
+        { result: constants },
+        { result: totalAssets },
+        { result: totalBorrow },
+        { result: userBorrowShares },
+        { result: userCollateralBalance },
+      ] = results
+      const [
         currRateLastBlock,
         currRateFeeToProtocolRate,
         currRateLastTimestamp,
         currRateRatePerSec,
-      ],
-      [exRateLastTimestamp, exRateExchangeRate],
-      [
+      ] = currentRateInfo ?? []
+      const [exRateLastTimestamp, exRateExchangeRate] = exchangeRateInfo ?? []
+      const [
         ltvPrecision,
         liqPrecision,
         utilPrecision,
@@ -95,39 +103,37 @@ export const usePairLeverParams = ({
         defaultInt,
         defaultProtocolFee,
         maxProtocolFee,
-      ],
-      totalAssets,
-      [totalBorrowAmount, totalBorrowShares],
-      userBorrowShares,
-      userCollateralBalance,
-    ]) => ({
-      constants: {
-        ltvPrecision,
-        liqPrecision,
-        utilPrecision,
-        feePrecision,
-        exchangePrecision,
-        defaultInt,
-        defaultProtocolFee,
-        maxProtocolFee,
-      },
-      currentRateInfo: {
-        lastBlock: currRateLastBlock,
-        feeToProtocolRate: currRateFeeToProtocolRate,
-        lastTimestamp: currRateLastTimestamp,
-        ratePerSec: currRateRatePerSec,
-      },
-      exchangeRate: {
-        lastTimestamp: exRateLastTimestamp,
-        exchangeRate: exRateExchangeRate,
-      },
-      maxLTV,
-      totalAssets,
-      totalBorrowAmount,
-      totalBorrowShares,
-      userBorrowShares,
-      userCollateralBalance,
-    }),
+      ] = constants ?? []
+      const [totalBorrowAmount, totalBorrowShares] = totalBorrow ?? []
+      return {
+        constants: {
+          ltvPrecision,
+          liqPrecision,
+          utilPrecision,
+          feePrecision,
+          exchangePrecision,
+          defaultInt,
+          defaultProtocolFee,
+          maxProtocolFee,
+        },
+        currentRateInfo: {
+          lastBlock: currRateLastBlock,
+          feeToProtocolRate: currRateFeeToProtocolRate,
+          lastTimestamp: currRateLastTimestamp,
+          ratePerSec: currRateRatePerSec,
+        },
+        exchangeRate: {
+          lastTimestamp: exRateLastTimestamp,
+          exchangeRate: exRateExchangeRate,
+        },
+        maxLTV,
+        totalAssets,
+        totalBorrowAmount,
+        totalBorrowShares,
+        userBorrowShares,
+        userCollateralBalance,
+      }
+    },
   })
   const borrowedAmount = useContractRead({
     chainId,
@@ -135,9 +141,9 @@ export const usePairLeverParams = ({
     abi: FortressLendingPair,
     functionName: "convertToAssets",
     args: [
-      accounting.data?.totalBorrowAmount ?? BigNumber.from(0),
-      accounting.data?.totalBorrowShares ?? BigNumber.from(0),
-      accounting.data?.userBorrowShares ?? BigNumber.from(0),
+      accounting.data?.totalBorrowAmount ?? 0n,
+      accounting.data?.totalBorrowShares ?? 0n,
+      accounting.data?.userBorrowShares ?? 0n,
       true,
     ],
     enabled:
@@ -168,19 +174,19 @@ export const usePairLeverParams = ({
 }
 
 export const useLeverPosition = ({
-  borrowAmount = BigNumber.from(0),
-  borrowAssetAddress = ethers.constants.AddressZero,
-  collateralAmount = BigNumber.from(0),
+  borrowAmount = 0n,
+  borrowAssetAddress = zeroAddress,
+  collateralAmount = 0n,
   enabled = true,
   minAmount,
   pairAddress,
   onSuccess,
 }: {
-  borrowAmount?: BigNumber
+  borrowAmount?: bigint
   borrowAssetAddress?: Address
-  collateralAmount?: BigNumber
+  collateralAmount?: bigint
   enabled?: boolean
-  minAmount: BigNumber
+  minAmount: bigint
   pairAddress: Address
   onSuccess?: () => void
 }) => {
@@ -191,7 +197,7 @@ export const useLeverPosition = ({
     abi: FortressLendingPair,
     functionName: "leveragePosition",
     args: [borrowAmount, collateralAmount, minAmount, borrowAssetAddress],
-    enabled: borrowAmount.gt(0) && collateralAmount.gt(0) && enabled,
+    enabled: borrowAmount > 0 && collateralAmount > 0 && enabled,
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -202,12 +208,12 @@ export const useLeverPosition = ({
 }
 
 export const useAddCollateral = ({
-  collateralAmount = BigNumber.from(0),
+  collateralAmount = 0n,
   enabled = true,
   pairAddress,
   onSuccess,
 }: {
-  collateralAmount?: BigNumber
+  collateralAmount?: bigint
   enabled?: boolean
   pairAddress: Address
   onSuccess?: () => void
@@ -220,7 +226,7 @@ export const useAddCollateral = ({
     abi: FortressLendingPair,
     functionName: "addCollateral",
     args: [collateralAmount, borrower],
-    enabled: collateralAmount.gt(0) && borrower !== "0x" && enabled,
+    enabled: collateralAmount > 0 && borrower !== "0x" && enabled,
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -231,12 +237,12 @@ export const useAddCollateral = ({
 }
 
 export const useRemoveCollateral = ({
-  collateralAmount = BigNumber.from(0),
+  collateralAmount = 0n,
   enabled = true,
   pairAddress,
   onSuccess,
 }: {
-  collateralAmount?: BigNumber
+  collateralAmount?: bigint
   enabled?: boolean
   pairAddress: Address
   onSuccess?: () => void
@@ -249,7 +255,7 @@ export const useRemoveCollateral = ({
     abi: FortressLendingPair,
     functionName: "removeCollateral",
     args: [collateralAmount, borrower],
-    enabled: collateralAmount.gt(0) && borrower !== "0x" && enabled,
+    enabled: collateralAmount > 0 && borrower !== "0x" && enabled,
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -260,12 +266,12 @@ export const useRemoveCollateral = ({
 }
 
 export const useRepayAsset = ({
-  shares = BigNumber.from(0),
+  shares = 0n,
   enabled = true,
   pairAddress,
   onSuccess,
 }: {
-  shares?: BigNumber
+  shares?: bigint
   enabled?: boolean
   pairAddress: Address
   onSuccess?: () => void
@@ -278,7 +284,7 @@ export const useRepayAsset = ({
     abi: FortressLendingPair,
     functionName: "repayAsset",
     args: [shares, borrower],
-    enabled: enabled && shares.gt(0) && borrower !== "0x",
+    enabled: enabled && shares > 0 && borrower !== "0x",
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -290,15 +296,15 @@ export const useRepayAsset = ({
 
 export const useRepayAssetWithCollateral = ({
   borrowAssetAddress = "0x",
-  collateralAmount = BigNumber.from(0),
-  minAmount = BigNumber.from(0),
+  collateralAmount = 0n,
+  minAmount = 0n,
   enabled = true,
   pairAddress,
   onSuccess,
 }: {
   borrowAssetAddress?: Address
-  collateralAmount?: BigNumber
-  minAmount?: BigNumber
+  collateralAmount?: bigint
+  minAmount?: bigint
   enabled?: boolean
   pairAddress: Address
   onSuccess?: () => void
@@ -310,7 +316,7 @@ export const useRepayAssetWithCollateral = ({
     abi: FortressLendingPair,
     functionName: "repayAssetWithCollateral",
     args: [collateralAmount, minAmount, borrowAssetAddress],
-    enabled: enabled && collateralAmount.gt(0) && borrowAssetAddress !== "0x",
+    enabled: enabled && collateralAmount > 0 && borrowAssetAddress !== "0x",
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -321,29 +327,27 @@ export const useRepayAssetWithCollateral = ({
 }
 
 export const useSignificantLeverAmount = ({
-  amount = BigNumber.from(0),
+  amount = 0n,
   assetAddress = "0x",
 }: {
-  amount?: BigNumber
+  amount?: bigint
   assetAddress?: Address
 }) => {
   const asset = useTokenOrNative({ address: assetAddress })
-  return amount.gt(parseUnits("0.0001", asset.data?.decimals ?? 18))
-    ? amount
-    : BigNumber.from(0)
+  return amount > parseUnits("0.0001", asset.data?.decimals ?? 18) ? amount : 0n
 }
 
 export const useConvertToShares = ({
-  amount = BigNumber.from(0),
+  amount = 0n,
   enabled = true,
-  totalBorrowAmount = BigNumber.from(0),
-  totalBorrowShares = BigNumber.from(0),
+  totalBorrowAmount = 0n,
+  totalBorrowShares = 0n,
   pairAddress,
 }: {
-  amount?: BigNumber
+  amount?: bigint
   enabled?: boolean
-  totalBorrowAmount?: BigNumber
-  totalBorrowShares?: BigNumber
+  totalBorrowAmount?: bigint
+  totalBorrowShares?: bigint
   pairAddress: Address
 }) => {
   const chainId = useActiveChainId()
@@ -353,19 +357,19 @@ export const useConvertToShares = ({
     abi: FortressLendingPair,
     functionName: "convertToShares",
     args: [totalBorrowAmount, totalBorrowShares, amount, false],
-    enabled: enabled && amount.gt(0),
+    enabled: enabled && amount > 0,
   })
 }
 
 export const useConvertToAssets = ({
-  shares = BigNumber.from(0),
-  totalBorrowAmount = BigNumber.from(0),
-  totalBorrowShares = BigNumber.from(0),
+  shares = 0n,
+  totalBorrowAmount = 0n,
+  totalBorrowShares = 0n,
   pairAddress,
 }: {
-  shares?: BigNumber
-  totalBorrowAmount?: BigNumber
-  totalBorrowShares?: BigNumber
+  shares?: bigint
+  totalBorrowAmount?: bigint
+  totalBorrowShares?: bigint
   pairAddress: Address
 }) => {
   const chainId = useActiveChainId()
@@ -375,6 +379,6 @@ export const useConvertToAssets = ({
     abi: FortressLendingPair,
     functionName: "convertToAssets",
     args: [totalBorrowAmount, totalBorrowShares, shares, false],
-    enabled: shares.gt(0),
+    enabled: shares > 0,
   })
 }

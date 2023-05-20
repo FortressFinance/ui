@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers"
 import { useCallback } from "react"
 import {
   Address,
@@ -29,19 +28,17 @@ export function useConcentratorPendingReward({
 }) {
   const chainId = useActiveChainId()
   const { address: userAddress } = useAccount()
-  const contracts = ybTokenList.map((ybToken) => ({
-    address: ybToken,
-    chainId,
-    abi: AMMConcentratorBase,
-    functionName: "pendingReward",
-    args: [userAddress ?? "0x"],
-  }))
-  const rewards = useContractReads({
-    contracts: contracts,
+  return useContractReads({
+    contracts: ybTokenList.map((ybToken) => ({
+      address: ybToken,
+      chainId,
+      abi: AMMConcentratorBase,
+      functionName: "pendingReward",
+      args: [userAddress ?? "0x"],
+    })),
     enabled: !!userAddress && ybTokenList.length > 0,
-    select: (data) => data.map((reward) => BigNumber.from(reward ?? 0)),
+    select: (results) => results.map((item) => (item.result ?? 0n) as bigint),
   })
-  return rewards
 }
 
 export function useConcentratorClaim({
@@ -65,8 +62,8 @@ export function useConcentratorClaim({
     rewardsBalance.refetch()
     balance.refetch()
   }
-  const ybTokenListWithRewards = ybTokenList.filter((_ybToken, index) =>
-    rewardsBalance.data?.[index]?.gt(0)
+  const ybTokenListWithRewards = ybTokenList.filter(
+    (_ybToken, index) => (rewardsBalance.data?.[index] ?? 0n) > 0
   )
   const prepareWrite = usePrepareContractWrite({
     address: multiClaimAddress,

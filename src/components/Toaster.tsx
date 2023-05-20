@@ -3,11 +3,8 @@ import Link from "next/link"
 import { FC, useCallback, useEffect, useRef, useState } from "react"
 import { FaSignature } from "react-icons/fa"
 import { useHoverDirty } from "react-use"
-import {
-  useNetwork,
-  UserRejectedRequestError,
-  useWaitForTransaction,
-} from "wagmi"
+import { UserRejectedRequestError } from "viem"
+import { useNetwork, useWaitForTransaction } from "wagmi"
 import { shallow } from "zustand/shallow"
 
 import clsxm from "@/lib/clsxm"

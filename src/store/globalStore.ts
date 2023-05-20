@@ -35,7 +35,7 @@ export const useGlobalStore = create<GlobalStore>()(
       setSlippageTolerance: (slippageTolerance) => set({ slippageTolerance }),
     }),
     {
-      name: "fortress.store",
+      name: "fortress-v1.global",
       partialize: (store) => ({
         // persist only the following properties
         consentAccepted: store.consentAccepted,

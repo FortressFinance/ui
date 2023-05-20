@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers"
 import { FC } from "react"
 import { FiArrowRight } from "react-icons/fi"
 import { useAccount } from "wagmi"
@@ -27,8 +26,8 @@ import { GradientText } from "@/components/Typography"
 import { LendingPair } from "@/constant"
 
 type LeverPositionUserStatsProps = LendingPair & {
-  adjustedBorrowAmount?: BigNumber
-  adjustedCollateralAmount?: BigNumber
+  adjustedBorrowAmount?: bigint
+  adjustedCollateralAmount?: bigint
   isUpdatingAmounts: boolean
 }
 

@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers"
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
 import { useController, useForm } from "react-hook-form"
 import { useDebounce } from "react-use"
@@ -23,9 +22,9 @@ type AddCollateralProps = {
   chainId: number
   collateralAssetAddress?: Address
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
-  collateralAmountSignificant: BigNumber
+  collateralAmountSignificant: bigint
   isUpdatingAmounts: boolean
-  setAdjustedCollateralAmount: Dispatch<SetStateAction<BigNumber | undefined>>
+  setAdjustedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
   setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
   pairAddress: Address
   onSuccess: () => void
@@ -53,7 +52,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
     shallow
   )
 
-  const [addedAmount, setAddedAmount] = useState<BigNumber>(BigNumber.from(0))
+  const [addedAmount, setAddedAmount] = useState<bigint>(0n)
 
   const form = useForm<AddCollateralFormValues>({
     values: { amount: "" },
@@ -77,7 +76,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
           parseCurrencyUnits({
             amountFormatted: amount,
             decimals: collateralAssetBalance.data?.decimals,
-          }).gt(collateralAssetBalance.data?.value || BigNumber.from(0))
+          }) > (collateralAssetBalance.data?.value || 0n)
             ? "Insufficient balance"
             : undefined,
       },
@@ -92,7 +91,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
   useDebounce(
     () => {
       if (!Number(amount)) {
-        setAddedAmount(BigNumber.from(0))
+        setAddedAmount(0n)
         setAdjustedCollateralAmount(undefined)
       } else {
         const addedAmount = parseCurrencyUnits({
@@ -100,9 +99,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
           decimals: collateralAssetBalance.data?.decimals,
         })
         setAddedAmount(addedAmount)
-        setAdjustedCollateralAmount(
-          collateralAmountSignificant.add(addedAmount)
-        )
+        setAdjustedCollateralAmount(collateralAmountSignificant + addedAmount)
       }
       setIsUpdatingAmounts(false)
     },
@@ -126,14 +123,14 @@ export const AddCollateral: FC<AddCollateralProps> = ({
     amount: addedAmount,
     spender: pairAddress,
     token: collateralAssetAddress,
-    enabled: !isUpdatingAmounts && addedAmount.gt(0) && form.formState.isValid,
+    enabled: !isUpdatingAmounts && addedAmount > 0 && form.formState.isValid,
   })
   const addCollateral = useAddCollateral({
     collateralAmount: addedAmount,
     enabled:
       !isUpdatingAmounts &&
       approval.isSufficient &&
-      addedAmount.gt(0) &&
+      addedAmount > 0 &&
       form.formState.isValid,
     pairAddress,
     onSuccess,
@@ -214,8 +211,8 @@ export const AddCollateral: FC<AddCollateralProps> = ({
                 !isClientReady ||
                 !isConnected ||
                 isUpdatingAmounts ||
-                collateralAssetBalance.data?.value.eq(addedAmount) ||
-                collateralAssetBalance.data?.value.eq(0)
+                collateralAssetBalance.data?.value === addedAmount ||
+                collateralAssetBalance.data?.value === 0n
               }
               type="button"
             >
