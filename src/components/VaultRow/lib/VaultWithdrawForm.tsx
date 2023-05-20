@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers"
 import { FC, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
@@ -9,7 +8,6 @@ import {
 } from "wagmi"
 import { shallow } from "zustand/shallow"
 
-import { fortLog } from "@/lib/fortLog"
 import { parseCurrencyUnits } from "@/lib/helpers"
 import {
   useActiveChainId,
@@ -98,7 +96,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
     chainId,
     token: outputTokenAddress,
     amount: value.toString(),
-    enabled: value.gt(0),
+    enabled: value > 0,
   })
 
   const vaultContract = useVaultContract(defaultInputToken)
@@ -107,7 +105,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
     !form.formState.isValidating &&
     form.formState.isValid &&
     !previewRedeem.isFetching &&
-    value.gt(0)
+    value > 0
   const enableRedeem = enablePrepareTx && outputIsLp
   const enableRedeemUnderlying = enablePrepareTx && !outputIsLp
 
@@ -134,7 +132,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
       userAddress ?? "0x",
       userAddress ?? "0x",
       value,
-      BigNumber.from(previewRedeem.data?.minAmountWei ?? "0"),
+      BigInt(previewRedeem.data?.minAmountWei ?? "0"),
     ],
   })
   const redeemUnderlying = useContractWrite(prepareRedeemUnderlying.config)
@@ -155,7 +153,6 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
 
   const onConfirmTransactionDetails = () => {
     if (enableRedeem) {
-      fortLog("Redeeming", amountInDebounced)
       const action = "Vault withdrawal"
       const toastId = addToast({ type: "startTx", action })
       redeem
@@ -169,7 +166,6 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
           replaceToast(toastId, { type: "errorWrite", error, action })
         )
     } else if (enableRedeemUnderlying) {
-      fortLog("Redeeming underlying tokens", amountInDebounced)
       const action = "Vault withdrawal"
       const toastId = addToast({ type: "startTx", action })
       redeemUnderlying

@@ -1,5 +1,4 @@
 import * as Tabs from "@radix-ui/react-tabs"
-import { BigNumber } from "ethers"
 import { GetStaticPaths, GetStaticProps, NextPage } from "next"
 import Link from "next/link"
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
@@ -50,9 +49,9 @@ export const getStaticProps: GetStaticProps = (context) => {
 
 const LeverPairDetail: NextPage<LendingPair> = (lendingPair) => {
   const [isUpdatingAmounts, setIsUpdatingAmounts] = useState(false)
-  const [adjustedBorrowAmount, setAdjustedBorrowAmount] = useState<BigNumber>()
+  const [adjustedBorrowAmount, setAdjustedBorrowAmount] = useState<bigint>()
   const [adjustedCollateralAmount, setAdjustedCollateralAmount] =
-    useState<BigNumber>()
+    useState<bigint>()
 
   return (
     <DisabledPage isDisabled={DISABLE_LENDING}>
@@ -128,10 +127,10 @@ const LeverPairHeading: FC<LendingPair> = ({
 }
 
 type ActiveLeverControlsProps = LendingPair & {
-  adjustedBorrowAmount?: BigNumber
+  adjustedBorrowAmount?: bigint
   isUpdatingAmounts: boolean
-  setAdjustedBorrowAmount: Dispatch<SetStateAction<BigNumber | undefined>>
-  setAdjustedCollateralAmount: Dispatch<SetStateAction<BigNumber | undefined>>
+  setAdjustedBorrowAmount: Dispatch<SetStateAction<bigint | undefined>>
+  setAdjustedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
   setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
 }
 
@@ -171,7 +170,7 @@ const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
   // we don't want to change the view unless the condition has truly changed and is not just undefined during refetch
   useEffect(() => {
     if (isClientReady) {
-      if (borrowAmountSignificant.gt(0) || collateralAmountSignificant.gt(0)) {
+      if (borrowAmountSignificant > 0 || collateralAmountSignificant > 0) {
         if (mode === "create") setMode("manage")
       } else if (mode === "manage") {
         setMode("create")

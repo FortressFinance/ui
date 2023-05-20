@@ -1,7 +1,6 @@
-import { Address } from "wagmi"
+import { Address, useContractRead } from "wagmi"
 
 import { useApiConcentratorTargetAssetId } from "@/hooks/lib/api/useApiConcentratorTargetAssetId"
-import { useFallbackRead } from "@/hooks/lib/useFallbackRequest"
 import { useRegistryContract } from "@/hooks/lib/useRegistryContract"
 
 export function useConcentratorTargetAssetId({
@@ -11,14 +10,11 @@ export function useConcentratorTargetAssetId({
 }) {
   const apiQuery = useApiConcentratorTargetAssetId({ targetAsset })
 
-  const targetAssets = useFallbackRead(
-    {
-      ...useRegistryContract(),
-      functionName: "concentratorTargetAssets",
-      enabled: apiQuery.isError,
-    },
-    []
-  )
+  const targetAssets = useContractRead({
+    ...useRegistryContract(),
+    functionName: "concentratorTargetAssets",
+    enabled: apiQuery.isError,
+  })
 
   if (apiQuery.isError) {
     let relevantIndex = -1

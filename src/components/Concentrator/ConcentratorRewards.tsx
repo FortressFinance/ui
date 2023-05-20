@@ -1,6 +1,6 @@
-import { BigNumber, ethers } from "ethers"
 import { FC } from "react"
 import { BiInfoCircle } from "react-icons/bi"
+import { zeroAddress } from "viem"
 import { Address, useAccount } from "wagmi"
 
 import { formatCurrencyUnits, formatPercentage, formatUsd } from "@/lib/helpers"
@@ -168,9 +168,7 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
       concentratorsList.data?.map((x) => x.vaultAssetAddress) ?? [],
     type: firstConcentratorVaultType ?? "balancer",
   })
-  const ybTokenListNonZero = ybTokenList.data?.filter(
-    (x) => x !== ethers.constants.AddressZero
-  )
+  const ybTokenListNonZero = ybTokenList.data?.filter((x) => x !== zeroAddress)
   const rewardsBalance = useConcentratorPendingReward({
     ybTokenList: ybTokenListNonZero ?? [],
   })
@@ -178,8 +176,8 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
     address: concentratorTargetAsset,
   })
   const totalRewards = rewardsBalance.data?.reduce(
-    (accumulator, currentValue) => accumulator.add(currentValue),
-    BigNumber.from(0)
+    (accumulator, currentValue) => accumulator + currentValue,
+    0n
   )
   return (
     <Skeleton
@@ -193,7 +191,7 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
     >
       {isConnected
         ? formatCurrencyUnits({
-            amountWei: (totalRewards ?? BigNumber.from(0)).toString(),
+            amountWei: (totalRewards ?? 0n).toString(),
             decimals: rewardToken.data?.decimals ?? 18,
             maximumFractionDigits: 4,
           })
@@ -221,9 +219,7 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
       concentratorsList.data?.map((x) => x.vaultAssetAddress) ?? [],
     type: firstConcentratorVaultType ?? "balancer",
   })
-  const ybTokenListNonZero = ybTokenList.data?.filter(
-    (x) => x !== ethers.constants.AddressZero
-  )
+  const ybTokenListNonZero = ybTokenList.data?.filter((x) => x !== zeroAddress)
   const claim = useConcentratorClaim({
     targetAsset: concentratorTargetAsset,
     ybTokenList: ybTokenListNonZero ?? [],
@@ -232,14 +228,14 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
     ybTokenList: ybTokenListNonZero ?? [],
   })
   const totalRewards = rewardsBalance.data?.reduce(
-    (accumulator, currentValue) => accumulator.add(currentValue),
-    BigNumber.from(0)
+    (accumulator, currentValue) => accumulator + currentValue,
+    0n
   )
   return (
     <Button
       className="mt-4 w-full py-2"
       disabled={
-        !totalRewards || totalRewards.eq("0") || !isReady || !isConnected
+        !totalRewards || totalRewards === 0n || !isReady || !isConnected
       }
       isLoading={
         concentratorTargetAssetsIsLoading ||

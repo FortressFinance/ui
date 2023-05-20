@@ -1,5 +1,4 @@
 import axios from "axios"
-import { BigNumber } from "ethers"
 import request, { gql } from "graphql-request"
 import { Address } from "wagmi"
 
@@ -46,12 +45,11 @@ export async function getVaultAprFallback(asset: VaultProps["asset"]) {
 }
 
 export async function getFortGlpAprFallback(
-  ethRewardsPerSecond: BigNumber | undefined
+  ethRewardsPerSecond: bigint | undefined
 ) {
   const { aum, priceGmx } = await getGmxPriceData()
   const ethRewardsAnnual =
-    ((ethRewardsPerSecond ?? BigNumber.from(0)).toNumber() * 3600 * 24 * 365) /
-    1e18
+    (Number(ethRewardsPerSecond ?? 0n) * 3600 * 24 * 365) / 1e18
   const ethPrice = await getApiPrice({ asset: ethTokenAddress })
   const gmxRewardsMonthlyEmissionRate = 0 // need to know why is it zero
   const esGmxRewards = priceGmx * gmxRewardsMonthlyEmissionRate * 12
@@ -144,13 +142,11 @@ async function getAuraBalRewardData() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = await request<any>(auraGraphUrl, graphqlQuery)
-  let rewardData = []
-  let totalStaked = 0
   const addresses: { [key: string]: Address } = {}
   const rewardRates: { [key: string]: string } = {}
-  rewardData = data.pool?.rewardData
-  totalStaked = data.pool?.totalStaked
-  rewardData?.map(
+  const rewardData = data.pool?.rewardData
+  const totalStaked = data.pool?.totalStaked
+  rewardData?.forEach(
     (d: { token: { symbol: string; id: string }; rewardRate: string }) => {
       addresses[d?.token?.symbol] = d?.token?.id as Address
       rewardRates[d?.token?.symbol] = d?.rewardRate
@@ -229,8 +225,7 @@ async function getTokenAPR(rewardRate: number, token: Address, tvl: number) {
   const rewardYearly = rewardRate * 86_400 * 365
   const tokenPriceUsd = await getApiPrice({ asset: token })
   const rewardAnnualUsd = rewardYearly * tokenPriceUsd
-  const tokenApr = rewardAnnualUsd / tvl
-  return tokenApr
+  return rewardAnnualUsd / tvl
 }
 
 export async function fetchApiAuraFinance(asset: VaultProps["asset"]) {

@@ -5,20 +5,17 @@ import { useVaultContract } from "@/hooks/lib/useVaultContract"
 
 // work also for the token compounder
 
-export default function useVaultTotalAssets({
+const useVaultTotalAssets = ({
   vaultAddress,
   enabled,
 }: {
   vaultAddress: VaultDynamicProps["vaultAddress"]
   enabled: boolean
-}) {
-  const vaultContract = useVaultContract(vaultAddress)
-
-  const totalAssetsQuery = useContractRead({
-    ...vaultContract,
+}) =>
+  useContractRead({
+    ...useVaultContract(vaultAddress),
     functionName: "totalAssets",
     enabled: enabled,
   })
 
-  return totalAssetsQuery
-}
+export default useVaultTotalAssets

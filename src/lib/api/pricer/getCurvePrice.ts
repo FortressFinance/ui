@@ -1,5 +1,5 @@
 import axios from "axios"
-import { ethers } from "ethers"
+import { formatUnits } from "viem"
 import { Address } from "wagmi"
 import { z } from "zod"
 
@@ -59,12 +59,12 @@ export async function getCurvePrice({
         acc +
         coin.usdPrice *
           parseFloat(
-            ethers.utils.formatUnits(coin.poolBalance ?? "0", coin.decimals)
+            formatUnits(BigInt(coin.poolBalance ?? "0"), Number(coin.decimals))
           )
       )
     }, 0)
     lpTokenPrice =
-      sumUnderlying / parseFloat(ethers.utils.formatUnits(pool.totalSupply, 18))
+      sumUnderlying / parseFloat(formatUnits(BigInt(pool.totalSupply), 18))
   })
   return lpTokenPrice
 }

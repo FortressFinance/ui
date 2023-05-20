@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers"
 import _ from "lodash"
 import {
   Address,
@@ -51,19 +50,28 @@ export const useLendingPairs = ({ chainId }: { chainId?: number }) => {
       },
     ]),
     select: (results) =>
-      _.chunk(results, 5).map(
-        (
-          [name, assetContract, collateralContract, maxLTV, totalAssets],
-          index
-        ) => ({
+      _.chunk(results, 5).map((resultsChunk, index) => {
+        const [name, assetContract, collateralContract, maxLTV, totalAssets] =
+          resultsChunk
+        return {
           pairAddress: chainLendingPairs[index].pairAddress,
-          name: name as string,
-          assetContract: assetContract as Address,
-          collateralContract: collateralContract as Address,
-          maxLTV: maxLTV as BigNumber,
-          totalAssets: totalAssets as BigNumber,
-        })
-      ),
+          name: name.status === "success" ? (name.result as string) : undefined,
+          assetContract:
+            assetContract.status === "success"
+              ? (assetContract.result as Address)
+              : undefined,
+          collateralContract:
+            collateralContract.status === "success"
+              ? (collateralContract.result as Address)
+              : undefined,
+          maxLTV:
+            maxLTV.status === "success" ? (maxLTV.result as bigint) : undefined,
+          totalAssets:
+            totalAssets.status === "success"
+              ? (totalAssets.result as bigint)
+              : undefined,
+        }
+      }),
     enabled: !!chainId && chainLendingPairs.length > 0,
   })
   return chainLendingPairs.length > 0
@@ -91,7 +99,7 @@ export const useLendingDepositPreview = ({
   pairAddress,
   enabled = true,
 }: {
-  amount: BigNumber
+  amount: bigint
   chainId: number
   pairAddress: Address
   enabled?: boolean
@@ -112,7 +120,7 @@ export const useLendingRedeemPreview = ({
   pairAddress,
   enabled = true,
 }: {
-  amount: BigNumber
+  amount: bigint
   chainId: number
   pairAddress: Address
   enabled?: boolean
@@ -135,7 +143,7 @@ export const useLendingDeposit = ({
   enabled = true,
   onSuccess,
 }: {
-  amount: BigNumber
+  amount: bigint
   assetAddress?: Address
   chainId: number
   pairAddress: Address
@@ -151,9 +159,9 @@ export const useLendingDeposit = ({
     abi: FortressLendingPair,
     functionName: "deposit",
     args: [amount, receiver],
-    enabled: !!chainId && amount.gt(0) && receiver !== "0x" && enabled,
+    enabled: !!chainId && amount > 0 && receiver !== "0x" && enabled,
   })
-  const write = useContractWrite(prepare.data)
+  const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
     onSuccess: () => {
@@ -173,7 +181,7 @@ export const useLendingRedeem = ({
   enabled = true,
   onSuccess,
 }: {
-  amount: BigNumber
+  amount: bigint
   assetAddress?: Address
   chainId: number
   pairAddress: Address
@@ -189,9 +197,9 @@ export const useLendingRedeem = ({
     abi: FortressLendingPair,
     functionName: "redeem",
     args: [amount, receiver, receiver],
-    enabled: !!chainId && amount.gt(0) && receiver !== "0x" && enabled,
+    enabled: !!chainId && amount > 0 && receiver !== "0x" && enabled,
   })
-  const write = useContractWrite(prepare.data)
+  const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
     onSuccess: () => {
