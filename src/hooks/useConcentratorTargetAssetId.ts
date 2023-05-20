@@ -8,7 +8,10 @@ export function useConcentratorTargetAssetId({
 }: {
   targetAsset: Address
 }) {
-  const apiQuery = useApiConcentratorTargetAssetId({ targetAsset })
+  const apiQuery = useApiConcentratorTargetAssetId({
+    targetAsset,
+    enabled: true,
+  })
 
   const targetAssets = useContractRead({
     ...useRegistryContract(),

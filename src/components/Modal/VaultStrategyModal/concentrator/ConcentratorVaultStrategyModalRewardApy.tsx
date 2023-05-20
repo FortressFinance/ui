@@ -7,7 +7,7 @@ import { useConcentratorBreakdownApy } from "@/hooks/useConcentratorBreakdownApy
 
 import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrategyModal"
 
-export const VaultStrategyModalConcentratorRewardApy: FC<VaultProps> = (
+export const ConcentratorVaultStrategyModalRewardApy: FC<VaultProps> = (
   props
 ) => {
   const firstConcentratorVaultType = useConcentratorFirstVaultType({

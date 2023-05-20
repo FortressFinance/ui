@@ -13,8 +13,8 @@ import PurpleModal, {
   PurpleModalHeader,
 } from "@/components/Modal/lib/PurpleModal"
 import {
-  VaultStrategyModalAmmApr,
-  VaultStrategyModalTokenApr,
+  CompounderVaultStrategyModalAmmApr,
+  CompounderVaultStrategyModalTokenApr,
 } from "@/components/Modal/VaultStrategyModal"
 import Skeleton from "@/components/Skeleton"
 import Tooltip from "@/components/Tooltip"
@@ -116,9 +116,9 @@ export const CompounderVaultStrategyModal: FC<
                 </h1>
                 <div className="p-4 pb-5 md:px-5">
                   {isToken ? (
-                    <VaultStrategyModalTokenApr {...vaultProps} />
+                    <CompounderVaultStrategyModalTokenApr {...vaultProps} />
                   ) : (
-                    <VaultStrategyModalAmmApr {...vaultProps} />
+                    <CompounderVaultStrategyModalAmmApr {...vaultProps} />
                   )}
                 </div>
               </div>

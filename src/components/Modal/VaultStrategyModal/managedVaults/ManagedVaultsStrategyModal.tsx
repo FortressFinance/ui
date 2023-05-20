@@ -2,16 +2,23 @@ import * as Dialog from "@radix-ui/react-dialog"
 import * as Tabs from "@radix-ui/react-tabs"
 import Link from "next/link"
 import { FC, MouseEventHandler } from "react"
+import { BiInfoCircle } from "react-icons/bi"
 import { useAccount, useNetwork } from "wagmi"
 
-import { useTokenOrNative } from "@/hooks"
+import { formatPercentage } from "@/lib/helpers"
+import { useTokenOrNative, useVaultFees } from "@/hooks"
 
 import { ModalBaseProps } from "@/components/Modal/lib/ModalBase"
 import PurpleModal, {
   PurpleModalContent,
   PurpleModalHeader,
 } from "@/components/Modal/lib/PurpleModal"
-import { ManagedVaultsActivityTable } from "@/components/Modal/VaultStrategyModal"
+import {
+  ManagedVaultsActivityTable,
+  ManagedVaultsStrategyModalAllocations,
+  ManagedVaultsStrategyModalApr,
+} from "@/components/Modal/VaultStrategyModal"
+import Skeleton from "@/components/Skeleton"
 import Tooltip from "@/components/Tooltip"
 import { VaultRowPropsWithProduct } from "@/components/VaultRow"
 
@@ -31,7 +38,10 @@ export const ManagedVaultsStrategyModal: FC<
     address: vaultProps.ybTokenAddress ?? "0x",
   })
 
-  const strategyTextValue = undefined
+  const fees = useVaultFees(vaultProps)
+
+  const strategyTextValue =
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In gravida maximus tellus vitae accumsan. Suspendisse maximus placerat risus, vitae rhoncus quam dapibus sed. In pulvinar purus ornare ligula aliquet porttitor. Nulla facilisi. Nulla malesuada, augue ac gravida varius, purus neque ultricies enim, non varius tortor mauris eu elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aliquam purus nulla, eleifend in metus at, sollicitudin laoreet elit. Vestibulum finibus erat sed massa euismod convallis. Nunc auctor augue vel laoreet pellentesque. Nullam et egestas erat.  Aenean dignissim turpis ac sodales congue. Nam eu accumsan lacus. Aliquam erat volutpat. In lobortis eros scelerisque nibh euismod sollicitudin. Vivamus id diam id dolor fringilla varius. Vestibulum in nibh sit amet eros malesuada congue id et mauris. Aliquam condimentum odio venenatis, congue est sed, consequat nulla. Sed sem nunc, suscipit sit amet neque nec, eleifend dignissim mi. Nullam commodo magna quis nisi lacinia posuere. "
 
   // limit the token name to 11 char max
   const truncateString = (str?: string): string => (str ? str.slice(0, 11) : "")
@@ -149,22 +159,54 @@ export const ManagedVaultsStrategyModal: FC<
                   </Tabs.Trigger>
                 </Tabs.List>
                 <Tabs.Content
-                  className="space-y-3 p-4 pb-5 leading-relaxed text-pink-50 max-md:text-sm md:px-5"
+                  className="space-y-3 p-4 px-5 pb-5 leading-relaxed text-pink-50 max-md:text-sm"
                   value="tabApr"
                 >
-                  fgdg
+                  <ManagedVaultsStrategyModalApr />
                 </Tabs.Content>
                 <Tabs.Content
-                  className="space-y-3 py-4 pb-5 leading-relaxed text-pink-50 max-md:text-sm md:px-5"
+                  className="space-y-3 px-5 py-4 pb-5 leading-relaxed text-pink-50 max-md:text-sm"
                   value="tabFees"
                 >
-                  ddsfsdf
+                  <dl className="grid grid-cols-[max-content,auto] gap-2 text-sm text-pink-50">
+                    <dt>Deposit</dt>
+                    <dd className="text-right">
+                      <Skeleton isLoading={fees.isLoading}>
+                        {formatPercentage(fees.data?.depositFee)}
+                      </Skeleton>
+                    </dd>
+                    <dt>
+                      <Tooltip label="Withdrawal fees stay in the vault and are distributed to vault participants. Used as a mechanism to protect against mercenary capital.">
+                        <span className="flex items-center gap-1">
+                          Withdrawal{" "}
+                          <BiInfoCircle className="h-5 w-5 cursor-pointer" />
+                        </span>
+                      </Tooltip>
+                    </dt>
+                    <dd className="text-right">
+                      <Skeleton isLoading={fees.isLoading}>
+                        {formatPercentage(fees.data?.withdrawFee)}
+                      </Skeleton>
+                    </dd>
+                    <dt>Management</dt>
+                    <dd className="text-right">
+                      <Skeleton isLoading={fees.isLoading}>
+                        {formatPercentage(fees.data?.managementFee)}
+                      </Skeleton>
+                    </dd>
+                    <dt>Performance</dt>
+                    <dd className="text-right">
+                      <Skeleton isLoading={fees.isLoading}>
+                        {formatPercentage(fees.data?.platformFee)}
+                      </Skeleton>
+                    </dd>
+                  </dl>
                 </Tabs.Content>
                 <Tabs.Content
-                  className="space-y-3 py-4 pb-5 leading-relaxed text-pink-50 max-md:text-sm md:px-5"
+                  className="space-y-3 px-5 py-4 pb-5 leading-relaxed text-pink-50 max-md:text-sm"
                   value="tabAllocations"
                 >
-                  dfsfds
+                  <ManagedVaultsStrategyModalAllocations />
                 </Tabs.Content>
               </Tabs.Root>
             </div>

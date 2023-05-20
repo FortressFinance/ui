@@ -1,12 +1,16 @@
 import { FC } from "react"
 
-import { VaultProps } from "@/lib/types"
-import { useConcentratorVaultBreakdownApy } from "@/hooks/useConcentratorVaultBreakdownApy"
+import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrategyModal"
 
-import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalDefinitionList"
-
-export const VaultStrategyModalConcentratorApr: FC<VaultProps> = (props) => {
-  const breakdownApr = useConcentratorVaultBreakdownApy(props)
+export const ManagedVaultsStrategyModalApr: FC = () => {
+  const breakdownApr = {
+    isLoading: false,
+    data: {
+      GMXApr: 0.1,
+      ETHApr: 0.23,
+      totalApr: 0.33,
+    },
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = breakdownApr.data as any

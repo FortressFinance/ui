@@ -10,8 +10,16 @@ import { useVaultContract } from "@/hooks/lib/useVaultContract"
 // TODO: Implement full fees support
 const HARDCODED_FEES = { depositFee: "0", managementFee: "0" }
 
-export function useConcentratorVaultFees({ asset, vaultAddress }: VaultProps) {
-  const apiConcentratorStaticData = useApiConcentratorStaticData()
+export function useConcentratorVaultFees({
+  asset,
+  vaultAddress,
+  enabled,
+}: {
+  asset: VaultProps["asset"]
+  vaultAddress: VaultProps["vaultAddress"]
+  enabled: boolean
+}) {
+  const apiConcentratorStaticData = useApiConcentratorStaticData({ enabled })
   const matchedVault = findApiConcentratorForPrimaryAsset(
     apiConcentratorStaticData.data,
     vaultAddress
@@ -24,7 +32,7 @@ export function useConcentratorVaultFees({ asset, vaultAddress }: VaultProps) {
   const vaultContract = useVaultContract(ybTokenAddress)
   const fallbackRequest = useContractRead({
     ...vaultContract,
-    enabled: apiConcentratorStaticData.isError,
+    enabled: apiConcentratorStaticData.isError && enabled,
     functionName: "fees",
     select: ([
       platformFeePercentage,
@@ -37,16 +45,18 @@ export function useConcentratorVaultFees({ asset, vaultAddress }: VaultProps) {
     }),
   })
 
-  return apiConcentratorStaticData.isError
-    ? fallbackRequest
-    : {
-        ...apiConcentratorStaticData,
-        data: {
-          ...HARDCODED_FEES,
-          platformFee: matchedVault?.concentrator?.platformFee,
-          withdrawFee: matchedVault?.concentrator?.withdrawalFee,
-        },
-      }
+  if (apiConcentratorStaticData.isError) {
+    return fallbackRequest
+  }
+
+  return {
+    ...apiConcentratorStaticData,
+    data: {
+      ...HARDCODED_FEES,
+      platformFee: matchedVault?.concentrator?.platformFee,
+      withdrawFee: matchedVault?.concentrator?.withdrawalFee,
+    },
+  }
 }
 
 function findApiConcentratorForPrimaryAsset(
