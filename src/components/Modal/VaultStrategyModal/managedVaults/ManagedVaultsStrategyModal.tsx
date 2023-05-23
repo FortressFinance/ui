@@ -152,7 +152,7 @@ export const ManagedVaultsStrategyModal: FC<
                     Fees
                   </Tabs.Trigger>
                   <Tabs.Trigger
-                    className="h-[41px] w-[auto] p-3 text-xs font-semibold uppercase text-pink-300 ui-state-active:border-b ui-state-active:border-pink-400 ui-state-active:bg-pink/10 max-md:text-center md:px-5"
+                    className="h-[41px] w-[auto] p-3 text-xs font-semibold uppercase text-pink-300 ui-state-active:border-b ui-state-active:border-pink-400 ui-state-active:bg-pink/10 max-md:w-1/3 max-md:text-center md:px-5"
                     value="tabAllocations"
                   >
                     Allocations

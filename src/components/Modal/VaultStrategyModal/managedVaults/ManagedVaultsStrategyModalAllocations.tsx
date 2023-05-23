@@ -1,8 +1,8 @@
-import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js"
+import { ArcElement, Chart as ChartJS, Colors, Legend, Tooltip } from "chart.js"
 import { FC } from "react"
 import { Doughnut } from "react-chartjs-2"
 
-ChartJS.register(ArcElement, Tooltip, Legend)
+ChartJS.register(ArcElement, Tooltip, Legend, Colors)
 
 export const ManagedVaultsStrategyModalAllocations: FC = () => {
   const data = {
@@ -32,5 +32,45 @@ export const ManagedVaultsStrategyModalAllocations: FC = () => {
     ],
   }
 
-  return <Doughnut data={data} />
+  const options = {
+    plugins: {
+      legend: {
+        position: "bottom", // Adjust the position of the legend
+        align: "start",
+        labels: {
+          font: {
+            size: 14, // Customize the font size
+          },
+          boxWidth: 20, // Adjust the width of the legend color boxes
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          generateLabels: (chart: any) => {
+            const { data } = chart
+            if (data.labels.length && data.datasets.length) {
+              return data.labels.map((label: string, index: number) => {
+                const dataset = data.datasets[0]
+                const value = dataset.data[index]
+                return {
+                  text: `${label}: ${value}`,
+                  fontColor: "rgb(243,215,229)",
+                  fillStyle: dataset.backgroundColor[index],
+                  hidden: chart.getDatasetMeta(0).data[index].hidden,
+                  lineCap: "round",
+                  lineDash: [],
+                  lineDashOffset: 0,
+                  lineJoin: "round",
+                  lineWidth: 1,
+                  strokeStyle: dataset.borderColor[index],
+                  pointStyle: dataset.pointStyle,
+                  rotation: 0,
+                }
+              })
+            }
+            return []
+          },
+        },
+      },
+    },
+  }
+
+  return <Doughnut data={data} options={options} className="w-full" />
 }
