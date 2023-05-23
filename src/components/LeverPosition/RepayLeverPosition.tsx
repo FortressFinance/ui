@@ -1,13 +1,20 @@
 import * as ToggleGroup from "@radix-ui/react-toggle-group"
-import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import { SubmitHandler, useController, useForm } from "react-hook-form"
 import { useDebounce } from "react-use"
 import { useAccount } from "wagmi"
 import { shallow } from "zustand/shallow"
 
 import {
-  addSlippage,
   assetToCollateral,
+  calculateInterestSinceLastAccrual,
   collateralToAsset,
   subSlippage,
 } from "@/lib"
@@ -97,15 +104,11 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   const activeRepaymentBalanceAmount = isRepayingWithCollateral
     ? collateralAmountSignificant ?? 0n
     : borrowAssetBalance.data?.value ?? 0n
-
   const maximumAmountRepayable = isRepayingWithCollateral
-    ? addSlippage(
-        assetToCollateral(
-          pairLeverParams.data.borrowedAmount,
-          pairLeverParams.data.exchangeRate,
-          pairLeverParams.data.constants?.exchangePrecision
-        ),
-        slippageTolerance
+    ? assetToCollateral(
+        pairLeverParams.data.borrowedAmount ?? 0n,
+        pairLeverParams.data.exchangeRate,
+        pairLeverParams.data.constants?.exchangePrecision
       )
     : pairLeverParams.data.borrowedAmount ?? 0n
 
@@ -187,12 +190,24 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     form.reset({ amount: "" })
   }
 
+  const interestSinceLastAccrual = useMemo(
+    () =>
+      calculateInterestSinceLastAccrual({
+        borrowedAmount: pairLeverParams.data.borrowedAmount,
+        interestAccruedAt: pairLeverParams.data.interestAccruedAt,
+        interestRatePerSecond: pairLeverParams.data.interestRatePerSecond,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [repaymentAmount]
+  )
+  const repaymentAmountToApprove = repaymentAmount + interestSinceLastAccrual
   const approval = useTokenApproval({
-    amount: repaymentAmount,
+    amount: repaymentAmountToApprove,
     spender: pairAddress,
     token: borrowAssetAddress,
     enabled:
       !isUpdatingAmounts && !isRepayingWithCollateral && repaymentAmount > 0,
+    onSuccess: () => repayAsset.prepare.refetch(),
   })
   const sharesToRepay = useConvertToShares({
     amount: repaymentAmount,
@@ -417,7 +432,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
               </Button>
             ) : (
               <ApproveToken
-                amount={repaymentAmount}
+                amount={repaymentAmountToApprove}
                 approval={approval}
                 spender={pairAddress}
               />

@@ -160,6 +160,9 @@ export const usePairLeverParams = ({
     data: {
       constants: accounting.data?.constants,
       exchangeRate: accounting.data?.exchangeRate.exchangeRate,
+      interestAccruedAt: Number(
+        accounting.data?.currentRateInfo.lastTimestamp ?? 0
+      ),
       interestRatePerSecond: accounting.data?.currentRateInfo.ratePerSec,
       maxLTV: accounting.data?.maxLTV,
       borrowedAmount: borrowedAmount.data,
@@ -270,11 +273,13 @@ export const useRepayAsset = ({
   enabled = true,
   pairAddress,
   onSuccess,
+  onPrepareError,
 }: {
   shares?: bigint
   enabled?: boolean
   pairAddress: Address
   onSuccess?: () => void
+  onPrepareError?: (error: Error) => void
 }) => {
   const chainId = useActiveChainId()
   const { address: borrower = "0x" } = useAccount()
@@ -285,6 +290,7 @@ export const useRepayAsset = ({
     functionName: "repayAsset",
     args: [shares, borrower],
     enabled: enabled && shares > 0 && borrower !== "0x",
+    onError: onPrepareError,
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -379,7 +385,7 @@ export const useConvertToAssets = ({
     address: pairAddress,
     abi: FortressLendingPair,
     functionName: "convertToAssets",
-    args: [totalBorrowAmount, totalBorrowShares, shares, false],
+    args: [totalBorrowAmount, totalBorrowShares, shares, true],
     enabled: shares > 0,
     cacheOnBlock: true,
   })
