@@ -2,7 +2,6 @@ import axios from "axios"
 import { Address, useQuery } from "wagmi"
 import { z } from "zod"
 
-import { convertToApr } from "@/lib/api/vaults/convertToApy"
 import { useActiveChainId } from "@/hooks"
 
 import {
@@ -30,7 +29,7 @@ export default function useCurveVaultArbitrumTotalApr({
 
   return {
     ...breakdownApr,
-    data: !breakdownApr.data ? 0 : convertToApr(breakdownApr.data.totalApy),
+    data: !breakdownApr.data ? 0 : breakdownApr.data.totalApr,
   }
 }
 
@@ -67,23 +66,23 @@ const respSchema = z.object({
 async function getCurveArbitrumApi(poolCurveAddress: Address) {
   const resp = await axios.get(convexSidechainsUrl)
   const parsed = respSchema.parse(resp.data)
-  let crvApy = 0,
-    cvxApy = 0,
-    baseApy = 0
+  let crvApr = 0,
+    cvxApr = 0,
+    baseApr = 0
   Object.entries(parsed.apys).forEach(([key, value]) => {
     if (
       poolCurveAddress !== "0x" &&
       key.toLocaleLowerCase().includes(poolCurveAddress.toLocaleLowerCase())
     ) {
-      baseApy = value.baseApy / 100
-      crvApy = value.crvApy / 100
-      cvxApy = value.cvxApy / 100
+      baseApr = value.baseApy / 100
+      crvApr = value.crvApy / 100
+      cvxApr = value.cvxApy / 100
     }
   })
   return {
-    baseApy,
-    crvApy,
-    cvxApy,
-    totalApy: baseApy + crvApy + cvxApy,
+    baseApr,
+    crvApr,
+    cvxApr,
+    totalApr: baseApr + crvApr + cvxApr,
   }
 }
