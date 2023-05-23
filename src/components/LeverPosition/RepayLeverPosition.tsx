@@ -86,7 +86,6 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   const [selectedPreset, setSelectedPreset] = useState<string>("")
   const [isTokenSelectModalOpen, setIsTokenSelectModalOpen] = useState(false)
   const [repaymentAmount, setRepaymentAmount] = useState<bigint>(0n)
-  const repaymentAmountMin = subSlippage(repaymentAmount, slippageTolerance)
 
   const form = useForm<RepayLeverPositionFormValues>({
     values: { amount: "", asset: borrowAssetAddress },
@@ -227,11 +226,15 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     pairAddress,
     onSuccess,
   })
+  const repaymentAmountMin = collateralToAsset(
+    subSlippage(repaymentAmount, slippageTolerance),
+    pairLeverParams.data.exchangeRate,
+    pairLeverParams.data.constants?.exchangePrecision
+  )
   const repayAssetWithCollateral = useRepayAssetWithCollateral({
     borrowAssetAddress: borrowAssetAddress,
     collateralAmount: repaymentAmount,
-    // TODO: lever Need a working method to calculate this value
-    minAmount: 0n,
+    minAmount: repaymentAmountMin,
     enabled:
       !isUpdatingAmounts &&
       isRepayingWithCollateral &&
@@ -419,7 +422,11 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
                 disabled={isSubmitDisabled}
                 isLoading={isRepayLoading}
               >
-                Repay with collateral
+                {repayAssetWithCollateral.prepare.error?.message.includes(
+                  "SlippageTooHigh"
+                )
+                  ? "Slippage too high"
+                  : "Repay with collateral"}
               </Button>
             ) : approval.isSufficient ? (
               <Button

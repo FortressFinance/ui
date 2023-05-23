@@ -66,7 +66,7 @@ export const VaultTable: FC<PropsWithChildren<VaultTableProps>> = ({
             </>
           )}
           <TableHeader className="flex justify-end">
-            <TxSettingsPopover />
+            <TxSettingsPopover popoverClassName="md:rounded-t-none md:border-t-0" />
           </TableHeader>
         </TableRow>
       </div>
