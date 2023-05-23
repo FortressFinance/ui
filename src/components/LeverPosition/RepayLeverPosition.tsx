@@ -187,6 +187,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   const onSuccess = () => {
     _onSuccess()
     form.reset({ amount: "" })
+    setSelectedPreset("")
   }
 
   const interestSinceLastAccrual = useMemo(
