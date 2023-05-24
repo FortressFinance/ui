@@ -66,7 +66,7 @@ const respSchema = z.object({
 async function getCurveArbitrumApi(poolCurveAddress: Address) {
   const resp = await axios.get(convexSidechainsUrl)
   const parsed = respSchema.parse(resp.data)
-  return Object.entries(apys).reduce(
+  return Object.entries(parsed.apys).reduce(
     (accumulator, [key, value]) => {
       if (
         poolCurveAddress !== "0x" &&
