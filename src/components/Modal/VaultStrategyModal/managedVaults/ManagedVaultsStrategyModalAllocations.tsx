@@ -1,5 +1,5 @@
 import { ArcElement, Chart as ChartJS, Colors, Legend, Tooltip } from "chart.js"
-import { FC } from "react"
+import { FC, Fragment } from "react"
 import { Doughnut } from "react-chartjs-2"
 
 import { formatPercentage } from "@/lib/helpers"
@@ -55,10 +55,9 @@ export const ManagedVaultsStrategyModalAllocations: FC = () => {
       <Doughnut data={data} options={options} className="w-full" />
       <div className="grid grid-cols-[20px,auto,1fr] gap-1.5">
         {data.labels?.map((label, i) => (
-          <>
+          <Fragment key={`legend-${i}`}>
             <div
-              key={`legend-${i}`}
-              className="mt-1 h-4 w-4 border"
+              className="gr mt-1 h-4 w-4 border"
               style={{
                 borderColor: `${data.datasets?.[0].borderColor[i]}`,
                 backgroundColor: `${data.datasets?.[0].backgroundColor[i]}`,
@@ -77,7 +76,7 @@ export const ManagedVaultsStrategyModalAllocations: FC = () => {
                 (data.datasets?.[0]?.data?.[i] * 100) / sumTotal / 100
               )}
             </span>
-          </>
+          </Fragment>
         ))}
       </div>
     </div>
