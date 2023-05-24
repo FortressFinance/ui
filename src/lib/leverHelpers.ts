@@ -73,12 +73,3 @@ export const calculateMinCollateralRequired = ({
   maxLTV = 1n,
   ltvPrecision = 1n,
 }) => (borrowedAmountAsCollateral * ltvPrecision) / maxLTV
-
-export const calculateInterestSinceLastAccrual = ({
-  borrowedAmount = 0n,
-  interestAccruedAt = 0,
-  interestRatePerSecond = 0n,
-}) =>
-  (BigInt(Math.floor(Date.now() / 1000) - interestAccruedAt) *
-    (borrowedAmount * interestRatePerSecond)) /
-  BigInt(1e18)
