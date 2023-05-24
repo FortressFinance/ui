@@ -72,13 +72,13 @@ async function getCurveArbitrumApi(poolCurveAddress: Address) {
         poolCurveAddress !== "0x" &&
         key.toLowerCase().includes(poolCurveAddress.toLowerCase())
       ) {
-        accumulator.baseApy = value.baseApy / 100;
-        accumulator.crvApy = value.crvApy / 100;
-        accumulator.cvxApy = value.cvxApy / 100;
-        accumulator.totalApr = accumulator.baseApy + accumulator.crvApy + accumulator.cvxApy;
+        accumulator.baseApr = value.baseApy / 100;
+        accumulator.crvApr = value.crvApy / 100;
+        accumulator.cvxApr = value.cvxApy / 100;
+        accumulator.totalApr = accumulator.baseApr + accumulator.crvApr + accumulator.cvxApr;
       }
       return accumulator;
     },
-    { baseApy: 0, crvApy: 0, cvxApy: 0, totalApr: 0 }
+    { baseApr: 0, crvApr: 0, cvxApr: 0, totalApr: 0 }
   )
 }
