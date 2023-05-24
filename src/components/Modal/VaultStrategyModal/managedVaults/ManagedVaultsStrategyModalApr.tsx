@@ -12,7 +12,9 @@ export const ManagedVaultsStrategyModalApr: FC = () => {
     },
   }
 
-  const data = breakdownApr.data
+  // we need it as we mock the breakdownApr.data above
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = breakdownApr.data as any
 
   // eslint-disable-next-line no-sparse-arrays
   const items = [
