@@ -4,7 +4,11 @@ import { useDebounce } from "react-use"
 import { Address, useAccount } from "wagmi"
 import { shallow } from "zustand/shallow"
 
-import { assetToCollateral, calculateMinCollateralRequired } from "@/lib"
+import {
+  addSlippage,
+  assetToCollateral,
+  calculateMinCollateralRequired,
+} from "@/lib"
 import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
 import {
   useClientReady,
@@ -72,8 +76,9 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
     maxLTV: pairLeverParams.data.maxLTV,
     ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
   })
+  const safeMinCollateralRequired = addSlippage(minCollateralRequired, 2)
   const maxCollateralWithdrawable =
-    collateralAmountSignificant - minCollateralRequired
+    collateralAmountSignificant - safeMinCollateralRequired
 
   const {
     field: { onChange: onChangeAmount, ...amountField },
@@ -141,7 +146,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
     <>
       <form
         onSubmit={form.handleSubmit(() => {
-          const action = "Depositing additional collateral"
+          const action = "Collateral removal"
           const toastId = addToast({ type: "startTx", action })
           removeCollateral.write
             .writeAsync?.()

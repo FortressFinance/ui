@@ -29,9 +29,6 @@ export const collateralToAsset = (
   exchangePrecision = 1n
 ) => (amount * exchangeRate) / exchangePrecision
 
-export const addSlippage = (amount = 0n, slippage: number) =>
-  amount + amount / BigInt(1 / slippage)
-
 export const calculateAssetsAvailable = ({
   totalAssets = 0n,
   totalBorrowAmount = 0n,
@@ -75,6 +72,13 @@ export const calculateMinCollateralRequired = ({
   borrowedAmountAsCollateral = 1n,
   maxLTV = 1n,
   ltvPrecision = 1n,
+}) => (borrowedAmountAsCollateral * ltvPrecision) / maxLTV
+
+export const calculateInterestSinceLastAccrual = ({
+  borrowedAmount = 0n,
+  interestAccruedAt = 0,
+  interestRatePerSecond = 0n,
 }) =>
-  (borrowedAmountAsCollateral * ltvPrecision) / maxLTV +
-  (borrowedAmountAsCollateral * ltvPrecision) / 9_000_000n
+  (BigInt(Math.floor(Date.now() / 1000) - interestAccruedAt) *
+    (borrowedAmount * interestRatePerSecond)) /
+  BigInt(1e18)

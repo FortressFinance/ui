@@ -5,7 +5,7 @@ import { useDebounce } from "react-use"
 import { Address, useAccount } from "wagmi"
 import { shallow } from "zustand/shallow"
 
-import { calculateMaxLeverage } from "@/lib"
+import { calculateMaxLeverage, subSlippage } from "@/lib"
 import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
 import {
   useClientReady,
@@ -19,7 +19,7 @@ import { ApproveToken } from "@/components"
 import Button from "@/components/Button"
 import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
 
-import { useToastStore } from "@/store"
+import { useGlobalStore, useToastStore } from "@/store"
 
 type CreateLeverPositionProps = {
   chainId: number
@@ -27,6 +27,7 @@ type CreateLeverPositionProps = {
   collateralAssetAddress?: Address
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
   adjustedBorrowAmount?: bigint
+  adjustedCollateralAmount?: bigint
   isUpdatingAmounts: boolean
   setAdjustedBorrowAmount: Dispatch<SetStateAction<bigint | undefined>>
   setAdjustedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
@@ -46,6 +47,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
   collateralAssetAddress,
   collateralAssetBalance,
   adjustedBorrowAmount,
+  adjustedCollateralAmount,
   isUpdatingAmounts,
   setAdjustedBorrowAmount,
   setAdjustedCollateralAmount,
@@ -59,6 +61,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     (state) => [state.addToast, state.replaceToast],
     shallow
   )
+  const slippageTolerance = useGlobalStore((state) => state.slippageTolerance)
 
   const pairLeverParams = usePairLeverParams({ chainId, pairAddress })
   const maxLeverage = calculateMaxLeverage({
@@ -157,19 +160,23 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
   const approval = useTokenApproval({
     amount: collateralAmount,
     spender: pairAddress,
-    token: borrowAssetAddress,
+    token: collateralAssetAddress,
     enabled: !isUpdatingAmounts && collateralAmount > 0,
   })
+  const minAmount = subSlippage(
+    (adjustedCollateralAmount ?? 0n) - collateralAmount,
+    slippageTolerance
+  )
   const leverPosition = useLeverPosition({
     borrowAmount: adjustedBorrowAmount,
     borrowAssetAddress,
     collateralAmount,
-    // TODO: lever minAmount
-    minAmount: 1n,
+    minAmount,
     enabled:
       !isUpdatingAmounts &&
       leverAmount > 1 &&
       approval.isSufficient &&
+      minAmount > 0 &&
       !isUpdatingAmounts,
     pairAddress,
     onSuccess,
@@ -186,7 +193,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     leverPosition.wait.isLoading
 
   const submitPosition: SubmitHandler<CreateLeverPositionFormValues> = () => {
-    const action = "Creating levered position"
+    const action = "Levered position creation"
     const toastId = addToast({ type: "startTx", action })
     leverPosition.write
       .writeAsync?.()
@@ -310,6 +317,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
               amount={collateralAmount}
               approval={approval}
               disabled={isSubmitDisabled}
+              spender={pairAddress}
             />
           )
         ) : (

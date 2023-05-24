@@ -1,11 +1,23 @@
 import * as ToggleGroup from "@radix-ui/react-toggle-group"
-import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import { SubmitHandler, useController, useForm } from "react-hook-form"
 import { useDebounce } from "react-use"
 import { useAccount } from "wagmi"
 import { shallow } from "zustand/shallow"
 
-import { addSlippage, assetToCollateral, collateralToAsset } from "@/lib"
+import {
+  assetToCollateral,
+  calculateInterestSinceLastAccrual,
+  collateralToAsset,
+  subSlippage,
+} from "@/lib"
 import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
 import {
   useClientReady,
@@ -23,7 +35,7 @@ import Button from "@/components/Button"
 import TokenSelectModal from "@/components/Modal/TokenSelectModal"
 import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
 
-import { useToastStore } from "@/store"
+import { useGlobalStore, useToastStore } from "@/store"
 
 type RepayLeverPositionProps = {
   chainId: number
@@ -46,8 +58,6 @@ type RepayLeverPositionFormValues = {
   asset?: Address
 }
 
-const SLIPPAGE = 0.00001
-
 export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   chainId,
   borrowAmountSignificant,
@@ -69,13 +79,13 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     (state) => [state.addToast, state.replaceToast],
     shallow
   )
+  const slippageTolerance = useGlobalStore((state) => state.slippageTolerance)
 
   const pairLeverParams = usePairLeverParams({ chainId, pairAddress })
 
   const [selectedPreset, setSelectedPreset] = useState<string>("")
   const [isTokenSelectModalOpen, setIsTokenSelectModalOpen] = useState(false)
   const [repaymentAmount, setRepaymentAmount] = useState<bigint>(0n)
-  const [_repaymentAmountMin, setRepaymentAmountMin] = useState<bigint>(0n)
 
   const form = useForm<RepayLeverPositionFormValues>({
     values: { amount: "", asset: borrowAssetAddress },
@@ -93,10 +103,9 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   const activeRepaymentBalanceAmount = isRepayingWithCollateral
     ? collateralAmountSignificant ?? 0n
     : borrowAssetBalance.data?.value ?? 0n
-
   const maximumAmountRepayable = isRepayingWithCollateral
     ? assetToCollateral(
-        pairLeverParams.data.borrowedAmount,
+        pairLeverParams.data.borrowedAmount ?? 0n,
         pairLeverParams.data.exchangeRate,
         pairLeverParams.data.constants?.exchangePrecision
       )
@@ -178,14 +187,27 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   const onSuccess = () => {
     _onSuccess()
     form.reset({ amount: "" })
+    setSelectedPreset("")
   }
 
+  const interestSinceLastAccrual = useMemo(
+    () =>
+      calculateInterestSinceLastAccrual({
+        borrowedAmount: pairLeverParams.data.borrowedAmount,
+        interestAccruedAt: pairLeverParams.data.interestAccruedAt,
+        interestRatePerSecond: pairLeverParams.data.interestRatePerSecond,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [repaymentAmount]
+  )
+  const repaymentAmountToApprove = repaymentAmount + interestSinceLastAccrual
   const approval = useTokenApproval({
-    amount: repaymentAmount,
+    amount: repaymentAmountToApprove,
     spender: pairAddress,
     token: borrowAssetAddress,
     enabled:
       !isUpdatingAmounts && !isRepayingWithCollateral && repaymentAmount > 0,
+    onSuccess: () => repayAsset.prepare.refetch(),
   })
   const sharesToRepay = useConvertToShares({
     amount: repaymentAmount,
@@ -205,17 +227,20 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     pairAddress,
     onSuccess,
   })
+  const repaymentAmountMin = collateralToAsset(
+    subSlippage(repaymentAmount, slippageTolerance),
+    pairLeverParams.data.exchangeRate,
+    pairLeverParams.data.constants?.exchangePrecision
+  )
   const repayAssetWithCollateral = useRepayAssetWithCollateral({
     borrowAssetAddress: borrowAssetAddress,
     collateralAmount: repaymentAmount,
-    // TODO: lever Need a working method to calculate this value
-    minAmount: 0n,
+    minAmount: repaymentAmountMin,
     enabled:
       !isUpdatingAmounts &&
       isRepayingWithCollateral &&
       repaymentAmount > 0 &&
-      // TODO: lever This is not working currently because repaymentAmountMin is only set when using the preset options
-      // repaymentAmountMin > 0 &&
+      repaymentAmountMin > 0 &&
       form.formState.isValid,
     pairAddress,
     onSuccess,
@@ -344,18 +369,13 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
                 (maximumAmountRepayable * BigInt(value)) / 100n
               onChangeAmount(
                 formatCurrencyUnits({
-                  amountWei: addSlippage(
-                    repaymentAmount,
-                    SLIPPAGE * 10
-                  ).toString(),
+                  amountWei: repaymentAmount.toString(),
                   decimals: activeRepaymentAsset?.decimals,
                 })
               )
-              setRepaymentAmountMin(repaymentAmount)
               setSelectedPreset(value)
             } else {
               onChangeAmount("")
-              setRepaymentAmountMin(0n)
               setSelectedPreset("")
             }
           }}
@@ -403,7 +423,11 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
                 disabled={isSubmitDisabled}
                 isLoading={isRepayLoading}
               >
-                Repay with collateral
+                {repayAssetWithCollateral.prepare.error?.message.includes(
+                  "SlippageTooHigh"
+                )
+                  ? "Slippage too high"
+                  : "Repay with collateral"}
               </Button>
             ) : approval.isSufficient ? (
               <Button
@@ -416,9 +440,9 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
               </Button>
             ) : (
               <ApproveToken
-                amount={repaymentAmount}
+                amount={repaymentAmountToApprove}
                 approval={approval}
-                disabled={isSubmitDisabled}
+                spender={pairAddress}
               />
             )
           ) : (

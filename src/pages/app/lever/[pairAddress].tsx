@@ -26,6 +26,7 @@ import {
   RepayLeverPosition,
 } from "@/components/LeverPosition"
 import Seo from "@/components/Seo"
+import { TxSettingsPopover } from "@/components/TxSettingsPopover"
 
 import { LendingPair, lendingPairs } from "@/constant"
 import { DISABLE_LENDING } from "@/constant/env"
@@ -65,13 +66,17 @@ const LeverPairDetail: NextPage<LendingPair> = (lendingPair) => {
 
           <main className="rounded-lg bg-pink-900/80 p-3 backdrop-blur-md lg:p-6">
             <header className="mb-3">
-              <Link
-                {...resolvedRoute("/app/lever")}
-                className="flex items-center gap-2 text-sm font-medium uppercase text-pink-100"
-              >
-                <FiArrowLeft className="h-4 w-4" />
-                Lever
-              </Link>
+              <div className="flex justify-between">
+                <Link
+                  {...resolvedRoute("/app/lever")}
+                  className="flex items-center gap-2 text-sm font-medium uppercase text-pink-100"
+                >
+                  <FiArrowLeft className="h-4 w-4" />
+                  Lever
+                </Link>
+                <TxSettingsPopover className="max-md:hidden" />
+              </div>
+
               <h1 className="mt-3 font-display text-3xl lg:text-4xl">
                 <LeverPairHeading {...lendingPair} />
               </h1>
@@ -81,6 +86,7 @@ const LeverPairDetail: NextPage<LendingPair> = (lendingPair) => {
                 <ActiveLeverControls
                   {...lendingPair}
                   adjustedBorrowAmount={adjustedBorrowAmount}
+                  adjustedCollateralAmount={adjustedCollateralAmount}
                   isUpdatingAmounts={isUpdatingAmounts}
                   setAdjustedBorrowAmount={setAdjustedBorrowAmount}
                   setAdjustedCollateralAmount={setAdjustedCollateralAmount}
@@ -128,6 +134,7 @@ const LeverPairHeading: FC<LendingPair> = ({
 
 type ActiveLeverControlsProps = LendingPair & {
   adjustedBorrowAmount?: bigint
+  adjustedCollateralAmount?: bigint
   isUpdatingAmounts: boolean
   setAdjustedBorrowAmount: Dispatch<SetStateAction<bigint | undefined>>
   setAdjustedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
@@ -138,6 +145,7 @@ const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
   chainId,
   pairAddress,
   adjustedBorrowAmount,
+  adjustedCollateralAmount,
   isUpdatingAmounts,
   setAdjustedBorrowAmount,
   setAdjustedCollateralAmount,
@@ -198,6 +206,7 @@ const ActiveLeverControls: FC<ActiveLeverControlsProps> = ({
       collateralAssetAddress={lendingPair.data?.collateralContract}
       collateralAssetBalance={collateralAssetBalance}
       adjustedBorrowAmount={adjustedBorrowAmount}
+      adjustedCollateralAmount={adjustedCollateralAmount}
       isUpdatingAmounts={isUpdatingAmounts}
       setAdjustedBorrowAmount={setAdjustedBorrowAmount}
       setAdjustedCollateralAmount={setAdjustedCollateralAmount}
