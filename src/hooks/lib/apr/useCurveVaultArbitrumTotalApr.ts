@@ -66,23 +66,19 @@ const respSchema = z.object({
 async function getCurveArbitrumApi(poolCurveAddress: Address) {
   const resp = await axios.get(convexSidechainsUrl)
   const parsed = respSchema.parse(resp.data)
-  let crvApr = 0,
-    cvxApr = 0,
-    baseApr = 0
-  Object.entries(parsed.apys).forEach(([key, value]) => {
-    if (
-      poolCurveAddress !== "0x" &&
-      key.toLocaleLowerCase().includes(poolCurveAddress.toLocaleLowerCase())
-    ) {
-      baseApr = value.baseApy / 100
-      crvApr = value.crvApy / 100
-      cvxApr = value.cvxApy / 100
-    }
-  })
-  return {
-    baseApr,
-    crvApr,
-    cvxApr,
-    totalApr: baseApr + crvApr + cvxApr,
-  }
+  return Object.entries(apys).reduce(
+    (accumulator, [key, value]) => {
+      if (
+        poolCurveAddress !== "0x" &&
+        key.toLowerCase().includes(poolCurveAddress.toLowerCase())
+      ) {
+        accumulator.baseApy = value.baseApy / 100;
+        accumulator.crvApy = value.crvApy / 100;
+        accumulator.cvxApy = value.cvxApy / 100;
+        accumulator.totalApr = accumulator.baseApy + accumulator.crvApy + accumulator.cvxApy;
+      }
+      return accumulator;
+    },
+    { baseApy: 0, crvApy: 0, cvxApy: 0, totalApr: 0 }
+  )
 }
