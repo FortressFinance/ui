@@ -12,8 +12,7 @@ export const ManagedVaultsStrategyModalApr: FC = () => {
     },
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const data = breakdownApr.data as any
+  const data = breakdownApr.data
 
   // eslint-disable-next-line no-sparse-arrays
   const items = [
