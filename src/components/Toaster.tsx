@@ -52,7 +52,9 @@ const Toast: FC<Toast> = (toast) => {
   const isHovered = useHoverDirty(toastRoot)
 
   const toastClass =
-    toast.type === "errorWrite" || toast.type === "errorTx"
+    toast.type === "errorSpeedBump" ||
+    toast.type === "errorWrite" ||
+    toast.type === "errorTx"
       ? "error"
       : toast.type === "startTx" || toast.type === "waitTx"
       ? "wait"
@@ -124,7 +126,9 @@ const Toast: FC<Toast> = (toast) => {
       )}
       duration={Infinity}
     >
-      {toast.type === "errorWrite" || toast.type === "errorTx" ? (
+      {toast.type === "errorSpeedBump" ||
+      toast.type === "errorWrite" ||
+      toast.type === "errorTx" ? (
         <FortIconWarning className="h-6 w-6 flex-shrink-0 fill-current" />
       ) : toast.type === "startTx" ? (
         <FaSignature className="h-6 w-6 flex-shrink-0 fill-current" />
@@ -135,7 +139,9 @@ const Toast: FC<Toast> = (toast) => {
       ) : null}
 
       <ToastPrimitive.Description className="w-full text-white/90">
-        {toast.type === "errorWrite"
+        {toast.type === "errorSpeedBump"
+          ? `You must wait for one block to confirm before ${toast.action?.toLowerCase()}`
+          : toast.type === "errorWrite"
           ? toast.error instanceof UserRejectedRequestError
             ? "User rejected request"
             : "Error broadcasting transaction"

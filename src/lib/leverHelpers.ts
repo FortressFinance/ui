@@ -72,4 +72,8 @@ export const calculateMinCollateralRequired = ({
   borrowedAmountAsCollateral = 1n,
   maxLTV = 1n,
   ltvPrecision = 1n,
-}) => (borrowedAmountAsCollateral * ltvPrecision) / maxLTV
+}) =>
+  (borrowedAmountAsCollateral * ltvPrecision) /
+  // If the user actually removes enough collateral to hit maxLTV, they will be insolvent
+  // Subtract 3% from the maxLTV to prevent this
+  (maxLTV - (30n * ltvPrecision) / 1000n)

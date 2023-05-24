@@ -5,14 +5,10 @@ import { useDebounce } from "react-use"
 import { useAccount } from "wagmi"
 import { shallow } from "zustand/shallow"
 
-import {
-  addSlippage,
-  assetToCollateral,
-  collateralToAsset,
-  subSlippage,
-} from "@/lib"
+import { assetToCollateral, collateralToAsset, subSlippage } from "@/lib"
 import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
 import {
+  BORROW_BUFFER_PERCENTAGE,
   useClientReady,
   useConvertToShares,
   usePairLeverParams,
@@ -102,7 +98,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
         pairLeverParams.data.exchangeRate,
         pairLeverParams.data.constants?.exchangePrecision
       )
-    : pairLeverParams.data.borrowedAmount ?? 0n
+    : pairLeverParams.data.borrowedAmountWithBuffer ?? 0n
 
   const {
     field: { onChange: onChangeAmount, ...amountField },
@@ -183,9 +179,8 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     setSelectedPreset("")
   }
 
-  const repaymentAmountToApprove = addSlippage(repaymentAmount, 0.005)
   const approval = useTokenApproval({
-    amount: repaymentAmountToApprove,
+    amount: repaymentAmount,
     spender: pairAddress,
     token: borrowAssetAddress,
     enabled:
@@ -193,7 +188,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     onSuccess: () => repayAsset.prepare.refetch(),
   })
   const sharesToRepay = useConvertToShares({
-    amount: repaymentAmount,
+    amount: subSlippage(repaymentAmount, BORROW_BUFFER_PERCENTAGE),
     enabled:
       !isUpdatingAmounts && !isRepayingWithCollateral && approval.isSufficient,
     totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
@@ -423,7 +418,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
               </Button>
             ) : (
               <ApproveToken
-                amount={repaymentAmountToApprove}
+                amount={repaymentAmount}
                 approval={approval}
                 spender={pairAddress}
               />

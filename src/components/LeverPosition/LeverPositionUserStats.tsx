@@ -217,7 +217,8 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
               <>
                 <span>
                   {formatCurrencyUnits({
-                    amountWei: pairLeverParams.data.borrowedAmount?.toString(),
+                    amountWei:
+                      pairLeverParams.data.borrowedAmountWithBuffer?.toString(),
                     decimals: borrowAsset.data?.decimals,
                     maximumFractionDigits: 6,
                   })}
