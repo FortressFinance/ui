@@ -1,6 +1,7 @@
 import { ArcElement, Chart as ChartJS, Colors, Legend, Tooltip } from "chart.js"
-import { FC, Fragment } from "react"
+import { FC } from "react"
 import { Doughnut } from "react-chartjs-2"
+import { Address } from "wagmi"
 
 import { formatPercentage } from "@/lib/helpers"
 
@@ -9,7 +10,14 @@ import { AssetLogo } from "@/components/Asset"
 ChartJS.register(ArcElement, Tooltip, Legend, Colors)
 
 export const ManagedVaultsStrategyModalAllocations: FC = () => {
-  const address = "0xadAD55f56C23cF8B1286A3419bFeed055F1aDcb0"
+  const addresses: Address[] = [
+    "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+    "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+    "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+    "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+    "0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978",
+    "0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F",
+  ]
   const data = {
     labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
     datasets: [
@@ -42,6 +50,10 @@ export const ManagedVaultsStrategyModalAllocations: FC = () => {
       legend: {
         display: false,
       },
+      tooltip: {
+        enabled: false,
+        external: externalTooltipHandler,
+      },
     },
   }
 
@@ -52,33 +64,118 @@ export const ManagedVaultsStrategyModalAllocations: FC = () => {
 
   return (
     <div className="grid w-full grid-cols-1 grid-rows-[auto,1fr]">
-      <Doughnut data={data} options={options} className="w-full" />
-      <div className="grid grid-cols-[20px,auto,1fr] gap-1.5">
+      <div>
+        <Doughnut data={data} options={options} className="w-full" />
+        {/* custom tooltip */}
+        <div>
+          {data.labels?.map((label, i) => (
+            <div key={`tooltip-${i}`} data-tooltip={label} className="hidden">
+              <div className="relative flex w-[117px] flex-col items-start rounded-[4px] bg-[rgba(191,70,128,0.6)] p-2 backdrop-opacity-[4.5px]">
+                <div className="flex h-[24px] w-full flex-none flex-row items-center gap-1 self-stretch p-0">
+                  <div className="relative float-left mr-2 h-6 w-6 rounded-full bg-white">
+                    <AssetLogo tokenAddress={addresses[i]} />
+                  </div>
+                  <span className="text-left text-sm uppercase text-pink-50">
+                    {label}
+                  </span>
+                </div>
+                <div className="flex w-full flex-none flex-col items-start p-0">
+                  <div className="flex h-[24px] w-full flex-none flex-row items-start gap-1 self-stretch p-0">
+                    <div className="w-1/2 items-center text-sm font-semibold capitalize text-pink-50">
+                      Balance :
+                    </div>
+                    <div className="w-1/2 items-center text-right text-sm">
+                      45K
+                    </div>
+                  </div>
+                  <div className="flex h-[24px] w-full flex-none flex-row items-start gap-1 self-stretch p-0">
+                    <div className="w-1/2 items-center text-sm font-semibold capitalize text-pink-50">
+                      Value :
+                    </div>
+                    <div className="w-1/2 items-center text-right text-sm">
+                      45K
+                    </div>
+                  </div>
+                  <div className="flex h-[24px] w-full flex-none flex-row items-start gap-1 self-stretch p-0">
+                    <div className="w-1/2 items-center text-sm font-semibold capitalize text-pink-50">
+                      Ratio :
+                    </div>
+                    <div className="w-1/2 items-center text-right text-sm">
+                      {formatPercentage(
+                        (data.datasets?.[0]?.data?.[i] * 100) / sumTotal / 100
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="flex w-full flex-none grow-0 flex-col items-start gap-2 p-0">
         {data.labels?.map((label, i) => (
-          <Fragment key={`legend-${i}`}>
+          <div
+            key={`legend-${i}`}
+            className="flex h-[24px] w-full flex-none grow-0 flex-row items-center gap-2 self-stretch p-0"
+          >
             <div
-              className="gr mt-1 h-4 w-4 border"
+              className="h-3 w-3 flex-none grow-0 border"
               style={{
                 borderColor: `${data.datasets?.[0].borderColor[i]}`,
                 backgroundColor: `${data.datasets?.[0].backgroundColor[i]}`,
               }}
             ></div>
-            <div>
-              <div className="relative float-left mr-2 h-6 w-6 rounded-full bg-white">
-                <AssetLogo tokenAddress={address} />
+            <div className="flex w-auto flex-none grow-0 flex-row items-center gap-1 p-0">
+              <div className="relative float-left mr-1 h-6 w-6 rounded-full bg-white">
+                <AssetLogo tokenAddress={addresses[i]} />
               </div>
               <span className="text-left text-xs uppercase text-pink-50">
                 {label}
               </span>
             </div>
-            <span className="mt-1 text-right text-xs text-pink-50">
-              {formatPercentage(
-                (data.datasets?.[0]?.data?.[i] * 100) / sumTotal / 100
-              )}
-            </span>
-          </Fragment>
+            <div className="grow-1 flex w-1/2 flex-none flex-row items-center gap-1 p-0">
+              <div className="w-full text-right text-sm text-pink-50">
+                {formatPercentage(
+                  (data.datasets?.[0]?.data?.[i] * 100) / sumTotal / 100
+                )}
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </div>
   )
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const externalTooltipHandler = (context: any) => {
+  // Tooltip Element
+  const { chart, tooltip } = context
+  const elements = document.querySelectorAll("[data-tooltip]")
+  elements.forEach((element) => {
+    const htmlElement = element as HTMLElement
+    htmlElement.style.display = "none"
+  })
+
+  if (tooltip.opacity !== 0) {
+    const titleLines = tooltip.title || []
+    const tooltipElts = titleLines.map((title: string) => {
+      return chart.canvas.parentNode.querySelector(`[data-tooltip="${title}"]`)
+    })
+
+    const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas
+
+    const tooltipElt = tooltipElts?.[0]
+    if (!tooltipElt) {
+      return
+    }
+    // Display, position, and set styles for font
+    tooltipElt.style.pointerEvents = "none"
+    tooltipElt.style.position = "absolute"
+    tooltipElt.style.transform = "translate(-50%, 0)"
+    tooltipElt.style.transition = "all .1s ease"
+    tooltipElt.style.display = "block"
+    tooltipElt.style.left = positionX + tooltip.caretX + "px"
+    tooltipElt.style.top = positionY + tooltip.caretY + "px"
+  }
 }
