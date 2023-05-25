@@ -125,7 +125,7 @@ export const ManagedVaultsStrategyModalAllocations: FC = () => {
                 backgroundColor: `${data.datasets?.[0].backgroundColor[i]}`,
               }}
             ></div>
-            <div className="flex w-auto flex-none grow-0 flex-row items-center gap-1 p-0">
+            <div className="flex w-[calc(50%-30px)] flex-none grow-0 flex-row items-center gap-1 p-0">
               <div className="relative float-left mr-1 h-6 w-6 rounded-full bg-white">
                 <AssetLogo tokenAddress={addresses[i]} />
               </div>
