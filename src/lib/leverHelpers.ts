@@ -72,13 +72,8 @@ export const calculateMinCollateralRequired = ({
   borrowedAmountAsCollateral = 1n,
   maxLTV = 1n,
   ltvPrecision = 1n,
-}) => (borrowedAmountAsCollateral * ltvPrecision) / maxLTV
-
-export const calculateInterestSinceLastAccrual = ({
-  borrowedAmount = 0n,
-  interestAccruedAt = 0,
-  interestRatePerSecond = 0n,
 }) =>
-  (BigInt(Math.floor(Date.now() / 1000) - interestAccruedAt) *
-    (borrowedAmount * interestRatePerSecond)) /
-  BigInt(1e18)
+  (borrowedAmountAsCollateral * ltvPrecision) /
+  // If the user actually removes enough collateral to hit maxLTV, they will be insolvent
+  // Subtract 3% from the maxLTV to prevent this
+  (maxLTV - (30n * ltvPrecision) / 1000n)

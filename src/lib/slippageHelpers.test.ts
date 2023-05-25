@@ -16,11 +16,12 @@ describe("percentageOfBigInt", () => {
   })
 
   it("returns a new bigint that is the percentage of the amount", () => {
-    expect(percentageOfBigInt(10000n, 1)).toEqual(1n)
-    expect(percentageOfBigInt(10000n, 10)).toEqual(10n)
-    expect(percentageOfBigInt(10000n, 100)).toEqual(100n)
-    expect(percentageOfBigInt(10000n, 1000)).toEqual(1000n)
-    expect(percentageOfBigInt(10000n, 10000)).toEqual(10000n)
+    expect(percentageOfBigInt(100000n, 1)).toEqual(1n)
+    expect(percentageOfBigInt(100000n, 10)).toEqual(10n)
+    expect(percentageOfBigInt(100000n, 100)).toEqual(100n)
+    expect(percentageOfBigInt(100000n, 1000)).toEqual(1000n)
+    expect(percentageOfBigInt(100000n, 10000)).toEqual(10000n)
+    expect(percentageOfBigInt(100000n, 100000)).toEqual(100000n)
   })
 })
 
@@ -30,15 +31,15 @@ describe("addSlippage", () => {
   })
 
   it("returns a new bigint equal in value to the passed amount when slippage is undefined", () => {
-    expect(addSlippage(10000n)).toEqual(10000n)
+    expect(addSlippage(100000n)).toEqual(100000n)
   })
 
   it("returns a new bigint with a slippage percentage added", () => {
-    expect(addSlippage(10000n, 0.01)).toEqual(10001n)
-    expect(addSlippage(10000n, 0.1)).toEqual(10010n)
-    expect(addSlippage(10000n, 1)).toEqual(10100n)
-    expect(addSlippage(10000n, 10)).toEqual(11000n)
-    expect(addSlippage(10000n, 100)).toEqual(20000n)
+    expect(addSlippage(100000n, 0.01)).toEqual(100010n)
+    expect(addSlippage(100000n, 0.1)).toEqual(100100n)
+    expect(addSlippage(100000n, 1)).toEqual(101000n)
+    expect(addSlippage(100000n, 10)).toEqual(110000n)
+    expect(addSlippage(100000n, 100)).toEqual(200000n)
   })
 })
 
@@ -48,14 +49,15 @@ describe("subSlippage", () => {
   })
 
   it("returns a new bigint equal in value to the passed amount when slippage is undefined", () => {
-    expect(subSlippage(10000n)).toEqual(10000n)
+    expect(subSlippage(100000n)).toEqual(100000n)
   })
 
   it("returns a new bigint with a slippage percentage subtracted", () => {
-    expect(subSlippage(10000n, 0.01)).toEqual(9999n)
-    expect(subSlippage(10000n, 0.1)).toEqual(9990n)
-    expect(subSlippage(10000n, 1)).toEqual(9900n)
-    expect(subSlippage(10000n, 10)).toEqual(9000n)
-    expect(subSlippage(10000n, 100)).toEqual(0n)
+    expect(subSlippage(100000n, 0.001)).toEqual(99999n)
+    expect(subSlippage(100000n, 0.01)).toEqual(99990n)
+    expect(subSlippage(100000n, 0.1)).toEqual(99900n)
+    expect(subSlippage(100000n, 1)).toEqual(99000n)
+    expect(subSlippage(100000n, 10)).toEqual(90000n)
+    expect(subSlippage(100000n, 100)).toEqual(0n)
   })
 })
