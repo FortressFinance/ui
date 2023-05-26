@@ -1,4 +1,11 @@
-import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
+import React, {
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react"
 import { useController, useForm } from "react-hook-form"
 import { useDebounce } from "react-use"
 import { Address, useAccount } from "wagmi"
@@ -26,6 +33,7 @@ type RemoveCollateralProps = {
   isUpdatingAmounts: boolean
   setAdjustedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
   setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
+  tabsList: ReactNode
   pairAddress: Address
   onSuccess: () => void
 }
@@ -42,6 +50,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
   isUpdatingAmounts,
   setAdjustedCollateralAmount,
   setIsUpdatingAmounts,
+  tabsList,
   pairAddress,
   onSuccess: _onSuccess,
 }) => {
@@ -229,6 +238,8 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
         </div>
 
         <div className="mt-3 flex items-center gap-3">
+          {tabsList}
+
           <Button
             type="submit"
             className="w-full"

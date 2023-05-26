@@ -15,6 +15,7 @@ import {
 
 import { DisabledPage } from "@/components"
 import { AssetLogo } from "@/components/Asset"
+import Button from "@/components/Button"
 import Layout from "@/components/Layout"
 import { LendingPairStats } from "@/components/LendingPair"
 import {
@@ -50,6 +51,7 @@ export const getStaticProps: GetStaticProps = (context) => {
 
 const LeverPairDetail: NextPage<LendingPair> = (props) => {
   const [activeTab, setActiveTab] = useState("create")
+  const [activeCollateralTab, setActiveCollateralTab] = useState("add")
   const [isLevered, setIsLevered] = useState(false)
   const [isUpdatingAmounts, setIsUpdatingAmounts] = useState(false)
   const [adjustedBorrowAmount, setAdjustedBorrowAmount] = useState<bigint>()
@@ -92,6 +94,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
       } else if (isLevered) {
         setIsLevered(false)
         setActiveTab("create")
+        setActiveCollateralTab("add")
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -102,6 +105,27 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
     pairLeverParams.data.borrowedAmount,
     pairLeverParams.data.collateralAmount,
   ])
+
+  const CollateralTabsList = () => (
+    <Tabs.List className="flex h-12 w-1/2 shrink-0 justify-center gap-1.5">
+      <Tabs.Trigger value="add" asChild>
+        <Button
+          variant="outline"
+          className="w-full text-sm ui-state-active:bg-pink/50"
+        >
+          Deposit
+        </Button>
+      </Tabs.Trigger>
+      <Tabs.Trigger value="remove" asChild>
+        <Button
+          variant="outline"
+          className="w-full text-sm ui-state-active:bg-pink/50"
+        >
+          Withdraw
+        </Button>
+      </Tabs.Trigger>
+    </Tabs.List>
+  )
 
   return (
     <DisabledPage isDisabled={DISABLE_LENDING}>
@@ -157,9 +181,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                       className="transition-color group h-14 w-1/3 px-3 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear disabled:cursor-not-allowed ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
                       disabled={!isLevered}
                     >
-                      <span className="group-disabled:opacity-25">
-                        Collateral
-                      </span>
+                      <span className="group-disabled:opacity-25">Manage</span>
                     </Tabs.Trigger>
                   </Tabs.List>
                   <div className="relative overflow-hidden">
@@ -216,41 +238,58 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                       className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6"
                       value="manageCollateral"
                     >
-                      {/* TODO: Switch to add/remove */}
-                      <AddCollateral
-                        chainId={props.chainId}
-                        collateralAssetAddress={
-                          lendingPair.data?.collateralContract
-                        }
-                        collateralAssetBalance={collateralAssetBalance}
-                        collateralAmountSignificant={
-                          collateralAmountSignificant
-                        }
-                        isUpdatingAmounts={isUpdatingAmounts}
-                        setAdjustedCollateralAmount={
-                          setAdjustedCollateralAmount
-                        }
-                        setIsUpdatingAmounts={setIsUpdatingAmounts}
-                        pairAddress={props.pairAddress}
-                        onSuccess={onSuccess}
-                      />
-                      <RemoveCollateral
-                        chainId={props.chainId}
-                        collateralAssetAddress={
-                          lendingPair.data?.collateralContract
-                        }
-                        collateralAssetBalance={collateralAssetBalance}
-                        collateralAmountSignificant={
-                          collateralAmountSignificant
-                        }
-                        isUpdatingAmounts={isUpdatingAmounts}
-                        setAdjustedCollateralAmount={
-                          setAdjustedCollateralAmount
-                        }
-                        setIsUpdatingAmounts={setIsUpdatingAmounts}
-                        pairAddress={props.pairAddress}
-                        onSuccess={onSuccess}
-                      />
+                      <Tabs.Root
+                        className="relative"
+                        value={activeCollateralTab}
+                        onValueChange={setActiveCollateralTab}
+                      >
+                        <Tabs.Content
+                          value="add"
+                          className="ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out"
+                        >
+                          <AddCollateral
+                            chainId={props.chainId}
+                            collateralAssetAddress={
+                              lendingPair.data?.collateralContract
+                            }
+                            collateralAssetBalance={collateralAssetBalance}
+                            collateralAmountSignificant={
+                              collateralAmountSignificant
+                            }
+                            isUpdatingAmounts={isUpdatingAmounts}
+                            setAdjustedCollateralAmount={
+                              setAdjustedCollateralAmount
+                            }
+                            setIsUpdatingAmounts={setIsUpdatingAmounts}
+                            pairAddress={props.pairAddress}
+                            onSuccess={onSuccess}
+                            tabsList={<CollateralTabsList />}
+                          />
+                        </Tabs.Content>
+                        <Tabs.Content
+                          value="remove"
+                          className="ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out"
+                        >
+                          <RemoveCollateral
+                            chainId={props.chainId}
+                            collateralAssetAddress={
+                              lendingPair.data?.collateralContract
+                            }
+                            collateralAssetBalance={collateralAssetBalance}
+                            collateralAmountSignificant={
+                              collateralAmountSignificant
+                            }
+                            isUpdatingAmounts={isUpdatingAmounts}
+                            setAdjustedCollateralAmount={
+                              setAdjustedCollateralAmount
+                            }
+                            setIsUpdatingAmounts={setIsUpdatingAmounts}
+                            pairAddress={props.pairAddress}
+                            onSuccess={onSuccess}
+                            tabsList={<CollateralTabsList />}
+                          />
+                        </Tabs.Content>
+                      </Tabs.Root>
                     </Tabs.Content>
                   </div>
                 </Tabs.Root>
