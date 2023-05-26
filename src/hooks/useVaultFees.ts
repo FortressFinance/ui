@@ -19,8 +19,8 @@ export function useVaultFees({
   return productType === "compounder"
     ? compounderVaultFees
     : productType === "concentrator"
-      ? concentratorVaultFees
-      : {
+    ? concentratorVaultFees
+    : {
         isLoading: false,
         data: {
           depositFee: "0",
@@ -28,6 +28,5 @@ export function useVaultFees({
           platformFee: 0.5,
           withdrawFee: 0.1,
         },
-      };
-
+      }
 }
