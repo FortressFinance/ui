@@ -9,7 +9,6 @@ import clsxm from "@/lib/clsxm"
 import { inter, vt323 } from "@/lib/fonts"
 import { resolvedRoute } from "@/lib/helpers"
 
-import AppProviders from "@/components/AppProviders"
 import Button from "@/components/Button"
 import { ConnectButton } from "@/components/ConnectButton"
 import {
@@ -40,7 +39,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter()
 
   return (
-    <AppProviders>
+    <>
       <Toaster />
 
       <div className="min-h-screen-small relative z-[1] grid grid-cols-1 grid-rows-[auto,1fr]">
@@ -359,7 +358,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
       <AccountModal />
       <ConnectModal />
       <ConsentModal />
-    </AppProviders>
+    </>
   )
 }
 
