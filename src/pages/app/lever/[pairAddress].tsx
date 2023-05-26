@@ -107,7 +107,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
   ])
 
   const CollateralTabsList = () => (
-    <Tabs.List className="flex h-12 w-1/2 shrink-0 justify-center gap-1.5">
+    <Tabs.List className="flex h-12 w-full shrink-0 justify-center gap-1.5 md:w-1/2">
       <Tabs.Trigger value="add" asChild>
         <Button
           variant="outline"

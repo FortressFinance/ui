@@ -237,7 +237,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
           />
         </div>
 
-        <div className="mt-3 flex items-center gap-3">
+        <div className="mt-3 flex items-center gap-3 max-md:flex-col">
           {tabsList}
 
           <Button

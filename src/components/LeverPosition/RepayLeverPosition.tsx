@@ -336,10 +336,10 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
         />
       </div>
 
-      <div className="mt-3 flex items-center gap-3">
+      <div className="mt-3 flex items-center gap-3 max-md:flex-col">
         <ToggleGroup.Root
           type="single"
-          className="flex h-12 w-1/2 shrink-0 justify-center gap-1.5"
+          className="flex h-12 w-full shrink-0 justify-center gap-1.5 md:w-1/2"
           disabled={repay.write.isLoading || repay.wait.isLoading}
           value={selectedPreset}
           onValueChange={(value) => {
