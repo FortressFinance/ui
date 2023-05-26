@@ -49,6 +49,7 @@ export const getStaticProps: GetStaticProps = (context) => {
 }
 
 const LeverPairDetail: NextPage<LendingPair> = (props) => {
+  const [activeTab, setActiveTab] = useState("create")
   const [isLevered, setIsLevered] = useState(false)
   const [isUpdatingAmounts, setIsUpdatingAmounts] = useState(false)
   const [adjustedBorrowAmount, setAdjustedBorrowAmount] = useState<bigint>()
@@ -90,6 +91,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
         if (!isLevered) setIsLevered(true)
       } else if (isLevered) {
         setIsLevered(false)
+        setActiveTab("create")
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -135,7 +137,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
             </header>
             <div className="mt-4 lg:mt-6">
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
-                <Tabs.Root defaultValue="create">
+                <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
                   <Tabs.List className="-mx-3 -mt-4 flex divide-x divide-pink/30 border-b border-pink/30 lg:-mx-6 lg:-mt-6">
                     <Tabs.Trigger
                       value="create"
