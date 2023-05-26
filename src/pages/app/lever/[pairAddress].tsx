@@ -130,7 +130,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
   return (
     <DisabledPage isDisabled={DISABLE_LENDING}>
       <Layout>
-        <Seo templateTitle={`${props.collateralTokenSymbol} | Lever`} />
+        <Seo templateTitle={`${props.name} | Lever`} />
 
         <div className="grid gap-4 lg:grid-cols-[1fr,3fr] lg:gap-6">
           <aside className="max-lg:hidden">
@@ -156,7 +156,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                   className="h-8 w-8"
                   tokenAddress={lendingPair.data?.collateralContract}
                 />
-                {props.collateralTokenName}
+                {props.name}
               </h1>
             </header>
             <div className="mt-4 lg:mt-6">
