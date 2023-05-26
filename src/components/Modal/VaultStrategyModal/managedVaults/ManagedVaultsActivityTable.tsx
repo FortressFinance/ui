@@ -29,7 +29,7 @@ const ManagedVaultsActivityRow: FC = () => {
   }))
 
   return (
-    <div className="max-h-[600px] min-h-[300px] w-full overflow-y-scroll">
+    <div className="!mt-0 max-h-[600px] min-h-[300px] w-full overflow-y-scroll">
       {activities.map((activity, i) => (
         <div
           key={`activity-${i}`}
