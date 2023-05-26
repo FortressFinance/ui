@@ -161,7 +161,17 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
             </header>
             <div className="mt-4 lg:mt-6">
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
-                <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
+                <Tabs.Root
+                  value={activeTab}
+                  onValueChange={(value) => {
+                    const prevActiveTab = activeTab
+                    setActiveTab(value)
+                    if (prevActiveTab === "manage") {
+                      // Wait 400ms for the tab to animate out, then reset collateral sub-tab
+                      setTimeout(() => setActiveCollateralTab("add"), 400)
+                    }
+                  }}
+                >
                   <Tabs.List className="-mx-3 -mt-4 flex divide-x divide-pink/30 border-b border-pink/30 lg:-mx-6 lg:-mt-6">
                     <Tabs.Trigger
                       value="create"
@@ -177,7 +187,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                       <span className="group-disabled:opacity-25">Repay</span>
                     </Tabs.Trigger>
                     <Tabs.Trigger
-                      value="manageCollateral"
+                      value="manage"
                       className="transition-color group h-14 w-1/3 px-3 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear disabled:cursor-not-allowed ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
                       disabled={!isLevered}
                     >
@@ -236,7 +246,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                     </Tabs.Content>
                     <Tabs.Content
                       className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6"
-                      value="manageCollateral"
+                      value="manage"
                     >
                       <Tabs.Root
                         className="relative"
