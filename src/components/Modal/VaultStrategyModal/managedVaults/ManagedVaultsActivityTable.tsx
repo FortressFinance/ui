@@ -47,7 +47,7 @@ const ManagedVaultsActivityRow: FC = () => {
                 <div className="float-left mr-1 text-center">
                   {activity.events}
                 </div>
-                <BsQuestionCircle className="float-left mt-[2px] h-4 w-4 cursor-pointer" />
+                <BsQuestionCircle className="float-left mt-0.5 h-4 w-4 cursor-pointer" />
               </span>
             </Tooltip>
           </span>

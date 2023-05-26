@@ -21,7 +21,7 @@ export const ConcentratorVaultStrategyModalRewardApy: FC<VaultProps> = (
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = breakdownApy.data as any
-  // eslint-disable-next-line no-sparse-arrays
+
   const items = [
     {
       label: "Total APY",

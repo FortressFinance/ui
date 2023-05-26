@@ -64,53 +64,51 @@ export const ManagedVaultsStrategyModalAllocations: FC = () => {
 
   return (
     <div className="grid w-full grid-cols-1 grid-rows-[auto,1fr]">
+      <Doughnut data={data} options={options} className="w-full" />
+      {/* custom tooltip */}
       <div>
-        <Doughnut data={data} options={options} className="w-full" />
-        {/* custom tooltip */}
-        <div>
-          {data.labels?.map((label, i) => (
-            <div key={`tooltip-${i}`} data-tooltip={label} className="hidden">
-              <div className="relative flex w-[117px] flex-col items-start rounded-[4px] bg-[rgba(191,70,128,0.6)] p-2 backdrop-opacity-[4.5px]">
-                <div className="flex h-[24px] w-full flex-none flex-row items-center gap-1 self-stretch p-0">
-                  <div className="relative float-left mr-2 h-6 w-6 rounded-full bg-white">
-                    <AssetLogo tokenAddress={addresses[i]} />
-                  </div>
-                  <span className="text-left text-sm uppercase text-pink-50">
-                    {label}
-                  </span>
+        {data.labels?.map((label, i) => (
+          <div key={`tooltip-${i}`} data-tooltip={label} className="hidden">
+            <div className="relative flex w-[117px] flex-col items-start rounded-[4px] bg-[rgba(191,70,128,0.6)] p-2 backdrop-opacity-[4.5px]">
+              <div className="flex h-[24px] w-full flex-none flex-row items-center gap-1 self-stretch p-0">
+                <div className="relative mr-2 flex h-6 w-6 rounded-full bg-white">
+                  <AssetLogo tokenAddress={addresses[i]} />
                 </div>
-                <div className="flex w-full flex-none flex-col items-start p-0">
-                  <div className="flex h-[24px] w-full flex-none flex-row items-start gap-1 self-stretch p-0">
-                    <div className="w-1/2 items-center text-sm font-semibold capitalize text-pink-50">
-                      Balance :
-                    </div>
-                    <div className="w-1/2 items-center text-right text-sm">
-                      45K
-                    </div>
+                <span className="text-left text-sm uppercase text-pink-50">
+                  {label}
+                </span>
+              </div>
+              <div className="flex w-full flex-none flex-col items-start p-0">
+                <div className="flex h-[24px] w-full flex-none flex-row items-start gap-1 self-stretch p-0">
+                  <div className="w-1/2 items-center text-sm font-semibold capitalize text-pink-50">
+                    Balance :
                   </div>
-                  <div className="flex h-[24px] w-full flex-none flex-row items-start gap-1 self-stretch p-0">
-                    <div className="w-1/2 items-center text-sm font-semibold capitalize text-pink-50">
-                      Value :
-                    </div>
-                    <div className="w-1/2 items-center text-right text-sm">
-                      45K
-                    </div>
+                  <div className="w-1/2 items-center text-right text-sm">
+                    45K
                   </div>
-                  <div className="flex h-[24px] w-full flex-none flex-row items-start gap-1 self-stretch p-0">
-                    <div className="w-1/2 items-center text-sm font-semibold capitalize text-pink-50">
-                      Ratio :
-                    </div>
-                    <div className="w-1/2 items-center text-right text-sm">
-                      {formatPercentage(
-                        (data.datasets?.[0]?.data?.[i] * 100) / sumTotal / 100
-                      )}
-                    </div>
+                </div>
+                <div className="flex h-[24px] w-full flex-none flex-row items-start gap-1 self-stretch p-0">
+                  <div className="w-1/2 items-center text-sm font-semibold capitalize text-pink-50">
+                    Value :
+                  </div>
+                  <div className="w-1/2 items-center text-right text-sm">
+                    45K
+                  </div>
+                </div>
+                <div className="flex h-[24px] w-full flex-none flex-row items-start gap-1 self-stretch p-0">
+                  <div className="w-1/2 items-center text-sm font-semibold capitalize text-pink-50">
+                    Ratio :
+                  </div>
+                  <div className="w-1/2 items-center text-right text-sm">
+                    {formatPercentage(
+                      (data.datasets?.[0]?.data?.[i] * 100) / sumTotal / 100
+                    )}
                   </div>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
       <div className="flex w-full flex-none grow-0 flex-col items-start gap-2 p-0">
         {data.labels?.map((label, i) => (
