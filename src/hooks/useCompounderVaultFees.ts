@@ -17,14 +17,20 @@ export function useCompounderVaultFees({
   asset,
   type,
   vaultAddress,
-}: VaultProps) {
+  enabled,
+}: {
+  asset: VaultProps["asset"]
+  type: VaultProps["type"]
+  vaultAddress: VaultProps["vaultAddress"]
+  enabled: boolean
+}) {
   // Preferred: API request
   const apiCompounderFees = useApiCompounderVaultFees({ asset, type })
   const apiTokenCompounderFees = useApiTokenCompounderVaultFees({ asset, type })
 
   // Fallback: amm contract request
   const isFallbackEnabled =
-    !apiCompounderFees.isEnabled && !apiTokenCompounderFees.isEnabled
+    !apiCompounderFees.isEnabled && !apiTokenCompounderFees.isEnabled && enabled
   const fallbackRequest = useContractRead({
     ...useVaultContract(vaultAddress),
     enabled: !!asset && isFallbackEnabled,

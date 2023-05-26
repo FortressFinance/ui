@@ -13,9 +13,9 @@ import {
   useVaultTotalApr,
 } from "@/hooks"
 
-import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalDefinitionList"
+import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrategyModal"
 
-export const VaultStrategyModalTokenApr: FC<VaultProps> = (props) => {
+export const CompounderVaultStrategyModalTokenApr: FC<VaultProps> = (props) => {
   const totalApy = useVaultApy(props)
   const totalApr = useVaultTotalApr(props)
   const balApr = useVaultBalApr(props)

@@ -3,15 +3,14 @@ import { FC } from "react"
 import { VaultProps } from "@/lib/types"
 import { useConcentratorVaultBreakdownApy } from "@/hooks/useConcentratorVaultBreakdownApy"
 
-import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrategyModal/lib/VaultStrategyModalDefinitionList"
+import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrategyModal"
 
-export const VaultStrategyModalConcentratorApr: FC<VaultProps> = (props) => {
+export const ConcentratorVaultStrategyModalApr: FC<VaultProps> = (props) => {
   const breakdownApr = useConcentratorVaultBreakdownApy(props)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = breakdownApr.data as any
 
-  // eslint-disable-next-line no-sparse-arrays
   const items = [
     {
       label: "Total APR",

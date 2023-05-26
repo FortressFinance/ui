@@ -10,9 +10,9 @@ export const ManagedVaultsNameCell: FC<VaultRowPropsWithProduct> = (props) => {
     <span className="line-clamp-2 max-lg:mr-8">
       <VaultName {...props} />
       {epochRunning ? (
-        <HiLockClosed className="float-left ml-2 mt-[2px] h-5 w-5 cursor-pointer" />
+        <HiLockClosed className="float-left ml-2 mt-0.5 h-5 w-5 cursor-pointer" />
       ) : (
-        <HiLockOpen className="float-left ml-2 mt-[2px] h-5 w-5 cursor-pointer" />
+        <HiLockOpen className="float-left ml-2 mt-0.5 h-5 w-5 cursor-pointer" />
       )}
     </span>
   )
