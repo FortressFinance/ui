@@ -59,7 +59,7 @@ export const AssetLogo: FC<AssetLogoProps> = ({
   return (
     <div
       className={clsxm(
-        "relative overflow-hidden rounded-full bg-white p-[2px] ring-0 ring-inset ring-white",
+        "relative overflow-hidden rounded-full bg-white p-0.5 ring-0 ring-inset ring-white",
         className
       )}
     >

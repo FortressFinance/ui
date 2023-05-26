@@ -4,10 +4,12 @@ import { useApiConcentratorStaticData } from "@/hooks/lib/api/useApiConcentrator
 
 export function useApiConcentratorTargetAssetId({
   targetAsset,
+  enabled,
 }: {
-  targetAsset: Address | undefined
+  targetAsset?: Address
+  enabled: boolean
 }) {
-  const apiQuery = useApiConcentratorStaticData()
+  const apiQuery = useApiConcentratorStaticData({ enabled })
   const targetAssetToId: Record<Address, number> = {} // target to targetId
   apiQuery.data?.forEach((data) => {
     const curTargetAsset = data?.target_asset?.address

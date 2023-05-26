@@ -13,8 +13,8 @@ import PurpleModal, {
   PurpleModalHeader,
 } from "@/components/Modal/lib/PurpleModal"
 import {
-  VaultStrategyModalConcentratorApr,
-  VaultStrategyModalConcentratorRewardApy,
+  ConcentratorVaultStrategyModalApr,
+  ConcentratorVaultStrategyModalRewardApy,
 } from "@/components/Modal/VaultStrategyModal"
 import Skeleton from "@/components/Skeleton"
 import Tooltip from "@/components/Tooltip"
@@ -114,7 +114,7 @@ export const ConcentratorVaultStrategyModal: FC<
                   Concentrator APR
                 </h1>
                 <div className="p-4 pb-5 md:px-5">
-                  <VaultStrategyModalConcentratorApr {...vaultProps} />
+                  <ConcentratorVaultStrategyModalApr {...vaultProps} />
                 </div>
               </div>
               <div>
@@ -122,7 +122,7 @@ export const ConcentratorVaultStrategyModal: FC<
                   Target Asset APY
                 </h1>
                 <div className="p-4 pb-5 md:px-5">
-                  <VaultStrategyModalConcentratorRewardApy {...vaultProps} />
+                  <ConcentratorVaultStrategyModalRewardApy {...vaultProps} />
                 </div>
               </div>
 

@@ -6,9 +6,12 @@ import { useConcentratorPrimaryAssets } from "@/hooks/useConcentratorPrimaryAsse
 export function useListConcentrators({
   concentratorTargetAssets,
 }: {
-  concentratorTargetAssets: Address[] | undefined
+  concentratorTargetAssets?: Address[]
 }) {
-  const apiQuery = useApiConcentratorPrimaryAssets({ concentratorTargetAssets })
+  const apiQuery = useApiConcentratorPrimaryAssets({
+    concentratorTargetAssets,
+    enabled: true,
+  })
   const primaryAssets = useConcentratorPrimaryAssets({
     concentratorTargetAssets,
     enabled: apiQuery.isError,

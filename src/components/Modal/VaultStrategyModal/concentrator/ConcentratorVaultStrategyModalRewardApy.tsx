@@ -7,7 +7,7 @@ import { useConcentratorBreakdownApy } from "@/hooks/useConcentratorBreakdownApy
 
 import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrategyModal"
 
-export const VaultStrategyModalConcentratorRewardApy: FC<VaultProps> = (
+export const ConcentratorVaultStrategyModalRewardApy: FC<VaultProps> = (
   props
 ) => {
   const firstConcentratorVaultType = useConcentratorFirstVaultType({
@@ -21,7 +21,7 @@ export const VaultStrategyModalConcentratorRewardApy: FC<VaultProps> = (
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = breakdownApy.data as any
-  // eslint-disable-next-line no-sparse-arrays
+
   const items = [
     {
       label: "Total APY",
