@@ -7,14 +7,27 @@ export function useVaultFees({
   productType,
   ...vaultProps
 }: VaultRowPropsWithProduct) {
-  const isCompounderProduct = productType === "compounder"
+  const compounderVaultFees = useCompounderVaultFees({
+    ...vaultProps,
+    enabled: productType === "compounder",
+  })
+  const concentratorVaultFees = useConcentratorVaultFees({
+    ...vaultProps,
+    enabled: productType === "concentrator",
+  })
 
-  const compounderVaultFees = useCompounderVaultFees(vaultProps)
-  const concentratorVaultFees = useConcentratorVaultFees(vaultProps)
+  return productType === "compounder"
+    ? compounderVaultFees
+    : productType === "concentrator"
+      ? concentratorVaultFees
+      : {
+        isLoading: false,
+        data: {
+          depositFee: "0",
+          managementFee: "0",
+          platformFee: 0.5,
+          withdrawFee: 0.1,
+        },
+      };
 
-  if (isCompounderProduct) {
-    return compounderVaultFees
-  }
-
-  return concentratorVaultFees
 }

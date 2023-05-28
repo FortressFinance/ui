@@ -5,11 +5,13 @@ import { useCategoriesByPrimaryAsset } from "@/hooks/useCategoriesByPrimaryAsset
 
 export function useApiConcentratorPrimaryAssets({
   concentratorTargetAssets,
+  enabled,
 }: {
-  concentratorTargetAssets: Address[] | undefined
+  concentratorTargetAssets?: Address[]
+  enabled: boolean
 }) {
   const filterCategoriesByPrimaryAsset = useCategoriesByPrimaryAsset()
-  const apiQuery = useApiConcentratorStaticData()
+  const apiQuery = useApiConcentratorStaticData({ enabled })
   const targetAssetToPrimaryAsset: Record<Address, Set<Address>> = {} // target to primaryKey
   apiQuery.data?.map((data) => {
     const targetAsset = data?.target_asset?.address

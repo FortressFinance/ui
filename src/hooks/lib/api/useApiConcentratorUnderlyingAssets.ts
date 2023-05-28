@@ -5,11 +5,13 @@ import { useApiConcentratorStaticData } from "@/hooks/lib/api/useApiConcentrator
 export function useApiConcentratorUnderlyingAssets({
   targetAsset,
   primaryAsset,
+  enabled,
 }: {
   targetAsset?: Address
   primaryAsset?: Address
+  enabled: boolean
 }) {
-  const apiQuery = useApiConcentratorStaticData()
+  const apiQuery = useApiConcentratorStaticData({ enabled })
   const targetAssetToUnderlying: Record<Address, Address[]> = {} // target to underlying
   apiQuery.data?.forEach((data) => {
     const curTargetAsset = data?.target_asset?.address

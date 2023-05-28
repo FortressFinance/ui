@@ -146,7 +146,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
     <>
       <form
         onSubmit={form.handleSubmit(() => {
-          const action = "Depositing additional collateral"
+          const action = "Collateral deposit"
           const toastId = addToast({ type: "startTx", action })
           addCollateral.write
             .writeAsync?.()
@@ -247,6 +247,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
                   amount={addedAmount}
                   approval={approval}
                   disabled={isSubmitDisabled}
+                  spender={pairAddress}
                 />
               )
             ) : (

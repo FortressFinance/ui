@@ -5,6 +5,8 @@ import { SiDiscord, SiGitbook, SiGithub, SiTwitter } from "react-icons/si"
 
 import clsxm from "@/lib/clsxm"
 
+import { FortIconDune } from "@/icons"
+
 type ExternalLinksProps = {
   className?: string
   showHelp?: boolean
@@ -39,6 +41,14 @@ const ExternalLinks: FC<ExternalLinksProps> = ({
       >
         <SiGithub className="h-5 w-5 fill-current" />
         {showLabels && <span>GitHub</span>}
+      </Link>
+      <Link
+        href="https://dune.com/dybbuk/fortressfinance"
+        className="flex items-center gap-3"
+        target="_blank"
+      >
+        <FortIconDune className="h-5 w-5 fill-current" />
+        {showLabels && <span>Dune Dashboard</span>}
       </Link>
       <Link
         href="https://docs.fortress.finance"

@@ -3,6 +3,7 @@ import { Address } from "wagmi"
 import { create } from "zustand"
 
 type ToastInfo =
+  | { type: "errorSpeedBump"; action?: string }
   | { type: "errorTx"; action?: string; hash?: string }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | { type: "errorWrite"; action?: string; error: any }

@@ -22,11 +22,13 @@ import { DEFAULT_SLIPPAGE } from "@/constant/env"
 type TxSettingsPopoverProps = {
   className?: string
   isMobile?: boolean
+  popoverClassName?: string
 }
 
 export const TxSettingsPopover: FC<TxSettingsPopoverProps> = ({
   className,
   isMobile,
+  popoverClassName,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -46,7 +48,10 @@ export const TxSettingsPopover: FC<TxSettingsPopoverProps> = ({
       <Popover.Portal>
         <Popover.Content
           align={isMobile ? "center" : "end"}
-          className={`${inter.variable} ${vt323.variable} z-40 mr-3 w-[283px] translate-y-3 rounded border border-black/60 bg-orange-400 p-4 font-sans shadow-lg ui-state-closed:animate-fade-out ui-state-open:animate-fade-in max-md:left-0 md:-mr-6 md:w-72 md:rounded-md md:rounded-t-none md:border-t-0 md:shadow-pink-900/50`}
+          className={clsxm(
+            `${inter.variable} ${vt323.variable} z-40 mr-3 w-[283px] translate-y-3 rounded border border-black/60 bg-orange-400 p-4 font-sans shadow-lg ui-state-closed:animate-fade-out ui-state-open:animate-fade-in max-md:left-0 md:-mr-6 md:w-72 md:rounded-md md:rounded-t-none md:border-t-0 md:shadow-pink-900/50`,
+            popoverClassName
+          )}
         >
           <TxSettingsForm close={() => setIsOpen(false)} />
         </Popover.Content>

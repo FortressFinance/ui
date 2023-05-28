@@ -16,11 +16,13 @@ export const useTokenApproval = ({
   spender = "0x",
   token = "0x",
   enabled,
+  onSuccess,
 }: {
   amount: bigint
   spender?: Address
   token?: Address
   enabled: boolean
+  onSuccess?: () => void
 }) => {
   const isNativeToken = token === ethTokenAddress
   const chainId = useActiveChainId()
@@ -47,7 +49,10 @@ export const useTokenApproval = ({
   })
   const wait = useWaitForTransaction({
     hash: write.data?.hash,
-    onSuccess: () => allowance.refetch(),
+    onSuccess: () => {
+      allowance.refetch()
+      onSuccess?.()
+    },
   })
   return {
     isSufficient: isNativeToken

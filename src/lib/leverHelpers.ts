@@ -29,9 +29,6 @@ export const collateralToAsset = (
   exchangePrecision = 1n
 ) => (amount * exchangeRate) / exchangePrecision
 
-export const addSlippage = (amount = 0n, slippage: number) =>
-  amount + amount / BigInt(1 / slippage)
-
 export const calculateAssetsAvailable = ({
   totalAssets = 0n,
   totalBorrowAmount = 0n,
@@ -76,5 +73,7 @@ export const calculateMinCollateralRequired = ({
   maxLTV = 1n,
   ltvPrecision = 1n,
 }) =>
-  (borrowedAmountAsCollateral * ltvPrecision) / maxLTV +
-  (borrowedAmountAsCollateral * ltvPrecision) / 9_000_000n
+  (borrowedAmountAsCollateral * ltvPrecision) /
+  // If the user actually removes enough collateral to hit maxLTV, they will be insolvent
+  // Subtract 3% from the maxLTV to prevent this
+  (maxLTV - (30n * ltvPrecision) / 1000n)

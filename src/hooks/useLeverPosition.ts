@@ -9,10 +9,16 @@ import {
   useWaitForTransaction,
 } from "wagmi"
 
+import { addSlippage } from "@/lib"
 import { useActiveChainId } from "@/hooks/useActiveChainId"
 import { useTokenOrNative } from "@/hooks/useTokenOrNative"
 
+import { useToastStore } from "@/store"
+
 import { FortressLendingPair } from "@/constant/abi"
+
+// We add a 0.005% buffer to the borrow amount to account for inaccuracy in the conversion to/from assets/shares
+export const BORROW_BUFFER_PERCENTAGE = 0.005
 
 export const usePairLeverParams = ({
   pairAddress,
@@ -160,13 +166,24 @@ export const usePairLeverParams = ({
     data: {
       constants: accounting.data?.constants,
       exchangeRate: accounting.data?.exchangeRate.exchangeRate,
+      interestAccruedAt: Number(
+        accounting.data?.currentRateInfo.lastTimestamp ?? 0
+      ),
       interestRatePerSecond: accounting.data?.currentRateInfo.ratePerSec,
       maxLTV: accounting.data?.maxLTV,
       borrowedAmount: borrowedAmount.data,
+      borrowedAmountWithBuffer: addSlippage(
+        borrowedAmount.data,
+        BORROW_BUFFER_PERCENTAGE
+      ),
       borrowedShares: accounting.data?.userBorrowShares,
       collateralAmount: accounting.data?.userCollateralBalance,
       totalAssets: accounting.data?.totalAssets,
       totalBorrowAmount: accounting.data?.totalBorrowAmount,
+      totalBorrowAmountWithBuffer: addSlippage(
+        accounting.data?.totalBorrowAmount,
+        BORROW_BUFFER_PERCENTAGE
+      ),
       totalBorrowShares: accounting.data?.totalBorrowShares,
     },
     refetch: accounting.refetch,
@@ -190,6 +207,7 @@ export const useLeverPosition = ({
   pairAddress: Address
   onSuccess?: () => void
 }) => {
+  const addToast = useToastStore((store) => store.addToast)
   const chainId = useActiveChainId()
   const prepare = usePrepareContractWrite({
     chainId,
@@ -198,6 +216,14 @@ export const useLeverPosition = ({
     functionName: "leveragePosition",
     args: [borrowAmount, collateralAmount, minAmount, borrowAssetAddress],
     enabled: borrowAmount > 0 && collateralAmount > 0 && enabled,
+    onError: (error) => {
+      if (error.message.includes("AlreadyCalledOnBlock")) {
+        addToast({
+          type: "errorSpeedBump",
+          action: "Levered position creation",
+        })
+      }
+    },
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -218,6 +244,7 @@ export const useAddCollateral = ({
   pairAddress: Address
   onSuccess?: () => void
 }) => {
+  const addToast = useToastStore((store) => store.addToast)
   const chainId = useActiveChainId()
   const { address: borrower = "0x" } = useAccount()
   const prepare = usePrepareContractWrite({
@@ -227,6 +254,14 @@ export const useAddCollateral = ({
     functionName: "addCollateral",
     args: [collateralAmount, borrower],
     enabled: collateralAmount > 0 && borrower !== "0x" && enabled,
+    onError: (error) => {
+      if (error.message.includes("AlreadyCalledOnBlock")) {
+        addToast({
+          type: "errorSpeedBump",
+          action: "Collateral deposit",
+        })
+      }
+    },
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -247,6 +282,7 @@ export const useRemoveCollateral = ({
   pairAddress: Address
   onSuccess?: () => void
 }) => {
+  const addToast = useToastStore((store) => store.addToast)
   const chainId = useActiveChainId()
   const { address: borrower = "0x" } = useAccount()
   const prepare = usePrepareContractWrite({
@@ -256,6 +292,14 @@ export const useRemoveCollateral = ({
     functionName: "removeCollateral",
     args: [collateralAmount, borrower],
     enabled: collateralAmount > 0 && borrower !== "0x" && enabled,
+    onError: (error) => {
+      if (error.message.includes("AlreadyCalledOnBlock")) {
+        addToast({
+          type: "errorSpeedBump",
+          action: "Collateral removal",
+        })
+      }
+    },
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -270,12 +314,15 @@ export const useRepayAsset = ({
   enabled = true,
   pairAddress,
   onSuccess,
+  onPrepareError,
 }: {
   shares?: bigint
   enabled?: boolean
   pairAddress: Address
   onSuccess?: () => void
+  onPrepareError?: (error: Error) => void
 }) => {
+  const addToast = useToastStore((store) => store.addToast)
   const chainId = useActiveChainId()
   const { address: borrower = "0x" } = useAccount()
   const prepare = usePrepareContractWrite({
@@ -285,6 +332,15 @@ export const useRepayAsset = ({
     functionName: "repayAsset",
     args: [shares, borrower],
     enabled: enabled && shares > 0 && borrower !== "0x",
+    onError: (error) => {
+      if (error.message.includes("AlreadyCalledOnBlock")) {
+        addToast({
+          type: "errorSpeedBump",
+          action: "Repayment",
+        })
+      }
+      onPrepareError?.(error)
+    },
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -309,6 +365,7 @@ export const useRepayAssetWithCollateral = ({
   pairAddress: Address
   onSuccess?: () => void
 }) => {
+  const addToast = useToastStore((store) => store.addToast)
   const chainId = useActiveChainId()
   const prepare = usePrepareContractWrite({
     chainId,
@@ -317,6 +374,14 @@ export const useRepayAssetWithCollateral = ({
     functionName: "repayAssetWithCollateral",
     args: [collateralAmount, minAmount, borrowAssetAddress],
     enabled: enabled && collateralAmount > 0 && borrowAssetAddress !== "0x",
+    onError: (error) => {
+      if (error.message.includes("AlreadyCalledOnBlock")) {
+        addToast({
+          type: "errorSpeedBump",
+          action: "Repayment with collateral",
+        })
+      }
+    },
   })
   const write = useContractWrite(prepare.config)
   const wait = useWaitForTransaction({
@@ -358,6 +423,7 @@ export const useConvertToShares = ({
     functionName: "convertToShares",
     args: [totalBorrowAmount, totalBorrowShares, amount, false],
     enabled: enabled && amount > 0,
+    cacheOnBlock: true,
   })
 }
 
@@ -378,7 +444,8 @@ export const useConvertToAssets = ({
     address: pairAddress,
     abi: FortressLendingPair,
     functionName: "convertToAssets",
-    args: [totalBorrowAmount, totalBorrowShares, shares, false],
+    args: [totalBorrowAmount, totalBorrowShares, shares, true],
     enabled: shares > 0,
+    cacheOnBlock: true,
   })
 }
