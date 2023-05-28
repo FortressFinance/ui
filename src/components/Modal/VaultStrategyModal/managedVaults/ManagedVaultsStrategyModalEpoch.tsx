@@ -23,16 +23,16 @@ export const ManagedVaultsStrategyModalEpoch: FC = () => {
           </>
         )}
       </div>
-      <div className="flex h-8 h-auto flex-none flex-row items-start gap-1 self-stretch px-0 pb-2 pt-0 text-sm text-pink-100">
-        <div className="w-1/2">Epoch duration :</div>
-        <div className="w-1/2 text-right">
-          <VaultEpoch />
-        </div>
-      </div>
-      <div className="flex h-8 flex-none flex-row items-start gap-1 self-stretch px-0 pb-2 pt-0 text-sm text-pink-100">
-        <div className="w-1/2">Epoch number :</div>
-        <div className="w-1/2 text-right">20</div>
-      </div>
+      <dl className="flex flex-none flex-row items-start gap-1 self-stretch px-0 pb-2 pt-0 text-sm text-pink-100">
+        <dt className="w-1/2">Epoch duration :</dt>
+        <dd className="w-1/2 text-right">
+          <VaultEpoch className="justify-end" />
+        </dd>
+      </dl>
+      <dl className="flex flex-none flex-row items-start gap-1 self-stretch px-0 pt-0 text-sm text-pink-100">
+        <dt className="w-1/2">Epoch number :</dt>
+        <dd className="w-1/2 text-right">20</dd>
+      </dl>
     </Skeleton>
   )
 }
