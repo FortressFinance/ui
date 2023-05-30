@@ -48,11 +48,9 @@ export const LeverPairs: FC = () => {
                       )}
                     >
                       {isActive ? (
-                        <GradientText>
-                          {lendingPair.collateralTokenSymbol}
-                        </GradientText>
+                        <GradientText>{lendingPair.name}</GradientText>
                       ) : (
-                        <span>{lendingPair.collateralTokenSymbol}</span>
+                        <span>{lendingPair.name}</span>
                       )}
                       <FiChevronRight className="-mr-1 h-6 w-6" />
                     </Link>

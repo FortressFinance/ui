@@ -48,13 +48,13 @@ export function useConcentratorVaultFees({
   return apiConcentratorStaticData.isError
     ? fallbackRequest
     : {
-      ...apiConcentratorStaticData,
-      data: {
-        ...HARDCODED_FEES,
-        platformFee: matchedVault?.concentrator?.platformFee,
-        withdrawFee: matchedVault?.concentrator?.withdrawalFee,
-      },
-    }
+        ...apiConcentratorStaticData,
+        data: {
+          ...HARDCODED_FEES,
+          platformFee: matchedVault?.concentrator?.platformFee,
+          withdrawFee: matchedVault?.concentrator?.withdrawalFee,
+        },
+      }
 }
 
 function findApiConcentratorForPrimaryAsset(

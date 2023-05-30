@@ -1,4 +1,11 @@
-import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
+import React, {
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react"
 import { useController, useForm } from "react-hook-form"
 import { useDebounce } from "react-use"
 import { Address, useAccount } from "wagmi"
@@ -26,6 +33,7 @@ type RemoveCollateralProps = {
   isUpdatingAmounts: boolean
   setAdjustedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
   setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
+  tabsList: ReactNode
   pairAddress: Address
   onSuccess: () => void
 }
@@ -42,6 +50,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
   isUpdatingAmounts,
   setAdjustedCollateralAmount,
   setIsUpdatingAmounts,
+  tabsList,
   pairAddress,
   onSuccess: _onSuccess,
 }) => {
@@ -190,11 +199,13 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
           <div className="relative z-[1] col-span-full col-start-1 row-start-2 px-4 pb-4 text-left align-bottom text-xs">
             <span className="text-pink-100">
               Collateral withdrawable:{" "}
-              {formatCurrencyUnits({
-                amountWei: maxCollateralWithdrawable.toString(),
-                decimals: collateralAssetBalance.data?.decimals,
-                maximumFractionDigits: 6,
-              })}
+              {isClientReady && isConnected
+                ? formatCurrencyUnits({
+                    amountWei: maxCollateralWithdrawable.toString(),
+                    decimals: collateralAssetBalance.data?.decimals,
+                    maximumFractionDigits: 6,
+                  })
+                : "—"}
             </span>
             <button
               className="ml-1.5 -translate-y-[1px] rounded px-1.5 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
@@ -226,7 +237,9 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
           />
         </div>
 
-        <div className="mt-3 flex items-center gap-3">
+        <div className="mt-3 flex items-center gap-3 max-md:flex-col">
+          {tabsList}
+
           <Button
             type="submit"
             className="w-full"

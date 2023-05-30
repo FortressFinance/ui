@@ -23,8 +23,8 @@ const LeverIndex: NextPage = () => {
               <h1 className="font-display text-4xl">Lever</h1>
             </header>
             <p className="mt-3 leading-relaxed text-white/75 lg:text-lg">
-              Amplify your yield farming with leverage. Select an fAsset to get
-              started.
+              Amplify your yield farming with leverage. Select an
+              fcAsset/fctrAsset to get started.
             </p>
           </main>
         </div>

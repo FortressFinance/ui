@@ -283,11 +283,13 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
         <div className="relative z-[1] col-span-full col-start-1 row-start-2 px-4 pb-4 text-left align-bottom text-xs">
           <span className="text-pink-100">
             {isRepayingWithCollateral ? "Collateral available: " : "Balance: "}
-            {formatCurrencyUnits({
-              amountWei: activeRepaymentBalanceAmount.toString(),
-              decimals: activeRepaymentAsset?.decimals,
-              maximumFractionDigits: 6,
-            })}
+            {isClientReady && isConnected
+              ? formatCurrencyUnits({
+                  amountWei: activeRepaymentBalanceAmount.toString(),
+                  decimals: activeRepaymentAsset?.decimals,
+                  maximumFractionDigits: 6,
+                })
+              : "—"}
           </span>
           <button
             className="ml-1.5 -translate-y-[1px] rounded px-1.5 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
@@ -334,10 +336,10 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
         />
       </div>
 
-      <div className="mt-3 flex items-center gap-3">
+      <div className="mt-3 flex items-center gap-3 max-md:flex-col">
         <ToggleGroup.Root
           type="single"
-          className="flex h-12 w-1/2 shrink-0 justify-center gap-1.5"
+          className="flex h-12 w-full shrink-0 justify-center gap-1.5 md:w-1/2"
           disabled={repay.write.isLoading || repay.wait.isLoading}
           value={selectedPreset}
           onValueChange={(value) => {
