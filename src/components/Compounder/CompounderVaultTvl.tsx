@@ -8,7 +8,7 @@ import { useVaultPoolId, useVaultTvl } from "@/hooks"
 import Skeleton from "@/components/Skeleton"
 
 export const CompounderVaultTvl: FC<VaultProps> = (props) => {
-  const poolId = useVaultPoolId(props)
+  const poolId = useVaultPoolId({ ...props, enabled: true })
   const tvlData = useVaultTvl({ ...props, poolId: poolId.data })
   const data = tvlData.data
 

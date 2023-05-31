@@ -13,7 +13,7 @@ import { useIsTokenVault } from "@/hooks/useVaultTypes"
 export function useVaultPoolId({
   asset,
   type,
-  enabled = true,
+  enabled,
 }: {
   asset: Address
   type: VaultType

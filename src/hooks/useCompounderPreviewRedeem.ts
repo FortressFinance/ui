@@ -20,6 +20,7 @@ export function useCompounderPreviewRedeem({
   const { data: poolId } = useVaultPoolId({
     asset: rest.asset ?? "0x",
     type: type ?? "curve",
+    enabled,
   })
   const args = {
     amount: rest.amount,

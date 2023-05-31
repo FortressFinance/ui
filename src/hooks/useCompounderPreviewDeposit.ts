@@ -20,6 +20,7 @@ export function useCompounderPreviewDeposit({
   const { data: poolId } = useVaultPoolId({
     asset: rest.asset ?? "0x",
     type: type ?? "curve",
+    enabled: true,
   })
   const args = {
     amount: rest.amount,

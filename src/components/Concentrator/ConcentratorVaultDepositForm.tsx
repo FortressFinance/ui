@@ -11,6 +11,7 @@ export const ConcentratorVaultDepositForm: FC<VaultProps> = (props) => {
     targetAsset: props.asset,
     primaryAsset: props.vaultAddress,
     type: props.type ?? "balancer",
+    enabled: true,
   })
 
   const { data: underlyingAssets } = useConcentratorUnderlyingAssets({
