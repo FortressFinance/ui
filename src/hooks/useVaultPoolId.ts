@@ -23,7 +23,7 @@ export function useVaultPoolId({
 
   // Preferred: API request
   const apiCompounderQuery = useApiCompounderVaults({ type, enabled })
-  const apiTokenQuery = useApiTokenVaults({ type })
+  const apiTokenQuery = useApiTokenVaults({ type, enabled })
 
   const primaryAssets = useListCompounders()
 
