@@ -23,8 +23,7 @@ export default function useTokenVaultTotalApy({
 export function useTokenVaultTotalApr({
   asset,
   enabled,
-}: {
-  asset: VaultDynamicProps["asset"]
+}: Pick<VaultDynamicProps, "asset"> & {
   enabled: boolean
 }) {
   const chainId = useActiveChainId()

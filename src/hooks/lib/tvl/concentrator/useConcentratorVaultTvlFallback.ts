@@ -8,15 +8,18 @@ export default function useConcentratorVaultTvlFallback({
   targetAsset,
   primaryAsset,
   type,
+  enabled,
 }: {
   targetAsset: Address
   primaryAsset: Address
   type: VaultType
+  enabled: boolean
 }) {
   const concentrator = useConcentratorVault({
     targetAsset,
     primaryAsset,
     type,
+    enabled,
   })
 
   const { data: primaryAssetPriceUsd, isLoading: isLoadingPricer } =

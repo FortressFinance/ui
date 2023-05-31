@@ -14,9 +14,7 @@ export function useConcentratorVaultFees({
   asset,
   vaultAddress,
   enabled,
-}: {
-  asset: VaultProps["asset"]
-  vaultAddress: VaultProps["vaultAddress"]
+}: Pick<VaultProps, "asset" | "vaultAddress"> & {
   enabled: boolean
 }) {
   const apiConcentratorStaticData = useApiConcentratorStaticData({ enabled })
@@ -28,6 +26,7 @@ export function useConcentratorVaultFees({
   const ybTokenAddress = useConcentratorVaultYbtokenAddress({
     targetAsset: asset,
     primaryAsset: vaultAddress,
+    enabled,
   })
   const vaultContract = useVaultContract(ybTokenAddress)
   const fallbackRequest = useContractRead({

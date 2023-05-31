@@ -98,6 +98,7 @@ const ConcentratorVaultRow: FC<ConcentratorVaultRowProps> = (props) => {
   const ybTokenAddress = useConcentratorVaultYbtokenAddress({
     primaryAsset: props.primaryAsset,
     targetAsset: props.targetAsset,
+    enabled: true,
   })
   const setStrategyLink = ({
     pathname,

@@ -8,7 +8,12 @@ import { useIsCurveVault, useIsTokenVault } from "@/hooks/useVaultTypes"
 
 // TODO: Create combined `useApiVaults` hook after https://github.com/FortressFinance/issues/issues/110 is implemented
 
-export function useApiCompounderVaults({ type }: Pick<VaultProps, "type">) {
+export function useApiCompounderVaults({
+  type,
+  enabled,
+}: Pick<VaultProps, "type"> & {
+  enabled: boolean
+}) {
   const chainId = useActiveChainId()
   const isCurve = useIsCurveVault(type)
   const isToken = useIsTokenVault(type)
@@ -18,7 +23,7 @@ export function useApiCompounderVaults({ type }: Pick<VaultProps, "type">) {
       queryFn: () =>
         getCompounderVaultsStaticData({ chainId, isCurve: isCurve ?? true }),
       retry: false,
-      enabled: !isToken,
+      enabled: !isToken && enabled,
     }),
     isEnabled: !isToken,
   }
