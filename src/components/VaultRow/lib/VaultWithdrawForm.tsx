@@ -1,4 +1,4 @@
-import { FC, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
   useAccount,
@@ -59,6 +59,14 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
     mode: "all",
     reValidateMode: "onChange",
   })
+
+  useEffect(() => {
+    form.reset({
+      amountIn: "",
+      inputToken: defaultInputToken,
+      outputToken: defaultOutputToken,
+    })
+  }, [defaultInputToken, defaultOutputToken, form])
 
   // Watch form values
   const amountIn = form.watch("amountIn")

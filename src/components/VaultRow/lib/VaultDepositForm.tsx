@@ -1,4 +1,4 @@
-import { FC, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import {
   Address,
@@ -72,6 +72,16 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     mode: "all",
     reValidateMode: "onChange",
   })
+
+  // fix arbi fork issue, the defaultOutputToken is undefined first and then updated
+  // this happen in cockroach mode
+  useEffect(() => {
+    form.reset({
+      amountIn: "",
+      inputToken: defaultInputToken,
+      outputToken: defaultOutputToken,
+    })
+  }, [defaultInputToken, defaultOutputToken, form])
 
   // Watch form values
   const amountIn = form.watch("amountIn")

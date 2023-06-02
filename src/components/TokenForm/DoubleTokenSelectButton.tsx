@@ -22,9 +22,8 @@ const DoubleTokenSelectButton: FC<DoubleTokenSelectButtonProps> = ({
   onClick,
 }) => {
   const doubleTokens = useDoubleTokenConfig()
-  const tokens = doubleTokens?.[tokenAddress]
-  const mainToken = tokens?.[0]
-  const secondToken = tokens?.[1]
+  const [mainToken, secondToken] = doubleTokens?.[tokenAddress] ?? []
+
   return canChange ? (
     <button
       type="button"
