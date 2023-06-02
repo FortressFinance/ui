@@ -25,6 +25,6 @@ export function useApiCompounderVaults({
       retry: false,
       enabled: !isToken && enabled,
     }),
-    isEnabled: !isToken,
+    isEnabled: !isToken && enabled,
   }
 }

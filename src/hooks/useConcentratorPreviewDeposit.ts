@@ -17,14 +17,17 @@ export function useConcentratorPreviewDeposit({
 }: VaultPreviewTransactionArgs) {
   const { data: targetAssetId } = useConcentratorTargetAssetId({
     targetAsset: rest.asset,
+    enabled,
   })
   const { data: concentratorId } = useConcentratorId({
     primaryAsset: rest.vaultAddress,
     targetAsset: rest.asset,
+    enabled,
   })
 
   const firstConcentratorVaultType = useConcentratorFirstVaultType({
     targetAsset: rest.asset,
+    enabled,
   })
 
   const args = {

@@ -14,10 +14,7 @@ import {
 import Skeleton from "@/components/Skeleton"
 
 export const VaultUserEarnings: FC<VaultProps> = (props) => {
-  const poolId = useVaultPoolId({
-    ...props,
-    enabled: true,
-  })
+  const poolId = useVaultPoolId(props)
   const earnings = useVaultUserEarnings({
     poolId: poolId.data,
     type: props.type,

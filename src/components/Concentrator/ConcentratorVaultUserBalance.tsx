@@ -12,7 +12,6 @@ export const ConcentratorVaultUserBalance: FC<VaultProps> = (props) => {
     targetAsset: props.asset,
     primaryAsset: props.vaultAddress,
     type: props.type,
-    enabled: true,
   })
 
   return isConnected ? (

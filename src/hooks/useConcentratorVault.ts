@@ -4,17 +4,19 @@ import { VaultType } from "@/lib/types"
 import { useApiConcentratorVault } from "@/hooks/lib/api/useApiConcentratorVault"
 import { useRegistryContract } from "@/hooks/lib/useRegistryContract"
 
+type ConcentratorVaultProps = {
+  targetAsset?: Address
+  primaryAsset?: Address
+  type?: VaultType
+  enabled?: boolean
+}
+
 export function useConcentratorVault({
   targetAsset,
   primaryAsset,
   type,
-  enabled,
-}: {
-  targetAsset?: Address
-  primaryAsset?: Address
-  type?: VaultType
-  enabled: boolean
-}) {
+  enabled = true,
+}: ConcentratorVaultProps) {
   const apiQuery = useApiConcentratorVault({
     targetAsset,
     primaryAsset,

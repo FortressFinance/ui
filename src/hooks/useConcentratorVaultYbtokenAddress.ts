@@ -3,15 +3,17 @@ import { Address } from "wagmi"
 import { useConcentratorVault } from "@/hooks/useConcentratorVault"
 import { useShouldUseCurveFallback } from "@/hooks/useVaultTypes"
 
+type ConcentratorVaultYbtokenAddressProps = {
+  primaryAsset: Address
+  targetAsset: Address
+  enabled?: boolean
+}
+
 export function useConcentratorVaultYbtokenAddress({
   primaryAsset,
   targetAsset,
-  enabled,
-}: {
-  primaryAsset: Address
-  targetAsset: Address
-  enabled: boolean
-}) {
+  enabled = true,
+}: ConcentratorVaultYbtokenAddressProps) {
   const isCurve = useShouldUseCurveFallback(primaryAsset)
   const concentrator = useConcentratorVault({
     targetAsset,

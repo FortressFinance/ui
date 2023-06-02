@@ -97,7 +97,6 @@ const HoldingsRow: FC<HoldingsRowProps> = ({
     targetAsset,
     primaryAsset,
     type,
-    enabled: true,
   })
   const holdingsVaults = useHoldingsVaults({ isCompounder: false })
 

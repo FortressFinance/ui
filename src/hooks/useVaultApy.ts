@@ -50,7 +50,6 @@ export function useVaultApy({ asset, type }: VaultProps) {
 export function useVaultBaseApr({ asset }: VaultProps) {
   const vaultAprFallback = useCurveVaultBreakdownApr({
     asset,
-    enabled: true,
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -99,7 +98,6 @@ export function useTokenVaultCrvApr({ asset, type }: VaultProps) {
 export function useVaultCrvApr({ asset }: VaultProps) {
   const vaultAprFallback = useCurveVaultBreakdownApr({
     asset,
-    enabled: true,
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -148,7 +146,6 @@ export function useTokenVaultCvxApr({ asset, type }: VaultProps) {
 export function useVaultCvxApr({ asset }: VaultProps) {
   const vaultAprFallback = useCurveVaultBreakdownApr({
     asset,
-    enabled: true,
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -163,7 +160,6 @@ export function useVaultCvxApr({ asset }: VaultProps) {
 export function useVaultExtraApr({ asset }: VaultProps) {
   const vaultAprFallback = useCurveVaultBreakdownApr({
     asset,
-    enabled: true,
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

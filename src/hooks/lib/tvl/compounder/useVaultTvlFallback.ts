@@ -5,9 +5,9 @@ import { useTokenPriceUsd } from "@/hooks/useTokenPriceUsd"
 export default function useVaultTvlFallback({
   asset,
   vaultAddress,
-  enabled,
+  enabled = true,
 }: Pick<VaultDynamicProps, "asset" | "vaultAddress"> & {
-  enabled: boolean
+  enabled?: boolean
 }) {
   const { data: primaryAssetPriceUsd, isLoading: isLoadingPricer } =
     useTokenPriceUsd({ asset, enabled })

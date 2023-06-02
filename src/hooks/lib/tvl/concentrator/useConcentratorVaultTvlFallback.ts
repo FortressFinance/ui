@@ -4,17 +4,19 @@ import { VaultType } from "@/lib/types"
 import { useConcentratorVault, useTokenPriceUsd } from "@/hooks"
 import useVaultTotalAssets from "@/hooks/lib/tvl/compounder/useVaultTotalAssets"
 
+type ConcentratorVaultTvlFallbackProps = {
+  targetAsset: Address
+  primaryAsset: Address
+  type: VaultType
+  enabled?: boolean
+}
+
 export default function useConcentratorVaultTvlFallback({
   targetAsset,
   primaryAsset,
   type,
-  enabled,
-}: {
-  targetAsset: Address
-  primaryAsset: Address
-  type: VaultType
-  enabled: boolean
-}) {
+  enabled = true,
+}: ConcentratorVaultTvlFallbackProps) {
   const concentrator = useConcentratorVault({
     targetAsset,
     primaryAsset,
@@ -27,7 +29,6 @@ export default function useConcentratorVaultTvlFallback({
   const { data: totalAssets, isLoading: isLoadingTotalAssets } =
     useVaultTotalAssets({
       vaultAddress: concentrator?.data?.ybTokenAddress,
-      enabled: true,
     })
   return {
     isLoading:

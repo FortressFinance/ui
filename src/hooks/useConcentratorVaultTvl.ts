@@ -10,6 +10,5 @@ export function useConcentratorVaultTvl({
     targetAsset,
     primaryAsset,
     type,
-    enabled: true,
   })
 }

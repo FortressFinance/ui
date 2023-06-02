@@ -4,13 +4,15 @@ import { useActiveChainId } from "@/hooks"
 import { useCurveVaultArbitrumBreakdownApr } from "@/hooks/lib/apr/useCurveVaultArbitrumTotalApr"
 import { useCurveVaultMainnetBreakdownApr } from "@/hooks/lib/apr/useCurveVaultMainnetTotalApr"
 
+type CurveVaultBreakdownAprProps = {
+  asset: Address
+  enabled?: boolean
+}
+
 export default function useCurveVaultBreakdownApr({
   asset,
-  enabled,
-}: {
-  asset: Address
-  enabled: boolean
-}) {
+  enabled = true,
+}: CurveVaultBreakdownAprProps) {
   const chainId = useActiveChainId()
   const isArbitrumFamily = chainId === 313371 || chainId === 42161
   const curveVaultMainnetTotalApr = useCurveVaultMainnetBreakdownApr({

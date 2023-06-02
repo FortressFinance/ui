@@ -2,15 +2,17 @@ import { Address } from "wagmi"
 
 import { useApiConcentratorStaticData } from "@/hooks/lib/api/useApiConcentratorStaticData"
 
+type ConcentratorUnderlyingAssetsProps = {
+  targetAsset?: Address
+  primaryAsset?: Address
+  enabled?: boolean
+}
+
 export function useApiConcentratorUnderlyingAssets({
   targetAsset,
   primaryAsset,
-  enabled,
-}: {
-  targetAsset?: Address
-  primaryAsset?: Address
-  enabled: boolean
-}) {
+  enabled = true,
+}: ConcentratorUnderlyingAssetsProps) {
   const apiQuery = useApiConcentratorStaticData({ enabled })
   const targetAssetToUnderlying: Record<Address, Address[]> = {} // target to underlying
   apiQuery.data?.forEach((data) => {

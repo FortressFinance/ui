@@ -14,7 +14,6 @@ export const ConcentratorVaultNameCell: FC<VaultRowPropsWithProduct> = (
   const ybTokenAddress = useConcentratorVaultYbtokenAddress({
     targetAsset: props.asset,
     primaryAsset: props.vaultAddress,
-    enabled: true,
   })
   const [mainInputToken, secondInputToken] =
     doubleTokens?.[ybTokenAddress] ?? []

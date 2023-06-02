@@ -4,13 +4,23 @@ import { useFirstConcentrator } from "@/hooks/useConcentratorHelpers"
 import { useConcentratorTargetAssets } from "@/hooks/useConcentratorTargetAssets"
 import { useListConcentrators } from "@/hooks/useListConcentrators"
 
+type FirstVaultProps = {
+  targetAsset: Address
+  enabled?: boolean
+}
+
 export function useConcentratorFirstVaultType({
   targetAsset,
-}: {
-  targetAsset: Address
-}) {
-  const { data: concentratorTargetAssets } = useConcentratorTargetAssets()
-  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
+  enabled = true,
+}: FirstVaultProps) {
+  const { data: concentratorTargetAssets } = useConcentratorTargetAssets(
+    undefined,
+    enabled
+  )
+  const concentratorsList = useListConcentrators({
+    concentratorTargetAssets,
+    enabled,
+  })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
     concentratorTargetAsset: targetAsset,
