@@ -6,6 +6,7 @@ import {
 } from "@/lib/api/vaults"
 import { queryKeys } from "@/lib/helpers"
 import { PreviewTransactionBaseArgs } from "@/hooks/lib/api/types"
+import useCompounderPreviewRedeemFallback from "@/hooks/lib/preview/compounder/useCompounderPreviewRedeemFallback"
 import { useVaultPoolId } from "@/hooks/useVaultPoolId"
 
 import { useGlobalStore } from "@/store"
@@ -30,7 +31,8 @@ export function useCompounderPreviewRedeem({
     // we store slippage as a fraction of 100; api expects slippage as a fraction of 1
     slippage: useGlobalStore((store) => store.slippageTolerance) / 100,
   }
-  return useQuery({
+
+  const apiQuery = useQuery({
     ...queryKeys.vaults.previewRedeem(args),
     queryFn: () =>
       type === "token"
@@ -43,4 +45,17 @@ export function useCompounderPreviewRedeem({
     onError,
     onSuccess,
   })
+
+  const previewFallback = useCompounderPreviewRedeemFallback({
+    ...rest,
+    type,
+    slippage: args.slippage,
+    enabled,
+  })
+
+  if (apiQuery.isError) {
+    return previewFallback
+  }
+
+  return apiQuery
 }

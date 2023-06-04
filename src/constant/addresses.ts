@@ -20,3 +20,14 @@ export const glpTokenAddress: Address =
   "0x5402B5F40310bDED796c7D0F3FF6683f5C0cFfdf"
 export const multiClaimAddress: Address =
   "0x259c2B9F14Ef98620d529feEf6d0D22269fDfbeD"
+
+export const wethArbiTokenAddress: Address =
+  "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
+export const wethTokenAddress: Address =
+  "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+
+export const ARBI_CURVE_ADDRESS: Record<Address, Address> = {
+  [crvTriCryptoTokenAddress]: crvTriCryptoPoolAddress,
+  [crvTwoCryptoTokenAddress]: crvTwoCryptoTokenAddress,
+  [fraxBpTokenAddress]: fraxBpTokenAddress,
+}

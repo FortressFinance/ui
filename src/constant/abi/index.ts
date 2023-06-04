@@ -1,5 +1,7 @@
 export * from "./AMMCompounderBase"
 export * from "./AMMConcentratorBase"
+export * from "./CurvePool2Asset"
+export * from "./CurvePool3AssetsV2"
 export * from "./FortressLendingPair"
 export * from "./MultiClaimer"
 export * from "./RewardDistributor"
