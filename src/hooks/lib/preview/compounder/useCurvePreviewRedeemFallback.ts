@@ -1,10 +1,10 @@
 import { Address, useContractRead } from "wagmi"
 
 import { VaultType } from "@/lib/types"
-import useCompounderPreviewRedeemUnderlying from "@/hooks/lib/preview/compounder/useCompounderPreviewRedeemUnderlying"
+import useCurvePreviewRedeemUnderlying from "@/hooks/lib/preview/compounder/useCurvePreviewRedeemUnderlying"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
 
-export default function useCompounderPreviewRedeemFallback({
+export default function useCurvePreviewRedeemFallback({
   asset,
   vaultAddress,
   token,
@@ -21,24 +21,24 @@ export default function useCompounderPreviewRedeemFallback({
   slippage: number
   enabled: boolean
 }) {
-  const isUnderlyingToken = token !== asset
+  const isUnderlyingAsset = token !== asset
   const preview = useContractRead({
     ...useVaultContract(vaultAddress),
-    enabled: !!asset && !isUnderlyingToken && enabled,
+    enabled: !!asset && !isUnderlyingAsset && enabled,
     functionName: "previewRedeem",
     args: [BigInt(amount)],
   })
 
-  const previewUnderlying = useCompounderPreviewRedeemUnderlying({
+  const previewUnderlying = useCurvePreviewRedeemUnderlying({
     asset,
     token,
     amount,
     type,
     slippage,
-    enabled: !!asset && isUnderlyingToken && enabled,
+    enabled: !!asset && isUnderlyingAsset && enabled,
   })
 
-  if (isUnderlyingToken) {
+  if (isUnderlyingAsset) {
     return {
       ...previewUnderlying,
       data: {

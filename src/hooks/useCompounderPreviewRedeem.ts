@@ -6,8 +6,10 @@ import {
 } from "@/lib/api/vaults"
 import { queryKeys } from "@/lib/helpers"
 import { PreviewTransactionBaseArgs } from "@/hooks/lib/api/types"
-import useCompounderPreviewRedeemFallback from "@/hooks/lib/preview/compounder/useCompounderPreviewRedeemFallback"
+import useCurvePreviewRedeemFallback from "@/hooks/lib/preview/compounder/useCurvePreviewRedeemFallback"
+import useTokenPreviewRedeemFallback from "@/hooks/lib/preview/compounder/useTokenPreviewRedeemFallback"
 import { useVaultPoolId } from "@/hooks/useVaultPoolId"
+import { useIsCurveVault, useIsTokenVault } from "@/hooks/useVaultTypes"
 
 import { useGlobalStore } from "@/store"
 
@@ -18,6 +20,9 @@ export function useCompounderPreviewRedeem({
   onSuccess,
   ...rest
 }: PreviewTransactionBaseArgs) {
+  const isToken = useIsTokenVault(type)
+  const isCurve = useIsCurveVault(type)
+
   const { data: poolId } = useVaultPoolId({
     asset: rest.asset ?? "0x",
     type: type ?? "curve",
@@ -35,7 +40,7 @@ export function useCompounderPreviewRedeem({
   const apiQuery = useQuery({
     ...queryKeys.vaults.previewRedeem(args),
     queryFn: () =>
-      type === "token"
+      isToken
         ? getPreviewRedeemTokenVault(args)
         : getPreviewRedeemAmmVault({ ...args, isCurve: type === "curve" }),
     keepPreviousData: args.amount !== "0",
@@ -46,15 +51,24 @@ export function useCompounderPreviewRedeem({
     onSuccess,
   })
 
-  const previewFallback = useCompounderPreviewRedeemFallback({
+  const curvePreviewFallback = useCurvePreviewRedeemFallback({
     ...rest,
     type,
     slippage: args.slippage,
-    enabled,
+    enabled: enabled && isCurve,
   })
 
-  if (apiQuery.isError) {
-    return previewFallback
+  const tokenPreviewFallback = useTokenPreviewRedeemFallback({
+    ...rest,
+    enabled: enabled && isToken,
+  })
+
+  if (apiQuery.isError && isCurve) {
+    return curvePreviewFallback
+  }
+
+  if (apiQuery.isError && isToken) {
+    return tokenPreviewFallback
   }
 
   return apiQuery

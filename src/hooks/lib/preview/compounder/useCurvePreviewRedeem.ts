@@ -9,13 +9,13 @@ import {
   ARBI_CURVE_ADDRESS,
   crvTriCryptoPoolAddress,
   crvTwoCryptoTokenAddress,
-  ethTokenAddress,
+  ETH,
   fraxBpTokenAddress,
-  wethArbiTokenAddress,
-  wethTokenAddress,
+  WETH,
+  WETH_ARBI,
 } from "@/constant/addresses"
 
-export default function useCompounderPreviewRedeemUnderlying({
+export default function useCurvePreviewRedeem({
   asset,
   token,
   amount,
@@ -46,11 +46,11 @@ export default function useCompounderPreviewRedeemUnderlying({
     abi = CurvePool2Assets
   }
 
-  if (token === ethTokenAddress && isArbitrumFamily) {
-    token = wethArbiTokenAddress
+  if (token === ETH && isArbitrumFamily) {
+    token = WETH_ARBI
   }
-  if (token === ethTokenAddress && !isArbitrumFamily) {
-    token = wethTokenAddress
+  if (token === ETH && !isArbitrumFamily) {
+    token = WETH
   }
 
   const underlyingAssets = useContractReads({
@@ -72,7 +72,6 @@ export default function useCompounderPreviewRedeemUnderlying({
     underlyingAssets.data?.filter((x) => x !== "0x").indexOf(token ?? "0x") ??
     -1
   const isCurveEnabled = index !== -1 && type === "curve" && enabled
-  //const isTokenEnabled = index !== -1 && type !== "curve" && enabled
 
   const curvePreviewUnderlying = useCalcWithdrawOneCoin({
     asset,

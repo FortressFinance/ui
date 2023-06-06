@@ -7,7 +7,7 @@ import { getLlamaPrice, getLlamaPriceEth } from "@/lib/api/pricer/getLlamaPrice"
 import { queryKeys } from "@/lib/helpers"
 import { useActiveChainConfig, useActiveChainId } from "@/hooks"
 
-import { ethTokenAddress, glpTokenAddress } from "@/constant/addresses"
+import { ETH, glpTokenAddress } from "@/constant/addresses"
 
 export function useTokenPriceUsd({
   asset = "0x",
@@ -47,7 +47,7 @@ export async function getApiPrice({
   asset?: Address
   chainId?: number
 }) {
-  if (asset === ethTokenAddress) {
+  if (asset === ETH) {
     return await getLlamaPriceEth()
   }
   let data = await getLlamaPrice({ asset, chainId })

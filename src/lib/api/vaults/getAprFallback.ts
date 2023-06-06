@@ -9,7 +9,7 @@ import { getApiPrice } from "@/hooks"
 import {
   auraBalTokenAddress,
   auraTokenAddress,
-  ethTokenAddress,
+  ETH,
 } from "@/constant/addresses"
 import {
   auraFinanceUrl,
@@ -50,7 +50,7 @@ export async function getFortGlpAprFallback(
   const { aum, priceGmx } = await getGmxPriceData()
   const ethRewardsAnnual =
     (Number(ethRewardsPerSecond ?? 0n) * 3600 * 24 * 365) / 1e18
-  const ethPrice = await getApiPrice({ asset: ethTokenAddress })
+  const ethPrice = await getApiPrice({ asset: ETH })
   const gmxRewardsMonthlyEmissionRate = 0 // need to know why is it zero
   const esGmxRewards = priceGmx * gmxRewardsMonthlyEmissionRate * 12
   const aprGmx = esGmxRewards / aum

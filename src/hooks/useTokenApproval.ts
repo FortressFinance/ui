@@ -9,7 +9,7 @@ import {
 
 import { useActiveChainId } from "@/hooks/useActiveChainId"
 
-import { ethTokenAddress } from "@/constant/addresses"
+import { ETH } from "@/constant/addresses"
 
 export const useTokenApproval = ({
   amount,
@@ -24,7 +24,7 @@ export const useTokenApproval = ({
   enabled: boolean
   onSuccess?: () => void
 }) => {
-  const isNativeToken = token === ethTokenAddress
+  const isNativeToken = token === ETH
   const chainId = useActiveChainId()
   const { address: owner = "0x" } = useAccount()
   const allowance = useContractRead({
