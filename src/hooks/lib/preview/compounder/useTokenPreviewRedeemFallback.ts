@@ -11,12 +11,14 @@ export default function useTokenPreviewRedeemFallback({
   vaultAddress,
   token,
   amount,
+  slippage,
   enabled,
 }: {
   asset: Address
   vaultAddress: Address
   token?: Address
   amount: string
+  slippage: number
   enabled: boolean
 }) {
   const tokenVaultSymbol = useTokenVaultSymbol({
@@ -46,6 +48,7 @@ export default function useTokenPreviewRedeemFallback({
   const previewUnderlying = useTokenPreviewRedeemUnderlying({
     token,
     amount,
+    slippage,
     enabled: isUnderlyingAsset && enabled,
   })
 

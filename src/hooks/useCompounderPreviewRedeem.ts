@@ -60,6 +60,7 @@ export function useCompounderPreviewRedeem({
 
   const tokenPreviewFallback = useTokenPreviewRedeemFallback({
     ...rest,
+    slippage: args.slippage,
     enabled: enabled && isToken,
   })
 
