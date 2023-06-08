@@ -94,7 +94,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     : borrowAssetBalance.data?.value ?? 0n
   const maximumAmountRepayable = isRepayingWithCollateral
     ? assetToCollateral(
-        pairLeverParams.data.borrowedAmount ?? 0n,
+        pairLeverParams.data.borrowedAmountWithBuffer ?? 0n,
         pairLeverParams.data.exchangeRate,
         pairLeverParams.data.constants?.exchangePrecision
       )
