@@ -54,8 +54,8 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
   const [activeCollateralTab, setActiveCollateralTab] = useState("add")
   const [isLevered, setIsLevered] = useState(false)
   const [isUpdatingAmounts, setIsUpdatingAmounts] = useState(false)
-  const [adjustedBorrowAmount, setAdjustedBorrowAmount] = useState<bigint>()
-  const [adjustedCollateralAmount, setAdjustedCollateralAmount] =
+  const [estimatedBorrowAmount, setEstimatedBorrowAmount] = useState<bigint>()
+  const [estimatedCollateralAmount, setEstimatedCollateralAmount] =
     useState<bigint>()
 
   const isClientReady = useClientReady()
@@ -206,12 +206,10 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                           lendingPair.data?.collateralContract
                         }
                         collateralAssetBalance={collateralAssetBalance}
-                        adjustedBorrowAmount={adjustedBorrowAmount}
-                        adjustedCollateralAmount={adjustedCollateralAmount}
                         isUpdatingAmounts={isUpdatingAmounts}
-                        setAdjustedBorrowAmount={setAdjustedBorrowAmount}
-                        setAdjustedCollateralAmount={
-                          setAdjustedCollateralAmount
+                        setEstimatedBorrowAmount={setEstimatedBorrowAmount}
+                        setEstimatedCollateralAmount={
+                          setEstimatedCollateralAmount
                         }
                         setIsUpdatingAmounts={setIsUpdatingAmounts}
                         pairAddress={props.pairAddress}
@@ -235,9 +233,9 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                         }
                         collateralAssetBalance={collateralAssetBalance}
                         isUpdatingAmounts={isUpdatingAmounts}
-                        setAdjustedBorrowAmount={setAdjustedBorrowAmount}
-                        setAdjustedCollateralAmount={
-                          setAdjustedCollateralAmount
+                        setEstimatedBorrowAmount={setEstimatedBorrowAmount}
+                        setEstimatedCollateralAmount={
+                          setEstimatedCollateralAmount
                         }
                         setIsUpdatingAmounts={setIsUpdatingAmounts}
                         pairAddress={props.pairAddress}
@@ -267,8 +265,8 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                               collateralAmountSignificant
                             }
                             isUpdatingAmounts={isUpdatingAmounts}
-                            setAdjustedCollateralAmount={
-                              setAdjustedCollateralAmount
+                            setEstimatedCollateralAmount={
+                              setEstimatedCollateralAmount
                             }
                             setIsUpdatingAmounts={setIsUpdatingAmounts}
                             pairAddress={props.pairAddress}
@@ -290,8 +288,8 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                               collateralAmountSignificant
                             }
                             isUpdatingAmounts={isUpdatingAmounts}
-                            setAdjustedCollateralAmount={
-                              setAdjustedCollateralAmount
+                            setEstimatedCollateralAmount={
+                              setEstimatedCollateralAmount
                             }
                             setIsUpdatingAmounts={setIsUpdatingAmounts}
                             pairAddress={props.pairAddress}
@@ -307,8 +305,10 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
                 <LeverPositionUserStats
                   {...props}
-                  adjustedBorrowAmount={adjustedBorrowAmount}
-                  adjustedCollateralAmount={adjustedCollateralAmount}
+                  estimatedBorrowAmount={estimatedBorrowAmount}
+                  estimatedCollateralAmount={estimatedCollateralAmount}
+                  borrowAmountSignificant={borrowAmountSignificant}
+                  collateralAmountSignificant={collateralAmountSignificant}
                   isUpdatingAmounts={isUpdatingAmounts}
                 />
               </div>

@@ -31,7 +31,7 @@ type AddCollateralProps = {
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
   collateralAmountSignificant: bigint
   isUpdatingAmounts: boolean
-  setAdjustedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
+  setEstimatedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
   setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
   tabsList: ReactNode
   pairAddress: Address
@@ -48,7 +48,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
   collateralAssetBalance,
   collateralAmountSignificant,
   isUpdatingAmounts,
-  setAdjustedCollateralAmount,
+  setEstimatedCollateralAmount,
   setIsUpdatingAmounts,
   tabsList,
   pairAddress,
@@ -101,14 +101,14 @@ export const AddCollateral: FC<AddCollateralProps> = ({
     () => {
       if (!Number(amount)) {
         setAddedAmount(0n)
-        setAdjustedCollateralAmount(undefined)
+        setEstimatedCollateralAmount(undefined)
       } else {
         const addedAmount = parseCurrencyUnits({
           amountFormatted: amount,
           decimals: collateralAssetBalance.data?.decimals,
         })
         setAddedAmount(addedAmount)
-        setAdjustedCollateralAmount(collateralAmountSignificant + addedAmount)
+        setEstimatedCollateralAmount(collateralAmountSignificant + addedAmount)
       }
       setIsUpdatingAmounts(false)
     },
@@ -118,7 +118,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
 
   useEffect(() => {
     return () => {
-      setAdjustedCollateralAmount(undefined)
+      setEstimatedCollateralAmount(undefined)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

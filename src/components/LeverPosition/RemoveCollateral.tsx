@@ -31,7 +31,7 @@ type RemoveCollateralProps = {
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
   collateralAmountSignificant: bigint
   isUpdatingAmounts: boolean
-  setAdjustedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
+  setEstimatedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
   setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
   tabsList: ReactNode
   pairAddress: Address
@@ -48,7 +48,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
   collateralAssetBalance,
   collateralAmountSignificant,
   isUpdatingAmounts,
-  setAdjustedCollateralAmount,
+  setEstimatedCollateralAmount,
   setIsUpdatingAmounts,
   tabsList,
   pairAddress,
@@ -112,14 +112,16 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
     () => {
       if (!Number(amount)) {
         setRemovedAmount(0n)
-        setAdjustedCollateralAmount(undefined)
+        setEstimatedCollateralAmount(undefined)
       } else {
         const removedAmount = parseCurrencyUnits({
           amountFormatted: amount,
           decimals: collateralAssetBalance.data?.decimals,
         })
         setRemovedAmount(removedAmount)
-        setAdjustedCollateralAmount(collateralAmountSignificant - removedAmount)
+        setEstimatedCollateralAmount(
+          collateralAmountSignificant - removedAmount
+        )
       }
       setIsUpdatingAmounts(false)
     },
@@ -129,7 +131,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
 
   useEffect(() => {
     return () => {
-      setAdjustedCollateralAmount(undefined)
+      setEstimatedCollateralAmount(undefined)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
