@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { FiArrowLeft } from "react-icons/fi"
 
+import clsxm from "@/lib/clsxm"
 import { resolvedRoute } from "@/lib/helpers"
 import {
   useClientReady,
@@ -52,6 +53,7 @@ export const getStaticProps: GetStaticProps = (context) => {
 const LeverPairDetail: NextPage<LendingPair> = (props) => {
   const [activeTab, setActiveTab] = useState("create")
   const [activeCollateralTab, setActiveCollateralTab] = useState("add")
+  const [isAccountLocked, setIsAccountLocked] = useState(false)
   const [isLevered, setIsLevered] = useState(false)
   const [isUpdatingAmounts, setIsUpdatingAmounts] = useState(false)
   const [estimatedBorrowAmount, setEstimatedBorrowAmount] = useState<bigint>()
@@ -82,6 +84,9 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
     pairLeverParams.refetch()
     borrowAssetBalance.refetch()
     collateralAssetBalance.refetch()
+    // lock UI to prevent speedbump errors if users attempt multiple txs in quick succession
+    setIsAccountLocked(true)
+    setTimeout(() => setIsAccountLocked(false), 5000)
   }
 
   // manually manage the available lever tabs
@@ -150,14 +155,25 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                 <TxSettingsPopover className="max-md:hidden" />
               </div>
 
-              <h1 className="mt-3 flex items-center gap-3 font-display text-3xl lg:text-4xl">
+              <div className="mt-3 flex items-center gap-3">
                 <AssetLogo
                   chainId={props.chainId}
                   className="h-8 w-8"
                   tokenAddress={lendingPair.data?.collateralContract}
                 />
-                {props.name}
-              </h1>
+                <h1 className="font-display text-3xl lg:text-4xl">
+                  {props.name}
+                </h1>
+                <span
+                  className={clsxm(
+                    "translate-y-px rounded border border-orange-400/50 bg-orange-400/20 p-1.5 px-2 text-xs text-orange-400 opacity-0 transition-opacity duration-200",
+                    { "opacity-100": isAccountLocked }
+                  )}
+                  aria-hidden={isAccountLocked ? "false" : "true"}
+                >
+                  5s <span className="uppercase">update-lock</span>
+                </span>
+              </div>
             </header>
             <div className="mt-4 lg:mt-6">
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
@@ -176,27 +192,31 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                     <Tabs.Trigger
                       value="create"
                       className="transition-color group h-14 w-1/3 px-3 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear disabled:cursor-not-allowed ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
+                      disabled={isAccountLocked}
                     >
                       <span className="group-disabled:opacity-25">Lever</span>
                     </Tabs.Trigger>
                     <Tabs.Trigger
                       value="repay"
                       className="transition-color group h-14 w-1/3 px-3 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear disabled:cursor-not-allowed ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
-                      disabled={!isLevered}
+                      disabled={!isLevered || isAccountLocked}
                     >
                       <span className="group-disabled:opacity-25">Repay</span>
                     </Tabs.Trigger>
                     <Tabs.Trigger
                       value="manage"
                       className="transition-color group h-14 w-1/3 px-3 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear disabled:cursor-not-allowed ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
-                      disabled={!isLevered}
+                      disabled={!isLevered || isAccountLocked}
                     >
                       <span className="group-disabled:opacity-25">Manage</span>
                     </Tabs.Trigger>
                   </Tabs.List>
                   <div className="relative overflow-hidden">
                     <Tabs.Content
-                      className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6"
+                      className={clsxm(
+                        "pt-3 transition-opacity duration-200 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6",
+                        { "opacity-50": isAccountLocked }
+                      )}
                       value="create"
                     >
                       <CreateLeverPosition
@@ -217,7 +237,10 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                       />
                     </Tabs.Content>
                     <Tabs.Content
-                      className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6"
+                      className={clsxm(
+                        "pt-3 transition-opacity duration-200 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6",
+                        { "opacity-50": isAccountLocked }
+                      )}
                       value="repay"
                     >
                       <RepayLeverPosition
@@ -243,7 +266,10 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                       />
                     </Tabs.Content>
                     <Tabs.Content
-                      className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6"
+                      className={clsxm(
+                        "pt-3 transition-opacity duration-200 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6",
+                        { "opacity-50": isAccountLocked }
+                      )}
                       value="manage"
                     >
                       <Tabs.Root
