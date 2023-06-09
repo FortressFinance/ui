@@ -14,11 +14,11 @@ import Skeleton from "@/components/Skeleton"
 
 import { LendingPair } from "@/constant"
 
-type LendingPairStatsProps = LendingPair & {
+type LendingPairMetricsProps = LendingPair & {
   apyType: LendingPairAPYType
 }
 
-export const LendingPairStats: FC<LendingPairStatsProps> = ({
+export const LendingPairMetrics: FC<LendingPairMetricsProps> = ({
   apyType,
   ...props
 }) => {

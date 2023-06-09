@@ -22,12 +22,12 @@ import {
 import { AssetLogo } from "@/components/Asset"
 import Button from "@/components/Button"
 import Layout from "@/components/Layout"
-import { LendingPairStats } from "@/components/LendingPair"
+import { LendingPairMetrics } from "@/components/LendingPair"
 import {
   AddCollateral,
   CreateLeverPosition,
   LeverPairs,
-  LeverPositionUserStats,
+  LeverPositionUserMetrics,
   RemoveCollateral,
   RepayLeverPosition,
 } from "@/components/LeverPosition"
@@ -347,7 +347,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                 </Tabs.Root>
               </div>
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
-                <LeverPositionUserStats
+                <LeverPositionUserMetrics
                   {...props}
                   estimatedBorrowAmount={estimatedBorrowAmount}
                   estimatedCollateralAmount={estimatedCollateralAmount}
@@ -357,7 +357,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                 />
               </div>
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
-                <LendingPairStats apyType="borrow" {...props} />
+                <LendingPairMetrics apyType="borrow" {...props} />
               </div>
             </div>
           </main>

@@ -25,7 +25,7 @@ import { GradientText } from "@/components/Typography"
 
 import { LendingPair } from "@/constant"
 
-type LeverPositionUserStatsProps = LendingPair & {
+type LeverPositionUserMetricsProps = LendingPair & {
   estimatedBorrowAmount?: bigint
   estimatedCollateralAmount?: bigint
   borrowAmountSignificant: bigint
@@ -33,7 +33,7 @@ type LeverPositionUserStatsProps = LendingPair & {
   isUpdatingAmounts: boolean
 }
 
-export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
+export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
   estimatedBorrowAmount,
   estimatedCollateralAmount,
   borrowAmountSignificant,

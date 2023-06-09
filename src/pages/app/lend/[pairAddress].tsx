@@ -23,8 +23,8 @@ import { AssetBalance, AssetLogo, AssetSymbol } from "@/components/Asset"
 import Layout from "@/components/Layout"
 import {
   LendingPairDepositForm,
+  LendingPairMetrics,
   LendingPairRedeem,
-  LendingPairStats,
 } from "@/components/LendingPair"
 import Seo from "@/components/Seo"
 import Skeleton from "@/components/Skeleton"
@@ -120,7 +120,7 @@ const LendingPairDetail: NextPage<LendingPair> = (props) => {
               </div>
             </div>
             <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
-              <LendingPairStats apyType="lend" {...props} />
+              <LendingPairMetrics apyType="lend" {...props} />
             </div>
           </main>
 
