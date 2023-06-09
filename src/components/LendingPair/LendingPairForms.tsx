@@ -196,7 +196,7 @@ export const LendingPairRedeem: FC<LendingPair> = ({
         isWithdraw
         asset={lendingPair.data?.assetContract}
         chainId={chainId}
-        submitText="Withdraw"
+        submitText="Redeem"
         isDebouncing={!!amountIn && !isDebounced}
         isError={preview.isError || redeem.prepare.isError}
         isLoadingPreview={preview.isLoading}
@@ -205,7 +205,7 @@ export const LendingPairRedeem: FC<LendingPair> = ({
         previewResultWei={preview.data?.toString()}
         productType="lending"
         onSubmit={() => {
-          const action = "Lending asset withdrawal"
+          const action = "Lending asset redemption"
           const toastId = addToast({ type: "startTx", action })
           redeem.write
             .writeAsync?.()

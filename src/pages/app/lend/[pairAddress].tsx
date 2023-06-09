@@ -135,10 +135,10 @@ const LendingPairDetail: NextPage<LendingPair> = (props) => {
                     Deposit
                   </Tabs.Trigger>
                   <Tabs.Trigger
-                    value="withdraw"
+                    value="redeem"
                     className="transition-color w-1/2 rounded-tr-lg pb-3.5 pt-5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
                   >
-                    Withdraw
+                    Redeem
                   </Tabs.Trigger>
                 </Tabs.List>
                 <div className="relative overflow-hidden">
@@ -149,7 +149,7 @@ const LendingPairDetail: NextPage<LendingPair> = (props) => {
                     <LendingPairDepositForm {...props} />
                   </Tabs.Content>
                   <Tabs.Content
-                    value="withdraw"
+                    value="redeem"
                     className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out"
                   >
                     <LendingPairRedeem {...props} />
