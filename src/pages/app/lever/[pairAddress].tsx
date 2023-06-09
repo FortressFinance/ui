@@ -90,7 +90,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
     collateralAssetBalance.refetch()
     // lock UI to prevent speedbump errors if users attempt multiple txs in quick succession
     setIsAccountLocked(true)
-    setTimeout(() => setIsAccountLocked(false), 5000)
+    setTimeout(() => setIsAccountLocked(false), 15000)
   }
 
   // manually manage the available lever tabs
@@ -187,7 +187,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                   )}
                   aria-hidden={isAccountLocked ? "false" : "true"}
                 >
-                  5s <span className="uppercase">update-lock</span>
+                  15s <span className="uppercase">update-lock</span>
                 </span>
               </div>
             </header>
