@@ -1,7 +1,8 @@
-import { Address, useContractReads } from "wagmi"
+import { Address, useContractRead, useContractReads } from "wagmi"
 
 import { VaultType } from "@/lib/types"
-import useCalcWithdrawOneCoin from "@/hooks/lib/preview/compounder/useCalcWithdrawOneCoin"
+import useCalcTokenAmount from "@/hooks/lib/preview/compounder/useCalcTokenAmount"
+import { useVaultContract } from "@/hooks/lib/useVaultContract"
 import { useActiveChainId } from "@/hooks/useActiveChainId"
 
 import { CurvePool2Assets, CurvePool3Assets } from "@/constant/abi"
@@ -15,8 +16,9 @@ import {
   WETH_ARBI,
 } from "@/constant/addresses"
 
-export default function useCurvePreviewRedeem({
+export default function useCurvePreviewDeposit({
   asset,
+  vaultAddress,
   token,
   amount,
   type,
@@ -24,6 +26,7 @@ export default function useCurvePreviewRedeem({
   enabled,
 }: {
   asset: Address
+  vaultAddress: Address
   token?: Address
   amount: string
   type: VaultType
@@ -71,23 +74,37 @@ export default function useCurvePreviewRedeem({
   const index =
     underlyingAssets.data?.filter((x) => x !== "0x").indexOf(token ?? "0x") ??
     -1
-  const isCurveEnabled = index !== -1 && type === "curve" && enabled
+  const underlyingAssetsAmount = [0, 1, 2, 3, 4].map((x, i) =>
+    index === i ? BigInt(amount) : BigInt(0)
+  )
+  const isCurveEnabled = type === "curve" && enabled
 
-  const curvePreviewUnderlying = useCalcWithdrawOneCoin({
+  const amountLp = useCalcTokenAmount({
     asset,
-    amount,
-    index,
+    assets: underlyingAssetsAmount,
+    isDeposit: true,
     enabled: isCurveEnabled && enabled,
+  })
+
+  const amountLpValue = amountLp.data ?? 0n
+  const amountLpWithSlippage = Number(amountLpValue) * (1 + slippage)
+
+  const preview = useContractRead({
+    ...useVaultContract(vaultAddress),
+    enabled: isCurveEnabled && enabled,
+    functionName: "previewDeposit",
+    args: [BigInt(amountLpWithSlippage)],
   })
 
   // TODO: Balancer side
 
   //if(isCurveEnabled){
-  const preview = curvePreviewUnderlying.data ?? 0n
-  const previewWithSlippage = Number(preview) * (1 + slippage)
   return {
-    ...curvePreviewUnderlying,
-    data: parseInt(previewWithSlippage.toFixed(2)),
+    ...preview,
+    data: {
+      minAmountWei: amountLpWithSlippage,
+      resultWei: preview.data ?? 0,
+    },
   }
   //}
 }

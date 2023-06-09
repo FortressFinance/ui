@@ -43,10 +43,10 @@ export function useCurveVaultArbitrumBreakdownApr({
 const respSchema = z.object({
   apys: z.record(
     z.object({
-      baseApy: z.number(),
-      crvApy: z.number(),
-      cvxApy: z.number(),
-      crvBoost: z.string().or(z.number()),
+      baseApy: z.string().or(z.number()).or(z.null()),
+      crvApy: z.string().or(z.number()).or(z.null()),
+      cvxApy: z.string().or(z.number()).or(z.null()),
+      crvBoost: z.string().or(z.number()).or(z.null()),
       extraRewards: z.array(z.unknown()),
     })
   ),
@@ -61,9 +61,9 @@ async function getCurveArbitrumApi(poolCurveAddress: Address) {
         poolCurveAddress !== "0x" &&
         key.toLowerCase().includes(poolCurveAddress.toLowerCase())
       ) {
-        accumulator.baseApr = value.baseApy / 100
-        accumulator.crvApr = value.crvApy / 100
-        accumulator.cvxApr = value.cvxApy / 100
+        accumulator.baseApr = Number(value.baseApy) / 100
+        accumulator.crvApr = Number(value.crvApy) / 100
+        accumulator.cvxApr = Number(value.cvxApy) / 100
         accumulator.totalApr =
           accumulator.baseApr + accumulator.crvApr + accumulator.cvxApr
       }

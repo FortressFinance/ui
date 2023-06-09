@@ -6,7 +6,10 @@ import {
 } from "@/lib/api/vaults"
 import { queryKeys } from "@/lib/helpers"
 import { VaultPreviewTransactionArgs } from "@/hooks/lib/api/types"
+import useCurvePreviewDepositFallback from "@/hooks/lib/preview/compounder/useCurvePreviewDepositFallback"
+import useTokenPreviewDepositFallback from "@/hooks/lib/preview/compounder/useTokenPreviewDepositFallback"
 import { useVaultPoolId } from "@/hooks/useVaultPoolId"
+import { useIsCurveVault, useIsTokenVault } from "@/hooks/useVaultTypes"
 
 import { useGlobalStore } from "@/store"
 
@@ -17,6 +20,9 @@ export function useCompounderPreviewDeposit({
   onSuccess,
   ...rest
 }: VaultPreviewTransactionArgs) {
+  const isToken = useIsTokenVault(type)
+  const isCurve = useIsCurveVault(type)
+
   const { data: poolId } = useVaultPoolId({
     asset: rest.asset ?? "0x",
     type: type ?? "curve",
@@ -30,7 +36,8 @@ export function useCompounderPreviewDeposit({
     // we store slippage as a fraction of 100; api expects slippage as a fraction of 1
     slippage: useGlobalStore((store) => store.slippageTolerance) / 100,
   }
-  return useQuery({
+
+  const apiQuery = useQuery({
     ...queryKeys.vaults.previewDeposit(args),
     queryFn: () =>
       type === "token"
@@ -43,4 +50,27 @@ export function useCompounderPreviewDeposit({
     onError,
     onSuccess,
   })
+
+  const curvePreviewFallback = useCurvePreviewDepositFallback({
+    ...rest,
+    type,
+    slippage: args.slippage,
+    enabled: enabled && isCurve,
+  })
+
+  const tokenPreviewFallback = useTokenPreviewDepositFallback({
+    ...rest,
+    slippage: args.slippage,
+    enabled: enabled && isToken,
+  })
+
+  if (apiQuery.isError && isCurve) {
+    return curvePreviewFallback
+  }
+
+  if (apiQuery.isError && isToken) {
+    return tokenPreviewFallback
+  }
+
+  return apiQuery
 }

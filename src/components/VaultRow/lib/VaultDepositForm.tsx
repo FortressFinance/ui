@@ -152,9 +152,10 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     form.formState.isValid &&
     !previewDeposit.isFetching &&
     value > 0
-  const enableDeposit = enablePrepareTx && !requiresApproval && inputIsLp
+  const enableDeposit =
+    enablePrepareTx && !requiresApproval && inputIsLp && !!userAddress
   const enableDepositUnderlying =
-    enablePrepareTx && !requiresApproval && !inputIsLp
+    enablePrepareTx && !requiresApproval && !inputIsLp && !!userAddress
 
   // Configure depositLp method
   const prepareDeposit = usePrepareContractWrite({

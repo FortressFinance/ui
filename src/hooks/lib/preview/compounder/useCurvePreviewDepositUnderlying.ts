@@ -1,10 +1,11 @@
 import { Address } from "wagmi"
 
 import { VaultType } from "@/lib/types"
-import useCurvePreviewRedeem from "@/hooks/lib/preview/compounder/useCurvePreviewRedeem"
+import useCurvePreviewDeposit from "@/hooks/lib/preview/compounder/useCurvePreviewDeposit"
 
-export default function useCurvePreviewRedeemUnderlying({
+export default function useCurvePreviewDepositUnderlying({
   asset,
+  vaultAddress,
   token,
   amount,
   type,
@@ -12,14 +13,16 @@ export default function useCurvePreviewRedeemUnderlying({
   enabled,
 }: {
   asset: Address
+  vaultAddress: Address
   token?: Address
   amount: string
   type: VaultType
   slippage: number
   enabled: boolean
 }) {
-  return useCurvePreviewRedeem({
+  return useCurvePreviewDeposit({
     asset,
+    vaultAddress,
     token,
     amount,
     type,
