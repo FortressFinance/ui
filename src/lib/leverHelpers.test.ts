@@ -342,38 +342,36 @@ describe("leverHelpers", () => {
   describe("calculateLiquidationPrice", () => {
     const cases = [
       {
-        borrowedAmount: undefined,
-        maxBorrowAmount: undefined,
-        exchangePrecision: undefined,
-        expected: "1",
+        ltv: undefined,
+        ltvPrecision: undefined,
+        maxLTV: undefined,
+        exchangeRate: undefined,
+        expected: "0",
       },
       {
-        borrowedAmount: 1n,
-        maxBorrowAmount: 1n,
-        exchangePrecision: 1n,
-        expected: "1",
+        ltv: 0n,
+        ltvPrecision: 0n,
+        maxLTV: 0n,
+        exchangeRate: 0n,
+        expected: "0",
       },
       {
-        borrowedAmount: 100n,
-        maxBorrowAmount: 500n,
-        exchangePrecision: 100n,
-        expected: "20",
-      },
-      {
-        borrowedAmount: 4749510656262000534n,
-        maxBorrowAmount: 17874808905703125237n,
-        exchangePrecision: 1000000000000000000n,
-        expected: "265709730454607806",
+        ltv: 49706n,
+        ltvPrecision: 100000n,
+        maxLTV: 81000n,
+        exchangeRate: 1004456814569838980n,
+        expected: "690122099018353570",
       },
     ]
     test.each(cases)(
       "should return %p when called with %p",
-      ({ borrowedAmount, maxBorrowAmount, exchangePrecision, expected }) => {
+      ({ ltv, ltvPrecision, maxLTV, exchangeRate, expected }) => {
         expect(
           calculateLiquidationPrice({
-            borrowedAmount,
-            maxBorrowAmount,
-            exchangePrecision,
+            ltv,
+            ltvPrecision,
+            maxLTV,
+            exchangeRate,
           }).toString()
         ).toEqual(expected)
       }

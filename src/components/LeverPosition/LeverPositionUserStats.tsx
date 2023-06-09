@@ -111,14 +111,16 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
   ]
   const [liquidationPrice, estimatedLiquidationPrice] = [
     calculateLiquidationPrice({
-      borrowedAmount: borrowAmountSignificant,
-      maxBorrowAmount,
-      exchangePrecision: pairLeverParams.data.constants?.exchangePrecision,
+      ltv: LTV,
+      ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+      maxLTV: pairLeverParams.data.maxLTV,
+      exchangeRate: pairLeverParams.data.exchangeRate,
     }),
     calculateLiquidationPrice({
-      borrowedAmount: estimatedBorrowAmount ?? borrowAmountSignificant,
-      maxBorrowAmount: estimatedMaxBorrowAmount,
-      exchangePrecision: pairLeverParams.data.constants?.exchangePrecision,
+      ltv: estimatedLTV,
+      ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+      maxLTV: pairLeverParams.data.maxLTV,
+      exchangeRate: pairLeverParams.data.exchangeRate,
     }),
   ]
   const [availableCredit, estimatedAvailableCredit] = [
