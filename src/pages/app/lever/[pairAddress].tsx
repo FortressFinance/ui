@@ -14,11 +14,7 @@ import {
   useTokenOrNativeBalance,
 } from "@/hooks"
 
-import {
-  AddTokenToWallet,
-  DisabledPage,
-  ViewContractOnExplorer,
-} from "@/components"
+import { DisabledPage, ViewContractOnExplorer } from "@/components"
 import { AssetLogo } from "@/components/Asset"
 import Button from "@/components/Button"
 import Layout from "@/components/Layout"
@@ -157,11 +153,6 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                   Lever
                 </Link>
                 <div className="flex items-center gap-4">
-                  <AddTokenToWallet
-                    chainId={props.chainId}
-                    className="h-5 w-5"
-                    tokenAddress={props.pairAddress}
-                  />
                   <ViewContractOnExplorer
                     chainId={props.chainId}
                     className="h-5 w-5"
