@@ -18,6 +18,7 @@ import {
   ManagedVaultsStrategyModalAllocations,
   ManagedVaultsStrategyModalApr,
   ManagedVaultsStrategyModalEpoch,
+  ManagedVaultsStrategyModalManager,
 } from "@/components/Modal/VaultStrategyModal"
 import Skeleton from "@/components/Skeleton"
 import Tooltip from "@/components/Tooltip"
@@ -163,11 +164,8 @@ export const ManagedVaultsStrategyModal: FC<
                   className="space-y-3 leading-relaxed text-pink-50 max-md:text-sm"
                   value="tabApr"
                 >
-                  <div className="px-5 pt-4">
+                  <div className="p-4 px-5">
                     <ManagedVaultsStrategyModalApr />
-                  </div>
-                  <div className="border-t border-pink-800 px-5 pt-2">
-                    <ManagedVaultsStrategyModalEpoch />
                   </div>
                 </Tabs.Content>
                 <Tabs.Content
@@ -215,6 +213,12 @@ export const ManagedVaultsStrategyModal: FC<
                   <ManagedVaultsStrategyModalAllocations />
                 </Tabs.Content>
               </Tabs.Root>
+              <div className="border-t border-pink-800 px-5 pb-4 pt-2">
+                <ManagedVaultsStrategyModalEpoch />
+              </div>
+              <div className="border-t border-pink-800 px-5 pb-4 pt-2">
+                <ManagedVaultsStrategyModalManager />
+              </div>
             </div>
           </PurpleModalContent>
         </>

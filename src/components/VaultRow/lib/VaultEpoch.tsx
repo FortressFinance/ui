@@ -1,7 +1,13 @@
 import { FC } from "react"
 import Countdown, { zeroPad } from "react-countdown"
 
-export const VaultEpoch: FC = () => {
+import clsxm from "@/lib/clsxm"
+
+type EpochProps = {
+  className?: string
+}
+
+export const VaultEpoch: FC<EpochProps> = ({ className }) => {
   // Set the target date to count down to
   const targetDate = new Date("2023-06-01T00:00:00")
   // Calculate the remaining time in milliseconds
@@ -20,7 +26,7 @@ export const VaultEpoch: FC = () => {
     seconds: number
   }) => (
     <>
-      <div className="auto-cols-auto grid-flow-col justify-center max-lg:hidden lg:grid">
+      <div className={clsxm("flex justify-center max-lg:hidden", className)}>
         <div className="lg:grid-row-2 lg:grid">
           <div>{zeroPad(days)}</div>
           <div className="text-xs">Ds</div>
