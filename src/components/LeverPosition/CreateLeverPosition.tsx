@@ -243,7 +243,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
 
         <div className="relative z-[1] col-span-full col-start-1 row-start-2 px-4 pb-4 text-left align-bottom text-xs">
           <span className="text-pink-100">
-            Collateral available:{" "}
+            Balance:{" "}
             {isClientReady && isConnected
               ? formatCurrencyUnits({
                   amountWei: collateralAssetBalance.data?.value.toString(),

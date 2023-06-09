@@ -235,17 +235,17 @@ const TokenForm: FC<TokenFormProps> = ({
           )}
         </div>
 
-        <div className="relative z-[1] col-span-full col-start-1 row-start-3 h-[38px] px-4 pb-3 text-left align-bottom text-xs">
+        <div className="relative z-[1] col-span-full col-start-1 row-start-3 px-4 pb-3 text-left align-bottom text-xs">
           <span className="text-pink-100">
             {(maxAvailable ?? 0) < (inputTokenBalanceOrShare?.value ?? 0) ? (
               <>
                 <span>
+                  Available:{" "}
                   {formatCurrencyUnits({
                     amountWei: maxAvailable?.toString(),
                     decimals: inputTokenBalanceOrShare?.decimals,
                     maximumFractionDigits: 4,
-                  })}{" "}
-                  avail.
+                  })}
                 </span>{" "}
                 <span className="opacity-70">
                   (
@@ -269,7 +269,7 @@ const TokenForm: FC<TokenFormProps> = ({
             )}
           </span>
           <button
-            className="ml-2 -translate-y-px rounded px-2 py-1 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
+            className="ml-1.5 -translate-y-px rounded px-1.5 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
             onClick={onClickMax}
             disabled={!showMaxBtn}
             type="button"
