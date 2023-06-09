@@ -24,6 +24,8 @@ export default function useTokenPreviewDeposit({
     isLoading: false,
     isFetching: false,
     isSuccess: true,
-    data: parseInt(amountOutWithSlippage.toFixed(2)),
+    data: parseInt(
+      amountOutWithSlippage.toLocaleString("fullwide", { useGrouping: false })
+    ),
   }
 }

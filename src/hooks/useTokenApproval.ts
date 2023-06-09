@@ -35,6 +35,7 @@ export const useTokenApproval = ({
     args: [owner, spender],
     enabled:
       amount > 0 &&
+      owner !== "0x" &&
       spender !== "0x" &&
       token !== "0x" &&
       !isNativeToken &&

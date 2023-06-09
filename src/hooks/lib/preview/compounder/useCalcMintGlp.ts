@@ -63,8 +63,11 @@ export default function useCalcMintGlp({
   }
 
   const tokenPrice = formatUnits(tokenPriceWei.data ?? BigInt(0), 30)
-  const usdgAmount =
-    (Number(tokenPrice) * Number(amount)) / 10 ** (decimals[token] ?? 1)
+  const amountFormatted = formatUnits(
+    BigInt(Number(amount)),
+    decimals[token] ?? 18
+  )
+  const usdgAmount = Number(amountFormatted) * Number(tokenPrice)
 
   const MINT_BURN_FEE_BASIS_POINTS = 25
   const TAX_BASIS_POINTS = 50
@@ -78,10 +81,10 @@ export default function useCalcMintGlp({
     functionName: "getFeeBasisPoints",
     args: [
       token,
-      BigInt(usdgAmount),
+      BigInt(parseInt(usdgAmount.toFixed(2))),
       BigInt(MINT_BURN_FEE_BASIS_POINTS),
       BigInt(TAX_BASIS_POINTS),
-      false,
+      true,
     ],
   })
 
@@ -95,5 +98,7 @@ export default function useCalcMintGlp({
     return 0
   }
 
-  return amountAfterFees * Number(tokenPrice) * (1 / glpPrice)
+  const mintAmount = amountAfterFees * Number(tokenPrice)
+  const mint = mintAmount * (1 / glpPrice)
+  return mint
 }

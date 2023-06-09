@@ -74,16 +74,16 @@ export default function useCurvePreviewDeposit({
   const index =
     underlyingAssets.data?.filter((x) => x !== "0x").indexOf(token ?? "0x") ??
     -1
-  const underlyingAssetsAmount = [0, 1, 2, 3, 4].map((x, i) =>
-    index === i ? BigInt(amount) : BigInt(0)
-  )
+  const underlyingAssetsAmount = underlyingAssets.data
+    ?.filter((x) => x !== "0x")
+    .map((x, i) => (index === i ? BigInt(amount) : BigInt(0)))
   const isCurveEnabled = type === "curve" && enabled
 
   const amountLp = useCalcTokenAmount({
     asset,
-    assets: underlyingAssetsAmount,
+    assets: underlyingAssetsAmount ?? [],
     isDeposit: true,
-    enabled: isCurveEnabled && enabled,
+    enabled: isCurveEnabled && !!underlyingAssetsAmount && enabled,
   })
 
   const amountLpValue = amountLp.data ?? 0n
@@ -93,7 +93,7 @@ export default function useCurvePreviewDeposit({
     ...useVaultContract(vaultAddress),
     enabled: isCurveEnabled && enabled,
     functionName: "previewDeposit",
-    args: [BigInt(amountLpWithSlippage)],
+    args: [BigInt(parseInt(amountLpWithSlippage.toFixed(2)))],
   })
 
   // TODO: Balancer side
@@ -102,7 +102,7 @@ export default function useCurvePreviewDeposit({
   return {
     ...preview,
     data: {
-      minAmountWei: amountLpWithSlippage,
+      minAmountWei: parseInt(amountLpWithSlippage.toFixed(2)),
       resultWei: preview.data ?? 0,
     },
   }
