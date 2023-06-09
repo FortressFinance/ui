@@ -1,13 +1,12 @@
 import * as Dialog from "@radix-ui/react-dialog"
 import * as Tabs from "@radix-ui/react-tabs"
-import Link from "next/link"
-import { FC, MouseEventHandler } from "react"
+import { FC } from "react"
 import { BiInfoCircle } from "react-icons/bi"
-import { useAccount, useNetwork } from "wagmi"
 
 import { formatPercentage } from "@/lib/helpers"
-import { useTokenOrNative, useVaultFees } from "@/hooks"
+import { useActiveChainId, useVaultFees } from "@/hooks"
 
+import { AddTokenToWallet, ViewContractOnExplorer } from "@/components"
 import { ModalBaseProps } from "@/components/Modal/lib/ModalBase"
 import PurpleModal, {
   PurpleModalContent,
@@ -24,38 +23,17 @@ import Skeleton from "@/components/Skeleton"
 import Tooltip from "@/components/Tooltip"
 import { VaultRowPropsWithProduct } from "@/components/VaultRow"
 
-import {
-  FortIconAddToWallet,
-  FortIconClose,
-  FortIconExternalLink,
-} from "@/icons"
+import { FortIconClose } from "@/icons"
 
 export const ManagedVaultsStrategyModal: FC<
   VaultRowPropsWithProduct & ModalBaseProps
 > = ({ isOpen, onClose, ...vaultProps }) => {
-  const { connector } = useAccount()
-  const { chain } = useNetwork()
-
-  const { data: ybToken } = useTokenOrNative({
-    address: vaultProps.ybTokenAddress ?? "0x",
-  })
+  const chainId = useActiveChainId()
 
   const fees = useVaultFees(vaultProps)
 
   const strategyTextValue =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In gravida maximus tellus vitae accumsan. Suspendisse maximus placerat risus, vitae rhoncus quam dapibus sed. In pulvinar purus ornare ligula aliquet porttitor. Nulla facilisi. Nulla malesuada, augue ac gravida varius, purus neque ultricies enim, non varius tortor mauris eu elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aliquam purus nulla, eleifend in metus at, sollicitudin laoreet elit. Vestibulum finibus erat sed massa euismod convallis. Nunc auctor augue vel laoreet pellentesque. Nullam et egestas erat.  Aenean dignissim turpis ac sodales congue. Nam eu accumsan lacus. Aliquam erat volutpat. In lobortis eros scelerisque nibh euismod sollicitudin. Vivamus id diam id dolor fringilla varius. Vestibulum in nibh sit amet eros malesuada congue id et mauris. Aliquam condimentum odio venenatis, congue est sed, consequat nulla. Sed sem nunc, suscipit sit amet neque nec, eleifend dignissim mi. Nullam commodo magna quis nisi lacinia posuere. "
-
-  // limit the token name to 11 char max
-  const truncateString = (str?: string): string => (str ? str.slice(0, 11) : "")
-  const addTokenToWallet: MouseEventHandler<HTMLButtonElement> = () => {
-    if (ybToken && ybToken.address && connector && connector.watchAsset) {
-      connector.watchAsset({
-        ...ybToken,
-        symbol: truncateString(ybToken.symbol),
-      })
-    }
-  }
-  const label = `Add ${ybToken?.symbol} to wallet`
 
   return (
     <PurpleModal
@@ -65,33 +43,19 @@ export const ManagedVaultsStrategyModal: FC<
     >
       {vaultProps.asset && vaultProps.type && vaultProps.ybTokenAddress && (
         <>
-          <PurpleModalHeader className="flex justify-between space-x-4">
-            <div className="flex space-x-4">
-              {!!connector && !!connector.watchAsset && (
-                <Tooltip label={label}>
-                  <button onClick={addTokenToWallet}>
-                    <FortIconAddToWallet
-                      className="h-6 w-6 fill-white"
-                      aria-label={label}
-                    />
-                  </button>
-                </Tooltip>
-              )}
-              {chain?.blockExplorers?.default.url &&
-                vaultProps.ybTokenAddress && (
-                  <Tooltip label="View contract">
-                    <Link
-                      className="h-6 w-6 p-[1px]"
-                      href={`${chain.blockExplorers.default.url}/address/${vaultProps.ybTokenAddress}`}
-                      target="_blank"
-                    >
-                      <FortIconExternalLink className="h-full w-full" />
-                      <span className="sr-only">View contract</span>
-                    </Link>
-                  </Tooltip>
-                )}
+          <PurpleModalHeader className="flex justify-between gap-4">
+            <div className="flex gap-4">
+              <AddTokenToWallet
+                className="h-6 w-6"
+                tokenAddress={vaultProps.ybTokenAddress}
+              />
+              <ViewContractOnExplorer
+                chainId={chainId}
+                className="h-6 w-6"
+                contractAddress={vaultProps.ybTokenAddress}
+              />
             </div>
-            <Dialog.Close className="h-6 w-6 p-[1px]">
+            <Dialog.Close className="h-6 w-6 p-px">
               <FortIconClose className="h-full w-full fill-white" />
               <span className="sr-only">Close</span>
             </Dialog.Close>

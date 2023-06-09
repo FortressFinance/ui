@@ -20,7 +20,7 @@ import { FortressLendingPair } from "@/constant/abi"
 // We add a 0.005% buffer to the borrow amount to account for inaccuracy in the conversion to/from assets/shares
 export const BORROW_BUFFER_PERCENTAGE = 0.005
 
-export const usePairLeverParams = ({
+export const useLeverPair = ({
   pairAddress,
   chainId,
 }: {

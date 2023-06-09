@@ -10,8 +10,8 @@ import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
 import {
   BORROW_BUFFER_PERCENTAGE,
   useClientReady,
+  useLeverPair,
   useLeverPosition,
-  usePairLeverParams,
   useTokenApproval,
   useTokenOrNativeBalance,
 } from "@/hooks"
@@ -60,10 +60,10 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
   )
   const slippageTolerance = useGlobalStore((state) => state.slippageTolerance)
 
-  const pairLeverParams = usePairLeverParams({ chainId, pairAddress })
+  const leverPair = useLeverPair({ chainId, pairAddress })
   const maxLeverage = calculateMaxLeverage({
-    maxLTV: pairLeverParams.data.maxLTV,
-    ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+    maxLTV: leverPair.data.maxLTV,
+    ltvPrecision: leverPair.data.constants?.ltvPrecision,
   })
   const leverageOptionsList = isClientReady
     ? Array(Math.floor(maxLeverage) - 1)
@@ -142,15 +142,14 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
             ? addSlippage(
                 leveredCollateralAmount -
                   addedCollateralAmount +
-                  (pairLeverParams.data.borrowedAmount ?? 0n),
+                  (leverPair.data.borrowedAmount ?? 0n),
                 BORROW_BUFFER_PERCENTAGE
               )
             : undefined
         )
         setEstimatedCollateralAmount(
           leverAmount > 1
-            ? leveredCollateralAmount +
-                (pairLeverParams.data.collateralAmount ?? 0n)
+            ? leveredCollateralAmount + (leverPair.data.collateralAmount ?? 0n)
             : undefined
         )
       }
@@ -243,7 +242,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
 
         <div className="relative z-[1] col-span-full col-start-1 row-start-2 px-4 pb-4 text-left align-bottom text-xs">
           <span className="text-pink-100">
-            Collateral available:{" "}
+            Balance:{" "}
             {isClientReady && isConnected
               ? formatCurrencyUnits({
                   amountWei: collateralAssetBalance.data?.value.toString(),
@@ -253,7 +252,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
               : "—"}
           </span>
           <button
-            className="ml-1.5 -translate-y-[1px] rounded px-1.5 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
+            className="ml-1.5 -translate-y-px rounded px-1.5 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
             onClick={() =>
               form.setValue(
                 "amount",

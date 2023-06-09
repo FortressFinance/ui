@@ -34,7 +34,7 @@ export const AssetLogoWithUnderlyings: FC<AssetLogoWithUnderlyingsProps> = ({
               key={`${tokenAddress}-${underlyingAssetAddress}`}
             >
               <AssetLogo
-                className="h-full w-full p-[1px]"
+                className="h-full w-full p-px"
                 tokenAddress={underlyingAssetAddress}
               />
             </div>

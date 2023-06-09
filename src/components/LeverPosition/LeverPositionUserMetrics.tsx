@@ -16,7 +16,7 @@ import { formatCurrencyUnits } from "@/lib/helpers"
 import {
   useClientReady,
   useLendingPair,
-  usePairLeverParams,
+  useLeverPair,
   useTokenOrNative,
 } from "@/hooks"
 
@@ -25,7 +25,7 @@ import { GradientText } from "@/components/Typography"
 
 import { LendingPair } from "@/constant"
 
-type LeverPositionUserStatsProps = LendingPair & {
+type LeverPositionUserMetricsProps = LendingPair & {
   estimatedBorrowAmount?: bigint
   estimatedCollateralAmount?: bigint
   borrowAmountSignificant: bigint
@@ -33,7 +33,7 @@ type LeverPositionUserStatsProps = LendingPair & {
   isUpdatingAmounts: boolean
 }
 
-export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
+export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
   estimatedBorrowAmount,
   estimatedCollateralAmount,
   borrowAmountSignificant,
@@ -47,7 +47,7 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
     chainId: props.chainId,
     pairAddress: props.pairAddress,
   })
-  const pairLeverParams = usePairLeverParams({
+  const leverPair = useLeverPair({
     chainId: props.chainId,
     pairAddress: props.pairAddress,
   })
@@ -63,62 +63,64 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
   const [borrowedAmountAsCollateral, estimatedBorrowedAmountAsCollateral] = [
     assetToCollateral(
       borrowAmountSignificant,
-      pairLeverParams.data.exchangeRate,
-      pairLeverParams.data.constants?.exchangePrecision
+      leverPair.data.exchangeRate,
+      leverPair.data.constants?.exchangePrecision
     ),
     assetToCollateral(
       estimatedBorrowAmount ?? borrowAmountSignificant,
-      pairLeverParams.data.exchangeRate,
-      pairLeverParams.data.constants?.exchangePrecision
+      leverPair.data.exchangeRate,
+      leverPair.data.constants?.exchangePrecision
     ),
   ]
   const [collateralAmountAsAsset, estimatedCollateralAmountAsAsset] = [
     collateralToAsset(
       collateralAmountSignificant,
-      pairLeverParams.data.exchangeRate,
-      pairLeverParams.data.constants?.exchangePrecision
+      leverPair.data.exchangeRate,
+      leverPair.data.constants?.exchangePrecision
     ),
     collateralToAsset(
       estimatedCollateralAmount ?? collateralAmountSignificant,
-      pairLeverParams.data.exchangeRate,
-      pairLeverParams.data.constants?.exchangePrecision
+      leverPair.data.exchangeRate,
+      leverPair.data.constants?.exchangePrecision
     ),
   ]
   const [maxBorrowAmount, estimatedMaxBorrowAmount] = [
     calculateMaxBorrowAmount({
       collateralAmountAsAsset,
-      maxLTV: pairLeverParams.data.maxLTV,
-      ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+      maxLTV: leverPair.data.maxLTV,
+      ltvPrecision: leverPair.data.constants?.ltvPrecision,
     }),
     calculateMaxBorrowAmount({
       collateralAmountAsAsset: estimatedCollateralAmountAsAsset,
-      maxLTV: pairLeverParams.data.maxLTV,
-      ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+      maxLTV: leverPair.data.maxLTV,
+      ltvPrecision: leverPair.data.constants?.ltvPrecision,
     }),
   ]
   const [LTV, estimatedLTV] = [
     calculateLTV({
       borrowedAmountAsCollateral,
       collateralAmount: collateralAmountSignificant,
-      ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+      ltvPrecision: leverPair.data.constants?.ltvPrecision,
     }),
     calculateLTV({
       borrowedAmountAsCollateral: estimatedBorrowedAmountAsCollateral,
       collateralAmount:
         estimatedCollateralAmount ?? collateralAmountSignificant,
-      ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+      ltvPrecision: leverPair.data.constants?.ltvPrecision,
     }),
   ]
   const [liquidationPrice, estimatedLiquidationPrice] = [
     calculateLiquidationPrice({
-      borrowedAmount: borrowAmountSignificant,
-      maxBorrowAmount,
-      exchangePrecision: pairLeverParams.data.constants?.exchangePrecision,
+      ltv: LTV,
+      ltvPrecision: leverPair.data.constants?.ltvPrecision,
+      maxLTV: leverPair.data.maxLTV,
+      exchangeRate: leverPair.data.exchangeRate,
     }),
     calculateLiquidationPrice({
-      borrowedAmount: estimatedBorrowAmount ?? borrowAmountSignificant,
-      maxBorrowAmount: estimatedMaxBorrowAmount,
-      exchangePrecision: pairLeverParams.data.constants?.exchangePrecision,
+      ltv: estimatedLTV,
+      ltvPrecision: leverPair.data.constants?.ltvPrecision,
+      maxLTV: leverPair.data.maxLTV,
+      exchangeRate: leverPair.data.exchangeRate,
     }),
   ]
   const [availableCredit, estimatedAvailableCredit] = [
@@ -146,10 +148,7 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
             {isClientReady && isConnected ? (
               <>
                 <span>
-                  {ltvPercentage(
-                    LTV,
-                    pairLeverParams.data.constants?.ltvPrecision
-                  )}
+                  {ltvPercentage(LTV, leverPair.data.constants?.ltvPrecision)}
                 </span>
                 {(estimatedBorrowAmount || estimatedCollateralAmount) && (
                   <span className="inline-flex items-center gap-2 font-medium text-orange">
@@ -157,7 +156,7 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
                     <GradientText>
                       {ltvPercentage(
                         estimatedLTV,
-                        pairLeverParams.data.constants?.ltvPrecision
+                        leverPair.data.constants?.ltvPrecision
                       )}
                     </GradientText>
                   </span>
@@ -180,6 +179,12 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
             {isClientReady && isConnected ? (
               <>
                 <span>
+                  1{" "}
+                  <AssetSymbol
+                    address={lendingPair.data?.collateralContract}
+                    chainId={props.chainId}
+                  />{" "}
+                  ={" "}
                   {formatCurrencyUnits({
                     amountWei: liquidationPrice.toString(),
                     decimals: borrowAsset.data?.decimals,
@@ -220,7 +225,7 @@ export const LeverPositionUserStats: FC<LeverPositionUserStatsProps> = ({
                 <span>
                   {formatCurrencyUnits({
                     amountWei:
-                      pairLeverParams.data.borrowedAmountWithBuffer?.toString(),
+                      leverPair.data.borrowedAmountWithBuffer?.toString(),
                     decimals: borrowAsset.data?.decimals,
                     maximumFractionDigits: 6,
                   })}

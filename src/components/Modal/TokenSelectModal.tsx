@@ -114,7 +114,7 @@ const TokenSelectOption = forwardRef<HTMLButtonElement, TokenSelectOptionProps>(
           <h2 className="col-start-2 row-start-1 flex items-center gap-1.5 text-left font-medium">
             <AssetSymbol address={tokenAddress} />
             {badge && (
-              <span className="inline-flex -translate-y-[1px] items-center rounded-full bg-white/80 px-2 py-0.5 text-2xs font-medium uppercase text-black group-ui-state-checked:bg-black group-ui-state-checked:text-white">
+              <span className="inline-flex -translate-y-px items-center rounded-full bg-white/80 px-2 py-0.5 text-2xs font-medium uppercase text-black group-ui-state-checked:bg-black group-ui-state-checked:text-white">
                 {badge}
               </span>
             )}

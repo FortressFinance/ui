@@ -9,21 +9,21 @@ import { resolvedRoute } from "@/lib/helpers"
 import {
   useClientReady,
   useLendingPair,
-  usePairLeverParams,
+  useLeverPair,
   useSignificantLeverAmount,
   useTokenOrNativeBalance,
 } from "@/hooks"
 
-import { DisabledPage } from "@/components"
+import { DisabledPage, ViewContractOnExplorer } from "@/components"
 import { AssetLogo } from "@/components/Asset"
 import Button from "@/components/Button"
 import Layout from "@/components/Layout"
-import { LendingPairStats } from "@/components/LendingPair"
+import { LendingPairMetrics } from "@/components/LendingPair"
 import {
   AddCollateral,
   CreateLeverPosition,
   LeverPairs,
-  LeverPositionUserStats,
+  LeverPositionUserMetrics,
   RemoveCollateral,
   RepayLeverPosition,
 } from "@/components/LeverPosition"
@@ -62,13 +62,13 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
 
   const isClientReady = useClientReady()
   const lendingPair = useLendingPair(props)
-  const pairLeverParams = usePairLeverParams(props)
+  const leverPair = useLeverPair(props)
   const borrowAmountSignificant = useSignificantLeverAmount({
-    amount: pairLeverParams.data.borrowedAmount,
+    amount: leverPair.data.borrowedAmount,
     assetAddress: lendingPair.data?.assetContract,
   })
   const collateralAmountSignificant = useSignificantLeverAmount({
-    amount: pairLeverParams.data.collateralAmount,
+    amount: leverPair.data.collateralAmount,
     assetAddress: lendingPair.data?.collateralContract,
   })
   const borrowAssetBalance = useTokenOrNativeBalance({
@@ -81,12 +81,12 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
   })
 
   const onSuccess = () => {
-    pairLeverParams.refetch()
+    leverPair.refetch()
     borrowAssetBalance.refetch()
     collateralAssetBalance.refetch()
     // lock UI to prevent speedbump errors if users attempt multiple txs in quick succession
     setIsAccountLocked(true)
-    setTimeout(() => setIsAccountLocked(false), 5000)
+    setTimeout(() => setIsAccountLocked(false), 15000)
   }
 
   // manually manage the available lever tabs
@@ -107,8 +107,8 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
     isClientReady,
     borrowAmountSignificant,
     collateralAmountSignificant,
-    pairLeverParams.data.borrowedAmount,
-    pairLeverParams.data.collateralAmount,
+    leverPair.data.borrowedAmount,
+    leverPair.data.collateralAmount,
   ])
 
   const CollateralTabsList = () => (
@@ -147,12 +147,19 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
               <div className="flex justify-between">
                 <Link
                   {...resolvedRoute("/app/lever")}
-                  className="flex items-center gap-2 text-sm font-medium uppercase text-pink-100"
+                  className="inline-flex items-center gap-2 text-sm font-medium uppercase text-pink-100"
                 >
                   <FiArrowLeft className="h-4 w-4" />
                   Lever
                 </Link>
-                <TxSettingsPopover className="max-md:hidden" />
+                <div className="flex items-center gap-4">
+                  <ViewContractOnExplorer
+                    chainId={props.chainId}
+                    className="h-5 w-5"
+                    contractAddress={props.pairAddress}
+                  />
+                  <TxSettingsPopover className="max-md:hidden" />
+                </div>
               </div>
 
               <div className="mt-3 flex items-center gap-3">
@@ -171,7 +178,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                   )}
                   aria-hidden={isAccountLocked ? "false" : "true"}
                 >
-                  5s <span className="uppercase">update-lock</span>
+                  15s <span className="uppercase">update-lock</span>
                 </span>
               </div>
             </header>
@@ -182,7 +189,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                   onValueChange={(value) => {
                     const prevActiveTab = activeTab
                     setActiveTab(value)
-                    if (prevActiveTab === "manage") {
+                    if (prevActiveTab === "collateral") {
                       // Wait 400ms for the tab to animate out, then reset collateral sub-tab
                       setTimeout(() => setActiveCollateralTab("add"), 400)
                     }
@@ -204,18 +211,23 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                       <span className="group-disabled:opacity-25">Repay</span>
                     </Tabs.Trigger>
                     <Tabs.Trigger
-                      value="manage"
+                      value="collateral"
                       className="transition-color group h-14 w-1/3 px-3 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear disabled:cursor-not-allowed ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
                       disabled={!isLevered || isAccountLocked}
                     >
-                      <span className="group-disabled:opacity-25">Manage</span>
+                      <span className="group-disabled:opacity-25">
+                        Collateral
+                      </span>
                     </Tabs.Trigger>
                   </Tabs.List>
                   <div className="relative overflow-hidden">
                     <Tabs.Content
                       className={clsxm(
                         "pt-3 transition-opacity duration-200 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6",
-                        { "opacity-50": isAccountLocked }
+                        {
+                          "opacity-50 after:absolute after:inset-0 after:z-10 after:cursor-not-allowed":
+                            isAccountLocked,
+                        }
                       )}
                       value="create"
                     >
@@ -239,7 +251,10 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                     <Tabs.Content
                       className={clsxm(
                         "pt-3 transition-opacity duration-200 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6",
-                        { "opacity-50": isAccountLocked }
+                        {
+                          "opacity-50 after:absolute after:inset-0 after:z-10 after:cursor-not-allowed":
+                            isAccountLocked,
+                        }
                       )}
                       value="repay"
                     >
@@ -268,9 +283,12 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                     <Tabs.Content
                       className={clsxm(
                         "pt-3 transition-opacity duration-200 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6",
-                        { "opacity-50": isAccountLocked }
+                        {
+                          "opacity-50 after:absolute after:inset-0 after:z-10 after:cursor-not-allowed":
+                            isAccountLocked,
+                        }
                       )}
-                      value="manage"
+                      value="collateral"
                     >
                       <Tabs.Root
                         className="relative"
@@ -329,7 +347,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                 </Tabs.Root>
               </div>
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
-                <LeverPositionUserStats
+                <LeverPositionUserMetrics
                   {...props}
                   estimatedBorrowAmount={estimatedBorrowAmount}
                   estimatedCollateralAmount={estimatedCollateralAmount}
@@ -339,7 +357,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                 />
               </div>
               <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
-                <LendingPairStats apyType="borrow" {...props} />
+                <LendingPairMetrics interestType="borrow" {...props} />
               </div>
             </div>
           </main>

@@ -15,7 +15,7 @@ import { assetToCollateral, calculateMinCollateralRequired } from "@/lib"
 import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
 import {
   useClientReady,
-  usePairLeverParams,
+  useLeverPair,
   useRemoveCollateral,
   useTokenOrNativeBalance,
 } from "@/hooks"
@@ -61,7 +61,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
     shallow
   )
 
-  const pairLeverParams = usePairLeverParams({ chainId, pairAddress })
+  const leverPair = useLeverPair({ chainId, pairAddress })
 
   const [removedAmount, setRemovedAmount] = useState<bigint>(0n)
 
@@ -74,12 +74,12 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
   const amount = form.watch("amount")
   const minCollateralRequired = calculateMinCollateralRequired({
     borrowedAmountAsCollateral: assetToCollateral(
-      pairLeverParams.data.borrowedAmount,
-      pairLeverParams.data.exchangeRate,
-      pairLeverParams.data.constants?.exchangePrecision
+      leverPair.data.borrowedAmount,
+      leverPair.data.exchangeRate,
+      leverPair.data.constants?.exchangePrecision
     ),
-    maxLTV: pairLeverParams.data.maxLTV,
-    ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+    maxLTV: leverPair.data.maxLTV,
+    ltvPrecision: leverPair.data.constants?.ltvPrecision,
   })
   const maxCollateralWithdrawable =
     collateralAmountSignificant - minCollateralRequired
@@ -200,7 +200,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
 
           <div className="relative z-[1] col-span-full col-start-1 row-start-2 px-4 pb-4 text-left align-bottom text-xs">
             <span className="text-pink-100">
-              Collateral withdrawable:{" "}
+              Withdrawable:{" "}
               {isClientReady && isConnected
                 ? formatCurrencyUnits({
                     amountWei: maxCollateralWithdrawable.toString(),
@@ -210,7 +210,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
                 : "—"}
             </span>
             <button
-              className="ml-1.5 -translate-y-[1px] rounded px-1.5 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
+              className="ml-1.5 -translate-y-px rounded px-1.5 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
               onClick={() => {
                 onChangeAmount(
                   formatCurrencyUnits({

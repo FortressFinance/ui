@@ -11,7 +11,7 @@ import {
   BORROW_BUFFER_PERCENTAGE,
   useClientReady,
   useConvertToShares,
-  usePairLeverParams,
+  useLeverPair,
   useRepayAsset,
   useRepayAssetWithCollateral,
   useTokenApproval,
@@ -70,7 +70,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   )
   const slippageTolerance = useGlobalStore((state) => state.slippageTolerance)
 
-  const pairLeverParams = usePairLeverParams({ chainId, pairAddress })
+  const leverPair = useLeverPair({ chainId, pairAddress })
 
   const [selectedPreset, setSelectedPreset] = useState<string>("")
   const [isTokenSelectModalOpen, setIsTokenSelectModalOpen] = useState(false)
@@ -94,11 +94,11 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     : borrowAssetBalance.data?.value ?? 0n
   const maximumAmountRepayable = isRepayingWithCollateral
     ? assetToCollateral(
-        pairLeverParams.data.borrowedAmountWithBuffer ?? 0n,
-        pairLeverParams.data.exchangeRate,
-        pairLeverParams.data.constants?.exchangePrecision
+        leverPair.data.borrowedAmountWithBuffer ?? 0n,
+        leverPair.data.exchangeRate,
+        leverPair.data.constants?.exchangePrecision
       )
-    : pairLeverParams.data.borrowedAmountWithBuffer ?? 0n
+    : leverPair.data.borrowedAmountWithBuffer ?? 0n
 
   const {
     field: { onChange: onChangeAmount, ...amountField },
@@ -148,8 +148,8 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
             (isRepayingWithCollateral
               ? collateralToAsset(
                   repaymentAmount,
-                  pairLeverParams.data.exchangeRate,
-                  pairLeverParams.data.constants?.exchangePrecision
+                  leverPair.data.exchangeRate,
+                  leverPair.data.constants?.exchangePrecision
                 )
               : repaymentAmount)
         )
@@ -191,8 +191,8 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     amount: subSlippage(repaymentAmount, BORROW_BUFFER_PERCENTAGE),
     enabled:
       !isUpdatingAmounts && !isRepayingWithCollateral && approval.isSufficient,
-    totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
-    totalBorrowShares: pairLeverParams.data.totalBorrowShares,
+    totalBorrowAmount: leverPair.data.totalBorrowAmount,
+    totalBorrowShares: leverPair.data.totalBorrowShares,
     pairAddress,
   })
   const repayAsset = useRepayAsset({
@@ -207,8 +207,8 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   })
   const repaymentAmountMin = collateralToAsset(
     subSlippage(repaymentAmount, slippageTolerance),
-    pairLeverParams.data.exchangeRate,
-    pairLeverParams.data.constants?.exchangePrecision
+    leverPair.data.exchangeRate,
+    leverPair.data.constants?.exchangePrecision
   )
   const repayAssetWithCollateral = useRepayAssetWithCollateral({
     borrowAssetAddress: borrowAssetAddress,
@@ -282,21 +282,50 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
 
         <div className="relative z-[1] col-span-full col-start-1 row-start-2 px-4 pb-4 text-left align-bottom text-xs">
           <span className="text-pink-100">
-            {isRepayingWithCollateral ? "Collateral available: " : "Balance: "}
-            {isClientReady && isConnected
-              ? formatCurrencyUnits({
-                  amountWei: activeRepaymentBalanceAmount.toString(),
-                  decimals: activeRepaymentAsset?.decimals,
-                  maximumFractionDigits: 6,
-                })
-              : "—"}
+            {activeRepaymentBalanceAmount > maximumAmountRepayable ? (
+              <>
+                <span>
+                  Debt:{" "}
+                  {formatCurrencyUnits({
+                    amountWei: maximumAmountRepayable.toString(),
+                    decimals: activeRepaymentAsset?.decimals,
+                    maximumFractionDigits: 4,
+                  })}
+                </span>{" "}
+                <span className="opacity-70">
+                  (
+                  {formatCurrencyUnits({
+                    amountWei: activeRepaymentBalanceAmount.toString(),
+                    decimals: activeRepaymentAsset?.decimals,
+                    maximumFractionDigits: 4,
+                  })}
+                  )
+                </span>
+              </>
+            ) : (
+              <>
+                {isRepayingWithCollateral
+                  ? "Deposited collateral: "
+                  : "Balance: "}
+                {isClientReady && isConnected
+                  ? formatCurrencyUnits({
+                      amountWei: activeRepaymentBalanceAmount.toString(),
+                      decimals: activeRepaymentAsset?.decimals,
+                      maximumFractionDigits: 6,
+                    })
+                  : "—"}
+              </>
+            )}
           </span>
           <button
-            className="ml-1.5 -translate-y-[1px] rounded px-1.5 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
+            className="ml-1.5 -translate-y-px rounded px-1.5 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
             onClick={() => {
               onChangeAmount(
                 formatCurrencyUnits({
-                  amountWei: activeRepaymentBalanceAmount.toString(),
+                  amountWei:
+                    activeRepaymentBalanceAmount > maximumAmountRepayable
+                      ? maximumAmountRepayable.toString()
+                      : activeRepaymentBalanceAmount.toString(),
                   decimals: activeRepaymentAsset?.decimals,
                 })
               )

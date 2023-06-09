@@ -1,3 +1,5 @@
+import { subSlippage } from "@/lib/slippageHelpers"
+
 export const calculateLTV = ({
   borrowedAmountAsCollateral = 0n,
   collateralAmount = 0n,
@@ -60,13 +62,15 @@ export const calculateAvailableCredit = ({
 }) => maxBorrowAmount - borrowedAmount
 
 export const calculateLiquidationPrice = ({
-  borrowedAmount = 1n,
-  maxBorrowAmount = 1n,
-  exchangePrecision = 1n,
+  ltv = 0n,
+  ltvPrecision = 0n,
+  maxLTV = 0n,
+  exchangeRate = 0n,
 }) =>
-  maxBorrowAmount > 0
-    ? (borrowedAmount * exchangePrecision) / maxBorrowAmount
-    : 1n
+  subSlippage(
+    exchangeRate,
+    Number((maxLTV - ltv) * 100n) / Number(ltvPrecision)
+  )
 
 export const calculateMinCollateralRequired = ({
   borrowedAmountAsCollateral = 1n,
