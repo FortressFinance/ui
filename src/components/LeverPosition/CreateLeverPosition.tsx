@@ -5,9 +5,10 @@ import { useDebounce } from "react-use"
 import { Address, useAccount } from "wagmi"
 import { shallow } from "zustand/shallow"
 
-import { calculateMaxLeverage, subSlippage } from "@/lib"
+import { addSlippage, calculateMaxLeverage, subSlippage } from "@/lib"
 import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
 import {
+  BORROW_BUFFER_PERCENTAGE,
   useClientReady,
   useLeverPosition,
   usePairLeverParams,
@@ -26,11 +27,9 @@ type CreateLeverPositionProps = {
   borrowAssetAddress?: Address
   collateralAssetAddress?: Address
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
-  adjustedBorrowAmount?: bigint
-  adjustedCollateralAmount?: bigint
   isUpdatingAmounts: boolean
-  setAdjustedBorrowAmount: Dispatch<SetStateAction<bigint | undefined>>
-  setAdjustedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
+  setEstimatedBorrowAmount: Dispatch<SetStateAction<bigint | undefined>>
+  setEstimatedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
   setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
   pairAddress: Address
   onSuccess: () => void
@@ -46,11 +45,9 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
   borrowAssetAddress,
   collateralAssetAddress,
   collateralAssetBalance,
-  adjustedBorrowAmount,
-  adjustedCollateralAmount,
   isUpdatingAmounts,
-  setAdjustedBorrowAmount,
-  setAdjustedCollateralAmount,
+  setEstimatedBorrowAmount,
+  setEstimatedCollateralAmount,
   setIsUpdatingAmounts,
   pairAddress,
   onSuccess: _onSuccess,
@@ -127,23 +124,34 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     () => {
       if (!Number(amount)) {
         setCollateralAmount(0n)
-        setAdjustedBorrowAmount(undefined)
-        setAdjustedCollateralAmount(undefined)
+        setEstimatedBorrowAmount(undefined)
+        setEstimatedCollateralAmount(undefined)
       } else {
-        const collateralAmount = parseCurrencyUnits({
+        const addedCollateralAmount = parseCurrencyUnits({
           amountFormatted: amount,
           decimals: collateralAssetBalance.data?.decimals,
         })
         const leveredCollateralAmount =
-          (collateralAmount * BigInt(Math.floor(leverAmount * 100))) / 100n
-        setCollateralAmount(collateralAmount)
-        setAdjustedBorrowAmount(
+          addedCollateralAmount > 0
+            ? (addedCollateralAmount * BigInt(Math.floor(leverAmount * 100))) /
+              100n
+            : 0n
+        setCollateralAmount(addedCollateralAmount)
+        setEstimatedBorrowAmount(
           leverAmount > 1
-            ? leveredCollateralAmount - collateralAmount
+            ? addSlippage(
+                leveredCollateralAmount -
+                  addedCollateralAmount +
+                  (pairLeverParams.data.borrowedAmount ?? 0n),
+                BORROW_BUFFER_PERCENTAGE
+              )
             : undefined
         )
-        setAdjustedCollateralAmount(
-          leverAmount > 1 ? leveredCollateralAmount : undefined
+        setEstimatedCollateralAmount(
+          leverAmount > 1
+            ? leveredCollateralAmount +
+                (pairLeverParams.data.collateralAmount ?? 0n)
+            : undefined
         )
       }
       setIsUpdatingAmounts(false)
@@ -163,12 +171,10 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     token: collateralAssetAddress,
     enabled: !isUpdatingAmounts && collateralAmount > 0,
   })
-  const minAmount = subSlippage(
-    (adjustedCollateralAmount ?? 0n) - collateralAmount,
-    slippageTolerance
-  )
+  const borrowAmount = collateralAmount * BigInt(leverAmount) - collateralAmount
+  const minAmount = subSlippage(borrowAmount, slippageTolerance)
   const leverPosition = useLeverPosition({
-    borrowAmount: adjustedBorrowAmount,
+    borrowAmount,
     borrowAssetAddress,
     collateralAmount,
     minAmount,

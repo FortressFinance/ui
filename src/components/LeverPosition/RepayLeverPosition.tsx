@@ -35,8 +35,8 @@ type RepayLeverPositionProps = {
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
   collateralAmountSignificant: bigint
   isUpdatingAmounts: boolean
-  setAdjustedBorrowAmount: Dispatch<SetStateAction<bigint | undefined>>
-  setAdjustedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
+  setEstimatedBorrowAmount: Dispatch<SetStateAction<bigint | undefined>>
+  setEstimatedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
   setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
   pairAddress: Address
   onSuccess: () => void
@@ -56,8 +56,8 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   collateralAssetBalance,
   collateralAmountSignificant,
   isUpdatingAmounts,
-  setAdjustedBorrowAmount,
-  setAdjustedCollateralAmount,
+  setEstimatedBorrowAmount,
+  setEstimatedCollateralAmount,
   setIsUpdatingAmounts,
   pairAddress,
   onSuccess: _onSuccess,
@@ -94,7 +94,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     : borrowAssetBalance.data?.value ?? 0n
   const maximumAmountRepayable = isRepayingWithCollateral
     ? assetToCollateral(
-        pairLeverParams.data.borrowedAmount ?? 0n,
+        pairLeverParams.data.borrowedAmountWithBuffer ?? 0n,
         pairLeverParams.data.exchangeRate,
         pairLeverParams.data.constants?.exchangePrecision
       )
@@ -135,15 +135,15 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     () => {
       if (!Number(amount)) {
         setRepaymentAmount(0n)
-        setAdjustedBorrowAmount(undefined)
-        setAdjustedCollateralAmount(undefined)
+        setEstimatedBorrowAmount(undefined)
+        setEstimatedCollateralAmount(undefined)
       } else {
         const repaymentAmount = parseCurrencyUnits({
           amountFormatted: amount,
           decimals: activeRepaymentAsset?.decimals,
         })
         setRepaymentAmount(repaymentAmount)
-        setAdjustedBorrowAmount(
+        setEstimatedBorrowAmount(
           borrowAmountSignificant -
             (isRepayingWithCollateral
               ? collateralToAsset(
@@ -153,7 +153,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
                 )
               : repaymentAmount)
         )
-        setAdjustedCollateralAmount(
+        setEstimatedCollateralAmount(
           isRepayingWithCollateral
             ? collateralAmountSignificant - repaymentAmount
             : undefined
@@ -167,8 +167,8 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
 
   useEffect(() => {
     return () => {
-      setAdjustedBorrowAmount(undefined)
-      setAdjustedCollateralAmount(undefined)
+      setEstimatedBorrowAmount(undefined)
+      setEstimatedCollateralAmount(undefined)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
