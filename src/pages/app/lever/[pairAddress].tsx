@@ -198,7 +198,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                   onValueChange={(value) => {
                     const prevActiveTab = activeTab
                     setActiveTab(value)
-                    if (prevActiveTab === "manage") {
+                    if (prevActiveTab === "collateral") {
                       // Wait 400ms for the tab to animate out, then reset collateral sub-tab
                       setTimeout(() => setActiveCollateralTab("add"), 400)
                     }
@@ -220,11 +220,13 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                       <span className="group-disabled:opacity-25">Repay</span>
                     </Tabs.Trigger>
                     <Tabs.Trigger
-                      value="manage"
+                      value="collateral"
                       className="transition-color group h-14 w-1/3 px-3 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear disabled:cursor-not-allowed ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
                       disabled={!isLevered || isAccountLocked}
                     >
-                      <span className="group-disabled:opacity-25">Manage</span>
+                      <span className="group-disabled:opacity-25">
+                        Collateral
+                      </span>
                     </Tabs.Trigger>
                   </Tabs.List>
                   <div className="relative overflow-hidden">
@@ -286,7 +288,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                         "pt-3 transition-opacity duration-200 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6",
                         { "opacity-50": isAccountLocked }
                       )}
-                      value="manage"
+                      value="collateral"
                     >
                       <Tabs.Root
                         className="relative"
