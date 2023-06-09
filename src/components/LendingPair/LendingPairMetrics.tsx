@@ -2,7 +2,7 @@ import { FC } from "react"
 
 import { calculateAssetsAvailable, ltvPercentage } from "@/lib"
 import { formatCurrencyUnits } from "@/lib/helpers"
-import { useLendingPair, usePairLeverParams, useTokenOrNative } from "@/hooks"
+import { useLendingPair, useLeverPair, useTokenOrNative } from "@/hooks"
 
 import { AssetSymbol } from "@/components/Asset"
 import {
@@ -80,15 +80,15 @@ export const LendingPairMetrics: FC<LendingPairMetricsProps> = ({
 
 const TotalBorrowed: FC<LendingPair> = ({ pairAddress, chainId }) => {
   const lendingPair = useLendingPair({ pairAddress, chainId })
-  const pairLeverParams = usePairLeverParams({ pairAddress, chainId })
+  const leverPair = useLeverPair({ pairAddress, chainId })
   const asset = useTokenOrNative({
     address: lendingPair.data?.assetContract,
     chainId,
   })
   return (
-    <Skeleton isLoading={pairLeverParams.isLoading} loadingText="...">
+    <Skeleton isLoading={leverPair.isLoading} loadingText="...">
       {formatCurrencyUnits({
-        amountWei: pairLeverParams.data.totalBorrowAmount?.toString(),
+        amountWei: leverPair.data.totalBorrowAmount?.toString(),
         decimals: asset.data?.decimals,
         maximumFractionDigits: 6,
       })}
@@ -98,17 +98,17 @@ const TotalBorrowed: FC<LendingPair> = ({ pairAddress, chainId }) => {
 
 const AssetsAvailable: FC<LendingPair> = ({ pairAddress, chainId }) => {
   const lendingPair = useLendingPair({ pairAddress, chainId })
-  const pairLeverParams = usePairLeverParams({ pairAddress, chainId })
+  const leverPair = useLeverPair({ pairAddress, chainId })
   const asset = useTokenOrNative({
     address: lendingPair.data?.assetContract,
     chainId,
   })
   return (
-    <Skeleton isLoading={pairLeverParams.isLoading} loadingText="...">
+    <Skeleton isLoading={leverPair.isLoading} loadingText="...">
       {formatCurrencyUnits({
         amountWei: calculateAssetsAvailable({
-          totalAssets: pairLeverParams.data.totalAssets,
-          totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
+          totalAssets: leverPair.data.totalAssets,
+          totalBorrowAmount: leverPair.data.totalBorrowAmount,
         }).toString(),
         decimals: asset.data?.decimals,
         maximumFractionDigits: 6,
@@ -118,12 +118,12 @@ const AssetsAvailable: FC<LendingPair> = ({ pairAddress, chainId }) => {
 }
 
 const LendingPairMaxLTV: FC<LendingPair> = ({ pairAddress, chainId }) => {
-  const pairLeverParams = usePairLeverParams({ pairAddress, chainId })
+  const leverPair = useLeverPair({ pairAddress, chainId })
   return (
-    <Skeleton isLoading={pairLeverParams.isLoading} loadingText="...">
+    <Skeleton isLoading={leverPair.isLoading} loadingText="...">
       {ltvPercentage(
-        pairLeverParams.data.maxLTV,
-        pairLeverParams.data.constants?.ltvPrecision
+        leverPair.data.maxLTV,
+        leverPair.data.constants?.ltvPrecision
       )}
     </Skeleton>
   )
@@ -131,15 +131,15 @@ const LendingPairMaxLTV: FC<LendingPair> = ({ pairAddress, chainId }) => {
 
 const CollateralExchangeRate: FC<LendingPair> = ({ pairAddress, chainId }) => {
   const lendingPair = useLendingPair({ pairAddress, chainId })
-  const pairLeverParams = usePairLeverParams({ pairAddress, chainId })
+  const leverPair = useLeverPair({ pairAddress, chainId })
   const asset = useTokenOrNative({
     address: lendingPair.data?.assetContract,
     chainId,
   })
   return (
-    <Skeleton isLoading={pairLeverParams.isLoading} loadingText="...">
+    <Skeleton isLoading={leverPair.isLoading} loadingText="...">
       {formatCurrencyUnits({
-        amountWei: pairLeverParams.data.exchangeRate?.toString(),
+        amountWei: leverPair.data.exchangeRate?.toString(),
         decimals: asset.data?.decimals,
         maximumFractionDigits: 6,
       })}

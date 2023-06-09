@@ -9,7 +9,7 @@ import { formatCurrencyUnits, resolvedRoute } from "@/lib/helpers"
 import {
   useConvertToAssets,
   useLendingPair,
-  usePairLeverParams,
+  useLeverPair,
   useTokenOrNative,
   useTokenOrNativeBalance,
 } from "@/hooks"
@@ -205,20 +205,20 @@ const UserAssetsLent: FC<LendingPair> = ({ pairAddress, chainId }) => {
     chainId,
   })
   const lendingPair = useLendingPair({ pairAddress, chainId })
-  const pairLeverParams = usePairLeverParams({ pairAddress, chainId })
+  const leverPair = useLeverPair({ pairAddress, chainId })
   const asset = useTokenOrNative({
     address: lendingPair.data?.assetContract,
     chainId,
   })
   const assetsLent = useConvertToAssets({
     shares: shareBalance.data?.value,
-    totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
-    totalBorrowShares: pairLeverParams.data.totalBorrowShares,
+    totalBorrowAmount: leverPair.data.totalBorrowAmount,
+    totalBorrowShares: leverPair.data.totalBorrowShares,
     pairAddress,
   })
 
   return (
-    <Skeleton isLoading={pairLeverParams.isLoading} loadingText="...">
+    <Skeleton isLoading={leverPair.isLoading} loadingText="...">
       {isConnected
         ? formatCurrencyUnits({
             amountWei: assetsLent.data?.toString(),

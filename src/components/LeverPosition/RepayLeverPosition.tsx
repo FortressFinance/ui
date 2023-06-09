@@ -11,7 +11,7 @@ import {
   BORROW_BUFFER_PERCENTAGE,
   useClientReady,
   useConvertToShares,
-  usePairLeverParams,
+  useLeverPair,
   useRepayAsset,
   useRepayAssetWithCollateral,
   useTokenApproval,
@@ -70,7 +70,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   )
   const slippageTolerance = useGlobalStore((state) => state.slippageTolerance)
 
-  const pairLeverParams = usePairLeverParams({ chainId, pairAddress })
+  const leverPair = useLeverPair({ chainId, pairAddress })
 
   const [selectedPreset, setSelectedPreset] = useState<string>("")
   const [isTokenSelectModalOpen, setIsTokenSelectModalOpen] = useState(false)
@@ -94,11 +94,11 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     : borrowAssetBalance.data?.value ?? 0n
   const maximumAmountRepayable = isRepayingWithCollateral
     ? assetToCollateral(
-        pairLeverParams.data.borrowedAmountWithBuffer ?? 0n,
-        pairLeverParams.data.exchangeRate,
-        pairLeverParams.data.constants?.exchangePrecision
+        leverPair.data.borrowedAmountWithBuffer ?? 0n,
+        leverPair.data.exchangeRate,
+        leverPair.data.constants?.exchangePrecision
       )
-    : pairLeverParams.data.borrowedAmountWithBuffer ?? 0n
+    : leverPair.data.borrowedAmountWithBuffer ?? 0n
 
   const {
     field: { onChange: onChangeAmount, ...amountField },
@@ -148,8 +148,8 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
             (isRepayingWithCollateral
               ? collateralToAsset(
                   repaymentAmount,
-                  pairLeverParams.data.exchangeRate,
-                  pairLeverParams.data.constants?.exchangePrecision
+                  leverPair.data.exchangeRate,
+                  leverPair.data.constants?.exchangePrecision
                 )
               : repaymentAmount)
         )
@@ -191,8 +191,8 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     amount: subSlippage(repaymentAmount, BORROW_BUFFER_PERCENTAGE),
     enabled:
       !isUpdatingAmounts && !isRepayingWithCollateral && approval.isSufficient,
-    totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
-    totalBorrowShares: pairLeverParams.data.totalBorrowShares,
+    totalBorrowAmount: leverPair.data.totalBorrowAmount,
+    totalBorrowShares: leverPair.data.totalBorrowShares,
     pairAddress,
   })
   const repayAsset = useRepayAsset({
@@ -207,8 +207,8 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   })
   const repaymentAmountMin = collateralToAsset(
     subSlippage(repaymentAmount, slippageTolerance),
-    pairLeverParams.data.exchangeRate,
-    pairLeverParams.data.constants?.exchangePrecision
+    leverPair.data.exchangeRate,
+    leverPair.data.constants?.exchangePrecision
   )
   const repayAssetWithCollateral = useRepayAssetWithCollateral({
     borrowAssetAddress: borrowAssetAddress,

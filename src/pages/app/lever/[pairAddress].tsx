@@ -9,7 +9,7 @@ import { resolvedRoute } from "@/lib/helpers"
 import {
   useClientReady,
   useLendingPair,
-  usePairLeverParams,
+  useLeverPair,
   useSignificantLeverAmount,
   useTokenOrNativeBalance,
 } from "@/hooks"
@@ -66,13 +66,13 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
 
   const isClientReady = useClientReady()
   const lendingPair = useLendingPair(props)
-  const pairLeverParams = usePairLeverParams(props)
+  const leverPair = useLeverPair(props)
   const borrowAmountSignificant = useSignificantLeverAmount({
-    amount: pairLeverParams.data.borrowedAmount,
+    amount: leverPair.data.borrowedAmount,
     assetAddress: lendingPair.data?.assetContract,
   })
   const collateralAmountSignificant = useSignificantLeverAmount({
-    amount: pairLeverParams.data.collateralAmount,
+    amount: leverPair.data.collateralAmount,
     assetAddress: lendingPair.data?.collateralContract,
   })
   const borrowAssetBalance = useTokenOrNativeBalance({
@@ -85,7 +85,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
   })
 
   const onSuccess = () => {
-    pairLeverParams.refetch()
+    leverPair.refetch()
     borrowAssetBalance.refetch()
     collateralAssetBalance.refetch()
     // lock UI to prevent speedbump errors if users attempt multiple txs in quick succession
@@ -111,8 +111,8 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
     isClientReady,
     borrowAmountSignificant,
     collateralAmountSignificant,
-    pairLeverParams.data.borrowedAmount,
-    pairLeverParams.data.collateralAmount,
+    leverPair.data.borrowedAmount,
+    leverPair.data.collateralAmount,
   ])
 
   const CollateralTabsList = () => (

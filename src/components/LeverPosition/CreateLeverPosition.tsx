@@ -10,8 +10,8 @@ import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
 import {
   BORROW_BUFFER_PERCENTAGE,
   useClientReady,
+  useLeverPair,
   useLeverPosition,
-  usePairLeverParams,
   useTokenApproval,
   useTokenOrNativeBalance,
 } from "@/hooks"
@@ -60,10 +60,10 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
   )
   const slippageTolerance = useGlobalStore((state) => state.slippageTolerance)
 
-  const pairLeverParams = usePairLeverParams({ chainId, pairAddress })
+  const leverPair = useLeverPair({ chainId, pairAddress })
   const maxLeverage = calculateMaxLeverage({
-    maxLTV: pairLeverParams.data.maxLTV,
-    ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+    maxLTV: leverPair.data.maxLTV,
+    ltvPrecision: leverPair.data.constants?.ltvPrecision,
   })
   const leverageOptionsList = isClientReady
     ? Array(Math.floor(maxLeverage) - 1)
@@ -142,15 +142,14 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
             ? addSlippage(
                 leveredCollateralAmount -
                   addedCollateralAmount +
-                  (pairLeverParams.data.borrowedAmount ?? 0n),
+                  (leverPair.data.borrowedAmount ?? 0n),
                 BORROW_BUFFER_PERCENTAGE
               )
             : undefined
         )
         setEstimatedCollateralAmount(
           leverAmount > 1
-            ? leveredCollateralAmount +
-                (pairLeverParams.data.collateralAmount ?? 0n)
+            ? leveredCollateralAmount + (leverPair.data.collateralAmount ?? 0n)
             : undefined
         )
       }

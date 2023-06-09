@@ -15,7 +15,7 @@ import { assetToCollateral, calculateMinCollateralRequired } from "@/lib"
 import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
 import {
   useClientReady,
-  usePairLeverParams,
+  useLeverPair,
   useRemoveCollateral,
   useTokenOrNativeBalance,
 } from "@/hooks"
@@ -61,7 +61,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
     shallow
   )
 
-  const pairLeverParams = usePairLeverParams({ chainId, pairAddress })
+  const leverPair = useLeverPair({ chainId, pairAddress })
 
   const [removedAmount, setRemovedAmount] = useState<bigint>(0n)
 
@@ -74,12 +74,12 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
   const amount = form.watch("amount")
   const minCollateralRequired = calculateMinCollateralRequired({
     borrowedAmountAsCollateral: assetToCollateral(
-      pairLeverParams.data.borrowedAmount,
-      pairLeverParams.data.exchangeRate,
-      pairLeverParams.data.constants?.exchangePrecision
+      leverPair.data.borrowedAmount,
+      leverPair.data.exchangeRate,
+      leverPair.data.constants?.exchangePrecision
     ),
-    maxLTV: pairLeverParams.data.maxLTV,
-    ltvPrecision: pairLeverParams.data.constants?.ltvPrecision,
+    maxLTV: leverPair.data.maxLTV,
+    ltvPrecision: leverPair.data.constants?.ltvPrecision,
   })
   const maxCollateralWithdrawable =
     collateralAmountSignificant - minCollateralRequired
