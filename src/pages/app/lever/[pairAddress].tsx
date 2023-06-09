@@ -14,7 +14,11 @@ import {
   useTokenOrNativeBalance,
 } from "@/hooks"
 
-import { DisabledPage } from "@/components"
+import {
+  AddTokenToWallet,
+  DisabledPage,
+  ViewContractOnExplorer,
+} from "@/components"
 import { AssetLogo } from "@/components/Asset"
 import Button from "@/components/Button"
 import Layout from "@/components/Layout"
@@ -147,12 +151,24 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
               <div className="flex justify-between">
                 <Link
                   {...resolvedRoute("/app/lever")}
-                  className="flex items-center gap-2 text-sm font-medium uppercase text-pink-100"
+                  className="inline-flex items-center gap-2 text-sm font-medium uppercase text-pink-100"
                 >
                   <FiArrowLeft className="h-4 w-4" />
                   Lever
                 </Link>
-                <TxSettingsPopover className="max-md:hidden" />
+                <div className="flex items-center gap-4">
+                  <AddTokenToWallet
+                    chainId={props.chainId}
+                    className="h-5 w-5"
+                    tokenAddress={props.pairAddress}
+                  />
+                  <ViewContractOnExplorer
+                    chainId={props.chainId}
+                    className="h-5 w-5"
+                    contractAddress={props.pairAddress}
+                  />
+                  <TxSettingsPopover className="max-md:hidden" />
+                </div>
               </div>
 
               <div className="mt-3 flex items-center gap-3">
