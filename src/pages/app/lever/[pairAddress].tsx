@@ -224,7 +224,10 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                     <Tabs.Content
                       className={clsxm(
                         "pt-3 transition-opacity duration-200 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6",
-                        { "opacity-50": isAccountLocked }
+                        {
+                          "opacity-50 after:absolute after:inset-0 after:z-10 after:cursor-not-allowed":
+                            isAccountLocked,
+                        }
                       )}
                       value="create"
                     >
@@ -248,7 +251,10 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                     <Tabs.Content
                       className={clsxm(
                         "pt-3 transition-opacity duration-200 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6",
-                        { "opacity-50": isAccountLocked }
+                        {
+                          "opacity-50 after:absolute after:inset-0 after:z-10 after:cursor-not-allowed":
+                            isAccountLocked,
+                        }
                       )}
                       value="repay"
                     >
@@ -277,7 +283,10 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                     <Tabs.Content
                       className={clsxm(
                         "pt-3 transition-opacity duration-200 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out lg:pt-6",
-                        { "opacity-50": isAccountLocked }
+                        {
+                          "opacity-50 after:absolute after:inset-0 after:z-10 after:cursor-not-allowed":
+                            isAccountLocked,
+                        }
                       )}
                       value="collateral"
                     >
