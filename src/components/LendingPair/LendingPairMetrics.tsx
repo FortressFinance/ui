@@ -7,7 +7,7 @@ import { useLendingPair, useLeverPair, useTokenOrNative } from "@/hooks"
 import { AssetSymbol } from "@/components/Asset"
 import {
   LendingPairAPY,
-  LendingPairAPYType,
+  LendingPairInterestType,
 } from "@/components/LendingPair/LendingPairAPY"
 import { LendingPairUtilization } from "@/components/LendingPair/LendingPairUtilization"
 import Skeleton from "@/components/Skeleton"
@@ -15,11 +15,11 @@ import Skeleton from "@/components/Skeleton"
 import { LendingPair } from "@/constant"
 
 type LendingPairMetricsProps = LendingPair & {
-  apyType: LendingPairAPYType
+  interestType: LendingPairInterestType
 }
 
 export const LendingPairMetrics: FC<LendingPairMetricsProps> = ({
-  apyType,
+  interestType,
   ...props
 }) => {
   const lendingPair = useLendingPair({
@@ -60,10 +60,10 @@ export const LendingPairMetrics: FC<LendingPairMetricsProps> = ({
         </div>
         <div className="flex items-center justify-between gap-3 lg:gap-6">
           <div className="text-sm uppercase text-white/75">
-            {apyType === "borrow" ? "Borrow" : "Lend"} APY
+            {interestType === "borrow" ? "Borrow APR" : "Lend APY"}
           </div>
           <div className="inline-flex gap-2 font-mono lg:text-lg">
-            <LendingPairAPY apyType={apyType} {...props} />
+            <LendingPairAPY interestType={interestType} {...props} />
           </div>
         </div>
         <div className="flex items-center justify-between gap-3 lg:gap-6">

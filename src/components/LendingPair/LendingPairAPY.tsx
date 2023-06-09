@@ -12,14 +12,14 @@ import Skeleton from "@/components/Skeleton"
 
 import { LendingPair } from "@/constant"
 
-export type LendingPairAPYType = "borrow" | "lend"
+export type LendingPairInterestType = "borrow" | "lend"
 
 type LendingPairAPYProps = LendingPair & {
-  apyType: LendingPairAPYType
+  interestType: LendingPairInterestType
 }
 
 export const LendingPairAPY: FC<LendingPairAPYProps> = ({
-  apyType,
+  interestType,
   ...lendingPair
 }) => {
   const leverPair = useLeverPair(lendingPair)
@@ -27,7 +27,7 @@ export const LendingPairAPY: FC<LendingPairAPYProps> = ({
     interestRatePerSecond: leverPair.data.interestRatePerSecond,
   })
 
-  if (apyType === "borrow") {
+  if (interestType === "borrow") {
     return (
       <Skeleton isLoading={leverPair.isLoading} loadingText="...">
         {formatPercentage(borrowAPY.toString())}
