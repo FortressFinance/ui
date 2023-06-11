@@ -6,44 +6,44 @@ import {
   calculateUtilizationRate,
 } from "@/lib"
 import { formatPercentage } from "@/lib/helpers"
-import { usePairLeverParams } from "@/hooks"
+import { useLeverPair } from "@/hooks"
 
 import Skeleton from "@/components/Skeleton"
 
 import { LendingPair } from "@/constant"
 
-export type LendingPairAPYType = "borrow" | "lend"
+export type LendingPairInterestType = "borrow" | "lend"
 
 type LendingPairAPYProps = LendingPair & {
-  apyType: LendingPairAPYType
+  interestType: LendingPairInterestType
 }
 
 export const LendingPairAPY: FC<LendingPairAPYProps> = ({
-  apyType,
+  interestType,
   ...lendingPair
 }) => {
-  const pairLeverParams = usePairLeverParams(lendingPair)
+  const leverPair = useLeverPair(lendingPair)
   const borrowAPY = calculateBorrowAPY({
-    interestRatePerSecond: pairLeverParams.data.interestRatePerSecond,
+    interestRatePerSecond: leverPair.data.interestRatePerSecond,
   })
 
-  if (apyType === "borrow") {
+  if (interestType === "borrow") {
     return (
-      <Skeleton isLoading={pairLeverParams.isLoading} loadingText="...">
+      <Skeleton isLoading={leverPair.isLoading} loadingText="...">
         {formatPercentage(borrowAPY.toString())}
       </Skeleton>
     )
   }
 
   const utilizationRate = calculateUtilizationRate({
-    totalAssets: pairLeverParams.data.totalAssets,
-    totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
-    utilPrecision: pairLeverParams.data.constants?.utilPrecision,
+    totalAssets: leverPair.data.totalAssets,
+    totalBorrowAmount: leverPair.data.totalBorrowAmount,
+    utilPrecision: leverPair.data.constants?.utilPrecision,
   })
   const lendAPY = calculateLendAPY({ borrowAPY, utilizationRate })
 
   return (
-    <Skeleton isLoading={pairLeverParams.isLoading} loadingText="...">
+    <Skeleton isLoading={leverPair.isLoading} loadingText="...">
       {formatPercentage(lendAPY.toString())}
     </Skeleton>
   )

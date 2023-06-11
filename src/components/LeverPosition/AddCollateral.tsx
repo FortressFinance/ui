@@ -31,7 +31,7 @@ type AddCollateralProps = {
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
   collateralAmountSignificant: bigint
   isUpdatingAmounts: boolean
-  setAdjustedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
+  setEstimatedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
   setIsUpdatingAmounts: Dispatch<SetStateAction<boolean>>
   tabsList: ReactNode
   pairAddress: Address
@@ -48,7 +48,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
   collateralAssetBalance,
   collateralAmountSignificant,
   isUpdatingAmounts,
-  setAdjustedCollateralAmount,
+  setEstimatedCollateralAmount,
   setIsUpdatingAmounts,
   tabsList,
   pairAddress,
@@ -101,14 +101,14 @@ export const AddCollateral: FC<AddCollateralProps> = ({
     () => {
       if (!Number(amount)) {
         setAddedAmount(0n)
-        setAdjustedCollateralAmount(undefined)
+        setEstimatedCollateralAmount(undefined)
       } else {
         const addedAmount = parseCurrencyUnits({
           amountFormatted: amount,
           decimals: collateralAssetBalance.data?.decimals,
         })
         setAddedAmount(addedAmount)
-        setAdjustedCollateralAmount(collateralAmountSignificant + addedAmount)
+        setEstimatedCollateralAmount(collateralAmountSignificant + addedAmount)
       }
       setIsUpdatingAmounts(false)
     },
@@ -118,7 +118,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
 
   useEffect(() => {
     return () => {
-      setAdjustedCollateralAmount(undefined)
+      setEstimatedCollateralAmount(undefined)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -213,7 +213,7 @@ export const AddCollateral: FC<AddCollateralProps> = ({
                 : "—"}
             </span>
             <button
-              className="ml-1.5 -translate-y-[1px] rounded px-1.5 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
+              className="ml-1.5 -translate-y-px rounded px-1.5 text-2xs font-semibold uppercase text-orange-300 ring-1 ring-orange-400 transition-colors duration-150 enabled:cursor-pointer enabled:hover:bg-orange-400/10 enabled:hover:text-orange-200 disabled:cursor-not-allowed disabled:opacity-30"
               onClick={() => {
                 onChangeAmount(collateralAssetBalance.data?.formatted ?? "")
                 setIsUpdatingAmounts(true)

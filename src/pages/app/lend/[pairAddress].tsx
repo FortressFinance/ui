@@ -9,18 +9,22 @@ import { formatCurrencyUnits, resolvedRoute } from "@/lib/helpers"
 import {
   useConvertToAssets,
   useLendingPair,
-  usePairLeverParams,
+  useLeverPair,
   useTokenOrNative,
   useTokenOrNativeBalance,
 } from "@/hooks"
 
-import { DisabledPage } from "@/components"
+import {
+  AddTokenToWallet,
+  DisabledPage,
+  ViewContractOnExplorer,
+} from "@/components"
 import { AssetBalance, AssetLogo, AssetSymbol } from "@/components/Asset"
 import Layout from "@/components/Layout"
 import {
   LendingPairDepositForm,
+  LendingPairMetrics,
   LendingPairRedeem,
-  LendingPairStats,
 } from "@/components/LendingPair"
 import Seo from "@/components/Seo"
 import Skeleton from "@/components/Skeleton"
@@ -45,29 +49,46 @@ export const getStaticProps: GetStaticProps = (context) => {
   return { props: lendingPair }
 }
 
-const LendingPairDetail: NextPage<LendingPair> = (lendingPair) => {
+const LendingPairDetail: NextPage<LendingPair> = (props) => {
   return (
     <DisabledPage isDisabled={DISABLE_LENDING}>
       <Layout>
-        <Seo templateTitle={`${lendingPair.name} | Lend`} />
+        <Seo templateTitle={`${props.name} | Lend`} />
 
         <div className="grid gap-4 lg:grid-cols-[2fr,1fr] lg:gap-6">
-          <main className="rounded-lg bg-pink-900/80 p-4 backdrop-blur-md lg:p-6">
+          {/* Use z-10 so the tooltips appears above the <aside /> */}
+          {/* TODO: Tooltip should work without doing this type of thing */}
+          <main className="relative z-10 rounded-lg bg-pink-900/80 p-4 backdrop-blur-md lg:p-6">
             <header>
-              <Link
-                {...resolvedRoute("/app/lend")}
-                className="flex items-center gap-2 text-sm font-medium uppercase text-pink-100"
-              >
-                <FiArrowLeft className="h-4 w-4" />
-                Lend
-              </Link>
+              <div className="flex justify-between">
+                <Link
+                  {...resolvedRoute("/app/lend")}
+                  className="inline-flex items-center gap-2 text-sm font-medium uppercase text-pink-100"
+                >
+                  <FiArrowLeft className="h-4 w-4" />
+                  Lend
+                </Link>
+                <div className="flex items-center gap-4">
+                  <AddTokenToWallet
+                    chainId={props.chainId}
+                    className="h-5 w-5"
+                    tokenAddress={props.pairAddress}
+                  />
+                  <ViewContractOnExplorer
+                    chainId={props.chainId}
+                    className="h-5 w-5"
+                    contractAddress={props.pairAddress}
+                  />
+                </div>
+              </div>
+
               <h1 className="mt-3 font-display text-3xl lg:text-4xl">
-                <LendingPairHeading {...lendingPair} />
+                <LendingPairHeading {...props} />
               </h1>
             </header>
             <p className="mt-3 leading-relaxed text-white/75 lg:text-lg">
-              Put your <LendingPairAsset {...lendingPair} /> to work in the
-              Fortress Lending markets.
+              Put your <LendingPairAsset {...props} /> to work in the Fortress
+              Lending markets.
             </p>
             <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
               <h2 className="mb-5 font-display text-2xl lg:text-3xl">
@@ -79,27 +100,27 @@ const LendingPairDetail: NextPage<LendingPair> = (lendingPair) => {
                     Assets lent
                   </div>
                   <div className="inline-flex gap-2 font-mono lg:text-lg">
-                    <UserAssetsLent {...lendingPair} />
-                    <LendingPairAsset {...lendingPair} />
+                    <UserAssetsLent {...props} />
+                    <LendingPairAsset {...props} />
                   </div>
                 </div>
                 <div className="flex items-center justify-between gap-3 lg:gap-6">
                   <div className="text-sm uppercase text-white/75">Shares</div>
                   <div className="inline-flex gap-2 font-mono lg:text-lg">
                     <AssetBalance
-                      address={lendingPair.pairAddress}
+                      address={props.pairAddress}
                       maximumFractionDigits={6}
                     />
                     <AssetSymbol
-                      address={lendingPair.pairAddress}
-                      chainId={lendingPair.chainId}
+                      address={props.pairAddress}
+                      chainId={props.chainId}
                     />
                   </div>
                 </div>
               </div>
             </div>
             <div className="-mx-4 mt-4 border-t border-t-pink/30 px-4 pt-4 lg:-mx-6 lg:mt-6 lg:px-6 lg:pt-6">
-              <LendingPairStats apyType="lend" {...lendingPair} />
+              <LendingPairMetrics interestType="lend" {...props} />
             </div>
           </main>
 
@@ -114,10 +135,10 @@ const LendingPairDetail: NextPage<LendingPair> = (lendingPair) => {
                     Deposit
                   </Tabs.Trigger>
                   <Tabs.Trigger
-                    value="withdraw"
+                    value="redeem"
                     className="transition-color w-1/2 rounded-tr-lg pb-3.5 pt-5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
                   >
-                    Withdraw
+                    Redeem
                   </Tabs.Trigger>
                 </Tabs.List>
                 <div className="relative overflow-hidden">
@@ -125,13 +146,13 @@ const LendingPairDetail: NextPage<LendingPair> = (lendingPair) => {
                     value="deposit"
                     className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out"
                   >
-                    <LendingPairDepositForm {...lendingPair} />
+                    <LendingPairDepositForm {...props} />
                   </Tabs.Content>
                   <Tabs.Content
-                    value="withdraw"
+                    value="redeem"
                     className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out"
                   >
-                    <LendingPairRedeem {...lendingPair} />
+                    <LendingPairRedeem {...props} />
                   </Tabs.Content>
                 </div>
               </Tabs.Root>
@@ -184,20 +205,20 @@ const UserAssetsLent: FC<LendingPair> = ({ pairAddress, chainId }) => {
     chainId,
   })
   const lendingPair = useLendingPair({ pairAddress, chainId })
-  const pairLeverParams = usePairLeverParams({ pairAddress, chainId })
+  const leverPair = useLeverPair({ pairAddress, chainId })
   const asset = useTokenOrNative({
     address: lendingPair.data?.assetContract,
     chainId,
   })
   const assetsLent = useConvertToAssets({
     shares: shareBalance.data?.value,
-    totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
-    totalBorrowShares: pairLeverParams.data.totalBorrowShares,
+    totalBorrowAmount: leverPair.data.totalBorrowAmount,
+    totalBorrowShares: leverPair.data.totalBorrowShares,
     pairAddress,
   })
 
   return (
-    <Skeleton isLoading={pairLeverParams.isLoading} loadingText="...">
+    <Skeleton isLoading={leverPair.isLoading} loadingText="...">
       {isConnected
         ? formatCurrencyUnits({
             amountWei: assetsLent.data?.toString(),
