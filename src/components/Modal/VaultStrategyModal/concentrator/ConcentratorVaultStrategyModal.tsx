@@ -1,12 +1,11 @@
 import * as Dialog from "@radix-ui/react-dialog"
-import Link from "next/link"
-import { FC, MouseEventHandler } from "react"
+import { FC } from "react"
 import { BiInfoCircle } from "react-icons/bi"
-import { useAccount, useNetwork } from "wagmi"
 
 import { formatPercentage } from "@/lib/helpers"
-import { useTokenOrNative, useVaultFees } from "@/hooks"
+import { useActiveChainId, useVaultFees } from "@/hooks"
 
+import { AddTokenToWallet, ViewContractOnExplorer } from "@/components"
 import { ModalBaseProps } from "@/components/Modal/lib/ModalBase"
 import PurpleModal, {
   PurpleModalContent,
@@ -20,40 +19,19 @@ import Skeleton from "@/components/Skeleton"
 import Tooltip from "@/components/Tooltip"
 import { VaultRowPropsWithProduct } from "@/components/VaultRow"
 
-import {
-  FortIconAddToWallet,
-  FortIconClose,
-  FortIconExternalLink,
-} from "@/icons"
+import { FortIconClose } from "@/icons"
 
 import strategyText from "@/constant/strategyText"
 
 export const ConcentratorVaultStrategyModal: FC<
   VaultRowPropsWithProduct & ModalBaseProps
 > = ({ isOpen, onClose, ...vaultProps }) => {
-  const { connector } = useAccount()
-  const { chain } = useNetwork()
-
-  const { data: ybToken } = useTokenOrNative({
-    address: vaultProps.ybTokenAddress ?? "0x",
-  })
+  const chainId = useActiveChainId()
 
   const productType = vaultProps.productType
   const strategyTextValue = strategyText[productType]?.[vaultProps.vaultAddress]
 
   const fees = useVaultFees(vaultProps)
-
-  // limit the token name to 11 char max
-  const truncateString = (str?: string): string => (str ? str.slice(0, 11) : "")
-  const addTokenToWallet: MouseEventHandler<HTMLButtonElement> = () => {
-    if (ybToken && ybToken.address && connector && connector.watchAsset) {
-      connector.watchAsset({
-        ...ybToken,
-        symbol: truncateString(ybToken.symbol),
-      })
-    }
-  }
-  const label = `Add ${ybToken?.symbol} to wallet`
 
   return (
     <PurpleModal
@@ -63,33 +41,19 @@ export const ConcentratorVaultStrategyModal: FC<
     >
       {vaultProps.asset && vaultProps.type && vaultProps.ybTokenAddress && (
         <>
-          <PurpleModalHeader className="flex justify-between space-x-4">
-            <div className="flex space-x-4">
-              {!!connector && !!connector.watchAsset && (
-                <Tooltip label={label}>
-                  <button onClick={addTokenToWallet}>
-                    <FortIconAddToWallet
-                      className="h-6 w-6 fill-white"
-                      aria-label={label}
-                    />
-                  </button>
-                </Tooltip>
-              )}
-              {chain?.blockExplorers?.default.url &&
-                vaultProps.ybTokenAddress && (
-                  <Tooltip label="View contract">
-                    <Link
-                      className="h-6 w-6 p-[1px]"
-                      href={`${chain.blockExplorers.default.url}/address/${vaultProps.ybTokenAddress}`}
-                      target="_blank"
-                    >
-                      <FortIconExternalLink className="h-full w-full" />
-                      <span className="sr-only">View contract</span>
-                    </Link>
-                  </Tooltip>
-                )}
+          <PurpleModalHeader className="flex justify-between gap-4">
+            <div className="flex gap-4">
+              <AddTokenToWallet
+                className="h-6 w-6"
+                tokenAddress={vaultProps.ybTokenAddress}
+              />
+              <ViewContractOnExplorer
+                chainId={chainId}
+                className="h-6 w-6"
+                contractAddress={vaultProps.ybTokenAddress}
+              />
             </div>
-            <Dialog.Close className="h-6 w-6 p-[1px]">
+            <Dialog.Close className="h-6 w-6 p-px">
               <FortIconClose className="h-full w-full fill-white" />
               <span className="sr-only">Close</span>
             </Dialog.Close>

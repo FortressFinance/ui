@@ -1,5 +1,5 @@
 export * from "./LendingPair"
 export * from "./LendingPairAPY"
 export * from "./LendingPairForms"
-export * from "./LendingPairStats"
+export * from "./LendingPairMetrics"
 export * from "./LendingPairUtilization"

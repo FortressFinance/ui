@@ -32,7 +32,7 @@ export const AssetDoubleLogo: FC<AssetDoubleLogoProps> = ({
           <div className="absolute -right-1 bottom-0 h-1/2 w-1/2">
             <AssetLogo
               tokenAddress={secondTokenAddress}
-              className="!p-[1px]"
+              className="!p-px"
               chainId={chainId}
             />
           </div>

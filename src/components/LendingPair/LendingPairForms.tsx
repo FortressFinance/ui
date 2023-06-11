@@ -12,7 +12,7 @@ import {
   useLendingPair,
   useLendingRedeem,
   useLendingRedeemPreview,
-  usePairLeverParams,
+  useLeverPair,
   useTokenApproval,
   useTokenOrNativeBalance,
 } from "@/hooks"
@@ -32,7 +32,7 @@ export const LendingPairDepositForm: FC<LendingPair> = ({
     shallow
   )
   const lendingPair = useLendingPair({ pairAddress, chainId })
-  const pairLeverParams = usePairLeverParams({ pairAddress, chainId })
+  const leverPair = useLeverPair({ pairAddress, chainId })
   const asset = useTokenOrNativeBalance({
     address: lendingPair.data?.assetContract,
     chainId,
@@ -77,7 +77,7 @@ export const LendingPairDepositForm: FC<LendingPair> = ({
       form.resetField("amountIn")
       asset.refetch()
       lendingPair.refetch()
-      pairLeverParams.refetch()
+      leverPair.refetch()
     },
   })
 
@@ -140,7 +140,7 @@ export const LendingPairRedeem: FC<LendingPair> = ({
     shallow
   )
   const lendingPair = useLendingPair({ pairAddress, chainId })
-  const pairLeverParams = usePairLeverParams({ pairAddress, chainId })
+  const leverPair = useLeverPair({ pairAddress, chainId })
   const share = useTokenOrNativeBalance({ address: pairAddress, chainId })
 
   const form = useForm<TokenFormValues>({
@@ -176,17 +176,17 @@ export const LendingPairRedeem: FC<LendingPair> = ({
       form.resetField("amountIn")
       share.refetch()
       lendingPair.refetch()
-      pairLeverParams.refetch()
+      leverPair.refetch()
     },
   })
 
   const maxSharesAvailableToWithdraw = useConvertToShares({
     amount: calculateAssetsAvailable({
-      totalAssets: pairLeverParams.data.totalAssets,
-      totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
+      totalAssets: leverPair.data.totalAssets,
+      totalBorrowAmount: leverPair.data.totalBorrowAmount,
     }),
-    totalBorrowAmount: pairLeverParams.data.totalBorrowAmount,
-    totalBorrowShares: pairLeverParams.data.totalBorrowShares,
+    totalBorrowAmount: leverPair.data.totalBorrowAmount,
+    totalBorrowShares: leverPair.data.totalBorrowShares,
     pairAddress,
   })
 
@@ -196,7 +196,7 @@ export const LendingPairRedeem: FC<LendingPair> = ({
         isWithdraw
         asset={lendingPair.data?.assetContract}
         chainId={chainId}
-        submitText="Withdraw"
+        submitText="Redeem"
         isDebouncing={!!amountIn && !isDebounced}
         isError={preview.isError || redeem.prepare.isError}
         isLoadingPreview={preview.isLoading}
@@ -205,7 +205,7 @@ export const LendingPairRedeem: FC<LendingPair> = ({
         previewResultWei={preview.data?.toString()}
         productType="lending"
         onSubmit={() => {
-          const action = "Lending asset withdrawal"
+          const action = "Lending asset redemption"
           const toastId = addToast({ type: "startTx", action })
           redeem.write
             .writeAsync?.()

@@ -1,6 +1,7 @@
 export * from "./VaultApy"
 export * from "./VaultDepositForm"
 export * from "./VaultEpoch"
+export * from "./VaultManager"
 export * from "./VaultName"
 export * from "./VaultTable"
 export * from "./VaultTvl"

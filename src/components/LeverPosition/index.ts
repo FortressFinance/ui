@@ -1,6 +1,6 @@
 export * from "./AddCollateral"
 export * from "./CreateLeverPosition"
 export * from "./LeverPairs"
-export * from "./LeverPositionUserStats"
+export * from "./LeverPositionUserMetrics"
 export * from "./RemoveCollateral"
 export * from "./RepayLeverPosition"
