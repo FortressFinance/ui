@@ -4,7 +4,7 @@ import useTokenPreviewDepositUnderlying from "@/hooks/lib/preview/compounder/use
 import { useActiveChainId } from "@/hooks/useActiveChainId"
 import { useTokenVaultSymbol } from "@/hooks/useTokenVaultSymbol"
 
-import { GlpCompounder } from "@/constant/abi"
+import { AMMCompounderBase } from "@/constant/abi"
 
 export default function useTokenPreviewDepositFallback({
   asset,
@@ -30,7 +30,7 @@ export default function useTokenPreviewDepositFallback({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let abi: any = undefined
   if (ybTokenSymbol === "fcGLP") {
-    abi = GlpCompounder
+    abi = AMMCompounderBase
   }
 
   const chainId = useActiveChainId()

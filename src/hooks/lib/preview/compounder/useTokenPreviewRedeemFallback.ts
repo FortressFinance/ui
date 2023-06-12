@@ -4,7 +4,7 @@ import useTokenPreviewRedeemUnderlying from "@/hooks/lib/preview/compounder/useT
 import { useActiveChainId } from "@/hooks/useActiveChainId"
 import { useTokenVaultSymbol } from "@/hooks/useTokenVaultSymbol"
 
-import { GlpCompounder } from "@/constant/abi"
+import { AMMCompounderBase } from "@/constant/abi"
 
 export default function useTokenPreviewRedeemFallback({
   asset,
@@ -30,7 +30,7 @@ export default function useTokenPreviewRedeemFallback({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let abi: any = undefined
   if (ybTokenSymbol === "fcGLP") {
-    abi = GlpCompounder
+    abi = AMMCompounderBase
   }
 
   const chainId = useActiveChainId()

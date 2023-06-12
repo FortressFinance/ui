@@ -1,31 +1,28 @@
 import { Address } from "wagmi"
 
-import { VaultType } from "@/lib/types"
 import useCurvePreviewDeposit from "@/hooks/lib/preview/useCurvePreviewDeposit"
 
-export default function useCurvePreviewDepositUnderlying({
-  asset,
-  vaultAddress,
+export default function usePreviewDepositUnderlying({
+  primaryAsset,
+  ybTokenAddress,
   token,
   amount,
-  type,
   slippage,
   enabled,
 }: {
-  asset: Address
-  vaultAddress: Address
+  primaryAsset: Address
+  ybTokenAddress: Address
   token?: Address
   amount: string
-  type: VaultType
   slippage: number
   enabled: boolean
 }) {
   return useCurvePreviewDeposit({
-    asset,
-    vaultAddress,
+    asset: primaryAsset,
+    vaultAddress: ybTokenAddress,
     token,
     amount,
-    type,
+    type: "curve",
     slippage,
     enabled,
   })

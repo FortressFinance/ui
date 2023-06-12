@@ -64,7 +64,7 @@ export default function useCurvePreviewDeposit({
       functionName: "coins",
       args: [index],
     })),
-    enabled: enabled,
+    enabled: poolCurveAddress !== "0x" && enabled,
     select: (results) =>
       results.map((item) => {
         return !item.error ? (item.result as unknown as Address) : "0x"
@@ -83,7 +83,8 @@ export default function useCurvePreviewDeposit({
     asset,
     assets: underlyingAssetsAmount ?? [],
     isDeposit: true,
-    enabled: isCurveEnabled && !!underlyingAssetsAmount && enabled,
+    enabled:
+      isCurveEnabled && !!underlyingAssetsAmount && index !== -1 && enabled,
   })
 
   const amountLpValue = amountLp.data ?? 0n

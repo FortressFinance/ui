@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 import { getConcentratorPreviewDeposit } from "@/lib/api/concentrators"
 import { queryKeys } from "@/lib/helpers"
 import { VaultPreviewTransactionArgs } from "@/hooks/lib/api/types"
+import usePreviewDepositFallback from "@/hooks/lib/preview/concentrator/usePreviewDepositFallback"
 import { useConcentratorFirstVaultType } from "@/hooks/useConcentratorFirstVaultType"
 import { useConcentratorId } from "@/hooks/useConcentratorId"
 import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAssetId"
@@ -40,7 +41,7 @@ export function useConcentratorPreviewDeposit({
     // we store slippage as a fraction of 100; api expects slippage as a fraction of 1
     slippage: useGlobalStore((store) => store.slippageTolerance) / 100,
   }
-  return useQuery({
+  const apiQuery = useQuery({
     ...queryKeys.concentrators.previewDeposit(args),
     queryFn: () => getConcentratorPreviewDeposit({ ...args }),
     keepPreviousData: args.amount !== "0",
@@ -50,4 +51,18 @@ export function useConcentratorPreviewDeposit({
     onError,
     onSuccess,
   })
+
+  const previewFallback = usePreviewDepositFallback({
+    ...rest,
+    primaryAsset: rest.vaultAddress,
+    targetAsset: rest.asset,
+    slippage: args.slippage,
+    enabled,
+  })
+
+  if (apiQuery.isError) {
+    return previewFallback
+  }
+
+  return apiQuery
 }
