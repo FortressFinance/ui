@@ -14,13 +14,13 @@ export function useConcentratorTargetAssetId({
 }: ConcentratorTargetAssetIdProps) {
   const apiQuery = useApiConcentratorTargetAssetId({
     targetAsset,
-    enabled,
+    enabled: targetAsset !== "0x" && enabled,
   })
 
   const targetAssets = useContractRead({
     ...useRegistryContract(),
     functionName: "concentratorTargetAssets",
-    enabled: apiQuery.isError && enabled,
+    enabled: apiQuery.isError && targetAsset !== "0x" && enabled,
   })
 
   if (apiQuery.isError) {

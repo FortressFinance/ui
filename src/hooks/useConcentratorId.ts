@@ -29,7 +29,7 @@ export function useConcentratorId({
     ...useRegistryContract(),
     functionName: "getConcentratorPrimaryAssets",
     args: [firstConcentratorVaultType === "curve", targetAsset],
-    enabled: apiQuery.isError && enabled,
+    enabled: apiQuery.isError && targetAsset !== "0x" && enabled,
   })
 
   if (apiQuery.isError) {

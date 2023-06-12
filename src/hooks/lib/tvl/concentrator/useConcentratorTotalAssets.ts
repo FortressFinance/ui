@@ -14,7 +14,7 @@ export default function useConcentratorTotalAssets({
   const totalAssetsQuery = useContractRead({
     ...vaultContract,
     functionName: "totalAssets",
-    enabled: enabled,
+    enabled: targetAsset !== "0x" && enabled,
   })
 
   return totalAssetsQuery
