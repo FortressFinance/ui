@@ -128,7 +128,7 @@ export const ManagedVaultsStrategyModal: FC<
                   className="space-y-3 leading-relaxed text-pink-50 max-md:text-sm"
                   value="tabApr"
                 >
-                  <div className="p-4 px-5">
+                  <div className="px-5 py-4">
                     <ManagedVaultsStrategyModalApr />
                   </div>
                 </Tabs.Content>
