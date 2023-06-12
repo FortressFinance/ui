@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 import { getConcentratorPreviewRedeem } from "@/lib/api/concentrators/getConcentratorPreviewRedeem"
 import { queryKeys } from "@/lib/helpers"
 import { VaultPreviewTransactionArgs } from "@/hooks/lib/api/types"
+import usePreviewRedeemFallback from "@/hooks/lib/preview/concentrator/usePreviewRedeemFallback"
 import { useConcentratorFirstVaultType } from "@/hooks/useConcentratorFirstVaultType"
 import { useConcentratorId } from "@/hooks/useConcentratorId"
 import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAssetId"
@@ -39,7 +40,8 @@ export function useConcentratorPreviewRedeem({
     // we store slippage as a fraction of 100; api expects slippage as a fraction of 1
     slippage: useGlobalStore((store) => store.slippageTolerance) / 100,
   }
-  return useQuery({
+
+  const apiQuery = useQuery({
     ...queryKeys.concentrators.previewRedeem(args),
     queryFn: () => getConcentratorPreviewRedeem(args),
     keepPreviousData: args.amount !== "0",
@@ -49,4 +51,18 @@ export function useConcentratorPreviewRedeem({
     onError,
     onSuccess,
   })
+
+  const previewFallback = usePreviewRedeemFallback({
+    ...rest,
+    primaryAsset: rest.vaultAddress,
+    targetAsset: rest.asset,
+    slippage: args.slippage,
+    enabled,
+  })
+
+  if (apiQuery.isError) {
+    return previewFallback
+  }
+
+  return apiQuery
 }
