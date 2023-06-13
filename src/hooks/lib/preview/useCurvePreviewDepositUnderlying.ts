@@ -126,10 +126,10 @@ function useCalcTokenAmount({
 
   return useContractRead({
     chainId,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     abi: (poolCurveAddress === crvTriCryptoPoolAddress
       ? CurvePool3Assets
-      : CurvePool2Assets) as any,
+      : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        CurvePool2Assets) as any,
     address: poolCurveAddress,
     enabled: !!asset && enabled,
     functionName: "calc_token_amount",

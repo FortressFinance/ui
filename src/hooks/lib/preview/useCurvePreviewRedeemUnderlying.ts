@@ -43,10 +43,10 @@ export default function useCurvePreviewRedeem({
     contracts: [0, 1, 2, 3, 4].map((index) => ({
       address: poolCurveAddress,
       chainId,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       abi: (poolCurveAddress === crvTriCryptoPoolAddress
         ? CurvePool3Assets
-        : CurvePool2Assets) as any,
+        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          CurvePool2Assets) as any,
       functionName: "coins",
       args: [index],
     })),
@@ -97,10 +97,10 @@ function useCalcWithdrawOneCoin({
 
   return useContractRead({
     chainId,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     abi: (poolCurveAddress === crvTriCryptoPoolAddress
       ? CurvePool3Assets
-      : CurvePool2Assets) as any,
+      : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        CurvePool2Assets) as any,
     address: poolCurveAddress,
     enabled: !!asset && enabled,
     functionName: "calc_withdraw_one_coin",
