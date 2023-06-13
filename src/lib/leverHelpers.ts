@@ -62,13 +62,13 @@ export const calculateAvailableCredit = ({
 }) => maxBorrowAmount - borrowedAmount
 
 export const calculateLiquidationPrice = ({
+  collateralAssetPrice = 0n,
   ltv = 0n,
   ltvPrecision = 0n,
   maxLTV = 0n,
-  exchangeRate = 0n,
 }) =>
   subSlippage(
-    exchangeRate,
+    collateralAssetPrice,
     Number((maxLTV - ltv) * 100n) / Number(ltvPrecision)
   )
 
