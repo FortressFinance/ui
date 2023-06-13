@@ -74,7 +74,7 @@ export const LendingPairMetrics: FC<LendingPairMetricsProps> = ({
               address={lendingPair.data?.collateralContract}
               chainId={props.chainId}
             />{" "}
-            = <CollateralExchangeRate {...props} />
+            = <CollateralAssetPrice {...props} />
             <AssetSymbol address={lendingPair.data?.assetContract} />
           </div>
         </div>
@@ -134,7 +134,7 @@ const LendingPairMaxLTV: FC<LendingPair> = ({ pairAddress, chainId }) => {
   )
 }
 
-const CollateralExchangeRate: FC<LendingPair> = ({ pairAddress, chainId }) => {
+const CollateralAssetPrice: FC<LendingPair> = ({ pairAddress, chainId }) => {
   const lendingPair = useLendingPair({ pairAddress, chainId })
   const leverPair = useLeverPair({ pairAddress, chainId })
   const asset = useTokenOrNative({
@@ -144,7 +144,7 @@ const CollateralExchangeRate: FC<LendingPair> = ({ pairAddress, chainId }) => {
   return (
     <Skeleton isLoading={leverPair.isLoading} loadingText="...">
       {formatCurrencyUnits({
-        amountWei: leverPair.data.exchangeRate?.toString(),
+        amountWei: leverPair.data.collateralAssetPrice.toString(),
         decimals: asset.data?.decimals,
         maximumFractionDigits: 6,
       })}
