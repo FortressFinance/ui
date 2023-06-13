@@ -55,13 +55,13 @@ export function useCompounderPreviewDeposit({
     ...rest,
     type,
     slippage: args.slippage,
-    enabled: enabled && isCurve,
+    enabled: apiQuery.isError && enabled && isCurve,
   })
 
   const tokenPreviewFallback = useTokenPreviewDepositFallback({
     ...rest,
     slippage: args.slippage,
-    enabled: enabled && isToken,
+    enabled: apiQuery.isError && enabled && isToken,
   })
 
   return apiQuery.isError && isCurve

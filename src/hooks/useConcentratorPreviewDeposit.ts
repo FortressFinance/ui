@@ -20,6 +20,7 @@ export function useConcentratorPreviewDeposit({
     targetAsset: rest.asset,
     enabled,
   })
+
   const { data: concentratorId } = useConcentratorId({
     primaryAsset: rest.vaultAddress,
     targetAsset: rest.asset,
@@ -41,6 +42,7 @@ export function useConcentratorPreviewDeposit({
     // we store slippage as a fraction of 100; api expects slippage as a fraction of 1
     slippage: useGlobalStore((store) => store.slippageTolerance) / 100,
   }
+
   const apiQuery = useQuery({
     ...queryKeys.concentrators.previewDeposit(args),
     queryFn: () => getConcentratorPreviewDeposit({ ...args }),
@@ -57,7 +59,7 @@ export function useConcentratorPreviewDeposit({
     primaryAsset: rest.vaultAddress,
     targetAsset: rest.asset,
     slippage: args.slippage,
-    enabled,
+    enabled: apiQuery.isError && enabled,
   })
 
   return apiQuery.isError ? previewFallback : apiQuery
