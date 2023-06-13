@@ -64,13 +64,9 @@ export function useCompounderPreviewDeposit({
     enabled: enabled && isToken,
   })
 
-  if (apiQuery.isError && isCurve) {
-    return curvePreviewFallback
-  }
-
-  if (apiQuery.isError && isToken) {
-    return tokenPreviewFallback
-  }
-
-  return apiQuery
+  return apiQuery.isError && isCurve
+    ? curvePreviewFallback
+    : apiQuery.isError && isToken
+    ? tokenPreviewFallback
+    : apiQuery
 }

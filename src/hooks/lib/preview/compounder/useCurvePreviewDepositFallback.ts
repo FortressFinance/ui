@@ -1,7 +1,7 @@
 import { Address, useContractRead } from "wagmi"
 
 import { VaultType } from "@/lib/types"
-import useCurvePreviewDepositUnderlying from "@/hooks/lib/preview/compounder/useCurvePreviewDepositUnderlying"
+import useCurvePreviewDepositUnderlying from "@/hooks/lib/preview/useCurvePreviewDepositUnderlying"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
 
 export default function useCurvePreviewDepositFallback({
@@ -39,21 +39,19 @@ export default function useCurvePreviewDepositFallback({
     enabled: !!asset && isUnderlyingAsset && enabled,
   })
 
-  if (isUnderlyingAsset) {
-    return {
-      ...previewUnderlying,
-      data: {
-        minAmountWei: BigInt(previewUnderlying?.data.minAmountWei).toString(),
-        resultWei: BigInt(previewUnderlying?.data.resultWei).toString(),
-      },
-    }
-  }
-
-  return {
-    ...preview,
-    data: {
-      minAmountWei: (preview.data ?? BigInt(0)).toString(),
-      resultWei: (preview.data ?? BigInt(0)).toString(),
-    },
-  }
+  return isUnderlyingAsset
+    ? {
+        ...previewUnderlying,
+        data: {
+          minAmountWei: BigInt(previewUnderlying?.data.minAmountWei).toString(),
+          resultWei: BigInt(previewUnderlying?.data.resultWei).toString(),
+        },
+      }
+    : {
+        ...preview,
+        data: {
+          minAmountWei: (preview.data ?? BigInt(0)).toString(),
+          resultWei: (preview.data ?? BigInt(0)).toString(),
+        },
+      }
 }

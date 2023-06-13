@@ -1,6 +1,6 @@
 import { Address, useContractRead } from "wagmi"
 
-import usePreviewRedeemUnderlying from "@/hooks/lib/preview/concentrator/usePreviewRedeemUnderlying"
+import useCurvePreviewRedeem from "@/hooks/lib/preview/useCurvePreviewRedeemUnderlying"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
 import { useConcentratorVaultYbtokenAddress } from "@/hooks/useConcentratorVaultYbtokenAddress"
 
@@ -33,29 +33,28 @@ export default function usePreviewRedeemFallback({
     args: [BigInt(amount)],
   })
 
-  const previewUnderlying = usePreviewRedeemUnderlying({
-    primaryAsset,
+  const previewUnderlying = useCurvePreviewRedeem({
+    asset: primaryAsset,
     token,
     amount,
+    type: "curve",
     slippage,
     enabled: isUnderlyingAsset && !!ybTokenAddress && enabled,
   })
 
-  if (isUnderlyingAsset) {
-    return {
-      ...previewUnderlying,
-      data: {
-        minAmountWei: BigInt(previewUnderlying?.data ?? 0).toString(),
-        resultWei: BigInt(previewUnderlying?.data ?? 0).toString(),
-      },
-    }
-  }
-
-  return {
-    ...preview,
-    data: {
-      minAmountWei: (preview.data ?? BigInt(0)).toString(),
-      resultWei: (preview.data ?? BigInt(0)).toString(),
-    },
-  }
+  return isUnderlyingAsset
+    ? {
+        ...previewUnderlying,
+        data: {
+          minAmountWei: BigInt(previewUnderlying?.data ?? 0).toString(),
+          resultWei: BigInt(previewUnderlying?.data ?? 0).toString(),
+        },
+      }
+    : {
+        ...preview,
+        data: {
+          minAmountWei: (preview.data ?? BigInt(0)).toString(),
+          resultWei: (preview.data ?? BigInt(0)).toString(),
+        },
+      }
 }

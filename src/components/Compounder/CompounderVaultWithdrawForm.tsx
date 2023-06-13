@@ -10,8 +10,8 @@ export const CompounderVaultWithdrawForm: FC<VaultProps> = (props) => {
   return (
     <VaultWithdrawForm
       {...props}
-      defaultInputToken={props.vaultAddress}
-      defaultOutputToken={props.asset}
+      initInputToken={props.vaultAddress}
+      initOutputToken={props.asset}
       underlyingAssets={vault.data?.underlyingAssets}
       productType="compounder"
     />

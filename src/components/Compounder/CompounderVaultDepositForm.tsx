@@ -10,8 +10,8 @@ export const CompounderVaultDepositForm: FC<VaultProps> = (props) => {
   return (
     <VaultDepositForm
       {...props}
-      defaultInputToken={props.asset}
-      defaultOutputToken={props.vaultAddress}
+      initInputToken={props.asset}
+      initOutputToken={props.vaultAddress}
       underlyingAssets={vault.data?.underlyingAssets}
       productType="compounder"
     />
