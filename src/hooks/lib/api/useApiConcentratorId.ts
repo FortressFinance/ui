@@ -9,7 +9,7 @@ export function useApiConcentratorId({
 }: {
   targetAsset?: Address
   primaryAsset?: Address
-  enabled: boolean
+  enabled?: boolean
 }) {
   const apiQuery = useApiConcentratorStaticData({ enabled })
   const targetAssetToConcentratorId: Record<Address, number> = {} // target to concentratorId

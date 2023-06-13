@@ -13,7 +13,7 @@ type ConcentratorIdProps = {
 export function useConcentratorId({
   targetAsset,
   primaryAsset,
-  enabled = true,
+  enabled,
 }: ConcentratorIdProps) {
   const apiQuery = useApiConcentratorId({
     targetAsset,

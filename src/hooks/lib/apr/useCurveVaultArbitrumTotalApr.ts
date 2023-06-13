@@ -27,7 +27,7 @@ export function useCurveVaultArbitrumBreakdownApr({
   enabled,
 }: {
   asset: Address
-  enabled: boolean
+  enabled?: boolean
 }) {
   const chainId = useActiveChainId()
   const poolCurveAddress = ARBI_CURVE_ADDRESS[asset] ?? "0x"

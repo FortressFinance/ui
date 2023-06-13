@@ -7,5 +7,6 @@ export function useVaultTvl({ asset, vaultAddress }: VaultProps) {
   return useVaultTvlFallback({
     asset,
     vaultAddress,
+    enabled: true,
   })
 }

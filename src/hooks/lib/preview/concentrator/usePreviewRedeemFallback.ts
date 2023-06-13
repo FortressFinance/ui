@@ -17,7 +17,7 @@ export default function usePreviewRedeemFallback({
   token?: Address
   amount: string
   slippage: number
-  enabled: boolean
+  enabled?: boolean
 }) {
   const isUnderlyingAsset = token !== primaryAsset
   const ybTokenAddress = useConcentratorVaultYbtokenAddress({

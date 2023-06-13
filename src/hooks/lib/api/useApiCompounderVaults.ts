@@ -12,7 +12,7 @@ export function useApiCompounderVaults({
   type,
   enabled,
 }: Pick<VaultProps, "type"> & {
-  enabled: boolean
+  enabled?: boolean
 }) {
   const chainId = useActiveChainId()
   const isCurve = useIsCurveVault(type)

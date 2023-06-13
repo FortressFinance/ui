@@ -16,11 +16,7 @@ type VaultPoolIdProps = {
   enabled?: boolean
 }
 
-export function useVaultPoolId({
-  asset,
-  type,
-  enabled = true,
-}: VaultPoolIdProps) {
+export function useVaultPoolId({ asset, type, enabled }: VaultPoolIdProps) {
   const isToken = useIsTokenVault(type)
 
   // Preferred: API request

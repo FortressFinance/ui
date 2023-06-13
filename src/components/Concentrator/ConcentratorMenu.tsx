@@ -25,6 +25,7 @@ export const ConcentratorMenu: FC<ConcentratorMenuProps> = ({
         setConcentratorTargetAsset(data[0])
       }
     },
+    enabled: true,
   })
 
   useEffect(() => {

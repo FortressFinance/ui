@@ -8,8 +8,8 @@ import { useActiveChainId } from "@/hooks/useActiveChainId"
 export function useApiConcentratorTargetAssets(
   options: {
     onSuccess?: (data: Address[]) => void
-  } = {},
-  enabled: boolean
+    enabled?: boolean
+  } = {}
 ) {
   const chainId = useActiveChainId()
   return {
@@ -23,7 +23,7 @@ export function useApiConcentratorTargetAssets(
         )
       },
       onSuccess: options.onSuccess,
-      enabled: enabled,
+      enabled: options.enabled,
     }),
   }
 }

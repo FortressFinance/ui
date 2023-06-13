@@ -9,6 +9,7 @@ type ConcentratorAumProps = {
 export function useConcentratorAum({ targetAsset }: ConcentratorAumProps) {
   const aumFallback = useConcentratorAumFallback({
     targetAsset,
+    enabled: true,
   })
 
   return aumFallback

@@ -12,7 +12,7 @@ type ConcentratorVaultYbtokenAddressProps = {
 export function useConcentratorVaultYbtokenAddress({
   primaryAsset,
   targetAsset,
-  enabled = true,
+  enabled,
 }: ConcentratorVaultYbtokenAddressProps) {
   const isCurve = useShouldUseCurveFallback(primaryAsset)
   const concentrator = useConcentratorVault({

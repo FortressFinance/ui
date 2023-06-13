@@ -11,7 +11,7 @@ import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAsset
 import { useGlobalStore } from "@/store"
 
 export function useConcentratorPreviewRedeem({
-  enabled = true,
+  enabled,
   onError,
   onSuccess,
   ...rest
@@ -28,6 +28,7 @@ export function useConcentratorPreviewRedeem({
 
   const firstConcentratorVaultType = useConcentratorFirstVaultType({
     targetAsset: rest.asset,
+    enabled,
   })
 
   const args = {

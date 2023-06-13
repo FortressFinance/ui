@@ -32,7 +32,7 @@ export default function useTokenPreviewDepositFallback({
   token?: Address
   amount: string
   slippage: number
-  enabled: boolean
+  enabled?: boolean
 }) {
   const tokenVaultSymbol = useTokenVaultSymbol({
     asset,
@@ -91,7 +91,7 @@ function useTokenPreviewDepositUnderlying({
   token?: Address
   amount: string
   slippage: number
-  enabled: boolean
+  enabled?: boolean
 }) {
   const chainId = useActiveChainId()
   const isArbitrumFamily = chainId === 313371 || chainId === 42161

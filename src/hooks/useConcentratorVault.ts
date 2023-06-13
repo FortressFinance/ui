@@ -15,7 +15,7 @@ export function useConcentratorVault({
   targetAsset,
   primaryAsset,
   type,
-  enabled = true,
+  enabled,
 }: ConcentratorVaultProps) {
   const apiQuery = useApiConcentratorVault({
     targetAsset,

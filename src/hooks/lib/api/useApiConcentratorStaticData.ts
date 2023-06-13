@@ -7,14 +7,14 @@ import { useActiveChainId } from "@/hooks/useActiveChainId"
 export function useApiConcentratorStaticData({
   enabled,
 }: {
-  enabled: boolean
+  enabled?: boolean
 }) {
   const chainId = useActiveChainId()
   return {
     ...useQuery({
       ...queryKeys.concentrators.list({ chainId }),
       queryFn: () => getConcentratorStaticData({ chainId }),
-      enabled: enabled,
+      enabled,
       retry: false,
     }),
   }

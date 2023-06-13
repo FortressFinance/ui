@@ -7,7 +7,7 @@ export default function useConcentratorTotalAssets({
   enabled,
 }: {
   targetAsset: Address
-  enabled: boolean
+  enabled?: boolean
 }) {
   const vaultContract = useConcentratorContract(targetAsset)
 

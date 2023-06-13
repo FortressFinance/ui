@@ -14,9 +14,11 @@ export function useConcentratorUnderlyingAssets({
   const apiQuery = useApiConcentratorUnderlyingAssets({
     targetAsset,
     primaryAsset,
+    enabled: true,
   })
   const firstConcentratorVaultType = useConcentratorFirstVaultType({
     targetAsset,
+    enabled: true,
   })
   const underlyingAssets = useContractRead({
     ...useRegistryContract(),

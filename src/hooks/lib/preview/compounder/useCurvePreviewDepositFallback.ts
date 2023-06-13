@@ -19,7 +19,7 @@ export default function useCurvePreviewDepositFallback({
   amount: string
   type: VaultType
   slippage: number
-  enabled: boolean
+  enabled?: boolean
 }) {
   const isUnderlyingAsset = token !== asset
   const preview = useContractRead({

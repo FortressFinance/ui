@@ -10,7 +10,7 @@ type ListConcentratorsProps = {
 
 export function useListConcentrators({
   concentratorTargetAssets,
-  enabled = true,
+  enabled,
 }: ListConcentratorsProps) {
   const apiQuery = useApiConcentratorPrimaryAssets({
     concentratorTargetAssets,

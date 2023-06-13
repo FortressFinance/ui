@@ -12,7 +12,7 @@ export function useApiTokenVaults({
   type,
   enabled,
 }: Pick<VaultProps, "type"> & {
-  enabled: boolean
+  enabled?: boolean
 }) {
   const chainId = useActiveChainId()
   const isToken = useIsTokenVault(type)

@@ -27,11 +27,12 @@ export function useConcentratorApy({
   const shouldCurveFallback = useShouldUseCurveFallback(targetAsset)
   const shouldTokenFallback = useShouldUseTokenFallback(targetAsset)
   const { data: targetAssetId, isLoading: targetAssetIdIsLoading } =
-    useConcentratorTargetAssetId({ targetAsset })
+    useConcentratorTargetAssetId({ targetAsset, enabled: true })
   const { data: concentratorId, isLoading: concentratorIdIsLoading } =
     useConcentratorId({
       targetAsset,
       primaryAsset,
+      enabled: true,
     })
 
   const apiQuery = useApiConcentratorDynamic({

@@ -14,7 +14,7 @@ import { useIsCurveVault, useIsTokenVault } from "@/hooks/useVaultTypes"
 import { useGlobalStore } from "@/store"
 
 export function useCompounderPreviewDeposit({
-  enabled = true,
+  enabled,
   type,
   onError,
   onSuccess,

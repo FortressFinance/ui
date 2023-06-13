@@ -11,12 +11,12 @@ type FirstVaultProps = {
 
 export function useConcentratorFirstVaultType({
   targetAsset,
-  enabled = true,
+  enabled,
 }: FirstVaultProps) {
-  const { data: concentratorTargetAssets } = useConcentratorTargetAssets(
-    undefined,
-    enabled
-  )
+  const { data: concentratorTargetAssets } = useConcentratorTargetAssets({
+    onSuccess: undefined,
+    enabled,
+  })
   const concentratorsList = useListConcentrators({
     concentratorTargetAssets,
     enabled,

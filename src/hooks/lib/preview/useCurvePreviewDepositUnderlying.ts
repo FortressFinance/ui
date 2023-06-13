@@ -8,9 +8,7 @@ import { CurvePool2Assets, CurvePool3Assets } from "@/constant/abi"
 import {
   ARBI_CURVE_ADDRESS,
   crvTriCryptoPoolAddress,
-  crvTwoCryptoTokenAddress,
   ETH,
-  fraxBpTokenAddress,
 } from "@/constant/addresses"
 
 const WETH_ARBI: Address = "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
@@ -31,36 +29,23 @@ export default function useCurvePreviewDeposit({
   amount: string
   type: VaultType
   slippage: number
-  enabled: boolean
+  enabled?: boolean
 }) {
   const chainId = useActiveChainId()
   const isArbitrumFamily = chainId === 313371 || chainId === 42161
   const poolCurveAddress = ARBI_CURVE_ADDRESS[asset] ?? "0x"
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let abi: any = undefined
-  if (poolCurveAddress === crvTriCryptoPoolAddress) {
-    abi = CurvePool3Assets
-  }
-  if (poolCurveAddress === crvTwoCryptoTokenAddress) {
-    abi = CurvePool2Assets
-  }
-  if (poolCurveAddress === fraxBpTokenAddress) {
-    abi = CurvePool2Assets
-  }
-
-  if (token === ETH && isArbitrumFamily) {
-    token = WETH_ARBI
-  }
-  if (token === ETH && !isArbitrumFamily) {
-    token = WETH
-  }
+  token =
+    token === ETH && isArbitrumFamily
+      ? WETH_ARBI
+      : token === ETH && !isArbitrumFamily
+      ? WETH
+      : token
 
   const underlyingAssets = useContractReads({
     contracts: [0, 1, 2, 3, 4].map((index) => ({
       address: poolCurveAddress,
       chainId,
-      abi,
+      abi: CurvePool3Assets,
       functionName: "coins",
       args: [index],
     })),
@@ -79,12 +64,21 @@ export default function useCurvePreviewDeposit({
     .map((x, i) => (index === i ? BigInt(amount) : BigInt(0)))
   const isCurveEnabled = type === "curve" && enabled
 
-  const amountLp = useCalcTokenAmount({
-    asset,
-    assets: underlyingAssetsAmount ?? [],
-    isDeposit: true,
+  const amountLp = useContractRead({
+    chainId,
+    abi: (poolCurveAddress === crvTriCryptoPoolAddress
+      ? CurvePool3Assets
+      : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        CurvePool2Assets) as any,
+    address: poolCurveAddress,
     enabled:
-      isCurveEnabled && !!underlyingAssetsAmount && index !== -1 && enabled,
+      !!asset &&
+      isCurveEnabled &&
+      !!underlyingAssetsAmount &&
+      index !== -1 &&
+      enabled,
+    functionName: "calc_token_amount",
+    args: [underlyingAssetsAmount ?? [], true],
   })
 
   const amountLpValue = amountLp.data ?? 0n
@@ -108,31 +102,4 @@ export default function useCurvePreviewDeposit({
     },
   }
   //}
-}
-
-function useCalcTokenAmount({
-  asset,
-  assets,
-  isDeposit,
-  enabled,
-}: {
-  asset: Address
-  assets: bigint[]
-  isDeposit: boolean
-  enabled: boolean
-}) {
-  const chainId = useActiveChainId()
-  const poolCurveAddress = ARBI_CURVE_ADDRESS[asset] ?? "0x"
-
-  return useContractRead({
-    chainId,
-    abi: (poolCurveAddress === crvTriCryptoPoolAddress
-      ? CurvePool3Assets
-      : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        CurvePool2Assets) as any,
-    address: poolCurveAddress,
-    enabled: !!asset && enabled,
-    functionName: "calc_token_amount",
-    args: [assets, isDeposit],
-  })
 }

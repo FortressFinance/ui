@@ -11,7 +11,7 @@ import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAsset
 import { useGlobalStore } from "@/store"
 
 export function useConcentratorPreviewDeposit({
-  enabled = true,
+  enabled,
   onError,
   onSuccess,
   ...rest

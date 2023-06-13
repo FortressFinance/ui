@@ -11,7 +11,7 @@ type ConcentratorUnderlyingAssetsProps = {
 export function useApiConcentratorUnderlyingAssets({
   targetAsset,
   primaryAsset,
-  enabled = true,
+  enabled,
 }: ConcentratorUnderlyingAssetsProps) {
   const apiQuery = useApiConcentratorStaticData({ enabled })
   const targetAssetToUnderlying: Record<Address, Address[]> = {} // target to underlying

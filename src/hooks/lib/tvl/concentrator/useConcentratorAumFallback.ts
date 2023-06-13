@@ -10,7 +10,7 @@ type ConcentratorAumFallbackProps = {
 
 export default function useConcentratorAumFallback({
   targetAsset,
-  enabled = true,
+  enabled,
 }: ConcentratorAumFallbackProps) {
   const { data: targetAssetPriceUsd, isLoading: isLoadingPricer } =
     useTokenPriceUsd({ asset: targetAsset, enabled })

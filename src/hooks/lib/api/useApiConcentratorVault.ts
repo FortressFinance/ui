@@ -9,7 +9,7 @@ export function useApiConcentratorVault({
 }: {
   targetAsset?: Address
   primaryAsset?: Address
-  enabled: boolean
+  enabled?: boolean
 }) {
   const apiQuery = useApiConcentratorStaticData({ enabled })
   const targetAssetToYbToken: Record<Address, Set<Address>> = {} // target to primaryKey

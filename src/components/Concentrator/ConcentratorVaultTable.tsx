@@ -31,8 +31,14 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
   const {
     data: concentratorTargetAssets,
     isLoading: concentratorTargetAssetsIsLoading,
-  } = useConcentratorTargetAssets()
-  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
+  } = useConcentratorTargetAssets({
+    onSuccess: undefined,
+    enabled: true,
+  })
+  const concentratorsList = useListConcentrators({
+    concentratorTargetAssets,
+    enabled: true,
+  })
   const filteredConcentratorVaults = useFilteredConcentrators({
     concentratorsList,
     concentratorTargetAsset,
@@ -98,6 +104,7 @@ const ConcentratorVaultRow: FC<ConcentratorVaultRowProps> = (props) => {
   const ybTokenAddress = useConcentratorVaultYbtokenAddress({
     primaryAsset: props.primaryAsset,
     targetAsset: props.targetAsset,
+    enabled: true,
   })
   const setStrategyLink = ({
     pathname,

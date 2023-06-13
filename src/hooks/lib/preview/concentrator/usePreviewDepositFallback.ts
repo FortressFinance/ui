@@ -17,7 +17,7 @@ export default function usePreviewDepositFallback({
   token?: Address
   amount: string
   slippage: number
-  enabled: boolean
+  enabled?: boolean
 }) {
   const isUnderlyingAsset = token !== primaryAsset
 

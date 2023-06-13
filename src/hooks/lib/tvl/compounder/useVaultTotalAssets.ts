@@ -7,7 +7,7 @@ import { useVaultContract } from "@/hooks/lib/useVaultContract"
 
 const useVaultTotalAssets = ({
   vaultAddress,
-  enabled = true,
+  enabled,
 }: Pick<VaultDynamicProps, "vaultAddress"> & {
   enabled?: boolean
 }) =>

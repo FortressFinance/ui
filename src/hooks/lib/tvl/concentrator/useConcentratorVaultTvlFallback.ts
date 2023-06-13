@@ -15,7 +15,7 @@ export default function useConcentratorVaultTvlFallback({
   targetAsset,
   primaryAsset,
   type,
-  enabled = true,
+  enabled,
 }: ConcentratorVaultTvlFallbackProps) {
   const concentrator = useConcentratorVault({
     targetAsset,
@@ -29,6 +29,7 @@ export default function useConcentratorVaultTvlFallback({
   const { data: totalAssets, isLoading: isLoadingTotalAssets } =
     useVaultTotalAssets({
       vaultAddress: concentrator?.data?.ybTokenAddress,
+      enabled: true,
     })
   return {
     isLoading:

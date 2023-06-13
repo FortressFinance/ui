@@ -11,7 +11,7 @@ type CurveVaultBreakdownAprProps = {
 
 export default function useCurveVaultBreakdownApr({
   asset,
-  enabled = true,
+  enabled,
 }: CurveVaultBreakdownAprProps) {
   const chainId = useActiveChainId()
   const isArbitrumFamily = chainId === 313371 || chainId === 42161

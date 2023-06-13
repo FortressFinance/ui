@@ -26,7 +26,7 @@ export default function useCurvePreviewRedeem({
   amount: string
   type: VaultType
   slippage: number
-  enabled: boolean
+  enabled?: boolean
 }) {
   const chainId = useActiveChainId()
   const isArbitrumFamily = chainId === 313371 || chainId === 42161
@@ -62,11 +62,16 @@ export default function useCurvePreviewRedeem({
     -1
   const isCurveEnabled = index !== -1 && type === "curve" && enabled
 
-  const curvePreviewUnderlying = useCalcWithdrawOneCoin({
-    asset,
-    amount,
-    index,
-    enabled: isCurveEnabled && enabled,
+  const curvePreviewUnderlying = useContractRead({
+    chainId,
+    abi: (poolCurveAddress === crvTriCryptoPoolAddress
+      ? CurvePool3Assets
+      : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        CurvePool2Assets) as any,
+    address: poolCurveAddress,
+    enabled: !!asset && isCurveEnabled && enabled,
+    functionName: "calc_withdraw_one_coin",
+    args: [BigInt(amount), index],
   })
 
   // TODO: Balancer side
@@ -79,31 +84,4 @@ export default function useCurvePreviewRedeem({
     data: parseInt(previewWithSlippage.toFixed(2)),
   }
   //}
-}
-
-function useCalcWithdrawOneCoin({
-  asset,
-  amount,
-  index,
-  enabled,
-}: {
-  asset: Address
-  amount: string
-  index: number
-  enabled: boolean
-}) {
-  const chainId = useActiveChainId()
-  const poolCurveAddress = ARBI_CURVE_ADDRESS[asset] ?? "0x"
-
-  return useContractRead({
-    chainId,
-    abi: (poolCurveAddress === crvTriCryptoPoolAddress
-      ? CurvePool3Assets
-      : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        CurvePool2Assets) as any,
-    address: poolCurveAddress,
-    enabled: !!asset && enabled,
-    functionName: "calc_withdraw_one_coin",
-    args: [BigInt(amount), index],
-  })
 }

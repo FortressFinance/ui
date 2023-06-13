@@ -10,17 +10,17 @@ import { useRegistryContract } from "@/hooks/lib/useRegistryContract"
 export function useConcentratorTargetAssets(
   options: {
     onSuccess?: (data: Address[]) => void
-  } = {},
-  enabled = true
+    enabled?: boolean
+  } = {}
 ) {
-  const apiQuery = useApiConcentratorTargetAssets(options, enabled)
+  const apiQuery = useApiConcentratorTargetAssets(options)
   const targetAssets = useContractRead({
     ...useRegistryContract(),
     functionName: "concentratorTargetAssets",
     select: (data) =>
       Array.from(new Set(data.filter((x) => x !== zeroAddress))),
     onSuccess: options.onSuccess,
-    enabled: apiQuery.isError && enabled,
+    enabled: apiQuery.isError && options.enabled,
   })
   return apiQuery.isError
     ? { ...targetAssets, data: targetAssets.data }

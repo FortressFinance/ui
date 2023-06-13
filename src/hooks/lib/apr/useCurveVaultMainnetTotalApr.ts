@@ -23,7 +23,7 @@ export function useCurveVaultMainnetBreakdownApr({
   enabled,
 }: {
   asset: Address
-  enabled: boolean
+  enabled?: boolean
 }) {
   const chainId = useActiveChainId()
   const vaultAprFallback = useQuery([chainId, asset, "vaultAprFallback"], {
