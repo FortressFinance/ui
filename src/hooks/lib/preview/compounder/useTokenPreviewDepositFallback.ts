@@ -34,26 +34,19 @@ export default function useTokenPreviewDepositFallback({
   slippage: number
   enabled?: boolean
 }) {
-  const tokenVaultSymbol = useTokenVaultSymbol({
+  const { data: ybTokenSymbol } = useTokenVaultSymbol({
     asset,
     enabled,
   })
-
-  const ybTokenSymbol = tokenVaultSymbol.data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let abi: any = undefined
-  if (ybTokenSymbol === "fcGLP") {
-    abi = AMMCompounderBase
-  }
 
   const chainId = useActiveChainId()
   const isUnderlyingAsset = token !== asset
 
   const preview = useContractRead({
     chainId,
-    abi,
+    abi: AMMCompounderBase,
     address: vaultAddress,
-    enabled: !isUnderlyingAsset && !!abi && enabled,
+    enabled: !isUnderlyingAsset && ybTokenSymbol === "fcGLP" && enabled,
     functionName: "previewDeposit",
     args: [BigInt(amount)],
   })
@@ -62,24 +55,24 @@ export default function useTokenPreviewDepositFallback({
     token,
     amount,
     slippage,
-    enabled: isUnderlyingAsset && enabled,
+    enabled: isUnderlyingAsset && ybTokenSymbol === "fcGLP" && enabled,
   })
 
   return isUnderlyingAsset && ybTokenSymbol === "fcGLP"
     ? {
-        ...previewUnderlying,
-        data: {
-          minAmountWei: BigInt(previewUnderlying?.data ?? 0).toString(),
-          resultWei: BigInt(previewUnderlying?.data ?? 0).toString(),
-        },
-      }
+      ...previewUnderlying,
+      data: {
+        minAmountWei: BigInt(previewUnderlying?.data ?? 0).toString(),
+        resultWei: BigInt(previewUnderlying?.data ?? 0).toString(),
+      },
+    }
     : {
-        ...preview,
-        data: {
-          minAmountWei: undefined,
-          resultWei: (preview.data ?? BigInt(0)).toString(),
-        },
-      }
+      ...preview,
+      data: {
+        minAmountWei: undefined,
+        resultWei: (preview.data ?? BigInt(0)).toString(),
+      },
+    }
 }
 
 function useTokenPreviewDepositUnderlying({
