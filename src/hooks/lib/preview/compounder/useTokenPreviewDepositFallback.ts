@@ -60,19 +60,19 @@ export default function useTokenPreviewDepositFallback({
 
   return isUnderlyingAsset && ybTokenSymbol === "fcGLP"
     ? {
-      ...previewUnderlying,
-      data: {
-        minAmountWei: BigInt(previewUnderlying?.data ?? 0).toString(),
-        resultWei: BigInt(previewUnderlying?.data ?? 0).toString(),
-      },
-    }
+        ...previewUnderlying,
+        data: {
+          minAmountWei: BigInt(previewUnderlying?.data ?? 0).toString(),
+          resultWei: BigInt(previewUnderlying?.data ?? 0).toString(),
+        },
+      }
     : {
-      ...preview,
-      data: {
-        minAmountWei: undefined,
-        resultWei: (preview.data ?? BigInt(0)).toString(),
-      },
-    }
+        ...preview,
+        data: {
+          minAmountWei: undefined,
+          resultWei: (preview.data ?? BigInt(0)).toString(),
+        },
+      }
 }
 
 function useTokenPreviewDepositUnderlying({
