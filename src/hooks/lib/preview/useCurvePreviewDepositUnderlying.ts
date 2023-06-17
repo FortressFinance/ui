@@ -61,7 +61,7 @@ export default function useCurvePreviewDeposit({
     -1
   const underlyingAssetsAmount = underlyingAssets.data
     ?.filter((x) => x !== "0x")
-    .map((x, i) => (index === i ? BigInt(amount) : BigInt(0)))
+    .map((x, i) => (index === i ? BigInt(amount) : 0n))
   const isCurveEnabled = type === "curve" && enabled
 
   const amountLp = useContractRead({

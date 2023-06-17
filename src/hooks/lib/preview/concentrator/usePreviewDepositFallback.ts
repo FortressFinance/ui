@@ -55,8 +55,8 @@ export default function usePreviewDepositFallback({
     : {
         ...preview,
         data: {
-          minAmountWei: (preview.data ?? BigInt(0)).toString(),
-          resultWei: (preview.data ?? BigInt(0)).toString(),
+          minAmountWei: (preview.data ?? 0n).toString(),
+          resultWei: (preview.data ?? 0n).toString(),
         },
       }
 }

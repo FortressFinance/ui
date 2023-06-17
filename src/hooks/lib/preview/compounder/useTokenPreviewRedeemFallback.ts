@@ -68,13 +68,13 @@ export default function useTokenPreviewRedeemFallback({
         ...preview,
         data: {
           minAmountWei: undefined,
-          resultWei: (preview.data ?? BigInt(0)).toString(),
+          resultWei: (preview.data ?? 0n).toString(),
         },
       }
 }
 
 function useTokenPreviewRedeemUnderlying({
-  token,
+  token = "0x",
   amount,
   slippage,
   enabled,
@@ -88,7 +88,6 @@ function useTokenPreviewRedeemUnderlying({
   const isArbitrumFamily = chainId === 313371 || chainId === 42161
   const [glpPrice, setGlpPrice] = useState(0)
 
-  token = token ?? "0x"
   if (token == ETH) {
     token = WETH_ARBI
   }

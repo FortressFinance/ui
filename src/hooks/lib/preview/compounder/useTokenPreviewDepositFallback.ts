@@ -19,6 +19,22 @@ const USDC_ARBI: Address = "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8"
 const USDT_ARBI: Address = "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9"
 const FRAX_ARBI: Address = "0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F"
 
+const MINT_BURN_FEE_BASIS_POINTS = 25
+const TAX_BASIS_POINTS = 50
+const BASIS_POINTS_DIVISOR = 10000
+
+const decimals: { [key: Address]: number } = {
+  [DAI_ARBI]: 18,
+  [WBTC_ARBI]: 8,
+  [WETH_ARBI]: 18,
+  [LINK_ARBI]: 18,
+  [UNI_ARBI]: 18,
+  [USDC_ARBI]: 6,
+  [USDT_ARBI]: 6,
+  [FRAX_ARBI]: 18,
+  [ETH]: 18,
+}
+
 export default function useTokenPreviewDepositFallback({
   asset,
   vaultAddress,
@@ -70,13 +86,13 @@ export default function useTokenPreviewDepositFallback({
         ...preview,
         data: {
           minAmountWei: undefined,
-          resultWei: (preview.data ?? BigInt(0)).toString(),
+          resultWei: (preview.data ?? 0n).toString(),
         },
       }
 }
 
 function useTokenPreviewDepositUnderlying({
-  token,
+  token = "0x",
   amount,
   slippage,
   enabled,
@@ -90,7 +106,6 @@ function useTokenPreviewDepositUnderlying({
   const isArbitrumFamily = chainId === 313371 || chainId === 42161
   const [glpPrice, setGlpPrice] = useState(0)
 
-  token = token ?? "0x"
   if (token == ETH) {
     token = WETH_ARBI
   }
@@ -104,31 +119,12 @@ function useTokenPreviewDepositUnderlying({
     address: glpVault,
     enabled: isArbitrumFamily && enabled,
     functionName: "getMinPrice",
-    args: [token !== ETH ? token : WETH_ARBI],
+    args: [token],
   })
 
-  const decimals: { [key: Address]: number } = {
-    [DAI_ARBI]: 18,
-    [WBTC_ARBI]: 8,
-    [WETH_ARBI]: 18,
-    [LINK_ARBI]: 18,
-    [UNI_ARBI]: 18,
-    [USDC_ARBI]: 6,
-    [USDT_ARBI]: 6,
-    [FRAX_ARBI]: 18,
-    [ETH]: 18,
-  }
-
-  const tokenPrice = formatUnits(tokenPriceWei.data ?? BigInt(0), 30)
-  const amountFormatted = formatUnits(
-    BigInt(Number(amount)),
-    decimals[token] ?? 18
-  )
+  const tokenPrice = formatUnits(tokenPriceWei.data ?? 0n, 30)
+  const amountFormatted = formatUnits(BigInt(amount), decimals[token] ?? 18)
   const usdgAmount = Number(amountFormatted) * Number(tokenPrice)
-
-  const MINT_BURN_FEE_BASIS_POINTS = 25
-  const TAX_BASIS_POINTS = 50
-  const BASIS_POINTS_DIVISOR = 10000
 
   const feeBasisPoints = useContractRead({
     chainId,
