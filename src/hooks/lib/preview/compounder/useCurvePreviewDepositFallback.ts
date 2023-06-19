@@ -41,17 +41,17 @@ export default function useCurvePreviewDepositFallback({
 
   return isUnderlyingAsset
     ? {
-      ...previewUnderlying,
-      data: {
-        minAmountWei: previewUnderlying?.data.minAmountWei.toString(),
-        resultWei: previewUnderlying?.data.resultWei.toString(),
-      },
-    }
+        ...previewUnderlying,
+        data: {
+          minAmountWei: previewUnderlying?.data.minAmountWei.toString(),
+          resultWei: previewUnderlying?.data.resultWei.toString(),
+        },
+      }
     : {
-      ...preview,
-      data: {
-        minAmountWei: preview.data?.toString() ?? "0",
-        resultWei: preview.data?.toString() ?? "0",
-      },
-    }
+        ...preview,
+        data: {
+          minAmountWei: preview.data?.toString() ?? "0",
+          resultWei: preview.data?.toString() ?? "0",
+        },
+      }
 }

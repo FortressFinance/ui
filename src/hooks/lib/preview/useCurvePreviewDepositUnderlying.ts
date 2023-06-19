@@ -50,12 +50,14 @@ export default function useCurvePreviewDeposit({
       args: [index],
     })),
     enabled: poolCurveAddress !== "0x" && enabled,
-    select: results => results.map(item => !item.error ? item.result : "0x"),
+    select: (results) =>
+      results.map((item) => (!item.error ? item.result : "0x")),
   })
 
   const index =
-    underlyingAssets.data?.filter((x) => x !== "0x").indexOf(curToken ?? "0x") ??
-    -1
+    underlyingAssets.data
+      ?.filter((x) => x !== "0x")
+      .indexOf(curToken ?? "0x") ?? -1
   const underlyingAssetsAmount = underlyingAssets.data
     ?.filter((x) => x !== "0x")
     .map((x, i) => (index === i ? BigInt(amount) : 0n))
