@@ -34,7 +34,7 @@ export default function useCurvePreviewDeposit({
   const chainId = useActiveChainId()
   const isArbitrumFamily = chainId === 313371 || chainId === 42161
   const poolCurveAddress = ARBI_CURVE_ADDRESS[asset] ?? "0x"
-  token =
+  const curToken =
     token === ETH && isArbitrumFamily
       ? WETH_ARBI
       : token === ETH && !isArbitrumFamily
@@ -50,14 +50,11 @@ export default function useCurvePreviewDeposit({
       args: [index],
     })),
     enabled: poolCurveAddress !== "0x" && enabled,
-    select: (results) =>
-      results.map((item) => {
-        return !item.error ? (item.result as unknown as Address) : "0x"
-      }),
+    select: results => results.map(item => !item.error ? item.result : "0x"),
   })
 
   const index =
-    underlyingAssets.data?.filter((x) => x !== "0x").indexOf(token ?? "0x") ??
+    underlyingAssets.data?.filter((x) => x !== "0x").indexOf(curToken ?? "0x") ??
     -1
   const underlyingAssetsAmount = underlyingAssets.data
     ?.filter((x) => x !== "0x")
