@@ -164,6 +164,9 @@ export const useLeverPair = ({
     isError: accounting.isError || borrowedAmount.isError,
     isSuccess: accounting.isSuccess && borrowedAmount.isSuccess,
     data: {
+      collateralAssetPrice:
+        BigInt(1e36) /
+        (accounting.data?.exchangeRate.exchangeRate ?? BigInt(1e36)),
       constants: accounting.data?.constants,
       exchangeRate: accounting.data?.exchangeRate.exchangeRate,
       interestAccruedAt: Number(

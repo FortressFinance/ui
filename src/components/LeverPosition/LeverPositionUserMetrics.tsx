@@ -111,16 +111,16 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
   ]
   const [liquidationPrice, estimatedLiquidationPrice] = [
     calculateLiquidationPrice({
+      collateralAssetPrice: leverPair.data.collateralAssetPrice,
       ltv: LTV,
       ltvPrecision: leverPair.data.constants?.ltvPrecision,
       maxLTV: leverPair.data.maxLTV,
-      exchangeRate: leverPair.data.exchangeRate,
     }),
     calculateLiquidationPrice({
+      collateralAssetPrice: leverPair.data.collateralAssetPrice,
       ltv: estimatedLTV,
       ltvPrecision: leverPair.data.constants?.ltvPrecision,
       maxLTV: leverPair.data.maxLTV,
-      exchangeRate: leverPair.data.exchangeRate,
     }),
   ]
   const [availableCredit, estimatedAvailableCredit] = [
