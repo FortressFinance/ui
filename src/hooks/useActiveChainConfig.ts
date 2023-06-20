@@ -1,3 +1,4 @@
+import { localhost } from "viem/chains"
 import { mainnet } from "wagmi"
 
 import { arbitrumFork, mainnetFork } from "@/lib/wagmi"
@@ -7,6 +8,7 @@ import { useClientReady } from "@/hooks/useClientReady"
 import {
   arbitrumConfig,
   arbitrumForkConfig,
+  localhostConfig,
   mainnetConfig,
   mainnetForkConfig,
 } from "@/constant/chainConfig"
@@ -23,6 +25,8 @@ export const useActiveChainConfig = () => {
       ? mainnetForkConfig
       : activeChainId === arbitrumFork.id
       ? arbitrumForkConfig
+      : activeChainId === localhost.id
+      ? localhostConfig
       : arbitrumConfig
     : arbitrumConfig
 }

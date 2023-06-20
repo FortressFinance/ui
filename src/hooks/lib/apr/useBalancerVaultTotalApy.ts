@@ -44,7 +44,8 @@ export function useBalancerVaultBreakdownApr({
   enabled: boolean
 }) {
   const chainId = useActiveChainId()
-  const isArbitrumFamily = chainId === 313371 || chainId === 42161
+  const isArbitrumFamily =
+    chainId === 313371 || chainId === 42161 || chainId === 1337
   const balancerVaultMainnetBreakdownApr = useBalancerVaultMainnetBreakdownApr({
     asset,
     enabled: enabled && !isArbitrumFamily,

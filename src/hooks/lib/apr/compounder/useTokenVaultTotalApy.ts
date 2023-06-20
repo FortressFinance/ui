@@ -27,7 +27,8 @@ export function useTokenVaultTotalApr({
   enabled: boolean
 }) {
   const chainId = useActiveChainId()
-  const isArbitrumFamily = chainId === 313371 || chainId === 42161
+  const isArbitrumFamily =
+    chainId === 313371 || chainId === 42161 || chainId === 1337
   const tokenVaultMainnetTotalApr = useTokenVaultMainnetTotalApr({
     asset,
     enabled: enabled && !isArbitrumFamily,

@@ -7,6 +7,7 @@ const chainIdToPrefix: Record<number, string> = {
   42161: "arbitrum",
   31337: "ethereum",
   313371: "arbitrum",
+  1337: "arbitrum",
 }
 
 const respSchema = z.object({

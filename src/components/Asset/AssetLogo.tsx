@@ -22,6 +22,7 @@ const LOGOS_NETWORK_NAME: Record<string, string> = {
   arbitrumFork: "arbitrum",
   mainnet: "ethereum",
   mainnetFork: "ethereum",
+  localhost: "arbitrum",
 }
 
 export const AssetLogo: FC<AssetLogoProps> = ({

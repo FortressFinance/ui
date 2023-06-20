@@ -32,7 +32,8 @@ export default function useCurvePreviewDeposit({
   enabled?: boolean
 }) {
   const chainId = useActiveChainId()
-  const isArbitrumFamily = chainId === 313371 || chainId === 42161
+  const isArbitrumFamily =
+    chainId === 313371 || chainId === 42161 || chainId === 1337
   const poolCurveAddress = ARBI_CURVE_ADDRESS[asset] ?? "0x"
   const curToken =
     token === ETH && isArbitrumFamily

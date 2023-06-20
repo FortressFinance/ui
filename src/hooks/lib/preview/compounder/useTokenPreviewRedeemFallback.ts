@@ -85,7 +85,8 @@ function useTokenPreviewRedeemUnderlying({
   enabled?: boolean
 }) {
   const chainId = useActiveChainId()
-  const isArbitrumFamily = chainId === 313371 || chainId === 42161
+  const isArbitrumFamily =
+    chainId === 313371 || chainId === 42161 || chainId === 1337
   const [glpPrice, setGlpPrice] = useState(0)
 
   if (token == ETH) {

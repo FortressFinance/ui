@@ -47,7 +47,8 @@ export function useConcentratorTokenVaultBreakdownApr({
   enabled: boolean
 }) {
   const chainId = useActiveChainId()
-  const isArbitrumFamily = chainId === 313371 || chainId === 42161
+  const isArbitrumFamily =
+    chainId === 313371 || chainId === 42161 || chainId === 1337
   const tokenVaultMainnetBreakdownApr =
     useConcentratorTokenVaultMainnetBreakdownApr({
       asset,
