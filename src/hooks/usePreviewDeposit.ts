@@ -15,9 +15,7 @@ export function usePreviewDeposit(props: PreviewTransactionBaseArgs) {
     enabled: !isCompounderProduct && props.enabled,
   })
 
-  if (isCompounderProduct) {
-    return compounderPreviewDeposit
-  }
-
-  return concentratorPreviewDeposit
+  return isCompounderProduct
+    ? compounderPreviewDeposit
+    : concentratorPreviewDeposit
 }

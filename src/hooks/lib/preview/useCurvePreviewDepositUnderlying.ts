@@ -82,7 +82,7 @@ export default function useCurvePreviewDeposit({
   })
 
   const amountLpValue = amountLp.data ?? 0n
-  const amountLpWithSlippage = Number(amountLpValue) * (1 + slippage)
+  const amountLpWithSlippage = Number(amountLpValue) * (1 - slippage)
 
   const preview = useContractRead({
     ...useVaultContract(vaultAddress),

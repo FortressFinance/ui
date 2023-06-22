@@ -152,7 +152,7 @@ function useTokenPreviewDepositUnderlying({
   const mint = mintAmount * (1 / glpPrice)
   const amountOut = !isArbitrumFamily ? 0 : mint
 
-  const amountOutWithSlippage = Number(amountOut) * (1 + slippage)
+  const amountOutWithSlippage = Number(amountOut) * (1 - slippage)
   return {
     isLoading: false,
     isFetching: false,

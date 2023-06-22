@@ -50,7 +50,7 @@ export default function useCurvePreviewDepositFallback({
     : {
         ...preview,
         data: {
-          minAmountWei: preview.data?.toString() ?? "0",
+          minAmountWei: undefined,
           resultWei: preview.data?.toString() ?? "0",
         },
       }
