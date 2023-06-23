@@ -52,7 +52,7 @@ const HomePage: NextPage = () => {
               </p>
               <ButtonLink
                 className="mt-6 px-8 lg:mt-8"
-                href="/app"
+                href="/app/yield"
                 size="large"
               >
                 Launch dApp
