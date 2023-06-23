@@ -16,6 +16,9 @@
     "format:check": "prettier -c .",
     "prepare": "husky install"
   },
+  "resolutions": {
+    "@types/react": "^18.2.13"
+  },
   "dependencies": {
     "@hookform/resolvers": "^2.9.11",
     "@lukemorales/query-key-factory": "^1.1.0",
@@ -68,7 +71,7 @@
     "@testing-library/react": "^14.0.0",
     "@types/lodash": "^4.14.194",
     "@types/node": "^18.11.18",
-    "@types/react": "^18.0.31",
+    "@types/react": "^18.2.13",
     "@typescript-eslint/eslint-plugin": "^5.48.0",
     "@typescript-eslint/parser": "^5.48.0",
     "autoprefixer": "^10.4.13",
