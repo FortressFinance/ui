@@ -52,13 +52,7 @@ const HomePage: NextPage = () => {
               </p>
               <ButtonLink
                 className="mt-6 px-8 lg:mt-8"
-                href={`${
-                  process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
-                    ? "https://app.fortress.finance"
-                    : process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
-                    ? "/app/yield"
-                    : "http://app.localhost:3000"
-                }`}
+                href="/app"
                 size="large"
               >
                 Launch dApp
