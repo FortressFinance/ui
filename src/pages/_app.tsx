@@ -33,8 +33,8 @@ FortressApp.getInitialProps = async (context: AppContext) => {
   return {
     ...ctx,
     isApp:
-      context.ctx.req?.url?.includes("/app") ||
-      context.ctx.req?.url?.includes("app."),
+      context.ctx.req?.headers.referer?.includes("app.") ||
+      context.ctx.asPath?.includes("/app"),
   }
 }
 
