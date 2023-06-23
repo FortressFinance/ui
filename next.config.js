@@ -57,6 +57,18 @@ const nextConfig = {
         destination: "https://app.fortress.finance/:slug*",
         permanent: true,
       },
+      {
+        source: "/app",
+        has: [
+          {
+            type: "header",
+            key: "host",
+            value: "staging.fortress.finance",
+          },
+        ],
+        destination: "https://staging.fortress.finance/app/yield",
+        permanent: true,
+      },
     ]
   },
   webpack(config) {
