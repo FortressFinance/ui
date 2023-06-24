@@ -1,4 +1,4 @@
-import { NextPage } from "next"
+import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from "next"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -10,13 +10,24 @@ import FortressLogoAnimated from "~/images/fortress-animated-logo.gif"
 import SwordImage from "~/images/sword.gif"
 import FortressLogo from "~/svg/fortress-logo.svg"
 
-export const getStaticProps = () => {
-  // Automatic SSG is disabled because of getInitialProps in _app.tsx
-  // Exporting this function enables SSG for this page
-  return { props: {} }
+type Data = {
+  appUrl: string
 }
 
-const HomePage: NextPage = () => {
+export const getServerSideProps: GetServerSideProps<Data> = async (context) => {
+  const host = context.req.headers.host || "fortress.finance"
+  const appUrl =
+    process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
+      ? `https://${host}/app`
+      : host.includes("localhost")
+      ? `http://app.${host}`
+      : `https://app.${host}`
+  return { props: { appUrl } }
+}
+
+const HomePage: NextPage<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+> = ({ appUrl }) => {
   return (
     <div className="h-screen-small overflow-hidden bg-gradient-to-br from-pink to-orange p-2 lg:p-4">
       <Seo />
@@ -52,7 +63,7 @@ const HomePage: NextPage = () => {
               </p>
               <ButtonLink
                 className="mt-6 px-8 lg:mt-8"
-                href="/app/yield"
+                href={`${appUrl}/yield`}
                 size="large"
               >
                 Launch dApp

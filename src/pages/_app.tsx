@@ -30,12 +30,8 @@ function FortressApp({ Component, pageProps, isApp }: FortressAppProps) {
 
 FortressApp.getInitialProps = async (context: AppContext) => {
   const ctx = await App.getInitialProps(context)
-  return {
-    ...ctx,
-    isApp:
-      context.ctx.req?.headers.host?.includes("app.") ||
-      context.ctx.asPath?.includes("/app"),
-  }
+  const path = context.ctx.asPath
+  return { ...ctx, isApp: path !== "/" }
 }
 
 export default FortressApp
