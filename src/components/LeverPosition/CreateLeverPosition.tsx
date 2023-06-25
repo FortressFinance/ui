@@ -336,7 +336,9 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
               disabled={isSubmitDisabled}
               isLoading={isLeverPositionLoading}
             >
-              Lever position
+              {leverPosition.prepare.error?.message.includes("SlippageTooHigh")
+                ? "Slippage too high"
+                : "Lever position"}
             </Button>
           ) : (
             <ApproveToken
