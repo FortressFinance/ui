@@ -1,5 +1,5 @@
 import * as ToggleGroup from "@radix-ui/react-toggle-group"
-import React, { Dispatch, FC, SetStateAction, useState } from "react"
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
 import { SubmitHandler, useController, useForm } from "react-hook-form"
 import { useDebounce } from "react-use"
 import { Address, useAccount } from "wagmi"
@@ -166,6 +166,16 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     },
     500,
     [amount, leverAmount]
+  )
+
+  // reset preview amounts when switching assets
+  useEffect(
+    () => {
+      setEstimatedBorrowAmount(undefined)
+      setEstimatedCollateralAmount(undefined)
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [borrowAssetAddress, collateralAssetAddress]
   )
 
   const onSuccess = () => {

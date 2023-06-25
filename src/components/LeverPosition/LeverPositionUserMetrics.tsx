@@ -232,19 +232,18 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
                     maximumFractionDigits: 6,
                   })}
                 </span>
-                {estimatedBorrowedAmountAsCollateral &&
-                  estimatedBorrowAmount && (
-                    <span className="inline-flex items-center gap-2 font-medium text-orange">
-                      <FiArrowRight />
-                      <GradientText>
-                        {formatCurrencyUnits({
-                          amountWei: estimatedBorrowAmount.toString(),
-                          decimals: borrowAsset.data?.decimals,
-                          maximumFractionDigits: 6,
-                        })}
-                      </GradientText>
-                    </span>
-                  )}
+                {estimatedBorrowAmount && (
+                  <span className="inline-flex items-center gap-2 font-medium text-orange">
+                    <FiArrowRight />
+                    <GradientText>
+                      {formatCurrencyUnits({
+                        amountWei: estimatedBorrowAmount.toString(),
+                        decimals: borrowAsset.data?.decimals,
+                        maximumFractionDigits: 6,
+                      })}
+                    </GradientText>
+                  </span>
+                )}
               </>
             ) : (
               "—"
