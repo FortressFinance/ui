@@ -31,6 +31,7 @@ type CreateLeverPositionProps = {
   chainId: number
   borrowAssetAddress?: Address
   collateralAssetAddress?: Address
+  underlyingAssetAddress?: Address
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
   isUpdatingAmounts: boolean
   setEstimatedBorrowAmount: Dispatch<SetStateAction<bigint | undefined>>
@@ -49,6 +50,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
   chainId,
   borrowAssetAddress,
   collateralAssetAddress,
+  underlyingAssetAddress,
   collateralAssetBalance,
   isUpdatingAmounts,
   setEstimatedBorrowAmount,
@@ -195,7 +197,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
   const minAmount = subSlippage(borrowAmount, slippageTolerance)
   const leverPosition = useLeverPosition({
     borrowAmount,
-    borrowAssetAddress,
+    underlyingAssetAddress,
     collateralAmount,
     minAmount,
     enabled:

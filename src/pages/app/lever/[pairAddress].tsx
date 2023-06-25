@@ -237,6 +237,7 @@ const LeverPairDetail: NextPage<LendingPair> = (props) => {
                         collateralAssetAddress={
                           lendingPair.data?.collateralContract
                         }
+                        underlyingAssetAddress={props.underlyingAssetAddress}
                         collateralAssetBalance={collateralAssetBalance}
                         isUpdatingAmounts={isUpdatingAmounts}
                         setEstimatedBorrowAmount={setEstimatedBorrowAmount}

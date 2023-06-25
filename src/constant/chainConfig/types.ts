@@ -13,4 +13,5 @@ export type ChainConfig = {
   fFraxFcTriCryptoTokenAddress: Address
   fraxTokenAddress: Address
   fallbackType: Record<Address, VaultType>
+  wethTokenAddress: Address
 }
