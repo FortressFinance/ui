@@ -185,11 +185,13 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
                     chainId={props.chainId}
                   />{" "}
                   ={" "}
-                  {formatCurrencyUnits({
-                    amountWei: liquidationPrice.toString(),
-                    decimals: borrowAsset.data?.decimals,
-                    maximumFractionDigits: 6,
-                  })}
+                  {borrowAmountSignificant
+                    ? formatCurrencyUnits({
+                        amountWei: liquidationPrice.toString(),
+                        decimals: borrowAsset.data?.decimals,
+                        maximumFractionDigits: 6,
+                      })
+                    : "0"}
                 </span>
                 {(estimatedBorrowAmount || estimatedCollateralAmount) && (
                   <span className="inline-flex items-center gap-2 font-medium text-orange">

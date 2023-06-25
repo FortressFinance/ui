@@ -17,6 +17,10 @@ export const useDoubleTokenConfig = () => {
       chainConfig.fraxTokenAddress,
       chainConfig.fcGlpTokenAddress,
     ],
+    [chainConfig.fFraxFcTriCryptoTokenAddress]: [
+      chainConfig.fraxTokenAddress,
+      chainConfig.fcTriCryptoTokenAddress,
+    ],
   }
 
   return doubleTokens

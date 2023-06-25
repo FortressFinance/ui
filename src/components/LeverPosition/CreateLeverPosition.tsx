@@ -1,11 +1,16 @@
 import * as ToggleGroup from "@radix-ui/react-toggle-group"
-import React, { Dispatch, FC, SetStateAction, useState } from "react"
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
 import { SubmitHandler, useController, useForm } from "react-hook-form"
 import { useDebounce } from "react-use"
 import { Address, useAccount } from "wagmi"
 import { shallow } from "zustand/shallow"
 
-import { addSlippage, calculateMaxLeverage, subSlippage } from "@/lib"
+import {
+  addSlippage,
+  calculateMaxLeverage,
+  collateralToAsset,
+  subSlippage,
+} from "@/lib"
 import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
 import {
   BORROW_BUFFER_PERCENTAGE,
@@ -26,6 +31,7 @@ type CreateLeverPositionProps = {
   chainId: number
   borrowAssetAddress?: Address
   collateralAssetAddress?: Address
+  underlyingAssetAddress?: Address
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
   isUpdatingAmounts: boolean
   setEstimatedBorrowAmount: Dispatch<SetStateAction<bigint | undefined>>
@@ -44,6 +50,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
   chainId,
   borrowAssetAddress,
   collateralAssetAddress,
+  underlyingAssetAddress,
   collateralAssetBalance,
   isUpdatingAmounts,
   setEstimatedBorrowAmount,
@@ -72,7 +79,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
   const [collateralAmount, setCollateralAmount] = useState<bigint>(0n)
 
   const form = useForm<CreateLeverPositionFormValues>({
-    values: { amount: "", leverAmount: 1 },
+    defaultValues: { amount: "", leverAmount: 1 },
     mode: "all",
     reValidateMode: "onChange",
   })
@@ -140,9 +147,11 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
         setEstimatedBorrowAmount(
           leverAmount > 1
             ? addSlippage(
-                leveredCollateralAmount -
-                  addedCollateralAmount +
-                  (leverPair.data.borrowedAmount ?? 0n),
+                collateralToAsset(
+                  leveredCollateralAmount - addedCollateralAmount,
+                  leverPair.data.exchangeRate,
+                  leverPair.data.constants?.exchangePrecision
+                ) + (leverPair.data.borrowedAmount ?? 0n),
                 BORROW_BUFFER_PERCENTAGE
               )
             : undefined
@@ -159,6 +168,16 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     [amount, leverAmount]
   )
 
+  // reset preview amounts when switching assets
+  useEffect(
+    () => {
+      setEstimatedBorrowAmount(undefined)
+      setEstimatedCollateralAmount(undefined)
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [borrowAssetAddress, collateralAssetAddress]
+  )
+
   const onSuccess = () => {
     _onSuccess()
     form.reset({ amount: "", leverAmount: 1 })
@@ -170,11 +189,15 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     token: collateralAssetAddress,
     enabled: !isUpdatingAmounts && collateralAmount > 0,
   })
-  const borrowAmount = collateralAmount * BigInt(leverAmount) - collateralAmount
+  const borrowAmount = collateralToAsset(
+    collateralAmount * BigInt(leverAmount) - collateralAmount,
+    leverPair.data.exchangeRate,
+    leverPair.data.constants?.exchangePrecision
+  )
   const minAmount = subSlippage(borrowAmount, slippageTolerance)
   const leverPosition = useLeverPosition({
     borrowAmount,
-    borrowAssetAddress,
+    underlyingAssetAddress,
     collateralAmount,
     minAmount,
     enabled:
@@ -315,7 +338,9 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
               disabled={isSubmitDisabled}
               isLoading={isLeverPositionLoading}
             >
-              Lever position
+              {leverPosition.prepare.error?.message.includes("SlippageTooHigh")
+                ? "Slippage too high"
+                : "Lever position"}
             </Button>
           ) : (
             <ApproveToken

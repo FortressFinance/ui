@@ -8,7 +8,9 @@ export const arbitrumConfig: ChainConfig = {
   fctrFraxBPFcGlpTokenAddress: "0xA7C12b4B98E6A38c51B12668773DAe855DdDecf8",
   fctrFraxBPTokenAddress: "0xe0Ef16f92DdC7f2AA3DADC0fDd3cdEd262Df03D6",
   fFraxFcGlpTokenAddress: "0xB900A00418bbD1A1b7e1b00A960A22EA540918a2",
+  fFraxFcTriCryptoTokenAddress: "0xf0888F34aa92A9dd427afc18CbaE0cbED9DcD6c8",
   fraxTokenAddress: "0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F",
+  wethTokenAddress: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
   fallbackType: {
     "0x86eE39B28A7fDea01b53773AEE148884Db311B46": "token",
     "0xC9B8a3FDECB9D5b218d02555a8Baf332E5B740d5": "curve",

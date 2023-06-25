@@ -91,7 +91,7 @@ const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
     ])
 
   const form = useForm<TxSettingsFormValues>({
-    values: {
+    defaultValues: {
       expertMode,
       slippageToleranceString: String(slippageTolerance),
     },

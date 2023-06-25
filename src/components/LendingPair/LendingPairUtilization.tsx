@@ -1,4 +1,4 @@
-import { FC } from "preact/compat"
+import { FC } from "react"
 
 import { calculateUtilizationRate } from "@/lib"
 import { formatPercentage } from "@/lib/helpers"

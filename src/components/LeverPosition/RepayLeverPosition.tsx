@@ -77,7 +77,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   const [repaymentAmount, setRepaymentAmount] = useState<bigint>(0n)
 
   const form = useForm<RepayLeverPositionFormValues>({
-    values: { amount: "", asset: borrowAssetAddress },
+    defaultValues: { amount: "", asset: borrowAssetAddress },
     mode: "all",
     reValidateMode: "onChange",
   })

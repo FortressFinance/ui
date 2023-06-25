@@ -11,7 +11,7 @@ import {
 import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet"
 import { InjectedConnector } from "wagmi/connectors/injected"
 import { MetaMaskConnector } from "wagmi/connectors/metaMask"
-import { WalletConnectLegacyConnector } from "wagmi/connectors/walletConnectLegacy"
+import { WalletConnectConnector } from "wagmi/connectors/walletConnect"
 
 import { enabledNetworks } from "@/lib/wagmi"
 
@@ -30,10 +30,20 @@ const config = createConfig({
       options: { shimDisconnect: true },
     }),
     new InjectedConnector({ chains }),
-    new WalletConnectLegacyConnector({
+    new WalletConnectConnector({
       chains,
       options: {
-        qrcode: true,
+        projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "",
+        showQrModal: true,
+        metadata: {
+          name: "Fortress Finance",
+          description:
+            "composable financial products for passive DeFi investors",
+          url: "https://app.fortress.finance",
+          icons: [
+            "https://fortress.finance/favicon/android-chrome-512x512.png",
+          ],
+        },
       },
     }),
     new CoinbaseWalletConnector({
