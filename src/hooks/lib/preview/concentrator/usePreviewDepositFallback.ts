@@ -1,6 +1,6 @@
 import { Address, useContractRead } from "wagmi"
 
-import useCurvePreviewDeposit from "@/hooks/lib/preview/useCurvePreviewDepositUnderlying"
+import useCurvePreviewDepositUnderlying from "@/hooks/lib/preview/useCurvePreviewDepositUnderlying"
 import { useConcentratorContract } from "@/hooks/lib/useConcentratorContract"
 import { useConcentratorVaultYbtokenAddress } from "@/hooks/useConcentratorVaultYbtokenAddress"
 
@@ -29,19 +29,19 @@ export default function usePreviewDepositFallback({
 
   const preview = useContractRead({
     ...useConcentratorContract(ybTokenAddress),
-    enabled: !isUnderlyingAsset && !!ybTokenAddress && enabled,
+    enabled: !isUnderlyingAsset && ybTokenAddress !== "0x" && enabled,
     functionName: "previewDeposit",
     args: [BigInt(amount)],
   })
 
-  const previewUnderlying = useCurvePreviewDeposit({
+  const previewUnderlying = useCurvePreviewDepositUnderlying({
     asset: primaryAsset,
     vaultAddress: ybTokenAddress,
     token,
     amount,
     type: "curve",
     slippage,
-    enabled: isUnderlyingAsset && !!ybTokenAddress && enabled,
+    enabled: isUnderlyingAsset && ybTokenAddress !== "0x" && enabled,
   })
 
   return isUnderlyingAsset

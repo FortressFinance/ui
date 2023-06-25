@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { getConcentratorStaticData } from "@/lib/api/concentrators"
 import { queryKeys } from "@/lib/helpers"
-import { useActiveChainId } from "@/hooks/useActiveChainId"
+import { useActiveChainId } from "@/hooks"
 
 export function useApiConcentratorStaticData({
   enabled,
@@ -17,5 +17,6 @@ export function useApiConcentratorStaticData({
       enabled,
       retry: false,
     }),
+    isEnabled: enabled,
   }
 }

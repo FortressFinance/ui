@@ -14,7 +14,7 @@ import {
 const WETH_ARBI: Address = "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
 const WETH: Address = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
 
-export default function useCurvePreviewDeposit({
+export default function useCurvePreviewDepositUnderlying({
   asset,
   vaultAddress,
   token,

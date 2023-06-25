@@ -1,6 +1,6 @@
 import { Address, useContractRead } from "wagmi"
 
-import useCurvePreviewRedeem from "@/hooks/lib/preview/useCurvePreviewRedeemUnderlying"
+import useCurvePreviewRedeemUnderlying from "@/hooks/lib/preview/useCurvePreviewRedeemUnderlying"
 import { useVaultContract } from "@/hooks/lib/useVaultContract"
 import { useConcentratorVaultYbtokenAddress } from "@/hooks/useConcentratorVaultYbtokenAddress"
 
@@ -33,7 +33,7 @@ export default function usePreviewRedeemFallback({
     args: [BigInt(amount)],
   })
 
-  const previewUnderlying = useCurvePreviewRedeem({
+  const previewUnderlying = useCurvePreviewRedeemUnderlying({
     asset: primaryAsset,
     token,
     amount,
