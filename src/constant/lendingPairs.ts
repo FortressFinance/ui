@@ -15,13 +15,13 @@ type LendingPairsConfig = Array<LendingPair>
 export const lendingPairs: LendingPairsConfig = [
   {
     chainId: arbitrum.id,
-    pairAddress: "0xB900A00418bbD1A1b7e1b00A960A22EA540918a2",
+    pairAddress: "0x21dA5B5718ebce131071eD43D13483DD3C585F04",
     name: "fcGLP/FRAX",
-    underlyingAssetAddress: arbitrumConfig.fraxTokenAddress,
+    underlyingAssetAddress: arbitrumConfig.wethTokenAddress,
   },
   {
     chainId: arbitrum.id,
-    pairAddress: "0xf0888F34aa92A9dd427afc18CbaE0cbED9DcD6c8",
+    pairAddress: "0x6a3e946B83fDD9b2B6650D909332C42397FF774f",
     name: "fcTriCrypto/FRAX",
     underlyingAssetAddress: arbitrumConfig.wethTokenAddress,
   },
