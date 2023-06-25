@@ -1,6 +1,5 @@
 import { Analytics } from "@vercel/analytics/react"
-import App, { AppContext, AppProps } from "next/app"
-import { ReactNode } from "react"
+import { AppProps } from "next/app"
 
 import "@/styles/globals.css"
 
@@ -8,30 +7,16 @@ import { inter, vt323 } from "@/lib/fonts"
 
 import AppProviders from "@/components/AppProviders"
 
-type FortressAppProps = Pick<AppProps, "Component" | "pageProps"> & {
-  isApp: boolean
-}
-
-function FortressApp({ Component, pageProps, isApp }: FortressAppProps) {
-  const Providers = isApp
-    ? AppProviders
-    : ({ children }: { children: ReactNode }) => <>{children}</>
-
+function FortressApp({ Component, pageProps }: AppProps) {
   return (
-    <Providers>
+    <AppProviders>
       <div className={`${inter.variable} ${vt323.variable} font-sans`}>
         <Component {...pageProps} />
       </div>
 
       <Analytics />
-    </Providers>
+    </AppProviders>
   )
-}
-
-FortressApp.getInitialProps = async (context: AppContext) => {
-  const ctx = await App.getInitialProps(context)
-  const path = context.ctx.asPath
-  return { ...ctx, isApp: path !== "/" }
 }
 
 export default FortressApp

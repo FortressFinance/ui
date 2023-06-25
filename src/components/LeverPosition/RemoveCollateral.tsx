@@ -66,7 +66,7 @@ export const RemoveCollateral: FC<RemoveCollateralProps> = ({
   const [removedAmount, setRemovedAmount] = useState<bigint>(0n)
 
   const form = useForm<AddCollateralFormValues>({
-    values: { amount: "" },
+    defaultValues: { amount: "" },
     mode: "all",
     reValidateMode: "onChange",
   })

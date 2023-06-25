@@ -111,16 +111,16 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
   ]
   const [liquidationPrice, estimatedLiquidationPrice] = [
     calculateLiquidationPrice({
+      collateralAssetPrice: leverPair.data.collateralAssetPrice,
       ltv: LTV,
       ltvPrecision: leverPair.data.constants?.ltvPrecision,
       maxLTV: leverPair.data.maxLTV,
-      exchangeRate: leverPair.data.exchangeRate,
     }),
     calculateLiquidationPrice({
+      collateralAssetPrice: leverPair.data.collateralAssetPrice,
       ltv: estimatedLTV,
       ltvPrecision: leverPair.data.constants?.ltvPrecision,
       maxLTV: leverPair.data.maxLTV,
-      exchangeRate: leverPair.data.exchangeRate,
     }),
   ]
   const [availableCredit, estimatedAvailableCredit] = [
@@ -185,11 +185,13 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
                     chainId={props.chainId}
                   />{" "}
                   ={" "}
-                  {formatCurrencyUnits({
-                    amountWei: liquidationPrice.toString(),
-                    decimals: borrowAsset.data?.decimals,
-                    maximumFractionDigits: 6,
-                  })}
+                  {borrowAmountSignificant
+                    ? formatCurrencyUnits({
+                        amountWei: liquidationPrice.toString(),
+                        decimals: borrowAsset.data?.decimals,
+                        maximumFractionDigits: 6,
+                      })
+                    : "0"}
                 </span>
                 {(estimatedBorrowAmount || estimatedCollateralAmount) && (
                   <span className="inline-flex items-center gap-2 font-medium text-orange">

@@ -342,36 +342,36 @@ describe("leverHelpers", () => {
   describe("calculateLiquidationPrice", () => {
     const cases = [
       {
+        collateralAssetPrice: undefined,
         ltv: undefined,
         ltvPrecision: undefined,
         maxLTV: undefined,
-        exchangeRate: undefined,
         expected: "0",
       },
       {
+        collateralAssetPrice: 0n,
         ltv: 0n,
         ltvPrecision: 0n,
         maxLTV: 0n,
-        exchangeRate: 0n,
         expected: "0",
       },
       {
+        collateralAssetPrice: 1004456814569838980n,
         ltv: 49706n,
         ltvPrecision: 100000n,
         maxLTV: 81000n,
-        exchangeRate: 1004456814569838980n,
         expected: "690122099018353570",
       },
     ]
     test.each(cases)(
       "should return %p when called with %p",
-      ({ ltv, ltvPrecision, maxLTV, exchangeRate, expected }) => {
+      ({ collateralAssetPrice, ltv, ltvPrecision, maxLTV, expected }) => {
         expect(
           calculateLiquidationPrice({
+            collateralAssetPrice,
             ltv,
             ltvPrecision,
             maxLTV,
-            exchangeRate,
           }).toString()
         ).toEqual(expected)
       }

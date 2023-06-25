@@ -23,13 +23,13 @@ export const assetToCollateral = (
   amount = 0n,
   exchangeRate = 1n,
   exchangePrecision = 1n
-) => (amount * exchangePrecision) / exchangeRate
+) => (amount * exchangeRate) / exchangePrecision
 
 export const collateralToAsset = (
   amount = 0n,
   exchangeRate = 1n,
   exchangePrecision = 1n
-) => (amount * exchangeRate) / exchangePrecision
+) => (amount * exchangePrecision) / exchangeRate
 
 export const calculateAssetsAvailable = ({
   totalAssets = 0n,
@@ -41,7 +41,7 @@ export const calculateUtilizationRate = ({
   totalBorrowAmount = 0n,
   utilPrecision = 1n,
 }) =>
-  Number((totalBorrowAmount * utilPrecision) / totalAssets) /
+  Number((totalBorrowAmount * utilPrecision) / (totalAssets || 1n)) /
   Number(utilPrecision)
 
 export const calculateBorrowAPY = ({ interestRatePerSecond = 0n }) =>
@@ -62,13 +62,13 @@ export const calculateAvailableCredit = ({
 }) => maxBorrowAmount - borrowedAmount
 
 export const calculateLiquidationPrice = ({
+  collateralAssetPrice = 0n,
   ltv = 0n,
   ltvPrecision = 0n,
   maxLTV = 0n,
-  exchangeRate = 0n,
 }) =>
   subSlippage(
-    exchangeRate,
+    collateralAssetPrice,
     Number((maxLTV - ltv) * 100n) / Number(ltvPrecision)
   )
 

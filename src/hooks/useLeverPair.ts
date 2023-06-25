@@ -164,6 +164,9 @@ export const useLeverPair = ({
     isError: accounting.isError || borrowedAmount.isError,
     isSuccess: accounting.isSuccess && borrowedAmount.isSuccess,
     data: {
+      collateralAssetPrice:
+        BigInt(1e36) /
+        (accounting.data?.exchangeRate.exchangeRate ?? BigInt(1e36)),
       constants: accounting.data?.constants,
       exchangeRate: accounting.data?.exchangeRate.exchangeRate,
       interestAccruedAt: Number(
@@ -192,7 +195,7 @@ export const useLeverPair = ({
 
 export const useLeverPosition = ({
   borrowAmount = 0n,
-  borrowAssetAddress = zeroAddress,
+  underlyingAssetAddress = zeroAddress,
   collateralAmount = 0n,
   enabled = true,
   minAmount,
@@ -200,7 +203,7 @@ export const useLeverPosition = ({
   onSuccess,
 }: {
   borrowAmount?: bigint
-  borrowAssetAddress?: Address
+  underlyingAssetAddress?: Address
   collateralAmount?: bigint
   enabled?: boolean
   minAmount: bigint
@@ -214,7 +217,7 @@ export const useLeverPosition = ({
     address: pairAddress,
     abi: FortressLendingPair,
     functionName: "leveragePosition",
-    args: [borrowAmount, collateralAmount, minAmount, borrowAssetAddress],
+    args: [borrowAmount, collateralAmount, minAmount, underlyingAssetAddress],
     enabled: borrowAmount > 0 && collateralAmount > 0 && enabled,
     onError: (error) => {
       if (error.message.includes("AlreadyCalledOnBlock")) {
