@@ -23,13 +23,13 @@ export const assetToCollateral = (
   amount = 0n,
   exchangeRate = 1n,
   exchangePrecision = 1n
-) => (amount * exchangePrecision) / exchangeRate
+) => (amount * exchangeRate) / exchangePrecision
 
 export const collateralToAsset = (
   amount = 0n,
   exchangeRate = 1n,
   exchangePrecision = 1n
-) => (amount * exchangeRate) / exchangePrecision
+) => (amount * exchangePrecision) / exchangeRate
 
 export const calculateAssetsAvailable = ({
   totalAssets = 0n,

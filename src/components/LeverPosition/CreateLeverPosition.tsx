@@ -144,15 +144,13 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
         setCollateralAmount(addedCollateralAmount)
         setEstimatedBorrowAmount(
           leverAmount > 1
-            ? collateralToAsset(
-                addSlippage(
-                  leveredCollateralAmount -
-                    addedCollateralAmount +
-                    (leverPair.data.borrowedAmount ?? 0n),
-                  BORROW_BUFFER_PERCENTAGE
-                ),
-                leverPair.data.exchangeRate,
-                leverPair.data.constants?.exchangePrecision
+            ? addSlippage(
+                collateralToAsset(
+                  leveredCollateralAmount - addedCollateralAmount,
+                  leverPair.data.exchangeRate,
+                  leverPair.data.constants?.exchangePrecision
+                ) + (leverPair.data.borrowedAmount ?? 0n),
+                BORROW_BUFFER_PERCENTAGE
               )
             : undefined
         )
