@@ -39,7 +39,7 @@ export const LendingPairDepositForm: FC<LendingPair> = ({
   })
 
   const form = useForm<TokenFormValues>({
-    values: {
+    defaultValues: {
       amountIn: "",
       inputToken: lendingPair.data?.assetContract ?? "0x",
       outputToken: pairAddress,
