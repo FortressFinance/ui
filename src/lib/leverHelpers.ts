@@ -41,7 +41,7 @@ export const calculateUtilizationRate = ({
   totalBorrowAmount = 0n,
   utilPrecision = 1n,
 }) =>
-  Number((totalBorrowAmount * utilPrecision) / totalAssets) /
+  Number((totalBorrowAmount * utilPrecision) / (totalAssets || 1n)) /
   Number(utilPrecision)
 
 export const calculateBorrowAPY = ({ interestRatePerSecond = 0n }) =>

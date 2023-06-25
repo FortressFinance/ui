@@ -7,7 +7,7 @@ import { DisabledPage } from "@/components"
 import Layout from "@/components/Layout"
 import { LendingPairRow } from "@/components/LendingPair"
 import Seo from "@/components/Seo"
-import { Table, TableEmpty, TableHeader } from "@/components/Table"
+import { Table, TableBody, TableEmpty, TableHeader } from "@/components/Table"
 
 import { lendingPairs } from "@/constant"
 import { DISABLE_LENDING } from "@/constant/env"
@@ -47,21 +47,23 @@ const Lend: NextPage = () => {
               </div>
 
               {isClientReady && chainLendingPairs.length ? (
-                chainLendingPairs.map((lendingPair, index) => (
-                  <div
-                    key={lendingPair.pairAddress}
-                    className={clsxm(
-                      "relative items-center gap-x-3 overflow-hidden bg-pink-900/80 p-3 backdrop-blur-md lg:grid lg:grid-cols-[3.5fr,1fr,1fr,1fr,7rem] lg:p-6",
-                      {
-                        "rounded-lg": index > 0,
-                        "rounded-b-lg": index === 0,
-                      }
-                    )}
-                    role="row"
-                  >
-                    <LendingPairRow {...lendingPair} />
-                  </div>
-                ))
+                <TableBody>
+                  {chainLendingPairs.map((lendingPair, index) => (
+                    <div
+                      key={lendingPair.pairAddress}
+                      className={clsxm(
+                        "relative items-center gap-x-3 overflow-hidden bg-pink-900/80 p-3 backdrop-blur-md lg:grid lg:grid-cols-[3.5fr,1fr,1fr,1fr,7rem] lg:p-6",
+                        {
+                          "rounded-lg": index > 0,
+                          "rounded-b-lg": index === 0,
+                        }
+                      )}
+                      role="row"
+                    >
+                      <LendingPairRow {...lendingPair} />
+                    </div>
+                  ))}
+                </TableBody>
               ) : (
                 <TableEmpty heading="Well, this is awkward...">
                   It seems we don't have any lending pairs available on this

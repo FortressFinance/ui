@@ -10,6 +10,7 @@ export const mainnetConfig: ChainConfig = {
   fctrFraxBPFcGlpTokenAddress: zeroAddress,
   fctrFraxBPTokenAddress: zeroAddress,
   fFraxFcGlpTokenAddress: zeroAddress,
+  fFraxFcTriCryptoTokenAddress: zeroAddress,
   fraxTokenAddress: "0x853d955aCEf822Db058eb8505911ED77F175b99e",
   fallbackType: {},
 }

@@ -60,18 +60,20 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
     address: lendingPair.data?.collateralContract,
   })
 
-  const [borrowedAmountAsCollateral, estimatedBorrowedAmountAsCollateral] = [
-    assetToCollateral(
-      borrowAmountSignificant,
-      leverPair.data.exchangeRate,
-      leverPair.data.constants?.exchangePrecision
-    ),
-    assetToCollateral(
-      estimatedBorrowAmount ?? borrowAmountSignificant,
-      leverPair.data.exchangeRate,
-      leverPair.data.constants?.exchangePrecision
-    ),
-  ]
+  const borrowedAmountAsCollateral = assetToCollateral(
+    borrowAmountSignificant,
+    leverPair.data.exchangeRate,
+    leverPair.data.constants?.exchangePrecision
+  )
+  const estimatedBorrowedAmountAsCollateral =
+    estimatedBorrowAmount ?? borrowedAmountAsCollateral
+  const estimatedBorrowAmountAsAsset = estimatedBorrowedAmountAsCollateral
+    ? collateralToAsset(
+        estimatedBorrowedAmountAsCollateral,
+        leverPair.data.exchangeRate,
+        leverPair.data.constants?.exchangePrecision
+      )
+    : borrowAmountSignificant
   const [collateralAmountAsAsset, estimatedCollateralAmountAsAsset] = [
     collateralToAsset(
       collateralAmountSignificant,
@@ -129,7 +131,7 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
       maxBorrowAmount,
     }),
     calculateAvailableCredit({
-      borrowedAmount: estimatedBorrowAmount ?? borrowAmountSignificant,
+      borrowedAmount: estimatedBorrowAmountAsAsset ?? borrowAmountSignificant,
       maxBorrowAmount: estimatedMaxBorrowAmount,
     }),
   ]
@@ -150,7 +152,8 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
                 <span>
                   {ltvPercentage(LTV, leverPair.data.constants?.ltvPrecision)}
                 </span>
-                {(estimatedBorrowAmount || estimatedCollateralAmount) && (
+                {(estimatedBorrowedAmountAsCollateral ||
+                  estimatedCollateralAmount) && (
                   <span className="inline-flex items-center gap-2 font-medium text-orange">
                     <FiArrowRight />
                     <GradientText>
@@ -185,13 +188,16 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
                     chainId={props.chainId}
                   />{" "}
                   ={" "}
-                  {formatCurrencyUnits({
-                    amountWei: liquidationPrice.toString(),
-                    decimals: borrowAsset.data?.decimals,
-                    maximumFractionDigits: 6,
-                  })}
+                  {borrowAmountSignificant
+                    ? formatCurrencyUnits({
+                        amountWei: liquidationPrice.toString(),
+                        decimals: borrowAsset.data?.decimals,
+                        maximumFractionDigits: 6,
+                      })
+                    : "0"}
                 </span>
-                {(estimatedBorrowAmount || estimatedCollateralAmount) && (
+                {(estimatedBorrowedAmountAsCollateral ||
+                  estimatedCollateralAmount) && (
                   <span className="inline-flex items-center gap-2 font-medium text-orange">
                     <FiArrowRight />
                     <GradientText>
@@ -230,18 +236,19 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
                     maximumFractionDigits: 6,
                   })}
                 </span>
-                {estimatedBorrowAmount && (
-                  <span className="inline-flex items-center gap-2 font-medium text-orange">
-                    <FiArrowRight />
-                    <GradientText>
-                      {formatCurrencyUnits({
-                        amountWei: estimatedBorrowAmount.toString(),
-                        decimals: borrowAsset.data?.decimals,
-                        maximumFractionDigits: 6,
-                      })}
-                    </GradientText>
-                  </span>
-                )}
+                {estimatedBorrowedAmountAsCollateral &&
+                  estimatedBorrowAmountAsAsset && (
+                    <span className="inline-flex items-center gap-2 font-medium text-orange">
+                      <FiArrowRight />
+                      <GradientText>
+                        {formatCurrencyUnits({
+                          amountWei: estimatedBorrowAmountAsAsset.toString(),
+                          decimals: borrowAsset.data?.decimals,
+                          maximumFractionDigits: 6,
+                        })}
+                      </GradientText>
+                    </span>
+                  )}
               </>
             ) : (
               "—"
@@ -312,7 +319,8 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
                     maximumFractionDigits: 6,
                   })}
                 </span>
-                {(estimatedBorrowAmount || estimatedCollateralAmount) && (
+                {(estimatedBorrowedAmountAsCollateral ||
+                  estimatedCollateralAmount) && (
                   <span className="inline-flex items-center gap-2 font-medium text-orange">
                     <FiArrowRight />
                     <GradientText>
