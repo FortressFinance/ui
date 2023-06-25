@@ -5,7 +5,12 @@ import { useDebounce } from "react-use"
 import { Address, useAccount } from "wagmi"
 import { shallow } from "zustand/shallow"
 
-import { addSlippage, calculateMaxLeverage, subSlippage } from "@/lib"
+import {
+  addSlippage,
+  calculateMaxLeverage,
+  collateralToAsset,
+  subSlippage,
+} from "@/lib"
 import { formatCurrencyUnits, parseCurrencyUnits } from "@/lib/helpers"
 import {
   BORROW_BUFFER_PERCENTAGE,
@@ -139,11 +144,15 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
         setCollateralAmount(addedCollateralAmount)
         setEstimatedBorrowAmount(
           leverAmount > 1
-            ? addSlippage(
-                leveredCollateralAmount -
-                  addedCollateralAmount +
-                  (leverPair.data.borrowedAmount ?? 0n),
-                BORROW_BUFFER_PERCENTAGE
+            ? collateralToAsset(
+                addSlippage(
+                  leveredCollateralAmount -
+                    addedCollateralAmount +
+                    (leverPair.data.borrowedAmount ?? 0n),
+                  BORROW_BUFFER_PERCENTAGE
+                ),
+                leverPair.data.exchangeRate,
+                leverPair.data.constants?.exchangePrecision
               )
             : undefined
         )
@@ -170,7 +179,11 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     token: collateralAssetAddress,
     enabled: !isUpdatingAmounts && collateralAmount > 0,
   })
-  const borrowAmount = collateralAmount * BigInt(leverAmount) - collateralAmount
+  const borrowAmount = collateralToAsset(
+    collateralAmount * BigInt(leverAmount) - collateralAmount,
+    leverPair.data.exchangeRate,
+    leverPair.data.constants?.exchangePrecision
+  )
   const minAmount = subSlippage(borrowAmount, slippageTolerance)
   const leverPosition = useLeverPosition({
     borrowAmount,

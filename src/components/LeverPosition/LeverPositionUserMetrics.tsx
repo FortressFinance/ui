@@ -60,20 +60,18 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
     address: lendingPair.data?.collateralContract,
   })
 
-  const borrowedAmountAsCollateral = assetToCollateral(
-    borrowAmountSignificant,
-    leverPair.data.exchangeRate,
-    leverPair.data.constants?.exchangePrecision
-  )
-  const estimatedBorrowedAmountAsCollateral =
-    estimatedBorrowAmount ?? borrowedAmountAsCollateral
-  const estimatedBorrowAmountAsAsset = estimatedBorrowedAmountAsCollateral
-    ? collateralToAsset(
-        estimatedBorrowedAmountAsCollateral,
-        leverPair.data.exchangeRate,
-        leverPair.data.constants?.exchangePrecision
-      )
-    : borrowAmountSignificant
+  const [borrowedAmountAsCollateral, estimatedBorrowedAmountAsCollateral] = [
+    assetToCollateral(
+      borrowAmountSignificant,
+      leverPair.data.exchangeRate,
+      leverPair.data.constants?.exchangePrecision
+    ),
+    assetToCollateral(
+      estimatedBorrowAmount ?? borrowAmountSignificant,
+      leverPair.data.exchangeRate,
+      leverPair.data.constants?.exchangePrecision
+    ),
+  ]
   const [collateralAmountAsAsset, estimatedCollateralAmountAsAsset] = [
     collateralToAsset(
       collateralAmountSignificant,
@@ -131,7 +129,7 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
       maxBorrowAmount,
     }),
     calculateAvailableCredit({
-      borrowedAmount: estimatedBorrowAmountAsAsset ?? borrowAmountSignificant,
+      borrowedAmount: estimatedBorrowAmount ?? borrowAmountSignificant,
       maxBorrowAmount: estimatedMaxBorrowAmount,
     }),
   ]
@@ -152,8 +150,7 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
                 <span>
                   {ltvPercentage(LTV, leverPair.data.constants?.ltvPrecision)}
                 </span>
-                {(estimatedBorrowedAmountAsCollateral ||
-                  estimatedCollateralAmount) && (
+                {(estimatedBorrowAmount || estimatedCollateralAmount) && (
                   <span className="inline-flex items-center gap-2 font-medium text-orange">
                     <FiArrowRight />
                     <GradientText>
@@ -196,8 +193,7 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
                       })
                     : "0"}
                 </span>
-                {(estimatedBorrowedAmountAsCollateral ||
-                  estimatedCollateralAmount) && (
+                {(estimatedBorrowAmount || estimatedCollateralAmount) && (
                   <span className="inline-flex items-center gap-2 font-medium text-orange">
                     <FiArrowRight />
                     <GradientText>
@@ -237,12 +233,12 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
                   })}
                 </span>
                 {estimatedBorrowedAmountAsCollateral &&
-                  estimatedBorrowAmountAsAsset && (
+                  estimatedBorrowAmount && (
                     <span className="inline-flex items-center gap-2 font-medium text-orange">
                       <FiArrowRight />
                       <GradientText>
                         {formatCurrencyUnits({
-                          amountWei: estimatedBorrowAmountAsAsset.toString(),
+                          amountWei: estimatedBorrowAmount.toString(),
                           decimals: borrowAsset.data?.decimals,
                           maximumFractionDigits: 6,
                         })}
@@ -319,8 +315,7 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
                     maximumFractionDigits: 6,
                   })}
                 </span>
-                {(estimatedBorrowedAmountAsCollateral ||
-                  estimatedCollateralAmount) && (
+                {(estimatedBorrowAmount || estimatedCollateralAmount) && (
                   <span className="inline-flex items-center gap-2 font-medium text-orange">
                     <FiArrowRight />
                     <GradientText>
