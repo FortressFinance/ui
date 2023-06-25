@@ -72,7 +72,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
   const [collateralAmount, setCollateralAmount] = useState<bigint>(0n)
 
   const form = useForm<CreateLeverPositionFormValues>({
-    values: { amount: "", leverAmount: 1 },
+    defaultValues: { amount: "", leverAmount: 1 },
     mode: "all",
     reValidateMode: "onChange",
   })

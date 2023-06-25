@@ -56,9 +56,42 @@ const LendingPairDetail: NextPage<LendingPair> = (props) => {
         <Seo templateTitle={`${props.name} | Lend`} />
 
         <div className="grid gap-4 lg:grid-cols-[2fr,1fr] lg:gap-6">
-          {/* Use z-10 so the tooltips appears above the <aside /> */}
-          {/* TODO: Tooltip should work without doing this type of thing */}
-          <main className="relative z-10 rounded-lg bg-pink-900/80 p-4 backdrop-blur-md lg:p-6">
+          <aside>
+            <div className="rounded-lg bg-pink-900/80 p-3 backdrop-blur-md lg:col-start-2 lg:row-start-1">
+              <Tabs.Root defaultValue="deposit" className="relative">
+                <Tabs.List className="-mx-3 -mt-3 divide-x divide-pink/30 border-b border-pink/30">
+                  <Tabs.Trigger
+                    value="deposit"
+                    className="transition-color w-1/2 rounded-tl-lg pb-3.5 pt-5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
+                  >
+                    Deposit
+                  </Tabs.Trigger>
+                  <Tabs.Trigger
+                    value="redeem"
+                    className="transition-color w-1/2 rounded-tr-lg pb-3.5 pt-5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
+                  >
+                    Redeem
+                  </Tabs.Trigger>
+                </Tabs.List>
+                <div className="relative overflow-hidden">
+                  <Tabs.Content
+                    value="deposit"
+                    className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out"
+                  >
+                    <LendingPairDepositForm {...props} />
+                  </Tabs.Content>
+                  <Tabs.Content
+                    value="redeem"
+                    className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out"
+                  >
+                    <LendingPairRedeem {...props} />
+                  </Tabs.Content>
+                </div>
+              </Tabs.Root>
+            </div>
+          </aside>
+
+          <main className="rounded-lg bg-pink-900/80 p-4 backdrop-blur-md lg:col-start-1 lg:row-start-1 lg:p-6">
             <header>
               <div className="flex justify-between">
                 <Link
@@ -123,41 +156,6 @@ const LendingPairDetail: NextPage<LendingPair> = (props) => {
               <LendingPairMetrics interestType="lend" {...props} />
             </div>
           </main>
-
-          <aside>
-            <div className="rounded-lg bg-pink-900/80 p-3 backdrop-blur-md">
-              <Tabs.Root defaultValue="deposit" className="relative">
-                <Tabs.List className="-mx-3 -mt-3 divide-x divide-pink/30 border-b border-pink/30">
-                  <Tabs.Trigger
-                    value="deposit"
-                    className="transition-color w-1/2 rounded-tl-lg pb-3.5 pt-5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
-                  >
-                    Deposit
-                  </Tabs.Trigger>
-                  <Tabs.Trigger
-                    value="redeem"
-                    className="transition-color w-1/2 rounded-tr-lg pb-3.5 pt-5 text-xs font-semibold uppercase text-pink-100/50 duration-200 ease-linear ui-state-active:bg-pink/10 ui-state-active:text-orange-400"
-                  >
-                    Redeem
-                  </Tabs.Trigger>
-                </Tabs.List>
-                <div className="relative overflow-hidden">
-                  <Tabs.Content
-                    value="deposit"
-                    className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out"
-                  >
-                    <LendingPairDepositForm {...props} />
-                  </Tabs.Content>
-                  <Tabs.Content
-                    value="redeem"
-                    className="pt-3 ui-state-active:animate-scale-in ui-state-inactive:absolute ui-state-inactive:inset-0 ui-state-inactive:animate-scale-out"
-                  >
-                    <LendingPairRedeem {...props} />
-                  </Tabs.Content>
-                </div>
-              </Tabs.Root>
-            </div>
-          </aside>
         </div>
       </Layout>
     </DisabledPage>
