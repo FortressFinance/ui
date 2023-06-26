@@ -64,7 +64,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
 
   // Configure form
   const form = useForm<TokenFormValues>({
-    values: {
+    defaultValues: {
       amountIn: "",
       inputToken: initInputToken,
       outputToken: initOutputToken,
