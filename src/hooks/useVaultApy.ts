@@ -283,7 +283,7 @@ export function useVaultGmxApr({ asset, type }: VaultProps) {
 
   return {
     ...tokenGlpVault,
-    data: tokenGlpVault.GMXApr,
+    data: tokenGlpVault.data?.GMXApr,
   }
 }
 
@@ -305,6 +305,6 @@ export function useVaultEthApr({ asset, type }: VaultProps) {
 
   return {
     ...tokenGlpVault,
-    data: tokenGlpVault.ETHApr,
+    data: tokenGlpVault.data?.ETHApr,
   }
 }

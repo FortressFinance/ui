@@ -22,6 +22,6 @@ export default function useTokenVaultArbitrumTotalApr({
 
   return {
     ...tokenGlpVault,
-    data: tokenGlpVault.totalApr,
+    data: tokenGlpVault.data?.totalApr,
   }
 }

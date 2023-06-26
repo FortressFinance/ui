@@ -36,12 +36,8 @@ export function useConcentratorTokenVaultArbitrumBreakdownApr({
 
   const isGlpTokenFallbackEnabled =
     enabled && !!targetAssetSymbol && targetAssetSymbol === "fcGLP"
-  const tokenGlpVault = useTokenGlpVault({
+
+  return useTokenGlpVault({
     enabled: isGlpTokenFallbackEnabled ?? false,
   })
-
-  return {
-    isLoading: false,
-    data: tokenGlpVault,
-  }
 }

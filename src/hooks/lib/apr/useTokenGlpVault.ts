@@ -24,10 +24,15 @@ export default function useTokenGlpVault({ enabled }: { enabled?: boolean }) {
     enabled: enabled,
   })
 
-  return useGetFortGlpAprFallback({
+  const result = useGetFortGlpAprFallback({
     ethRewardsPerSecond: glpQuery.data,
     enabled: enabled && !!glpQuery.data,
   })
+
+  return {
+    isLoading: false,
+    data: result,
+  }
 }
 
 export function useGetFortGlpAprFallback({
