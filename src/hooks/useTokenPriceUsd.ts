@@ -2,12 +2,12 @@ import { useQuery } from "@tanstack/react-query"
 import { Address } from "wagmi"
 
 import { getCurvePrice } from "@/lib/api/pricer/getCurvePrice"
-import { getGlpPrice } from "@/lib/api/pricer/getGlpPrice"
 import { getLlamaPrice, getLlamaPriceEth } from "@/lib/api/pricer/getLlamaPrice"
 import { queryKeys } from "@/lib/helpers"
 import { useActiveChainConfig, useActiveChainId } from "@/hooks"
+import { useGlpPrice } from "@/hooks/lib/pricer/useGlpPrice"
 
-import { ethTokenAddress, glpTokenAddress } from "@/constant/addresses"
+import { ethTokenAddress, sGlpTokenAddress } from "@/constant/addresses"
 
 export function useTokenPriceUsd({
   asset = "0x",
@@ -17,17 +17,15 @@ export function useTokenPriceUsd({
   enabled?: boolean
 }) {
   const chainConfig = useActiveChainConfig()
-  const customPricers: Record<Address, () => Promise<number>> = {
-    [glpTokenAddress]: getGlpPrice,
-    [chainConfig.fcGlpTokenAddress]: getGlpPrice,
-  }
+  const { price } = useGlpPrice({ enabled })
 
   const chainId = useActiveChainId()
   const priceRequest = useQuery({
     ...queryKeys.tokens.priceUsd({ asset }),
-    queryFn: customPricers[asset]
-      ? customPricers[asset]
-      : () => getApiPrice({ asset, chainId }),
+    queryFn:
+      sGlpTokenAddress === asset || chainConfig.fcGlpTokenAddress === asset
+        ? () => price
+        : () => getApiPrice({ asset, chainId }),
     enabled: enabled && asset !== "0x",
   })
 

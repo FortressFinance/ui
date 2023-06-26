@@ -16,7 +16,11 @@ export const ethTokenAddress: Address =
   "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
 export const glpRewardsDistributorAddress: Address =
   "0x5C04a12EB54A093c396f61355c6dA0B15890150d"
-export const glpTokenAddress: Address =
+export const sGlpTokenAddress: Address =
   "0x5402B5F40310bDED796c7D0F3FF6683f5C0cFfdf"
 export const multiClaimAddress: Address =
   "0x259c2B9F14Ef98620d529feEf6d0D22269fDfbeD"
+export const glpManagerAddress: Address =
+  "0x3963FfC9dff443c2A94f21b129D429891E32ec18"
+export const glpTokenAddress: Address =
+  "0x4277f8F2c384827B5273592FF7CeBd9f2C1ac258"

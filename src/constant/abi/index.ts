@@ -1,6 +1,7 @@
 export * from "./AMMCompounderBase"
 export * from "./AMMConcentratorBase"
 export * from "./FortressLendingPair"
+export * from "./GlpManager"
 export * from "./MultiClaimer"
 export * from "./RewardDistributor"
 export * from "./TokenCompounderBase"

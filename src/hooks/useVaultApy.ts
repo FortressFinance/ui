@@ -278,13 +278,12 @@ export function useVaultGmxApr({ asset, type }: VaultProps) {
   const isGlpTokenFallbackEnabled =
     isToken && !!ybTokenSymbol && ybTokenSymbol === "fortGLP"
   const tokenGlpVault = useTokenGlpVault({
-    asset,
     enabled: isGlpTokenFallbackEnabled ?? false,
   })
 
   return {
     ...tokenGlpVault,
-    data: tokenGlpVault.data?.GMXApr,
+    data: tokenGlpVault.GMXApr,
   }
 }
 
@@ -301,12 +300,11 @@ export function useVaultEthApr({ asset, type }: VaultProps) {
   const isGlpTokenFallbackEnabled =
     isToken && !!ybTokenSymbol && ybTokenSymbol === "fortGLP"
   const tokenGlpVault = useTokenGlpVault({
-    asset,
     enabled: isGlpTokenFallbackEnabled ?? false,
   })
 
   return {
     ...tokenGlpVault,
-    data: tokenGlpVault.data?.ETHApr,
+    data: tokenGlpVault.ETHApr,
   }
 }

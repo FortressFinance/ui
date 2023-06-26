@@ -141,7 +141,7 @@ const ConcentratorRewardsApy: FC<ConcentratorRewardsProps> = ({
         !isReady ||
         concentratorTargetAssetsIsLoading ||
         concentratorsList.isLoading ||
-        totalApy.isLoading
+        (totalApy.isLoading ?? false)
       }
     >
       {formatPercentage(totalApy.data)}

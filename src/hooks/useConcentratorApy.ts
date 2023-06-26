@@ -41,10 +41,16 @@ export function useConcentratorApy({
   })
 
   const isCurveFallbackEnabled =
-    apiQuery.isError && shouldCurveFallback && !shouldTokenFallback
+    (apiQuery.isError || (apiQuery.data?.APY.compounderAPY ?? 0) === 0) &&
+    shouldCurveFallback &&
+    !shouldTokenFallback
   const isBalancerFallbackEnabled =
-    apiQuery.isError && !shouldCurveFallback && !shouldTokenFallback
-  const isTokenFallbackEnabled = apiQuery.isError && shouldTokenFallback
+    (apiQuery.isError || (apiQuery.data?.APY.compounderAPY ?? 0) === 0) &&
+    !shouldCurveFallback &&
+    !shouldTokenFallback
+  const isTokenFallbackEnabled =
+    (apiQuery.isError || (apiQuery.data?.APY.compounderAPY ?? 0) === 0) &&
+    shouldTokenFallback
 
   const fallbackApr = useConcentratorFallbackApr({ targetAsset })
 

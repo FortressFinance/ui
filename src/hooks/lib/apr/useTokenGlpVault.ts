@@ -1,18 +1,16 @@
-import { Address, useContractRead, useQuery } from "wagmi"
+import { useEffect, useState } from "react"
+import { useContractRead } from "wagmi"
 
-import { getFortGlpAprFallback } from "@/lib/api/vaults"
-import { useActiveChainId } from "@/hooks"
+import { getApiPrice, useActiveChainId } from "@/hooks"
+import { useGlpPrice } from "@/hooks/lib/pricer/useGlpPrice"
 
 import { RewardDistributor } from "@/constant/abi"
-import { glpRewardsDistributorAddress } from "@/constant/addresses"
+import {
+  ethTokenAddress,
+  glpRewardsDistributorAddress,
+} from "@/constant/addresses"
 
-export default function useTokenGlpVault({
-  asset,
-  enabled,
-}: {
-  asset: Address
-  enabled: boolean
-}) {
+export default function useTokenGlpVault({ enabled }: { enabled?: boolean }) {
   let chainId = useActiveChainId()
   // force to get the latest tokensPerInterval in mainnet
   if (chainId === 313371) {
@@ -26,13 +24,40 @@ export default function useTokenGlpVault({
     enabled: enabled,
   })
 
-  const ethRewardsPerSecond = glpQuery.data
-
-  const fortGlpAprFallback = useQuery([chainId, asset, "fortGlpAprFallback"], {
-    queryFn: () => getFortGlpAprFallback(ethRewardsPerSecond),
-    retry: false,
-    enabled: enabled && !!ethRewardsPerSecond,
+  return useGetFortGlpAprFallback({
+    ethRewardsPerSecond: glpQuery.data,
+    enabled: enabled && !!glpQuery.data,
   })
+}
 
-  return fortGlpAprFallback
+export function useGetFortGlpAprFallback({
+  ethRewardsPerSecond,
+  enabled,
+}: {
+  ethRewardsPerSecond?: bigint
+  enabled?: boolean
+}) {
+  const [ethPrice, setEthPrice] = useState(0)
+  useEffect(() => {
+    async function fetchPrice() {
+      const price = await getApiPrice({ asset: ethTokenAddress })
+      setEthPrice(price)
+    }
+    fetchPrice()
+  }, [])
+
+  const { aumInUsdg: aum, price: priceGmx } = useGlpPrice({ enabled })
+  const ethRewardsAnnual =
+    (Number(ethRewardsPerSecond ?? 0n) * 3600 * 24 * 365) / 1e18
+
+  const gmxRewardsMonthlyEmissionRate = 0 // need to know why is it zero
+  const esGmxRewards = priceGmx * gmxRewardsMonthlyEmissionRate * 12
+  const aprGmx = esGmxRewards / aum
+  const aprEth = (ethRewardsAnnual * ethPrice) / aum
+  const totalApr = aprGmx + aprEth
+  return {
+    GMXApr: aprGmx,
+    ETHApr: aprEth,
+    totalApr: totalApr,
+  }
 }
