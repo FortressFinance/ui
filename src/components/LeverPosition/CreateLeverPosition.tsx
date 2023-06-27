@@ -77,6 +77,8 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     : Array(4)
 
   const [borrowAmount, setBorrowAmount] = useState<bigint>(0n)
+  const [borrowAmountAsCollateral, setBorrowAmountAsCollateral] =
+    useState<bigint>(0n)
   const [collateralAmount, setCollateralAmount] = useState<bigint>(0n)
 
   const form = useForm<CreateLeverPositionFormValues>({
@@ -152,12 +154,15 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
             ? leveredCollateralAmount + (leverPair.data.collateralAmount ?? 0n)
             : undefined
         )
-        // borrowAmount is the amount of borrowed asset for this transaction
+        // borrowAmount is the amount borrowed, denominated in collateral token, for this transaction
+        const addedBorrowAmountAsCollateral = subSlippage(
+          addedCollateralAmount * BigInt(leverAmount - 1),
+          slippageTolerance
+        )
+        setBorrowAmountAsCollateral(addedBorrowAmountAsCollateral)
+        // borrowAmount is the amount borrowed, denominated in asset token, for this transaction
         const addedBorrowAmount = collateralToAsset(
-          subSlippage(
-            collateralAmount * BigInt(leverAmount - 1),
-            slippageTolerance
-          ),
+          addedBorrowAmountAsCollateral,
           leverPair.data.exchangeRate,
           leverPair.data.constants?.exchangePrecision
         )
@@ -166,11 +171,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
         setEstimatedBorrowAmount(
           leverAmount > 1
             ? addSlippage(
-                collateralToAsset(
-                  leveredCollateralAmount - addedCollateralAmount,
-                  leverPair.data.exchangeRate,
-                  leverPair.data.constants?.exchangePrecision
-                ) + (leverPair.data.borrowedAmount ?? 0n),
+                addedBorrowAmount + (leverPair.data.borrowedAmount ?? 0n),
                 BORROW_BUFFER_PERCENTAGE
               )
             : undefined
@@ -182,9 +183,12 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     [amount, leverAmount]
   )
 
-  // reset preview amounts when switching assets
+  // reset data when switching assets
   useEffect(
     () => {
+      form.reset()
+      setBorrowAmount(0n)
+      setCollateralAmount(0n)
       setEstimatedBorrowAmount(undefined)
       setEstimatedCollateralAmount(undefined)
     },
@@ -203,7 +207,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     token: collateralAssetAddress,
     enabled: !isUpdatingAmounts && collateralAmount > 0,
   })
-  const minAmount = subSlippage(borrowAmount, slippageTolerance)
+  const minAmount = subSlippage(borrowAmountAsCollateral, slippageTolerance)
   const leverPosition = useLeverPosition({
     borrowAmount,
     underlyingAssetAddress,
@@ -349,6 +353,8 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
             >
               {leverPosition.prepare.error?.message.includes("SlippageTooHigh")
                 ? "Slippage too high"
+                : leverPosition.prepare.error?.message.includes("Insolvent")
+                ? "Insolvent"
                 : "Lever position"}
             </Button>
           ) : (
