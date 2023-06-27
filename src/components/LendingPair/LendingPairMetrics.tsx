@@ -69,12 +69,7 @@ export const LendingPairMetrics: FC<LendingPairMetricsProps> = ({
         <div className="flex items-center justify-between gap-3 lg:gap-6">
           <div className="text-sm uppercase text-white/75">Exchange rate</div>
           <div className="inline-flex gap-2 font-mono lg:text-lg">
-            1{" "}
-            <AssetSymbol
-              address={lendingPair.data?.collateralContract}
-              chainId={props.chainId}
-            />{" "}
-            = <CollateralAssetPrice {...props} />
+            <CollateralAssetPrice {...props} />
             <AssetSymbol address={lendingPair.data?.assetContract} />
           </div>
         </div>

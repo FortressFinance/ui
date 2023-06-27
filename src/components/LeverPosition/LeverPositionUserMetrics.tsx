@@ -179,12 +179,6 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
             {isClientReady && isConnected ? (
               <>
                 <span>
-                  1{" "}
-                  <AssetSymbol
-                    address={lendingPair.data?.collateralContract}
-                    chainId={props.chainId}
-                  />{" "}
-                  ={" "}
                   {borrowAmountSignificant
                     ? formatCurrencyUnits({
                         amountWei: liquidationPrice.toString(),
