@@ -7,5 +7,3 @@ export const convexSidechainsUrl =
   "https://www.convexfinance.com/api/curve-arbitrum-apys"
 export const convexStakingUrl =
   "https://api.thegraph.com/subgraphs/name/convex-community/convex-staking"
-export const gmxGraphUrl =
-  "https://api.thegraph.com/subgraphs/name/gmx-io/gmx-stats"

@@ -17,7 +17,7 @@ import { useToastStore } from "@/store"
 
 import { FortressLendingPair } from "@/constant/abi"
 
-// We add a 0.005% buffer to the borrow amount to account for inaccuracy in the conversion to/from assets/shares
+// We add a 0.005% buffer to the borrow amount to account for interest that has not accrued yet
 export const BORROW_BUFFER_PERCENTAGE = 0.005
 
 export const useLeverPair = ({
@@ -354,14 +354,14 @@ export const useRepayAsset = ({
 }
 
 export const useRepayAssetWithCollateral = ({
-  borrowAssetAddress = "0x",
+  underlyingAssetAddress = "0x",
   collateralAmount = 0n,
   minAmount = 0n,
   enabled = true,
   pairAddress,
   onSuccess,
 }: {
-  borrowAssetAddress?: Address
+  underlyingAssetAddress?: Address
   collateralAmount?: bigint
   minAmount?: bigint
   enabled?: boolean
@@ -375,8 +375,8 @@ export const useRepayAssetWithCollateral = ({
     address: pairAddress,
     abi: FortressLendingPair,
     functionName: "repayAssetWithCollateral",
-    args: [collateralAmount, minAmount, borrowAssetAddress],
-    enabled: enabled && collateralAmount > 0 && borrowAssetAddress !== "0x",
+    args: [collateralAmount, minAmount, underlyingAssetAddress],
+    enabled: enabled && collateralAmount > 0 && underlyingAssetAddress !== "0x",
     onError: (error) => {
       if (error.message.includes("AlreadyCalledOnBlock")) {
         addToast({

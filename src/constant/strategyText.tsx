@@ -6,13 +6,13 @@ import {
   crvTriCryptoTokenAddress,
   crvTwoCryptoTokenAddress,
   fraxBpTokenAddress,
-  glpTokenAddress,
+  sGlpTokenAddress,
 } from "@/constant/addresses"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const strategyText: { [key in VaultProductType]: any } = {
   compounder: {
-    [glpTokenAddress]: (
+    [sGlpTokenAddress]: (
       <>
         <p>
           This vault accepts deposits in form of its primary asset sGLP and any

@@ -42,5 +42,6 @@ export function useTokenVaultTotalApr({
   if (!isArbitrumFamily) {
     return tokenVaultMainnetTotalApr
   }
+
   return tokenVaultArbitrumTotalApr
 }
