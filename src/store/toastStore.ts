@@ -1,12 +1,12 @@
 import { uniqueId } from "lodash"
+import { ProviderRpcError, RpcError } from "viem"
 import { Address } from "wagmi"
 import { create } from "zustand"
 
 type ToastInfo =
   | { type: "errorSpeedBump"; action?: string }
   | { type: "errorTx"; action?: string; hash?: string }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  | { type: "errorWrite"; action?: string; error: any }
+  | { type: "errorWrite"; action?: string; error: RpcError | ProviderRpcError }
   | { type: "startTx"; action?: string }
   | { type: "successTx"; action?: string; hash: string }
   | { type: "waitTx"; action?: string; hash: Address }
