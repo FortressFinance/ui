@@ -354,14 +354,14 @@ export const useRepayAsset = ({
 }
 
 export const useRepayAssetWithCollateral = ({
-  borrowAssetAddress = "0x",
+  underlyingAssetAddress = "0x",
   collateralAmount = 0n,
   minAmount = 0n,
   enabled = true,
   pairAddress,
   onSuccess,
 }: {
-  borrowAssetAddress?: Address
+  underlyingAssetAddress?: Address
   collateralAmount?: bigint
   minAmount?: bigint
   enabled?: boolean
@@ -375,8 +375,8 @@ export const useRepayAssetWithCollateral = ({
     address: pairAddress,
     abi: FortressLendingPair,
     functionName: "repayAssetWithCollateral",
-    args: [collateralAmount, minAmount, borrowAssetAddress],
-    enabled: enabled && collateralAmount > 0 && borrowAssetAddress !== "0x",
+    args: [collateralAmount, minAmount, underlyingAssetAddress],
+    enabled: enabled && collateralAmount > 0 && underlyingAssetAddress !== "0x",
     onError: (error) => {
       if (error.message.includes("AlreadyCalledOnBlock")) {
         addToast({
