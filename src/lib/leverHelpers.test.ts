@@ -125,7 +125,7 @@ describe("leverHelpers", () => {
     )
   })
 
-  describe("assetToCollateral", () => {
+  describe("collateralToAsset", () => {
     const cases = [
       {
         amount: undefined,
@@ -156,13 +156,13 @@ describe("leverHelpers", () => {
       "should return %p when called with %p",
       ({ amount, exchangeRate, exchangePrecision, expected }) => {
         expect(
-          assetToCollateral(amount, exchangeRate, exchangePrecision).toString()
+          collateralToAsset(amount, exchangeRate, exchangePrecision).toString()
         ).toEqual(expected)
       }
     )
   })
 
-  describe("collateralToAsset", () => {
+  describe("assetToCollateral", () => {
     const cases = [
       {
         amount: undefined,
@@ -193,7 +193,7 @@ describe("leverHelpers", () => {
       "should return %p when called with %p",
       ({ amount, exchangeRate, exchangePrecision, expected }) => {
         expect(
-          collateralToAsset(amount, exchangeRate, exchangePrecision).toString()
+          assetToCollateral(amount, exchangeRate, exchangePrecision).toString()
         ).toEqual(expected)
       }
     )

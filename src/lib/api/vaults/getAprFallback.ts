@@ -2,15 +2,10 @@ import axios from "axios"
 import request, { gql } from "graphql-request"
 import { Address } from "wagmi"
 
-import { getGmxPriceData } from "@/lib/api/pricer/getGlpPrice"
 import { VaultProps } from "@/lib/types"
 import { getApiPrice } from "@/hooks"
 
-import {
-  auraBalTokenAddress,
-  auraTokenAddress,
-  ETH,
-} from "@/constant/addresses"
+import { auraBalTokenAddress, auraTokenAddress } from "@/constant/addresses"
 import {
   auraFinanceUrl,
   auraGraphUrl,
@@ -42,25 +37,6 @@ export async function getVaultAprFallback(asset: VaultProps["asset"]) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = await request<any>(curveGraphUrl, graphqlQuery, variables)
   return data?.pools
-}
-
-export async function getFortGlpAprFallback(
-  ethRewardsPerSecond: bigint | undefined
-) {
-  const { aum, priceGmx } = await getGmxPriceData()
-  const ethRewardsAnnual =
-    (Number(ethRewardsPerSecond ?? 0n) * 3600 * 24 * 365) / 1e18
-  const ethPrice = await getApiPrice({ asset: ETH })
-  const gmxRewardsMonthlyEmissionRate = 0 // need to know why is it zero
-  const esGmxRewards = priceGmx * gmxRewardsMonthlyEmissionRate * 12
-  const aprGmx = esGmxRewards / aum
-  const aprEth = (ethRewardsAnnual * ethPrice) / aum
-  const totalApr = aprGmx + aprEth
-  return {
-    GMXApr: aprGmx,
-    ETHApr: aprEth,
-    totalApr: totalApr,
-  }
 }
 
 export async function getFortCvxCrvAprFallback() {

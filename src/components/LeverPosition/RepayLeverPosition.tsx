@@ -34,6 +34,7 @@ type RepayLeverPositionProps = {
   collateralAssetAddress?: Address
   collateralAssetBalance: ReturnType<typeof useTokenOrNativeBalance>
   collateralAmountSignificant: bigint
+  underlyingAssetAddress?: Address
   isUpdatingAmounts: boolean
   setEstimatedBorrowAmount: Dispatch<SetStateAction<bigint | undefined>>
   setEstimatedCollateralAmount: Dispatch<SetStateAction<bigint | undefined>>
@@ -55,6 +56,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
   collateralAssetAddress,
   collateralAssetBalance,
   collateralAmountSignificant,
+  underlyingAssetAddress,
   isUpdatingAmounts,
   setEstimatedBorrowAmount,
   setEstimatedCollateralAmount,
@@ -211,7 +213,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     leverPair.data.constants?.exchangePrecision
   )
   const repayAssetWithCollateral = useRepayAssetWithCollateral({
-    borrowAssetAddress: borrowAssetAddress,
+    underlyingAssetAddress,
     collateralAmount: repaymentAmount,
     minAmount: repaymentAmountMin,
     enabled:

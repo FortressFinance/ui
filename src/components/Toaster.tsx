@@ -3,7 +3,6 @@ import Link from "next/link"
 import { FC, useCallback, useEffect, useRef, useState } from "react"
 import { FaSignature } from "react-icons/fa"
 import { useHoverDirty } from "react-use"
-import { UserRejectedRequestError } from "viem"
 import { useNetwork, useWaitForTransaction } from "wagmi"
 import { shallow } from "zustand/shallow"
 
@@ -142,9 +141,7 @@ const Toast: FC<Toast> = (toast) => {
         {toast.type === "errorSpeedBump"
           ? `You must wait for one block to confirm before ${toast.action?.toLowerCase()}`
           : toast.type === "errorWrite"
-          ? toast.error instanceof UserRejectedRequestError
-            ? "User rejected request"
-            : "Error broadcasting transaction"
+          ? toast.error.shortMessage
           : toast.type === "errorTx"
           ? `${toast.action} unsuccessful`
           : toast.type === "successTx"

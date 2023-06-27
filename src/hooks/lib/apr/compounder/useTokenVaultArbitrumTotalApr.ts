@@ -17,7 +17,6 @@ export default function useTokenVaultArbitrumTotalApr({
   const isGlpTokenFallbackEnabled =
     enabled && !!ybTokenSymbol && ybTokenSymbol === "fcGLP"
   const tokenGlpVault = useTokenGlpVault({
-    asset,
     enabled: isGlpTokenFallbackEnabled ?? false,
   })
 

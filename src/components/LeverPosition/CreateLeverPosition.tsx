@@ -76,6 +76,9 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     ? Array(Math.floor(maxLeverage) - 1)
     : Array(4)
 
+  const [borrowAmount, setBorrowAmount] = useState<bigint>(0n)
+  const [borrowAmountAsCollateral, setBorrowAmountAsCollateral] =
+    useState<bigint>(0n)
   const [collateralAmount, setCollateralAmount] = useState<bigint>(0n)
 
   const form = useForm<CreateLeverPositionFormValues>({
@@ -134,31 +137,43 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
         setEstimatedBorrowAmount(undefined)
         setEstimatedCollateralAmount(undefined)
       } else {
+        // collateralAmount is the amount of collateral for this transaction
         const addedCollateralAmount = parseCurrencyUnits({
           amountFormatted: amount,
           decimals: collateralAssetBalance.data?.decimals,
         })
+        setCollateralAmount(addedCollateralAmount)
+        // estimatedCollateralAmount is the amount of collateral in the position after this transaction
         const leveredCollateralAmount =
           addedCollateralAmount > 0
             ? (addedCollateralAmount * BigInt(Math.floor(leverAmount * 100))) /
               100n
             : 0n
-        setCollateralAmount(addedCollateralAmount)
-        setEstimatedBorrowAmount(
-          leverAmount > 1
-            ? addSlippage(
-                collateralToAsset(
-                  leveredCollateralAmount - addedCollateralAmount,
-                  leverPair.data.exchangeRate,
-                  leverPair.data.constants?.exchangePrecision
-                ) + (leverPair.data.borrowedAmount ?? 0n),
-                BORROW_BUFFER_PERCENTAGE
-              )
-            : undefined
-        )
         setEstimatedCollateralAmount(
           leverAmount > 1
             ? leveredCollateralAmount + (leverPair.data.collateralAmount ?? 0n)
+            : undefined
+        )
+        // borrowAmount is the amount borrowed, denominated in collateral token, for this transaction
+        const addedBorrowAmountAsCollateral = subSlippage(
+          addedCollateralAmount * BigInt(leverAmount - 1),
+          slippageTolerance
+        )
+        setBorrowAmountAsCollateral(addedBorrowAmountAsCollateral)
+        // borrowAmount is the amount borrowed, denominated in asset token, for this transaction
+        const addedBorrowAmount = collateralToAsset(
+          addedBorrowAmountAsCollateral,
+          leverPair.data.exchangeRate,
+          leverPair.data.constants?.exchangePrecision
+        )
+        setBorrowAmount(addedBorrowAmount)
+        // estimatedBorrowAmount is the amount of borrowed asset in the position after this transaction
+        setEstimatedBorrowAmount(
+          leverAmount > 1
+            ? addSlippage(
+                addedBorrowAmount + (leverPair.data.borrowedAmount ?? 0n),
+                BORROW_BUFFER_PERCENTAGE
+              )
             : undefined
         )
       }
@@ -168,9 +183,12 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     [amount, leverAmount]
   )
 
-  // reset preview amounts when switching assets
+  // reset data when switching assets
   useEffect(
     () => {
+      form.reset()
+      setBorrowAmount(0n)
+      setCollateralAmount(0n)
       setEstimatedBorrowAmount(undefined)
       setEstimatedCollateralAmount(undefined)
     },
@@ -189,12 +207,7 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
     token: collateralAssetAddress,
     enabled: !isUpdatingAmounts && collateralAmount > 0,
   })
-  const borrowAmount = collateralToAsset(
-    collateralAmount * BigInt(leverAmount) - collateralAmount,
-    leverPair.data.exchangeRate,
-    leverPair.data.constants?.exchangePrecision
-  )
-  const minAmount = subSlippage(borrowAmount, slippageTolerance)
+  const minAmount = subSlippage(borrowAmountAsCollateral, slippageTolerance)
   const leverPosition = useLeverPosition({
     borrowAmount,
     underlyingAssetAddress,
@@ -340,6 +353,8 @@ export const CreateLeverPosition: FC<CreateLeverPositionProps> = ({
             >
               {leverPosition.prepare.error?.message.includes("SlippageTooHigh")
                 ? "Slippage too high"
+                : leverPosition.prepare.error?.message.includes("Insolvent")
+                ? "Insolvent"
                 : "Lever position"}
             </Button>
           ) : (

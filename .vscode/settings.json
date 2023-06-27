@@ -7,5 +7,6 @@
   },
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "barrelr.useDoubleQuotes": true,
-  "barrelr.useSemiColons": false
+  "barrelr.useSemiColons": false,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

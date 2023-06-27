@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react"
 import { formatUnits } from "viem"
 import { Address, useContractRead } from "wagmi"
 
-import { getGlpPrice } from "@/lib/api/pricer/getGlpPrice"
+import { useGlpPrice } from "@/hooks/lib/pricer/useGlpPrice"
 import { useActiveChainId } from "@/hooks/useActiveChainId"
 import { useTokenVaultSymbol } from "@/hooks/useTokenVaultSymbol"
 
@@ -105,15 +104,11 @@ function useTokenPreviewDepositUnderlying({
   const chainId = useActiveChainId()
   const isArbitrumFamily =
     chainId === 313371 || chainId === 42161 || chainId === 1337
-  const [glpPrice, setGlpPrice] = useState(0)
+  const { price: glpPrice } = useGlpPrice({ enabled })
 
   if (token == ETH) {
     token = WETH_ARBI
   }
-  useEffect(() => {
-    getGlpPrice().then((price) => setGlpPrice(price))
-  }, [])
-
   const tokenPriceWei = useContractRead({
     chainId,
     abi: GlpVault,
