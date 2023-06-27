@@ -17,7 +17,7 @@ import { useToastStore } from "@/store"
 
 import { FortressLendingPair } from "@/constant/abi"
 
-// We add a 0.005% buffer to the borrow amount to account for inaccuracy in the conversion to/from assets/shares
+// We add a 0.005% buffer to the borrow amount to account for interest that has not accrued yet
 export const BORROW_BUFFER_PERCENTAGE = 0.005
 
 export const useLeverPair = ({
