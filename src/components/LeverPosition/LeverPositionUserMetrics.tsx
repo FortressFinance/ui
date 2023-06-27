@@ -4,11 +4,8 @@ import { useAccount } from "wagmi"
 
 import {
   assetToCollateral,
-  calculateAvailableCredit,
   calculateLiquidationPrice,
   calculateLTV,
-  calculateMaxBorrowAmount,
-  collateralToAsset,
   ltvPercentage,
 } from "@/lib"
 import clsxm from "@/lib/clsxm"
@@ -72,30 +69,6 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
       leverPair.data.constants?.exchangePrecision
     ),
   ]
-  const [collateralAmountAsAsset, estimatedCollateralAmountAsAsset] = [
-    collateralToAsset(
-      collateralAmountSignificant,
-      leverPair.data.exchangeRate,
-      leverPair.data.constants?.exchangePrecision
-    ),
-    collateralToAsset(
-      estimatedCollateralAmount ?? collateralAmountSignificant,
-      leverPair.data.exchangeRate,
-      leverPair.data.constants?.exchangePrecision
-    ),
-  ]
-  const [maxBorrowAmount, estimatedMaxBorrowAmount] = [
-    calculateMaxBorrowAmount({
-      collateralAmountAsAsset,
-      maxLTV: leverPair.data.maxLTV,
-      ltvPrecision: leverPair.data.constants?.ltvPrecision,
-    }),
-    calculateMaxBorrowAmount({
-      collateralAmountAsAsset: estimatedCollateralAmountAsAsset,
-      maxLTV: leverPair.data.maxLTV,
-      ltvPrecision: leverPair.data.constants?.ltvPrecision,
-    }),
-  ]
   const [LTV, estimatedLTV] = [
     calculateLTV({
       borrowedAmountAsCollateral,
@@ -121,16 +94,6 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
       ltv: estimatedLTV,
       ltvPrecision: leverPair.data.constants?.ltvPrecision,
       maxLTV: leverPair.data.maxLTV,
-    }),
-  ]
-  const [availableCredit, estimatedAvailableCredit] = [
-    calculateAvailableCredit({
-      borrowedAmount: borrowAmountSignificant,
-      maxBorrowAmount,
-    }),
-    calculateAvailableCredit({
-      borrowedAmount: estimatedBorrowAmount ?? borrowAmountSignificant,
-      maxBorrowAmount: estimatedMaxBorrowAmount,
     }),
   ]
 
@@ -286,46 +249,6 @@ export const LeverPositionUserMetrics: FC<LeverPositionUserMetricsProps> = ({
             )}
             <AssetSymbol
               address={lendingPair.data?.collateralContract}
-              chainId={props.chainId}
-            />
-          </div>
-        </div>
-        <div className="flex items-center justify-between gap-3 lg:gap-6">
-          <div className="text-sm uppercase text-white/75">
-            Available credit
-          </div>
-          <div
-            className={clsxm("inline-flex gap-2 font-mono lg:text-lg", {
-              "animate-pulse": isUpdatingAmounts,
-            })}
-          >
-            {isClientReady && isConnected ? (
-              <>
-                <span>
-                  {formatCurrencyUnits({
-                    amountWei: availableCredit.toString(),
-                    decimals: borrowAsset.data?.decimals,
-                    maximumFractionDigits: 6,
-                  })}
-                </span>
-                {(estimatedBorrowAmount || estimatedCollateralAmount) && (
-                  <span className="inline-flex items-center gap-2 font-medium text-orange">
-                    <FiArrowRight />
-                    <GradientText>
-                      {formatCurrencyUnits({
-                        amountWei: estimatedAvailableCredit.toString(),
-                        decimals: borrowAsset.data?.decimals,
-                        maximumFractionDigits: 6,
-                      })}
-                    </GradientText>
-                  </span>
-                )}
-              </>
-            ) : (
-              "—"
-            )}
-            <AssetSymbol
-              address={lendingPair.data?.assetContract}
               chainId={props.chainId}
             />
           </div>
