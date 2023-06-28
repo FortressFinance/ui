@@ -11,7 +11,7 @@ import { ETH, glpRewardsDistributorAddress } from "@/constant/addresses"
 export default function useTokenGlpVault({ enabled }: { enabled?: boolean }) {
   let chainId = useActiveChainId()
   // force to get the latest tokensPerInterval in mainnet
-  if (chainId === 313371) {
+  if (chainId === 313371 || chainId === 1337) {
     chainId = 42161
   }
   const glpQuery = useContractRead({
@@ -19,7 +19,7 @@ export default function useTokenGlpVault({ enabled }: { enabled?: boolean }) {
     abi: RewardDistributor,
     address: glpRewardsDistributorAddress,
     functionName: "tokensPerInterval",
-    enabled: enabled,
+    enabled,
   })
 
   const result = useGetFortGlpAprFallback({

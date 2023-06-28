@@ -8,7 +8,7 @@ export default function useTokenVaultArbitrumTotalApr({
   enabled,
 }: {
   asset: Address
-  enabled: boolean
+  enabled?: boolean
 }) {
   const tokenVaultSymbol = useTokenVaultSymbol({ asset, enabled })
 

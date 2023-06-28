@@ -8,7 +8,8 @@ import { glpManagerAddress, glpTokenAddress } from "@/constant/addresses"
 
 export function useGlpPrice({ enabled }: { enabled?: boolean }) {
   const chainId = useActiveChainId()
-  const isArbitrumFamily = chainId === 313371 || chainId === 42161
+  const isArbitrumFamily =
+    chainId === 313371 || chainId === 42161 || chainId === 1337
   const queries = useContractReads({
     contracts: [
       {
