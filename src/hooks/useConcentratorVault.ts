@@ -32,9 +32,7 @@ export function useConcentratorVault({
       rewardTokenAddress: targetAsset ?? "0x",
     }),
   })
-  return apiQuery.isError
-    ? { ...fallbackRequest, data: fallbackRequest.data }
-    : apiQuery
+  return fallbackRequest.isSuccess ? fallbackRequest : apiQuery
 }
 
 export function useConcentratorVaultList({

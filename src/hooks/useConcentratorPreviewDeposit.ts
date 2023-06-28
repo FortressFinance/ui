@@ -62,5 +62,5 @@ export function useConcentratorPreviewDeposit({
     enabled: apiQuery.isError && enabled,
   })
 
-  return apiQuery.isError ? previewFallback : apiQuery
+  return previewFallback.isSuccess ? previewFallback : apiQuery
 }

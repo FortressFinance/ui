@@ -32,7 +32,7 @@ export function useConcentratorId({
     enabled: apiQuery.isError && targetAsset !== "0x" && enabled,
   })
 
-  if (apiQuery.isError) {
+  if (primaryAssets.isSuccess) {
     let relevantIndex = -1
     primaryAssets.data?.map((curPrimaryAsset, index) => {
       if (

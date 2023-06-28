@@ -61,9 +61,5 @@ export function useConcentratorPreviewRedeem({
     enabled,
   })
 
-  if (apiQuery.isError) {
-    return previewFallback
-  }
-
-  return apiQuery
+  return previewFallback.isSuccess ? previewFallback : apiQuery
 }

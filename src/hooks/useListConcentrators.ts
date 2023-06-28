@@ -20,12 +20,5 @@ export function useListConcentrators({
     concentratorTargetAssets,
     enabled: apiQuery.isError && enabled,
   })
-
-  if (apiQuery.isError) {
-    return {
-      ...primaryAssets,
-      data: primaryAssets.data,
-    }
-  }
-  return apiQuery
+  return primaryAssets.isSuccess ? primaryAssets : apiQuery
 }

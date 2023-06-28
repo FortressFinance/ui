@@ -26,5 +26,5 @@ export function useConcentratorUnderlyingAssets({
     args: [firstConcentratorVaultType === "curve", targetAsset, primaryAsset],
     enabled: apiQuery.isError,
   })
-  return apiQuery.isError ? underlyingAssets : apiQuery
+  return underlyingAssets.isSuccess ? underlyingAssets : apiQuery
 }

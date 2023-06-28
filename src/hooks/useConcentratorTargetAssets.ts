@@ -22,7 +22,5 @@ export function useConcentratorTargetAssets(
     onSuccess: options.onSuccess,
     enabled: apiQuery.isError && options.enabled,
   })
-  return apiQuery.isError
-    ? { ...targetAssets, data: targetAssets.data }
-    : apiQuery
+  return targetAssets.isSuccess ? targetAssets : apiQuery
 }
