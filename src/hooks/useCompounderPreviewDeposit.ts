@@ -23,11 +23,12 @@ export function useCompounderPreviewDeposit({
   const isToken = useIsTokenVault(type)
   const isCurve = useIsCurveVault(type)
 
-  const { data: poolId } = useVaultPoolId({
+  const { data: poolId, isLoading: poolIdIsLoading } = useVaultPoolId({
     asset: rest.asset ?? "0x",
     type: type ?? "curve",
     enabled,
   })
+
   const args = {
     amount: rest.amount,
     chainId: rest.chainId,
@@ -46,7 +47,7 @@ export function useCompounderPreviewDeposit({
     keepPreviousData: args.amount !== "0",
     refetchInterval: args.amount !== "0" ? 20000 : false,
     refetchIntervalInBackground: false,
-    enabled: args.amount !== "0" && enabled,
+    enabled: args.amount !== "0" && enabled && !poolIdIsLoading,
     onError,
     onSuccess,
   })
@@ -55,18 +56,18 @@ export function useCompounderPreviewDeposit({
     ...rest,
     type,
     slippage: args.slippage,
-    enabled: apiQuery.isError && enabled && isCurve,
+    enabled: apiQuery.isError && enabled && isCurve && !poolIdIsLoading,
   })
 
   const tokenPreviewFallback = useTokenPreviewDepositFallback({
     ...rest,
     slippage: args.slippage,
-    enabled: apiQuery.isError && enabled && isToken,
+    enabled: apiQuery.isError && enabled && isToken && !poolIdIsLoading,
   })
 
-  return apiQuery.isError && isCurve
-    ? curvePreviewFallback
-    : apiQuery.isError && isToken
+  return tokenPreviewFallback.isSuccess && isToken
     ? tokenPreviewFallback
+    : curvePreviewFallback.isSuccess && isCurve
+    ? curvePreviewFallback
     : apiQuery
 }
