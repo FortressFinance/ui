@@ -8,7 +8,7 @@ import { queryKeys } from "@/lib/helpers"
 import { PreviewTransactionBaseArgs } from "@/hooks/lib/api/types"
 import { useVaultPoolId } from "@/hooks/useVaultPoolId"
 
-import { useGlobalStore } from "@/store"
+import { useSlippageTolerance } from "@/store"
 
 export function useCompounderPreviewRedeem({
   enabled = true,
@@ -27,7 +27,7 @@ export function useCompounderPreviewRedeem({
     token: rest.token,
     id: poolId,
     // we store slippage as a fraction of 100; api expects slippage as a fraction of 1
-    slippage: useGlobalStore((store) => store.slippageTolerance) / 100,
+    slippage: useSlippageTolerance() / 100,
   }
   return useQuery({
     ...queryKeys.vaults.previewRedeem(args),

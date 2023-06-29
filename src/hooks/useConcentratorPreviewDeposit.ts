@@ -7,7 +7,7 @@ import { useConcentratorFirstVaultType } from "@/hooks/useConcentratorFirstVault
 import { useConcentratorId } from "@/hooks/useConcentratorId"
 import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAssetId"
 
-import { useGlobalStore } from "@/store"
+import { useSlippageTolerance } from "@/store"
 
 export function useConcentratorPreviewDeposit({
   enabled = true,
@@ -35,7 +35,7 @@ export function useConcentratorPreviewDeposit({
     concentratorId,
     isCurve: firstConcentratorVaultType === "curve",
     // we store slippage as a fraction of 100; api expects slippage as a fraction of 1
-    slippage: useGlobalStore((store) => store.slippageTolerance) / 100,
+    slippage: useSlippageTolerance() / 100,
   }
   return useQuery({
     ...queryKeys.concentrators.previewDeposit(args),
