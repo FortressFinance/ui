@@ -16,8 +16,8 @@ type GlobalStore = {
   setConsentAccepted: (consentAccepted: boolean) => void
   expertMode: boolean
   setExpertMode: (expertMode: boolean) => void
-  slippageTolerance: number
-  setSlippageTolerance: (slippageTolerance: number) => void
+  slippageTolerance?: number
+  setSlippageTolerance: (slippageTolerance?: number) => void
 }
 
 export const useGlobalStore = create<GlobalStore>()(
@@ -31,11 +31,12 @@ export const useGlobalStore = create<GlobalStore>()(
       setConsentAccepted: (consentAccepted) => set({ consentAccepted }),
       expertMode: false,
       setExpertMode: (expertMode) => set({ expertMode }),
-      slippageTolerance: DEFAULT_SLIPPAGE,
+      slippageTolerance: undefined,
       setSlippageTolerance: (slippageTolerance) => set({ slippageTolerance }),
     }),
     {
       name: "fortress-v1.global",
+      version: 2,
       partialize: (store) => ({
         // persist only the following properties
         consentAccepted: store.consentAccepted,
@@ -45,3 +46,6 @@ export const useGlobalStore = create<GlobalStore>()(
     }
   )
 )
+
+export const useSlippageTolerance = () =>
+  useGlobalStore((state) => state.slippageTolerance) ?? DEFAULT_SLIPPAGE
