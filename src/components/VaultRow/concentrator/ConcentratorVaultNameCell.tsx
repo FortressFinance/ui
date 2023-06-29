@@ -25,7 +25,7 @@ export const ConcentratorVaultNameCell: FC<VaultRowPropsWithProduct> = (
         secondTokenAddress={secondInputToken}
       />
 
-      <span className="line-clamp-2 max-lg:mr-8">
+      <span className="max-lg:mr-8">
         <VaultName {...props} vaultAddress={ybTokenAddress} />
       </span>
     </>

@@ -12,7 +12,7 @@ export const VaultName: FC<VaultProps> = (props) => {
     <Skeleton
       isLoading={vault.isLoading}
       loadingText="Loading vault"
-      className="float-left"
+      className="line-clamp-2 flex"
     >
       {vault.data?.name}
     </Skeleton>
