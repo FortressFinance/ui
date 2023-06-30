@@ -1,101 +1,31 @@
-import {
-  Children,
-  cloneElement,
-  FC,
-  PropsWithChildren,
-  useCallback,
-  useRef,
-  useState,
-} from "react"
-import { usePopper } from "react-popper"
+import * as TooltipPrimitive from "@radix-ui/react-tooltip"
+import { FC, PropsWithChildren } from "react"
 
-import clsxm from "@/lib/clsxm"
+import { inter } from "@/lib/fonts"
 
-import Triangle from "~/svg/triangle.svg"
-
-type TooltipProps = {
+type TooltipProps = PropsWithChildren<{
   label: string
-}
+}>
 
-const Tooltip: FC<PropsWithChildren<TooltipProps>> = ({ children, label }) => {
-  const enterTimeout = useRef<NodeJS.Timeout | null>(null)
-  const exitTimeout = useRef<NodeJS.Timeout | null>(null)
-
-  const [isOpen, setIsOpen] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
-  const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(
-    null
-  )
-  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null)
-  const [arrowElement, setArrowElement] = useState<HTMLElement | null>(null)
-
-  const onOpen = useCallback(() => {
-    if (enterTimeout.current) clearTimeout(enterTimeout.current)
-    setIsOpen(true)
-    setIsMounted(true)
-  }, [])
-  const onMouseEnter = useCallback(() => {
-    if (exitTimeout.current) {
-      clearTimeout(exitTimeout.current)
-      exitTimeout.current = null
-    }
-    if (!enterTimeout.current) enterTimeout.current = setTimeout(onOpen, 300)
-  }, [onOpen])
-  const onMouseLeave = useCallback(() => {
-    if (enterTimeout.current) {
-      clearTimeout(enterTimeout.current)
-      enterTimeout.current = null
-    }
-    setIsOpen(false)
-    exitTimeout.current = setTimeout(() => setIsMounted(false), 200)
-  }, [setIsOpen])
-
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "top",
-    strategy: "absolute",
-    modifiers: [
-      { name: "preventOverflow", options: { padding: 8 } },
-      { name: "offset", options: { offset: [0, 16] } },
-      { name: "arrow", options: { element: arrowElement } },
-    ],
-  })
-
-  const child = Children.only(children) as React.ReactElement & {
-    ref?: React.Ref<unknown>
-  }
-
-  return (
-    <>
-      {cloneElement(child, {
-        onMouseEnter,
-        onMouseLeave,
-        ref: setReferenceElement,
-      })}
-      {isMounted && (
-        <div
-          ref={setPopperElement}
-          className={clsxm(
-            "z-20 !m-0 max-w-sm rounded-lg bg-blue px-4 py-2 text-center text-sm font-normal text-white",
-            {
-              "animate-fade-in": isOpen,
-              "animate-fade-out": !isOpen,
-            }
-          )}
-          style={styles.popper}
-          {...attributes.popper}
-        >
-          <span className="-translate-y-4">{label}</span>
-          <span
-            ref={setArrowElement}
-            style={styles.arrow}
-            {...attributes.arrow}
-          >
-            <Triangle className="h-3 w-6 translate-y-6 fill-blue" />
-          </span>
-        </div>
-      )}
-    </>
-  )
-}
+const Tooltip: FC<TooltipProps> = ({ children, label }) => (
+  <TooltipPrimitive.Root>
+    <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
+    <TooltipPrimitive.Portal>
+      <TooltipPrimitive.Content
+        className={`${inter.variable} z-50 max-w-sm rounded-lg bg-blue px-4 py-2 text-center font-sans text-sm font-normal text-white shadow-md ui-state-closed:animate-fade-out ui-state-delayed-open:animate-fade-in ui-state-open:animate-fade-in`}
+        sideOffset={6}
+      >
+        {label}
+        <TooltipPrimitive.Arrow className="h-2.5 w-5 fill-blue" />
+      </TooltipPrimitive.Content>
+    </TooltipPrimitive.Portal>
+  </TooltipPrimitive.Root>
+)
 
 export default Tooltip
+
+export const TooltipProvider: FC<PropsWithChildren> = ({ children }) => (
+  <TooltipPrimitive.Provider delayDuration={300} skipDelayDuration={600}>
+    {children}
+  </TooltipPrimitive.Provider>
+)
