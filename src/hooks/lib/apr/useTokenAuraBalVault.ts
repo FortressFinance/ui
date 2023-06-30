@@ -15,7 +15,10 @@ export default function useTokenAuraBalVault({
   const auraTokenQuery = useQuery([chainId, asset, "auraMint"], {
     queryFn: () => getAuraMint(),
     retry: false,
-    enabled: enabled,
+    enabled,
+    keepPreviousData: enabled,
+    refetchInterval: enabled ? 20000 : false,
+    refetchIntervalInBackground: false,
   })
 
   const auraTokenMint = auraTokenQuery.data
@@ -27,6 +30,9 @@ export default function useTokenAuraBalVault({
       queryFn: () => getFortAuraBalAprFallback(auraTokenMint),
       retry: false,
       enabled: enabled && auraTokenQuery.isSuccess,
+      keepPreviousData: enabled,
+      refetchInterval: enabled ? 20000 : false,
+      refetchIntervalInBackground: false,
     }
   )
 

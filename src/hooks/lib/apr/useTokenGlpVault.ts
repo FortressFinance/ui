@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react"
 import { formatUnits } from "viem"
-import { useContractRead } from "wagmi"
+import { useContractRead, useQuery } from "wagmi"
 
 import { getApiPrice, useActiveChainId } from "@/hooks"
 import { useGlpPrice } from "@/hooks/lib/pricer/useGlpPrice"
@@ -22,7 +21,7 @@ export default function useTokenGlpVault({ enabled }: { enabled?: boolean }) {
     abi: RewardDistributor,
     address: glpRewardsDistributorAddress,
     functionName: "tokensPerInterval",
-    enabled: enabled,
+    enabled,
   })
 
   const result = useGetFortGlpAprFallback({
@@ -43,14 +42,15 @@ export function useGetFortGlpAprFallback({
   ethRewardsPerSecond?: bigint
   enabled?: boolean
 }) {
-  const [ethPrice, setEthPrice] = useState(0)
-  useEffect(() => {
-    async function fetchPrice() {
-      const price = await getApiPrice({ asset: ethTokenAddress })
-      setEthPrice(price)
-    }
-    fetchPrice()
-  }, [])
+  const chainId = useActiveChainId()
+  const { data: ethPrice } = useQuery([chainId, "ethPrice"], {
+    queryFn: () => getApiPrice({ asset: ethTokenAddress }),
+    retry: false,
+    enabled,
+    keepPreviousData: enabled,
+    refetchInterval: enabled ? 20000 : false,
+    refetchIntervalInBackground: false,
+  })
 
   const { aumInUsdg: aum, price: priceGmx } = useGlpPrice({ enabled })
   const ethRewardsAnnual = formatUnits(
@@ -61,7 +61,7 @@ export function useGetFortGlpAprFallback({
   const gmxRewardsMonthlyEmissionRate = 0 // need to know why is it zero
   const esGmxRewards = priceGmx * gmxRewardsMonthlyEmissionRate * 12
   const aprGmx = esGmxRewards / aum
-  const aprEth = (Number(ethRewardsAnnual) * ethPrice) / aum
+  const aprEth = (Number(ethRewardsAnnual) * (ethPrice ?? 0)) / aum
   const totalApr = aprGmx + aprEth
   return {
     GMXApr: aprGmx,
