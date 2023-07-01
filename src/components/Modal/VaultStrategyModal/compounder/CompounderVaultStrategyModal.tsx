@@ -42,7 +42,12 @@ export const CompounderVaultStrategyModal: FC<
     >
       {vaultProps.asset && vaultProps.type && vaultProps.ybTokenAddress && (
         <>
-          <PurpleModalHeader className="flex justify-between gap-4">
+          {/* flex-row-reverse to prevent focus initially on AddTokenToWallet; automatically showing the tooltip */}
+          <PurpleModalHeader className="flex flex-row-reverse justify-between gap-4">
+            <Dialog.Close className="h-6 w-6 p-px">
+              <FortIconClose className="h-full w-full fill-white" />
+              <span className="sr-only">Close</span>
+            </Dialog.Close>
             <div className="flex gap-4">
               <AddTokenToWallet
                 className="h-6 w-6"
@@ -54,10 +59,6 @@ export const CompounderVaultStrategyModal: FC<
                 contractAddress={vaultProps.ybTokenAddress}
               />
             </div>
-            <Dialog.Close className="h-6 w-6 p-px">
-              <FortIconClose className="h-full w-full fill-white" />
-              <span className="sr-only">Close</span>
-            </Dialog.Close>
           </PurpleModalHeader>
 
           <PurpleModalContent className="grid grid-cols-1 divide-pink-800 p-0 md:grid-cols-[3fr,2fr] md:divide-x md:p-0 lg:grid-cols-[2fr,1fr]">

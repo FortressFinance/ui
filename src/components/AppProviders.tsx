@@ -15,6 +15,8 @@ import { WalletConnectConnector } from "wagmi/connectors/walletConnect"
 
 import { enabledNetworks } from "@/lib/wagmi"
 
+import { TooltipProvider } from "@/components/Tooltip"
+
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   enabledNetworks.chains,
   enabledNetworks.providers
@@ -72,11 +74,13 @@ const queryClient = new QueryClient({
 
 const AppProviders: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <ToastProvider>
-      <QueryClientProvider client={queryClient}>
-        <WagmiConfig config={config}>{children}</WagmiConfig>
-      </QueryClientProvider>
-    </ToastProvider>
+    <TooltipProvider>
+      <ToastProvider>
+        <QueryClientProvider client={queryClient}>
+          <WagmiConfig config={config}>{children}</WagmiConfig>
+        </QueryClientProvider>
+      </ToastProvider>
+    </TooltipProvider>
   )
 }
 
