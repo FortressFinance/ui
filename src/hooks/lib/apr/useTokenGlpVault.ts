@@ -1,5 +1,6 @@
+import { useQuery } from "@tanstack/react-query"
 import { formatUnits } from "viem"
-import { useContractRead, useQuery } from "wagmi"
+import { useContractRead } from "wagmi"
 
 import { getApiPrice, useActiveChainId } from "@/hooks"
 import { useGlpPrice } from "@/hooks/lib/pricer/useGlpPrice"
