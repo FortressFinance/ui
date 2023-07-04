@@ -39,6 +39,7 @@ export type ConcentratorStaticData = {
 
 export type GetConcentratorStaticDataBody = {
   chainId: number
+  isCurve: boolean
   pools: ConcentratorStaticData[]
 }
 

@@ -1,7 +1,7 @@
 import { Address } from "wagmi"
 
-import { ethTokenAddress } from "@/constant/addresses"
+import { ETH } from "@/constant/addresses"
 
 export default function isEthTokenAddress(address: Address | undefined) {
-  return address === ethTokenAddress
+  return address === ETH
 }

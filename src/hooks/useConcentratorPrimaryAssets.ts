@@ -10,8 +10,8 @@ export function useConcentratorPrimaryAssets({
   concentratorTargetAssets,
   enabled,
 }: {
-  concentratorTargetAssets: Address[] | undefined
-  enabled: boolean
+  concentratorTargetAssets?: Address[]
+  enabled?: boolean
 }) {
   const filterCategoriesByPrimaryAsset = useCategoriesByPrimaryAsset()
   const registryContract = useRegistryContract()

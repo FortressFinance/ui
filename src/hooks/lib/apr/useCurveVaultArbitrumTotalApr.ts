@@ -4,19 +4,8 @@ import { z } from "zod"
 
 import { useActiveChainId } from "@/hooks"
 
-import {
-  crvTriCryptoPoolAddress,
-  crvTriCryptoTokenAddress,
-  crvTwoCryptoTokenAddress,
-  fraxBpTokenAddress,
-} from "@/constant/addresses"
+import { ARBI_CURVE_ADDRESS } from "@/constant/addresses"
 import { convexSidechainsUrl } from "@/constant/urls"
-
-const ARBI_CURVE_ADDRESS: Record<Address, Address> = {
-  [crvTriCryptoTokenAddress]: crvTriCryptoPoolAddress,
-  [crvTwoCryptoTokenAddress]: crvTwoCryptoTokenAddress,
-  [fraxBpTokenAddress]: fraxBpTokenAddress,
-}
 
 export default function useCurveVaultArbitrumTotalApr({
   asset,
@@ -38,7 +27,7 @@ export function useCurveVaultArbitrumBreakdownApr({
   enabled,
 }: {
   asset: Address
-  enabled: boolean
+  enabled?: boolean
 }) {
   const chainId = useActiveChainId()
   const poolCurveAddress = ARBI_CURVE_ADDRESS[asset] ?? "0x"

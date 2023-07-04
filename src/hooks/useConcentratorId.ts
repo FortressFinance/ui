@@ -4,30 +4,35 @@ import { useApiConcentratorId } from "@/hooks/lib/api/useApiConcentratorId"
 import { useRegistryContract } from "@/hooks/lib/useRegistryContract"
 import { useConcentratorFirstVaultType } from "@/hooks/useConcentratorFirstVaultType"
 
+type ConcentratorIdProps = {
+  targetAsset: Address
+  primaryAsset: Address
+  enabled?: boolean
+}
+
 export function useConcentratorId({
   targetAsset,
   primaryAsset,
-}: {
-  targetAsset: Address
-  primaryAsset: Address
-}) {
+  enabled,
+}: ConcentratorIdProps) {
   const apiQuery = useApiConcentratorId({
     targetAsset,
     primaryAsset,
-    enabled: true,
+    enabled,
   })
   const firstConcentratorVaultType = useConcentratorFirstVaultType({
     targetAsset,
+    enabled,
   })
 
   const primaryAssets = useContractRead({
     ...useRegistryContract(),
     functionName: "getConcentratorPrimaryAssets",
     args: [firstConcentratorVaultType === "curve", targetAsset],
-    enabled: apiQuery.isError,
+    enabled: apiQuery.isError && targetAsset !== "0x" && enabled,
   })
 
-  if (apiQuery.isError) {
+  if (primaryAssets.isSuccess) {
     let relevantIndex = -1
     primaryAssets.data?.map((curPrimaryAsset, index) => {
       if (

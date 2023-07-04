@@ -3,20 +3,22 @@ import { Address } from "wagmi"
 import useConcentratorTotalAssets from "@/hooks/lib/tvl/concentrator/useConcentratorTotalAssets"
 import { useTokenPriceUsd } from "@/hooks/useTokenPriceUsd"
 
+type ConcentratorAumFallbackProps = {
+  targetAsset: Address
+  enabled?: boolean
+}
+
 export default function useConcentratorAumFallback({
   targetAsset,
   enabled,
-}: {
-  targetAsset: Address
-  enabled: boolean
-}) {
+}: ConcentratorAumFallbackProps) {
   const { data: targetAssetPriceUsd, isLoading: isLoadingPricer } =
     useTokenPriceUsd({ asset: targetAsset, enabled })
 
   const { data: totalAssets, isLoading: isLoadingTotalAssets } =
     useConcentratorTotalAssets({
       targetAsset,
-      enabled: true,
+      enabled,
     })
 
   return {

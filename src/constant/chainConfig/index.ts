@@ -1,4 +1,5 @@
 export * from "./arbitrum"
 export * from "./arbitrumFork"
+export * from "./localhost"
 export * from "./mainnet"
 export * from "./mainnetFork"

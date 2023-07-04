@@ -6,15 +6,12 @@ import { getApiPrice, useActiveChainId } from "@/hooks"
 import { useGlpPrice } from "@/hooks/lib/pricer/useGlpPrice"
 
 import { RewardDistributor } from "@/constant/abi"
-import {
-  ethTokenAddress,
-  glpRewardsDistributorAddress,
-} from "@/constant/addresses"
+import { ETH, glpRewardsDistributorAddress } from "@/constant/addresses"
 
 export default function useTokenGlpVault({ enabled }: { enabled?: boolean }) {
   let chainId = useActiveChainId()
   // force to get the latest tokensPerInterval in mainnet
-  if (chainId === 313371) {
+  if (chainId === 313371 || chainId === 1337) {
     chainId = 42161
   }
   const glpQuery = useContractRead({
@@ -45,7 +42,7 @@ export function useGetFortGlpAprFallback({
 }) {
   const chainId = useActiveChainId()
   const { data: ethPrice } = useQuery([chainId, "ethPrice"], {
-    queryFn: () => getApiPrice({ asset: ethTokenAddress }),
+    queryFn: () => getApiPrice({ asset: ETH }),
     retry: false,
     enabled,
     keepPreviousData: enabled,

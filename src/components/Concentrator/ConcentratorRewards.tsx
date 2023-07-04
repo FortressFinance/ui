@@ -122,8 +122,14 @@ const ConcentratorRewardsApy: FC<ConcentratorRewardsProps> = ({
   const {
     data: concentratorTargetAssets,
     isLoading: concentratorTargetAssetsIsLoading,
-  } = useConcentratorTargetAssets()
-  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
+  } = useConcentratorTargetAssets({
+    onSuccess: undefined,
+    enabled: true,
+  })
+  const concentratorsList = useListConcentrators({
+    concentratorTargetAssets,
+    enabled: true,
+  })
   const firstConcentrator = useFirstConcentrator({
     concentratorsList,
     concentratorTargetAsset,
@@ -157,10 +163,17 @@ const ConcentratorRewardsBalance: FC<ConcentratorRewardsProps> = ({
   const {
     data: concentratorTargetAssets,
     isLoading: concentratorTargetAssetsIsLoading,
-  } = useConcentratorTargetAssets()
-  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
+  } = useConcentratorTargetAssets({
+    onSuccess: undefined,
+    enabled: true,
+  })
+  const concentratorsList = useListConcentrators({
+    concentratorTargetAssets,
+    enabled: true,
+  })
   const firstConcentratorVaultType = useConcentratorFirstVaultType({
     targetAsset: concentratorTargetAsset,
+    enabled: true,
   })
   const ybTokenList = useConcentratorVaultList({
     targetAsset: concentratorTargetAsset,
@@ -208,10 +221,17 @@ const ConcentratorClaimButton: FC<ConcentratorRewardsProps> = ({
   const {
     data: concentratorTargetAssets,
     isLoading: concentratorTargetAssetsIsLoading,
-  } = useConcentratorTargetAssets()
-  const concentratorsList = useListConcentrators({ concentratorTargetAssets })
+  } = useConcentratorTargetAssets({
+    onSuccess: undefined,
+    enabled: true,
+  })
+  const concentratorsList = useListConcentrators({
+    concentratorTargetAssets,
+    enabled: true,
+  })
   const firstConcentratorVaultType = useConcentratorFirstVaultType({
     targetAsset: concentratorTargetAsset,
+    enabled: true,
   })
   const ybTokenList = useConcentratorVaultList({
     targetAsset: concentratorTargetAsset,

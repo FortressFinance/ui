@@ -8,7 +8,7 @@ export function useApiConcentratorPrimaryAssets({
   enabled,
 }: {
   concentratorTargetAssets?: Address[]
-  enabled: boolean
+  enabled?: boolean
 }) {
   const filterCategoriesByPrimaryAsset = useCategoriesByPrimaryAsset()
   const apiQuery = useApiConcentratorStaticData({ enabled })

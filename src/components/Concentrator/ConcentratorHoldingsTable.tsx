@@ -27,9 +27,12 @@ const ConcentratorHoldingsTable: FC = () => {
   const {
     data: concentratorTargetAssets,
     isLoading: concentratorTargetAssetsIsLoading,
-  } = useConcentratorTargetAssets()
+  } = useConcentratorTargetAssets({
+    onSuccess: undefined,
+    enabled: true,
+  })
   const { data: concentratorsList, isLoading: concentratorsListIsLoading } =
-    useListConcentrators({ concentratorTargetAssets })
+    useListConcentrators({ concentratorTargetAssets, enabled: true })
   const { data: holdingsVaults, isLoading: isLoadingHoldingsVault } =
     useHoldingsVaults({ isCompounder: false })
 
@@ -97,6 +100,7 @@ const HoldingsRow: FC<HoldingsRowProps> = ({
     targetAsset,
     primaryAsset,
     type,
+    enabled: true,
   })
   const holdingsVaults = useHoldingsVaults({ isCompounder: false })
 

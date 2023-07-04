@@ -11,6 +11,7 @@ export const ConcentratorVaultWithdrawForm: FC<VaultProps> = (props) => {
     targetAsset: props.asset,
     primaryAsset: props.vaultAddress,
     type: props.type ?? "balancer",
+    enabled: true,
   })
 
   const { data: underlyingAssets } = useConcentratorUnderlyingAssets({
@@ -20,8 +21,8 @@ export const ConcentratorVaultWithdrawForm: FC<VaultProps> = (props) => {
   return (
     <VaultWithdrawForm
       {...props}
-      defaultInputToken={concentrator?.data?.ybTokenAddress}
-      defaultOutputToken={props.vaultAddress}
+      initInputToken={concentrator?.data?.ybTokenAddress}
+      initOutputToken={props.vaultAddress}
       underlyingAssets={underlyingAssets}
       productType="concentrator"
     />

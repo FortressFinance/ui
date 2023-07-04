@@ -11,7 +11,7 @@ export default function useTokenVaultTotalApy({
   enabled,
 }: {
   asset: Address
-  enabled: boolean
+  enabled?: boolean
 }) {
   const apr = useTokenVaultTotalApr({ asset, enabled })
   return {
@@ -23,12 +23,12 @@ export default function useTokenVaultTotalApy({
 export function useTokenVaultTotalApr({
   asset,
   enabled,
-}: {
-  asset: VaultDynamicProps["asset"]
-  enabled: boolean
+}: Pick<VaultDynamicProps, "asset"> & {
+  enabled?: boolean
 }) {
   const chainId = useActiveChainId()
-  const isArbitrumFamily = chainId === 313371 || chainId === 42161
+  const isArbitrumFamily =
+    chainId === 313371 || chainId === 42161 || chainId === 1337
   const tokenVaultMainnetTotalApr = useTokenVaultMainnetTotalApr({
     asset,
     enabled: enabled && !isArbitrumFamily,

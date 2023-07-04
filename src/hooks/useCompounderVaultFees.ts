@@ -18,15 +18,16 @@ export function useCompounderVaultFees({
   type,
   vaultAddress,
   enabled,
-}: {
-  asset: VaultProps["asset"]
-  type: VaultProps["type"]
-  vaultAddress: VaultProps["vaultAddress"]
+}: Pick<VaultProps, "asset" | "type" | "vaultAddress"> & {
   enabled: boolean
 }) {
   // Preferred: API request
-  const apiCompounderFees = useApiCompounderVaultFees({ asset, type })
-  const apiTokenCompounderFees = useApiTokenCompounderVaultFees({ asset, type })
+  const apiCompounderFees = useApiCompounderVaultFees({ asset, type, enabled })
+  const apiTokenCompounderFees = useApiTokenCompounderVaultFees({
+    asset,
+    type,
+    enabled,
+  })
 
   // Fallback: amm contract request
   const isFallbackEnabled =
@@ -56,8 +57,11 @@ export function useCompounderVaultFees({
 function useApiCompounderVaultFees({
   asset,
   type,
-}: Pick<VaultProps, "asset" | "type">) {
-  const apiCompounderVault = useApiCompounderVaults({ type })
+  enabled,
+}: Pick<VaultProps, "asset" | "type"> & {
+  enabled: boolean
+}) {
+  const apiCompounderVault = useApiCompounderVaults({ type, enabled })
   const matchedVault = findApiCompounderVaultForAsset(
     apiCompounderVault.data,
     asset
@@ -79,8 +83,11 @@ function useApiCompounderVaultFees({
 function useApiTokenCompounderVaultFees({
   asset,
   type,
-}: Pick<VaultProps, "asset" | "type">) {
-  const apiTokenVault = useApiTokenVaults({ type })
+  enabled,
+}: Pick<VaultProps, "asset" | "type"> & {
+  enabled: boolean
+}) {
+  const apiTokenVault = useApiTokenVaults({ type, enabled })
   const matchedVault = findApiTokenVaultForAsset(apiTokenVault.data, asset)
   return {
     ...apiTokenVault,

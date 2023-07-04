@@ -10,18 +10,18 @@ import { useApiTokenVaults } from "@/hooks/lib/api/useApiTokenVaults"
 import { useListCompounders } from "@/hooks/useListCompounders"
 import { useIsTokenVault } from "@/hooks/useVaultTypes"
 
-export function useVaultPoolId({
-  asset,
-  type,
-}: {
+type VaultPoolIdProps = {
   asset: Address
   type: VaultType
-}) {
+  enabled?: boolean
+}
+
+export function useVaultPoolId({ asset, type, enabled }: VaultPoolIdProps) {
   const isToken = useIsTokenVault(type)
 
   // Preferred: API request
-  const apiCompounderQuery = useApiCompounderVaults({ type })
-  const apiTokenQuery = useApiTokenVaults({ type })
+  const apiCompounderQuery = useApiCompounderVaults({ type, enabled })
+  const apiTokenQuery = useApiTokenVaults({ type, enabled })
 
   const primaryAssets = useListCompounders()
 

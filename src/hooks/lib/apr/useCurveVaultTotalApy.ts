@@ -32,7 +32,8 @@ export function useCurveVaultTotalApr({
   enabled: boolean
 }) {
   const chainId = useActiveChainId()
-  const isArbitrumFamily = chainId === 313371 || chainId === 42161
+  const isArbitrumFamily =
+    chainId === 313371 || chainId === 42161 || chainId === 1337
   const curveVaultMainnetTotalApr = useCurveVaultMainnetTotalApr({
     asset,
     enabled: enabled && !isArbitrumFamily,
@@ -58,7 +59,8 @@ export function useCurveVaultBreakdownApr({
   enabled: boolean
 }) {
   const chainId = useActiveChainId()
-  const isArbitrumFamily = chainId === 313371 || chainId === 42161
+  const isArbitrumFamily =
+    chainId === 313371 || chainId === 42161 || chainId === 31337
   const curveVaultMainnetBreakdownApr = useCurveVaultMainnetBreakdownApr({
     asset,
     enabled: enabled && !isArbitrumFamily,

@@ -1,3 +1,4 @@
+import { localhost } from "viem/chains"
 import { Chain, ChainProviderFn, mainnet } from "wagmi"
 import { arbitrum } from "wagmi/chains"
 import { alchemyProvider } from "wagmi/providers/alchemy"
@@ -68,6 +69,9 @@ const ARBITRUM_FORK_ENABLED =
   Boolean(
     JSON.parse(process.env.NEXT_PUBLIC_ARBITRUMFORK_SUPPORTED ?? "false")
   ) || process.env.NODE_ENV === "test"
+const LOCALHOST_ENABLED =
+  Boolean(JSON.parse(process.env.NEXT_PUBLIC_LOCALHOST_SUPPORTED ?? "false")) ||
+  process.env.NODE_ENV === "test"
 
 const fortressForkProvider = ({
   apiKey: _apiKey,
@@ -102,6 +106,18 @@ const networks = [
       },
     ],
     enabled: ARBITRUM_FORK_ENABLED,
+  },
+  {
+    chain: localhost,
+    providers: [
+      {
+        id: "fortress",
+        apiKey: "fortress",
+        chainProviderFn: fortressForkProvider,
+        priority: 1,
+      },
+    ],
+    enabled: LOCALHOST_ENABLED,
   },
   {
     chain: arbitrum,

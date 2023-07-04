@@ -36,14 +36,14 @@ import { useGlobalStore, useToastStore } from "@/store"
 import { maxUint256 } from "@/constant"
 
 export type VaultDepositWithdrawProps = VaultRowPropsWithProduct & {
-  defaultInputToken: Address
-  defaultOutputToken: Address
+  initInputToken: Address
+  initOutputToken: Address
   underlyingAssets?: Address[] | readonly Address[]
 }
 
 export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
-  defaultInputToken,
-  defaultOutputToken,
+  initInputToken,
+  initOutputToken,
   underlyingAssets,
   ...props
 }) => {
@@ -66,8 +66,8 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
   const form = useForm<TokenFormValues>({
     defaultValues: {
       amountIn: "",
-      inputToken: defaultInputToken,
-      outputToken: defaultOutputToken,
+      inputToken: initInputToken,
+      outputToken: initOutputToken,
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -81,7 +81,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
 
   const inputTokenAddress = form.watch("inputToken")
   // Calculate + fetch information on selected tokens
-  const inputIsLp = inputTokenAddress === defaultInputToken
+  const inputIsLp = inputTokenAddress === initInputToken
   const inputIsEth = isEthTokenAddress(inputTokenAddress)
   const { data: inputToken } = useTokenOrNative({
     address: inputTokenAddress,
@@ -91,7 +91,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     address: inputTokenAddress,
   })
   const outputTokenBalance = useTokenOrNativeBalance({
-    address: defaultOutputToken,
+    address: initOutputToken,
   })
 
   // preview redeem currently returns a value with slippage accounted for; no math is required here
@@ -106,7 +106,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     abi: erc20ABI,
     address: inputTokenAddress,
     functionName: "allowance",
-    args: [userAddress ?? "0x", defaultOutputToken],
+    args: [userAddress ?? "0x", initOutputToken],
     enabled: !!userAddress && !inputIsEth,
   })
   const requiresApproval = inputIsEth ? false : (allowance.data ?? 0n) < value
@@ -122,7 +122,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
   // Configure approve method
   const approval = useTokenApproval({
     amount: maxUint256,
-    spender: defaultOutputToken,
+    spender: initOutputToken,
     token: inputTokenAddress,
     enabled: !!requiresApproval,
   })
@@ -135,16 +135,17 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
     enabled: value > 0,
   })
 
-  const vaultContract = useVaultContract(defaultOutputToken)
+  const vaultContract = useVaultContract(initOutputToken)
   // Enable prepare hooks accordingly
   const enablePrepareTx =
     !form.formState.isValidating &&
     form.formState.isValid &&
     !previewDeposit.isFetching &&
     value > 0
-  const enableDeposit = enablePrepareTx && !requiresApproval && inputIsLp
+  const enableDeposit =
+    enablePrepareTx && !requiresApproval && inputIsLp && !!userAddress
   const enableDepositUnderlying =
-    enablePrepareTx && !requiresApproval && !inputIsLp
+    enablePrepareTx && !requiresApproval && !inputIsLp && !!userAddress
 
   // Configure depositLp method
   const prepareDeposit = usePrepareContractWrite({
@@ -253,7 +254,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
           onSubmit={onSubmitForm}
           submitText={requiresApproval ? "Approve" : "Deposit"}
           previewResultWei={previewDeposit.data?.resultWei}
-          asset={defaultInputToken}
+          asset={initInputToken}
           tokenAddresses={underlyingAssets}
           productType={props.productType}
         />
@@ -271,7 +272,7 @@ export const VaultDepositForm: FC<VaultDepositWithdrawProps> = ({
             ? previewDeposit.data?.resultWei
             : previewDeposit.data?.minAmountWei
         }
-        outputTokenAddress={defaultOutputToken}
+        outputTokenAddress={initOutputToken}
         isLoading={previewDeposit.isFetching}
         isPreparing={prepareDeposit.isFetching}
         isWaitingForSignature={deposit.isLoading || depositUnderlying.isLoading}

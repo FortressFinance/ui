@@ -12,6 +12,7 @@ export const ConcentratorVaultStrategyModalRewardApy: FC<VaultProps> = (
 ) => {
   const firstConcentratorVaultType = useConcentratorFirstVaultType({
     targetAsset: props.asset,
+    enabled: true,
   })
   const breakdownApy = useConcentratorBreakdownApy({
     targetAsset: props.asset,

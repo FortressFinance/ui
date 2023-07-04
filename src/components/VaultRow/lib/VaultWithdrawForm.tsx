@@ -29,8 +29,8 @@ import { VaultDepositWithdrawProps } from "@/components/VaultRow/lib"
 import { useGlobalStore, useToastStore } from "@/store"
 
 export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
-  defaultInputToken,
-  defaultOutputToken,
+  initInputToken,
+  initOutputToken,
   underlyingAssets,
   ...props
 }) => {
@@ -53,8 +53,8 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
   const form = useForm<TokenFormValues>({
     defaultValues: {
       amountIn: "",
-      inputToken: defaultInputToken,
-      outputToken: defaultOutputToken,
+      inputToken: initInputToken,
+      outputToken: initOutputToken,
     },
     mode: "all",
     reValidateMode: "onChange",
@@ -67,11 +67,11 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
   ])
   const outputTokenAddress = form.watch("outputToken")
   // Calculate + fetch information on selected tokens
-  const outputIsLp = outputTokenAddress === defaultOutputToken
-  const { data: inputToken } = useTokenOrNative({ address: defaultInputToken })
+  const outputIsLp = outputTokenAddress === initOutputToken
+  const { data: inputToken } = useTokenOrNative({ address: initInputToken })
 
   const inputTokenBalance = useTokenOrNativeBalance({
-    address: defaultInputToken,
+    address: initInputToken,
   })
   const outputTokenBalance = useTokenOrNativeBalance({
     address: outputTokenAddress,
@@ -99,7 +99,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
     enabled: value > 0,
   })
 
-  const vaultContract = useVaultContract(defaultInputToken)
+  const vaultContract = useVaultContract(initInputToken)
   // Enable/disable prepare hooks based on form state
   const enablePrepareTx =
     !form.formState.isValidating &&
@@ -204,7 +204,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
           onSubmit={onSubmitForm}
           previewResultWei={previewRedeem.data?.resultWei}
           submitText="Withdraw"
-          asset={defaultOutputToken}
+          asset={initOutputToken}
           tokenAddresses={underlyingAssets}
           productType={props.productType}
         />
@@ -215,7 +215,7 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
         onClose={() => setShowConfirmWithdraw(false)}
         onConfirm={onConfirmTransactionDetails}
         inputAmount={value.toString()}
-        inputTokenAddress={defaultInputToken}
+        inputTokenAddress={initInputToken}
         outputAmount={previewRedeem.data?.resultWei}
         outputAmountMin={
           outputIsLp

@@ -18,6 +18,7 @@ export function useConcentratorUnderlyingAssets({
   })
   const firstConcentratorVaultType = useConcentratorFirstVaultType({
     targetAsset,
+    enabled: true,
   })
   const underlyingAssets = useContractRead({
     ...useRegistryContract(),
@@ -25,5 +26,5 @@ export function useConcentratorUnderlyingAssets({
     args: [firstConcentratorVaultType === "curve", targetAsset, primaryAsset],
     enabled: apiQuery.isError,
   })
-  return apiQuery.isError ? underlyingAssets : apiQuery
+  return underlyingAssets.isSuccess ? underlyingAssets : apiQuery
 }

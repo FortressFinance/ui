@@ -5,11 +5,13 @@ import { useApiConcentratorStaticData } from "@/hooks/lib/api/useApiConcentrator
 export function useApiConcentratorVault({
   targetAsset,
   primaryAsset,
+  enabled,
 }: {
   targetAsset?: Address
   primaryAsset?: Address
+  enabled?: boolean
 }) {
-  const apiQuery = useApiConcentratorStaticData({ enabled: true })
+  const apiQuery = useApiConcentratorStaticData({ enabled })
   const targetAssetToYbToken: Record<Address, Set<Address>> = {} // target to primaryKey
   apiQuery.data?.forEach((data) => {
     const curTargetAsset = data?.target_asset?.address

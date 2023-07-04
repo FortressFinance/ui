@@ -3,23 +3,27 @@ import { Address, useContractRead } from "wagmi"
 import { useApiConcentratorTargetAssetId } from "@/hooks/lib/api/useApiConcentratorTargetAssetId"
 import { useRegistryContract } from "@/hooks/lib/useRegistryContract"
 
+type ConcentratorTargetAssetIdProps = {
+  targetAsset: Address
+  enabled?: boolean
+}
+
 export function useConcentratorTargetAssetId({
   targetAsset,
-}: {
-  targetAsset: Address
-}) {
+  enabled,
+}: ConcentratorTargetAssetIdProps) {
   const apiQuery = useApiConcentratorTargetAssetId({
     targetAsset,
-    enabled: true,
+    enabled: targetAsset !== "0x" && enabled,
   })
 
   const targetAssets = useContractRead({
     ...useRegistryContract(),
     functionName: "concentratorTargetAssets",
-    enabled: apiQuery.isError,
+    enabled: apiQuery.isError && targetAsset !== "0x" && enabled,
   })
 
-  if (apiQuery.isError) {
+  if (targetAssets.isSuccess) {
     let relevantIndex = -1
     targetAssets.data?.map((curTargetAsset, index) => {
       if (
