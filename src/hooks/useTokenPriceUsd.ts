@@ -27,6 +27,9 @@ export function useTokenPriceUsd({
         ? () => price
         : () => getApiPrice({ asset, chainId }),
     enabled: enabled && asset !== "0x",
+    keepPreviousData: enabled,
+    refetchInterval: enabled ? 20000 : false,
+    refetchIntervalInBackground: false,
   })
 
   if (asset === "0x") {

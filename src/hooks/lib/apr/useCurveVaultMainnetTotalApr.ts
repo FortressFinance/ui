@@ -29,7 +29,10 @@ export function useCurveVaultMainnetBreakdownApr({
   const vaultAprFallback = useQuery([chainId, asset, "vaultAprFallback"], {
     queryFn: () => getVaultAprFallback(asset),
     retry: false,
-    enabled: enabled,
+    enabled,
+    keepPreviousData: enabled,
+    refetchInterval: enabled ? 20000 : false,
+    refetchIntervalInBackground: false,
   })
   return {
     ...vaultAprFallback,
