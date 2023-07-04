@@ -40,13 +40,19 @@ export function useBalancerVaultMainnetBreakdownApr({
         queryKey: [chainId, asset, "auraFinance"],
         queryFn: () => fetchApiAuraFinance(asset),
         staleTime: Infinity,
-        enabled: enabled,
+        enabled,
+        keepPreviousData: enabled,
+        refetchInterval: enabled ? 20000 : false,
+        refetchIntervalInBackground: false,
       },
       {
         queryKey: [chainId, asset, "auraMint"],
         queryFn: () => getAuraMint(),
         staleTime: Infinity,
-        enabled: enabled,
+        enabled,
+        keepPreviousData: enabled,
+        refetchInterval: enabled ? 20000 : false,
+        refetchIntervalInBackground: false,
       },
     ],
   })
@@ -62,6 +68,9 @@ export function useBalancerVaultMainnetBreakdownApr({
         getBalancerTotalAprFallback(asset, extraTokenAwards, swapFee, auraMint),
       retry: false,
       enabled: enabled && !!swapFee && !!extraTokenAwards && !!auraMint,
+      keepPreviousData: enabled,
+      refetchInterval: enabled ? 20000 : false,
+      refetchIntervalInBackground: false,
     }
   )
 

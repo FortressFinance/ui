@@ -11,7 +11,7 @@ import useTokenPreviewRedeemFallback from "@/hooks/lib/preview/compounder/useTok
 import { useVaultPoolId } from "@/hooks/useVaultPoolId"
 import { useIsCurveVault, useIsTokenVault } from "@/hooks/useVaultTypes"
 
-import { useGlobalStore } from "@/store"
+import { useSlippageTolerance } from "@/store"
 
 export function useCompounderPreviewRedeem({
   enabled,
@@ -34,7 +34,7 @@ export function useCompounderPreviewRedeem({
     token: rest.token,
     id: poolId,
     // we store slippage as a fraction of 100; api expects slippage as a fraction of 1
-    slippage: useGlobalStore((store) => store.slippageTolerance) / 100,
+    slippage: useSlippageTolerance() / 100,
   }
 
   const apiQuery = useQuery({

@@ -19,7 +19,7 @@ import PurpleModal, {
 
 import { FortIconCloseCircle, FortIconWarning } from "@/icons"
 
-import { useGlobalStore } from "@/store"
+import { useSlippageTolerance } from "@/store"
 
 type ConfirmTransactionModalProps = ModalBaseProps & {
   onConfirm?: () => void
@@ -49,7 +49,7 @@ export const ConfirmTransactionModal: FC<ConfirmTransactionModalProps> = ({
   type,
   ...modalProps
 }) => {
-  const slippageTolerance = useGlobalStore((store) => store.slippageTolerance)
+  const slippageTolerance = useSlippageTolerance()
   const isUnusualSlippage = slippageTolerance <= 0 || slippageTolerance >= 2
   const [sanityChecked, setSanityChecked] = useState(!isUnusualSlippage)
 

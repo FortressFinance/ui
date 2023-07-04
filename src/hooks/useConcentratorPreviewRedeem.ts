@@ -8,7 +8,7 @@ import { useConcentratorFirstVaultType } from "@/hooks/useConcentratorFirstVault
 import { useConcentratorId } from "@/hooks/useConcentratorId"
 import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAssetId"
 
-import { useGlobalStore } from "@/store"
+import { useSlippageTolerance } from "@/store"
 
 export function useConcentratorPreviewRedeem({
   enabled,
@@ -39,7 +39,7 @@ export function useConcentratorPreviewRedeem({
     concentratorId,
     isCurve: firstConcentratorVaultType === "curve",
     // we store slippage as a fraction of 100; api expects slippage as a fraction of 1
-    slippage: useGlobalStore((store) => store.slippageTolerance) / 100,
+    slippage: useSlippageTolerance() / 100,
   }
 
   const apiQuery = useQuery({

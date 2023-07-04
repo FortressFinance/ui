@@ -24,7 +24,7 @@ import Button from "@/components/Button"
 import TokenSelectModal from "@/components/Modal/TokenSelectModal"
 import TokenSelectButton from "@/components/TokenForm/TokenSelectButton"
 
-import { useGlobalStore, useToastStore } from "@/store"
+import { useSlippageTolerance, useToastStore } from "@/store"
 
 type RepayLeverPositionProps = {
   chainId: number
@@ -70,7 +70,7 @@ export const RepayLeverPosition: FC<RepayLeverPositionProps> = ({
     (state) => [state.addToast, state.replaceToast],
     shallow
   )
-  const slippageTolerance = useGlobalStore((state) => state.slippageTolerance)
+  const slippageTolerance = useSlippageTolerance()
 
   const leverPair = useLeverPair({ chainId, pairAddress })
 

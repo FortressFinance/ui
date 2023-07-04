@@ -17,7 +17,10 @@ export default function useTokenCvxCrvVault({
     {
       queryFn: () => getFortCvxCrvAprFallback(),
       retry: false,
-      enabled: enabled,
+      enabled,
+      keepPreviousData: enabled,
+      refetchInterval: enabled ? 20000 : false,
+      refetchIntervalInBackground: false,
     }
   )
 

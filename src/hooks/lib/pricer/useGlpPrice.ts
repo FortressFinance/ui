@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { formatUnits } from "viem"
 import { useContractReads } from "wagmi"
 
@@ -38,6 +39,23 @@ export function useGlpPrice({ enabled }: { enabled?: boolean }) {
   const price = Number(formatUnits(queries.data?.[0].result ?? 0n, 30))
   const aumInUsdg = Number(formatUnits(queries.data?.[1].result ?? 0n, 18))
   const totalSupply = Number(formatUnits(queries.data?.[2].result ?? 0n, 18))
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null
+
+    if (enabled) {
+      intervalId = setInterval(() => {
+        queries.refetch()
+      }, 20000)
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId)
+      }
+    }
+  }, [enabled, queries])
+
   return {
     aumInUsdg,
     price,

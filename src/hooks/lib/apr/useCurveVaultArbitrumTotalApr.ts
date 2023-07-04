@@ -34,7 +34,10 @@ export function useCurveVaultArbitrumBreakdownApr({
   const curveApiQuery = useQuery([chainId, asset, "curveApi"], {
     queryFn: () => getCurveArbitrumApi(poolCurveAddress),
     retry: false,
-    enabled: enabled,
+    enabled,
+    keepPreviousData: enabled,
+    refetchInterval: enabled ? 20000 : false,
+    refetchIntervalInBackground: false,
   })
 
   return curveApiQuery

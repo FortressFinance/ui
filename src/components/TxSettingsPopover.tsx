@@ -6,6 +6,7 @@ import { FC, FormEventHandler, useEffect, useState } from "react"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { BiInfoCircle } from "react-icons/bi"
 import { z } from "zod"
+import { shallow } from "zustand/shallow"
 
 import clsxm from "@/lib/clsxm"
 import { inter, vt323 } from "@/lib/fonts"
@@ -66,41 +67,42 @@ type TxSettingsFormProps = {
 
 type TxSettingsFormValues = {
   expertMode: boolean
-  slippageToleranceString: string
+  slippageToleranceString?: string
 }
 
 const formValuesSchema = z.object({
   expertMode: z.boolean(),
-  slippageToleranceString: z.coerce
-    .number({
-      invalid_type_error: "Invalid slippage percentage",
-    })
-    .positive({
-      message: "Invalid slippage percentage",
-    })
-    .lt(100, { message: "Invalid slippage percentage" }),
+  slippageToleranceString: z.string().refine((val) => {
+    if (val === "") return true
+    const parsed = Number(val)
+    return !isNaN(parsed) && parsed > 0 && parsed < 100
+  }),
 })
 
 const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
   const [expertMode, setExpertMode, slippageTolerance, setSlippageTolerance] =
-    useGlobalStore((store) => [
-      store.expertMode,
-      store.setExpertMode,
-      store.slippageTolerance,
-      store.setSlippageTolerance,
-    ])
+    useGlobalStore(
+      (store) => [
+        store.expertMode,
+        store.setExpertMode,
+        store.slippageTolerance,
+        store.setSlippageTolerance,
+      ],
+      shallow
+    )
 
   const form = useForm<TxSettingsFormValues>({
     defaultValues: {
       expertMode,
-      slippageToleranceString: String(slippageTolerance),
+      slippageToleranceString: slippageTolerance
+        ? String(slippageTolerance)
+        : "",
     },
     mode: "all",
     reValidateMode: "onChange",
     resolver: zodResolver(formValuesSchema),
   })
-  const isAutoSlippage =
-    form.watch("slippageToleranceString") === String(DEFAULT_SLIPPAGE)
+  const isAutoSlippage = form.watch("slippageToleranceString") === ""
   const slippageError = form.formState.errors.slippageToleranceString
 
   const submitHandler: SubmitHandler<TxSettingsFormValues> = (data) => {
@@ -108,7 +110,14 @@ const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
     const parsedData = formValuesSchema.safeParse(data)
     if (parsedData.success) {
       setExpertMode(parsedData.data.expertMode)
-      setSlippageTolerance(parsedData.data.slippageToleranceString)
+      const newSlippageTolerance = Number(
+        parsedData.data.slippageToleranceString
+      )
+      setSlippageTolerance(
+        newSlippageTolerance === 0 || newSlippageTolerance === DEFAULT_SLIPPAGE
+          ? undefined
+          : newSlippageTolerance
+      )
     }
   }
 
@@ -143,15 +152,11 @@ const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
             pressed={isAutoSlippage}
             onPressedChange={(checked: boolean) => {
               if (checked) {
-                form.setValue(
-                  "slippageToleranceString",
-                  String(DEFAULT_SLIPPAGE),
-                  {
-                    shouldDirty: true,
-                    shouldTouch: true,
-                    shouldValidate: true,
-                  }
-                )
+                form.setValue("slippageToleranceString", "", {
+                  shouldDirty: true,
+                  shouldTouch: true,
+                  shouldValidate: true,
+                })
               }
             }}
             asChild
@@ -174,6 +179,7 @@ const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
               autoComplete="off"
               autoCorrect="off"
               autoCapitalize="off"
+              placeholder={String(DEFAULT_SLIPPAGE)}
               {...form.register("slippageToleranceString")}
             />
             <span className="relative z-[1] col-start-2 row-start-1 self-center pl-1 pr-3 text-xl text-black">
@@ -189,7 +195,7 @@ const TxSettingsForm: FC<TxSettingsFormProps> = ({ close }) => {
           {/* Error messaging */}
           {slippageError && (
             <div className="col-span-2 text-sm font-semibold">
-              {slippageError.message}
+              Invalid slippage tolerance
             </div>
           )}
         </div>

@@ -11,7 +11,7 @@ import useTokenPreviewDepositFallback from "@/hooks/lib/preview/compounder/useTo
 import { useVaultPoolId } from "@/hooks/useVaultPoolId"
 import { useIsCurveVault, useIsTokenVault } from "@/hooks/useVaultTypes"
 
-import { useGlobalStore } from "@/store"
+import { useSlippageTolerance } from "@/store"
 
 export function useCompounderPreviewDeposit({
   enabled,
@@ -35,7 +35,7 @@ export function useCompounderPreviewDeposit({
     token: rest.token,
     id: poolId,
     // we store slippage as a fraction of 100; api expects slippage as a fraction of 1
-    slippage: useGlobalStore((store) => store.slippageTolerance) / 100,
+    slippage: useSlippageTolerance() / 100,
   }
 
   const apiQuery = useQuery({
