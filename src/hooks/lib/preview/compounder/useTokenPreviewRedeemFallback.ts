@@ -30,20 +30,15 @@ export default function useTokenPreviewRedeemFallback({
   })
 
   const ybTokenSymbol = tokenVaultSymbol.data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let abi: any = undefined
-  if (ybTokenSymbol === "fcGLP") {
-    abi = AMMCompounderBase
-  }
 
   const chainId = useActiveChainId()
   const isUnderlyingAsset = token !== asset
 
   const preview = useContractRead({
     chainId,
-    abi,
+    abi: AMMCompounderBase,
     address: vaultAddress,
-    enabled: !isUnderlyingAsset && enabled,
+    enabled: !isUnderlyingAsset && ybTokenSymbol === "fcGLP" && enabled,
     functionName: "previewRedeem",
     args: [BigInt(amount)],
   })
@@ -52,7 +47,7 @@ export default function useTokenPreviewRedeemFallback({
     token,
     amount,
     slippage,
-    enabled: isUnderlyingAsset && enabled,
+    enabled: isUnderlyingAsset && ybTokenSymbol === "fcGLP" && enabled,
   })
 
   return isUnderlyingAsset && ybTokenSymbol === "fcGLP"

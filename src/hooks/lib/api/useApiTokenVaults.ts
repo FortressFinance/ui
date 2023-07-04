@@ -23,6 +23,5 @@ export function useApiTokenVaults({
       retry: false,
       enabled: isToken && enabled,
     }),
-    isEnabled: isToken && enabled,
   }
 }

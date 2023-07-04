@@ -17,6 +17,5 @@ export function useApiConcentratorStaticData({
       enabled,
       retry: false,
     }),
-    isEnabled: enabled,
   }
 }
