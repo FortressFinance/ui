@@ -1,5 +1,3 @@
-import { useQuery } from "@tanstack/react-query"
-
 import {
   getPreviewRedeemAmmVault,
   getPreviewRedeemTokenVault,
@@ -8,6 +6,7 @@ import { queryKeys } from "@/lib/helpers"
 import { PreviewTransactionBaseArgs } from "@/hooks/lib/api/types"
 import useCurvePreviewRedeemFallback from "@/hooks/lib/preview/compounder/useCurvePreviewRedeemFallback"
 import useTokenPreviewRedeemFallback from "@/hooks/lib/preview/compounder/useTokenPreviewRedeemFallback"
+import { useQueryWithStatus } from "@/hooks/useQueryWithStatus"
 import { useVaultPoolId } from "@/hooks/useVaultPoolId"
 import { useIsCurveVault, useIsTokenVault } from "@/hooks/useVaultTypes"
 
@@ -37,7 +36,7 @@ export function useCompounderPreviewRedeem({
     slippage: useSlippageTolerance() / 100,
   }
 
-  const apiQuery = useQuery({
+  const apiQuery = useQueryWithStatus({
     ...queryKeys.vaults.previewRedeem(args),
     queryFn: () =>
       isToken

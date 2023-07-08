@@ -1,5 +1,3 @@
-import { useQuery } from "@tanstack/react-query"
-
 import { getConcentratorPreviewDeposit } from "@/lib/api/concentrators"
 import { queryKeys } from "@/lib/helpers"
 import { VaultPreviewTransactionArgs } from "@/hooks/lib/api/types"
@@ -7,6 +5,7 @@ import usePreviewDepositFallback from "@/hooks/lib/preview/concentrator/usePrevi
 import { useConcentratorFirstVaultType } from "@/hooks/useConcentratorFirstVaultType"
 import { useConcentratorId } from "@/hooks/useConcentratorId"
 import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAssetId"
+import { useQueryWithStatus } from "@/hooks/useQueryWithStatus"
 
 import { useSlippageTolerance } from "@/store"
 
@@ -43,7 +42,7 @@ export function useConcentratorPreviewDeposit({
     slippage: useSlippageTolerance() / 100,
   }
 
-  const apiQuery = useQuery({
+  const apiQuery = useQueryWithStatus({
     ...queryKeys.concentrators.previewDeposit(args),
     queryFn: () => getConcentratorPreviewDeposit({ ...args }),
     keepPreviousData: args.amount !== "0",

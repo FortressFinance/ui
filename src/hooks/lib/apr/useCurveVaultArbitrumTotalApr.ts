@@ -1,8 +1,8 @@
 import axios from "axios"
-import { Address, useQuery } from "wagmi"
+import { Address } from "wagmi"
 import { z } from "zod"
 
-import { useActiveChainId } from "@/hooks"
+import { useActiveChainId, useQueryWithStatus } from "@/hooks"
 
 import { ARBI_CURVE_ADDRESS } from "@/constant/addresses"
 import { convexSidechainsUrl } from "@/constant/urls"
@@ -31,7 +31,8 @@ export function useCurveVaultArbitrumBreakdownApr({
 }) {
   const chainId = useActiveChainId()
   const poolCurveAddress = ARBI_CURVE_ADDRESS[asset] ?? "0x"
-  const curveApiQuery = useQuery([chainId, asset, "curveApi"], {
+  const curveApiQuery = useQueryWithStatus({
+    queryKey: [chainId, asset, "curveApi"],
     queryFn: () => getCurveArbitrumApi(poolCurveAddress),
     retry: false,
     enabled,

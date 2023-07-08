@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { Address } from "wagmi"
 
 import { getAuraMint, getFortAuraBalAprFallback } from "@/lib/api/vaults"
-import { useActiveChainId } from "@/hooks"
+import { useActiveChainId, useQueryWithStatus } from "@/hooks"
 
 export default function useTokenAuraBalVault({
   asset,
@@ -12,7 +12,8 @@ export default function useTokenAuraBalVault({
   enabled: boolean
 }) {
   const chainId = useActiveChainId()
-  const auraTokenQuery = useQuery([chainId, asset, "auraMint"], {
+  const auraTokenQuery = useQueryWithStatus({
+    queryKey: [chainId, asset, "auraMint"],
     queryFn: () => getAuraMint(),
     retry: false,
     enabled,
