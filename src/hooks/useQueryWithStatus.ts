@@ -31,7 +31,7 @@ export function useQueryWithStatus(arg: any) {
       isError: true,
       error: new Error("Previous request failed."),
       isSuccess: false,
-      isFetched: false,
+      isFetching: false,
       isLoading: false,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       data: undefined as any,
@@ -45,7 +45,7 @@ export function useQueryWithStatus(arg: any) {
         isError: true,
         error: new Error("Previous request failed."),
         isSuccess: false,
-        isFetched: false,
+        isFetching: false,
         isLoading: false,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         data: undefined as any,
