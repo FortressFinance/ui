@@ -33,7 +33,7 @@ const FallbackSignal: FC<FallbackSignalProps> = ({
     <Tooltip label={label}>
       <nav
         className={clsxm(
-          "flex justify-center gap-2 md:justify-start",
+          "flex cursor-pointer justify-center gap-2 md:justify-start",
           className
         )}
       >
