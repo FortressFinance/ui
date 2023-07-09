@@ -19,13 +19,13 @@ export function useQueryWithStatus<
     "initialData"
   > & { initialData?: () => undefined }
 ): UseQueryResult<TData, TError> {
-  const [addFailedStatus, requestStatus] = useQueryStatusStore(
+  const [addFailedStatus, failedQueries] = useQueryStatusStore(
     (state) => [state.addFailedStatus, state.queryStatus],
     shallow
   )
 
   const queryKey = JSON.stringify(options?.queryKey)
-  const isPreviousFailed = requestStatus.has(queryKey)
+  const isPreviousFailed = failedQueries.has(queryKey)
 
   const isEnabled = !isPreviousFailed && options?.enabled
 
