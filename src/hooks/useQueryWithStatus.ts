@@ -1,27 +1,37 @@
-import { useQuery } from "@tanstack/react-query"
+import {
+  QueryKey,
+  useQuery,
+  UseQueryOptions,
+  UseQueryResult,
+} from "@tanstack/react-query"
 import { shallow } from "zustand/shallow"
 
 import { useQueryStatusStore } from "@/store"
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function useQueryWithStatus(arg: any) {
-  const requestStatus = useQueryStatusStore((state) => state.queryStatus)
-  const requestInprogress = useQueryStatusStore((state) => state.queryQueue)
-
-  const queryKey = JSON.stringify(arg?.queryKey)
-  const isPreviousFailed = requestStatus.has(queryKey)
-  const queryStillInprogress = requestInprogress.has(queryKey)
-
-  const isEnabled = !isPreviousFailed && arg?.enabled && !queryStillInprogress
-
-  const [addFailedStatus, addQueryInprogress] = useQueryStatusStore(
-    (state) => [state.addFailedStatus, state.addQueryInprogress],
+export function useQueryWithStatus<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
+>(
+  options: Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    "initialData"
+  > & { initialData?: () => undefined }
+): UseQueryResult<TData, TError> {
+  const [addFailedStatus, requestStatus] = useQueryStatusStore(
+    (state) => [state.addFailedStatus, state.queryStatus],
     shallow
   )
 
+  const queryKey = JSON.stringify(options?.queryKey)
+  const isPreviousFailed = requestStatus.has(queryKey)
+
+  const isEnabled = !isPreviousFailed && options?.enabled
+
   // Execute the query using useQuery
   const query = useQuery({
-    ...arg,
+    ...options,
     enabled: isEnabled,
   })
 
@@ -29,39 +39,17 @@ export function useQueryWithStatus(arg: any) {
   if (isPreviousFailed) {
     return {
       isError: true,
-      error: new Error("Previous request failed."),
+      error: new Error("Previous request failed.") as unknown as TError,
       isSuccess: false,
       isFetching: false,
       isLoading: false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      data: undefined as any,
-    }
-  }
-
-  // Check if the request is already in progress
-  if (queryStillInprogress) {
-    return (
-      requestInprogress.get(queryKey) ?? {
-        isError: true,
-        error: new Error("Previous request failed."),
-        isSuccess: false,
-        isFetching: false,
-        isLoading: false,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        data: undefined as any,
-      }
-    )
-  }
-
-  // If the request is in progress, store the promise in the queue
-  if (isEnabled) {
-    addQueryInprogress(queryKey, query)
+      data: undefined,
+    } as UseQueryResult<TData, TError>
   }
 
   // Store the request status after it's completed
   if (isEnabled && !query.isSuccess) {
     addFailedStatus(queryKey)
-    requestInprogress.delete(queryKey)
   }
 
   return query
