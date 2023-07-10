@@ -17,6 +17,7 @@ import {
   DropdownMenuItems,
 } from "@/components/DropdownMenu"
 import ExternalLinks from "@/components/ExternalLinks"
+import FallbackSignal from "@/components/FallbackSignal"
 import { AccountModal, ConnectModal, ConsentModal } from "@/components/Modal"
 import NetworkSelector from "@/components/NetworkSelector"
 import { Toaster } from "@/components/Toaster"
@@ -191,7 +192,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               className={`${inter.variable} ${vt323.variable} fixed inset-y-0 right-0 z-40 font-sans ui-state-closed:animate-slide-out-right ui-state-open:animate-slide-in-right`}
             >
               <div className="relative h-full w-full max-w-xs overflow-y-auto border-l border-pink/10 bg-gradient-to-tr from-pink-600/40 to-orange-600/40 shadow-xl">
-                <div className="grid h-full grid-cols-1 grid-rows-[1fr,auto] gap-16 p-3">
+                <div className="grid h-full grid-cols-1 grid-rows-[1fr,auto,1fr] gap-16 p-3">
                   <div>
                     <div className="relative grid grid-cols-[auto,min-content,min-content] grid-rows-1 gap-x-2">
                       <NetworkSelector isMobile />
@@ -321,6 +322,10 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                     showHelp
                     showLabels
                   />
+                  <FallbackSignal
+                    className="justify-start border-t border-orange-400/40 px-3 pb-6 pt-2"
+                    showLabels
+                  />
                 </div>
               </div>
             </Dialog.Content>
@@ -331,6 +336,9 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
         <footer className="layout pb-3 pt-6 md:py-6">
           <div className="grid grid-cols-[1fr,auto,1fr] md:gap-4">
+            <div className="flex py-2 max-md:hidden">
+              <FallbackSignal showLabels />
+            </div>
             <Link
               className="col-start-2 items-center rounded-full bg-pink-900/80 px-4 py-2 text-center text-xs font-medium leading-5 text-pink-100"
               href="https://docs.fortress.finance/protocol/risks"

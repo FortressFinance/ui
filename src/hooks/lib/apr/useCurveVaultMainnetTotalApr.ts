@@ -1,8 +1,7 @@
-import { useQuery } from "@tanstack/react-query"
 import { Address } from "wagmi"
 
 import { getVaultAprFallback } from "@/lib/api/vaults"
-import { useActiveChainId } from "@/hooks"
+import { useActiveChainId, useQueryWithStatus } from "@/hooks"
 
 export default function useCurveVaultMainnetTotalApr({
   asset,
@@ -26,7 +25,8 @@ export function useCurveVaultMainnetBreakdownApr({
   enabled?: boolean
 }) {
   const chainId = useActiveChainId()
-  const vaultAprFallback = useQuery([chainId, asset, "vaultAprFallback"], {
+  const vaultAprFallback = useQueryWithStatus({
+    queryKey: [chainId, asset, "vaultAprFallback"],
     queryFn: () => getVaultAprFallback(asset),
     retry: false,
     enabled,

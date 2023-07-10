@@ -1,5 +1,3 @@
-import { useQuery } from "@tanstack/react-query"
-
 import {
   getPreviewDepositAmmVault,
   getPreviewDepositTokenVault,
@@ -8,6 +6,7 @@ import { queryKeys } from "@/lib/helpers"
 import { VaultPreviewTransactionArgs } from "@/hooks/lib/api/types"
 import useCurvePreviewDepositFallback from "@/hooks/lib/preview/compounder/useCurvePreviewDepositFallback"
 import useTokenPreviewDepositFallback from "@/hooks/lib/preview/compounder/useTokenPreviewDepositFallback"
+import { useQueryWithStatus } from "@/hooks/useQueryWithStatus"
 import { useVaultPoolId } from "@/hooks/useVaultPoolId"
 import { useIsCurveVault, useIsTokenVault } from "@/hooks/useVaultTypes"
 
@@ -38,7 +37,7 @@ export function useCompounderPreviewDeposit({
     slippage: useSlippageTolerance() / 100,
   }
 
-  const apiQuery = useQuery({
+  const apiQuery = useQueryWithStatus({
     ...queryKeys.vaults.previewDeposit(args),
     queryFn: () =>
       type === "token"
