@@ -1,5 +1,4 @@
 import { FC } from "react"
-import { shallow } from "zustand/shallow"
 
 import clsxm from "@/lib/clsxm"
 
@@ -17,17 +16,16 @@ const FallbackSignal: FC<FallbackSignalProps> = ({
   className,
   showLabels = true,
 }) => {
-  const [failedQueries] = useQueryStatusStore(
-    (state) => [state.queryStatus],
-    shallow
-  )
+  const failedQueries = useQueryStatusStore((state) => state.queryStatus)
   const failedQueriesCount = failedQueries.size
-  const label =
-    failedQueriesCount >= 1 && failedQueriesCount <= 3
-      ? "Experiencing minor service interruptions"
-      : failedQueriesCount >= 5
-      ? "Service is severely impacted due to critical issues"
-      : "Service is operating at optimal performance"
+  const isMinorInterruption = failedQueriesCount >= 1 && failedQueriesCount <= 3
+  const isCriticalInterruption = failedQueriesCount >= 5
+  const isOptimalPerformance = failedQueriesCount < 1
+  const label = isMinorInterruption
+    ? "Experiencing minor service interruptions"
+    : isCriticalInterruption
+    ? "Service is severely impacted due to critical issues"
+    : "Service is operating at optimal performance"
 
   return (
     <Tooltip label={label}>
@@ -38,19 +36,17 @@ const FallbackSignal: FC<FallbackSignalProps> = ({
         )}
       >
         <div
-          className={`mt-1 flex h-2 w-2 items-center rounded-full ${
-            failedQueriesCount >= 1 && failedQueriesCount <= 3
-              ? "bg-yellow-500"
-              : failedQueriesCount >= 5
-              ? "bg-red-500"
-              : "bg-green-500"
-          }`}
+          className={clsxm("mt-1 flex h-2 w-2 items-center rounded-full", {
+            "bg-yellow-500": isMinorInterruption,
+            "bg-red-500": isCriticalInterruption,
+            "bg-green-500": isOptimalPerformance,
+          })}
         ></div>
         {showLabels && (
           <span className="flex items-center text-xs text-neutral-400">
-            {failedQueriesCount >= 1 && failedQueriesCount <= 3
+            {isMinorInterruption
               ? "Partial Outage"
-              : failedQueriesCount >= 5
+              : isCriticalInterruption
               ? "Major Outage"
               : "Fully operational"}
           </span>
