@@ -48,7 +48,7 @@ export function useQueryWithStatus<
   }
 
   // Store the request status after it's completed
-  if (isEnabled && !query.isSuccess) {
+  if (isEnabled && query.isError) {
     addFailedStatus(queryKey)
   }
 
