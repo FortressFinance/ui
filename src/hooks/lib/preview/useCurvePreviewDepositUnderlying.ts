@@ -39,8 +39,8 @@ export default function useCurvePreviewDepositUnderlying({
     token === ETH && isArbitrumFamily
       ? WETH_ARBI
       : token === ETH && !isArbitrumFamily
-        ? WETH
-        : token
+      ? WETH
+      : token
 
   const underlyingAssets = useContractReads({
     contracts: [0, 1, 2, 3, 4].map((index) => ({
@@ -69,7 +69,7 @@ export default function useCurvePreviewDepositUnderlying({
     abi: (poolCurveAddress === crvTriCryptoPoolAddress
       ? CurvePool3Assets
       : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      CurvePool2Assets) as any,
+        CurvePool2Assets) as any,
     address: poolCurveAddress,
     enabled:
       !!asset &&
