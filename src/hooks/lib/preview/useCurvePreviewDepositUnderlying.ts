@@ -87,7 +87,7 @@ export default function useCurvePreviewDepositUnderlying({
     ...useVaultContract(vaultAddress),
     enabled: isCurveEnabled && enabled,
     functionName: "previewDeposit",
-    args: [BigInt(amountLpValue)],
+    args: [BigInt(Number(amountLpValue))],
   })
 
   const shareValue = preview.data ?? 0n
