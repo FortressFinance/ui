@@ -32,12 +32,6 @@ export function useTokenPriceUsd({
     refetchIntervalInBackground: false,
   })
 
-  if (asset === "0x") {
-    return {
-      isLoading: false,
-      data: 0,
-    }
-  }
   return priceRequest
 }
 
