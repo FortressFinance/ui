@@ -82,14 +82,16 @@ export default function useCurvePreviewDepositUnderlying({
   })
 
   const amountLpValue = amountLp.data ?? 0n
-  const amountLpWithSlippage = Number(amountLpValue) * (1 - slippage)
 
   const preview = useContractRead({
     ...useVaultContract(vaultAddress),
     enabled: isCurveEnabled && enabled,
     functionName: "previewDeposit",
-    args: [BigInt(parseInt(amountLpWithSlippage.toFixed(2)))],
+    args: [BigInt(Number(amountLpValue))],
   })
+
+  const shareValue = preview.data ?? 0n
+  const shareValueWithSlippage = Number(shareValue) * (1 - slippage)
 
   // TODO: Balancer side
 
@@ -97,8 +99,8 @@ export default function useCurvePreviewDepositUnderlying({
   return {
     ...preview,
     data: {
-      minAmountWei: parseInt(amountLpWithSlippage.toFixed(2)),
-      resultWei: preview.data ?? 0,
+      minAmountWei: Number(amountLpValue),
+      resultWei: shareValueWithSlippage ?? 0,
     },
   }
   //}

@@ -79,7 +79,7 @@ export default function useCurvePreviewRedeemUnderlying({
 
   //if(isCurveEnabled){
   const preview = curvePreviewUnderlying.data ?? 0n
-  const previewWithSlippage = Number(preview) * (1 + slippage)
+  const previewWithSlippage = Number(preview) * (1 - slippage)
   return {
     ...curvePreviewUnderlying,
     data: parseInt(previewWithSlippage.toFixed(2)),
