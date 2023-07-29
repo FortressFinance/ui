@@ -94,7 +94,7 @@ function useTokenPreviewRedeemUnderlying({
     address: glpVault,
     enabled: isArbitrumFamily && enabled,
     functionName: "getRedemptionAmount",
-    args: [token, BigInt(usdgAmount)],
+    args: [token, BigInt(parseInt(usdgAmount.toFixed()))],
   })
 
   const MINT_BURN_FEE_BASIS_POINTS = 25
@@ -109,7 +109,7 @@ function useTokenPreviewRedeemUnderlying({
     functionName: "getFeeBasisPoints",
     args: [
       token,
-      BigInt(usdgAmount),
+      BigInt(parseInt(usdgAmount.toFixed())),
       BigInt(MINT_BURN_FEE_BASIS_POINTS),
       BigInt(TAX_BASIS_POINTS),
       false,
