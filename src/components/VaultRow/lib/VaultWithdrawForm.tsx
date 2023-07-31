@@ -132,7 +132,8 @@ export const VaultWithdrawForm: FC<VaultDepositWithdrawProps> = ({
       userAddress ?? "0x",
       userAddress ?? "0x",
       value,
-      BigInt(previewRedeem.data?.minAmountWei ?? "0"),
+      //BigInt(previewRedeem.data?.minAmountWei ?? "0"),
+      BigInt("0"),
     ],
   })
   const redeemUnderlying = useContractWrite(prepareRedeemUnderlying.config)
