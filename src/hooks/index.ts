@@ -1,6 +1,7 @@
 export * from "./managedVaults"
 export * from "./useActiveChainConfig"
 export * from "./useActiveChainId"
+export * from "./useArbitrumLogs"
 export * from "./useCategoriesByPrimaryAsset"
 export * from "./useClientEffect"
 export * from "./useClientReady"

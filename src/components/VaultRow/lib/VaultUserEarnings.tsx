@@ -18,10 +18,7 @@ export const VaultUserEarnings: FC<VaultProps> = (props) => {
     ...props,
     enabled: true,
   })
-  const earnings = useVaultUserEarnings({
-    poolId: poolId.data,
-    type: props.type,
-  })
+  const earnings = useVaultUserEarnings(props)
   const token = useTokenOrNative({ address: props.asset })
   const { isConnected } = useAccount()
   const isLoading = poolId.isLoading || earnings.isLoading
@@ -42,7 +39,7 @@ export const VaultUserEarnings: FC<VaultProps> = (props) => {
       <div className="max-lg:hidden">
         <Skeleton isLoading={isLoading || isLoadingTokenPriceUsd}>
           {formatCurrencyUnits({
-            amountWei: earnings.data.earned,
+            amountWei: "0", //earnings.data.earned,
             decimals: token.data?.decimals,
             maximumFractionDigits: 2,
           })}
