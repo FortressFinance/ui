@@ -77,6 +77,7 @@ type CompounderVaultRowProps = {
 
 const CompounderVaultRow: FC<CompounderVaultRowProps> = (props) => {
   const vaultAddress = useCompounderVault(props)
+  const ybTokenAddress = vaultAddress.data?.ybTokenAddress
 
   const setStrategyLink = ({
     pathname,
@@ -90,19 +91,18 @@ const CompounderVaultRow: FC<CompounderVaultRowProps> = (props) => {
       asset: props.vaultAssetAddress,
       type: props.vaultType,
       productType: "compounder",
-      vaultAddress: vaultAddress.data?.ybTokenAddress,
-      ybTokenAddress: vaultAddress.data?.ybTokenAddress,
+      vaultAddress: ybTokenAddress,
+      ybTokenAddress: ybTokenAddress,
     })
   }
 
-  if (!vaultAddress.data?.ybTokenAddress)
-    return <TableLoading>Loading vaults...</TableLoading>
+  if (!ybTokenAddress) return <TableLoading>Loading vaults...</TableLoading>
   return (
     <VaultRow
       {...props}
       asset={props.vaultAssetAddress}
       type={props.vaultType}
-      vaultAddress={vaultAddress.data?.ybTokenAddress}
+      vaultAddress={ybTokenAddress}
       productType="compounder"
       setStrategyLink={setStrategyLink}
       showEarningsColumn
