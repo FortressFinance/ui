@@ -12,7 +12,7 @@ export const formatCurrencyUnits = ({
   maximumFractionDigits?: number
 }) => {
   if (maximumFractionDigits !== undefined) {
-    const formatted = formatUnits(BigInt(parseInt(amountWei)), decimals)
+    const formatted = formatUnits(BigInt(amountWei), decimals)
     return formatted.startsWith("-")
       ? "0"
       : localeNumber(Number(formatted), {
@@ -20,7 +20,7 @@ export const formatCurrencyUnits = ({
           maximumFractionDigits,
         })
   }
-  const formatted = formatUnits(BigInt(parseInt(amountWei)), decimals)
+  const formatted = formatUnits(BigInt(amountWei), decimals)
   return formatted.startsWith("-") ? "0" : formatted
 }
 
