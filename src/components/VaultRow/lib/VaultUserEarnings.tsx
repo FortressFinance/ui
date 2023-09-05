@@ -7,21 +7,16 @@ import { VaultProps } from "@/lib/types"
 import {
   useTokenOrNative,
   useTokenPriceUsd,
-  useVaultPoolId,
   useVaultUserEarnings,
 } from "@/hooks"
 
 import Skeleton from "@/components/Skeleton"
 
 export const VaultUserEarnings: FC<VaultProps> = (props) => {
-  const poolId = useVaultPoolId({
-    ...props,
-    enabled: true,
-  })
   const earnings = useVaultUserEarnings(props)
   const token = useTokenOrNative({ address: props.asset })
   const { isConnected } = useAccount()
-  const isLoading = poolId.isLoading || earnings.isLoading
+  const isLoading = earnings.isLoading
   const { data: tokenPriceUsd, isLoading: isLoadingTokenPriceUsd } =
     useTokenPriceUsd({ asset: props.asset })
 
