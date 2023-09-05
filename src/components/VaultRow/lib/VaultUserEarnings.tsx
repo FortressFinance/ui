@@ -39,7 +39,7 @@ export const VaultUserEarnings: FC<VaultProps> = (props) => {
       <div className="max-lg:hidden">
         <Skeleton isLoading={isLoading || isLoadingTokenPriceUsd}>
           {formatCurrencyUnits({
-            amountWei: "0", //earnings.data.earned,
+            amountWei: earnings.data.earned.toString(),
             decimals: token.data?.decimals,
             maximumFractionDigits: 2,
           })}

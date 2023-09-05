@@ -121,6 +121,16 @@ const queryFnTransfer = ({
   return fetchLogTransfer({ address })
 }
 
+function createArbiPublicClient() {
+  return createPublicClient({
+    chain: arbitrum,
+    transport: http(
+      //`http://18.196.63.80:8545`
+      `https://arb-mainnet.g.alchemy.com/v2/-wP78W37FcrusMohOijQj9EeuXFKX6ZV`
+    ),
+  })
+}
+
 async function fetchLogDeposit({
   address,
 }: {
@@ -128,12 +138,7 @@ async function fetchLogDeposit({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }): Promise<any> {
   if (!address) throw new Error("address is required")
-  const client = createPublicClient({
-    chain: arbitrum,
-    transport: http(
-      `https://arb-mainnet.g.alchemy.com/v2/-wP78W37FcrusMohOijQj9EeuXFKX6ZV`
-    ),
-  })
+  const client = createArbiPublicClient()
 
   return await client.getLogs({
     address: getAddress(address),
@@ -151,12 +156,7 @@ async function fetchLogWithdraw({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }): Promise<any> {
   if (!address) throw new Error("address is required")
-  const client = createPublicClient({
-    chain: arbitrum,
-    transport: http(
-      `https://arb-mainnet.g.alchemy.com/v2/-wP78W37FcrusMohOijQj9EeuXFKX6ZV`
-    ),
-  })
+  const client = createArbiPublicClient()
 
   return await client.getLogs({
     address: getAddress(address),
@@ -174,12 +174,7 @@ async function fetchLogTransfer({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }): Promise<any> {
   if (!address) throw new Error("address is required")
-  const client = createPublicClient({
-    chain: arbitrum,
-    transport: http(
-      `https://arb-mainnet.g.alchemy.com/v2/-wP78W37FcrusMohOijQj9EeuXFKX6ZV`
-    ),
-  })
+  const client = createArbiPublicClient()
 
   return await client.getLogs({
     address: getAddress(address),
