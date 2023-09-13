@@ -20,7 +20,7 @@ export function useConcentratorVaultFees({
     primaryAsset: vaultAddress,
     enabled,
   })
-  const vaultContract = useVaultContract(ybTokenAddress)
+  const vaultContract = useVaultContract(ybTokenAddress ?? "0x")
   return useContractRead({
     ...vaultContract,
     enabled,
