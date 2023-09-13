@@ -2,7 +2,6 @@ import { FC } from "react"
 
 import { convertToApy } from "@/lib/api/vaults/convertToApy"
 import { VaultProps } from "@/lib/types"
-import { useConcentratorFirstVaultType } from "@/hooks"
 import { useConcentratorBreakdownApy } from "@/hooks/useConcentratorBreakdownApy"
 
 import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrategyModal"
@@ -10,14 +9,8 @@ import { VaultStrategyModalDefinitionList } from "@/components/Modal/VaultStrate
 export const ConcentratorVaultStrategyModalRewardApy: FC<VaultProps> = (
   props
 ) => {
-  const firstConcentratorVaultType = useConcentratorFirstVaultType({
-    targetAsset: props.asset,
-    enabled: true,
-  })
   const breakdownApy = useConcentratorBreakdownApy({
     targetAsset: props.asset,
-    primaryAsset: props.vaultAddress,
-    type: firstConcentratorVaultType ?? "balancer",
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -28,7 +28,7 @@ export default function usePreviewDepositFallback({
   })
 
   const preview = useContractRead({
-    ...useConcentratorContract(ybTokenAddress),
+    ...useConcentratorContract(ybTokenAddress ?? "0x"),
     enabled: !isUnderlyingAsset && ybTokenAddress !== "0x" && enabled,
     functionName: "previewDeposit",
     args: [BigInt(amount)],
@@ -36,7 +36,7 @@ export default function usePreviewDepositFallback({
 
   const previewUnderlying = useCurvePreviewDepositUnderlying({
     asset: primaryAsset,
-    vaultAddress: ybTokenAddress,
+    vaultAddress: ybTokenAddress ?? "0x",
     token,
     amount,
     type: "curve",

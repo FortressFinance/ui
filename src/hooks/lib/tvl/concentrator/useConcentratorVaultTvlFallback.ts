@@ -28,7 +28,9 @@ export default function useConcentratorVaultTvlFallback({
     useTokenPriceUsd({ asset: primaryAsset, enabled: true })
   const { data: totalAssets, isLoading: isLoadingTotalAssets } =
     useVaultTotalAssets({
-      vaultAddress: concentrator?.data?.ybTokenAddress,
+      vaultAddress: !concentrator?.data
+        ? "0x"
+        : concentrator?.data.ybTokenAddress,
       enabled: true,
     })
   return {

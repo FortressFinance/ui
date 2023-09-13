@@ -83,7 +83,7 @@ export const ConcentratorVaultTable: FC<ConcentratorVaultTableProps> = ({
           ) => (
             <ConcentratorVaultRow
               key={`concentrator-${i}`}
-              targetAsset={concentratorTargetAsset}
+              targetAsset={concentratorTargetAsset ?? "0x"}
               type={vaultType}
               primaryAsset={primaryAsset}
             />
