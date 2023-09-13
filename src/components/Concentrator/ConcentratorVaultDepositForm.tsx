@@ -22,7 +22,9 @@ export const ConcentratorVaultDepositForm: FC<VaultProps> = (props) => {
     <VaultDepositForm
       {...props}
       initInputToken={props.vaultAddress}
-      initOutputToken={concentrator?.data?.ybTokenAddress}
+      initOutputToken={
+        !concentrator?.data ? "0x" : concentrator?.data?.ybTokenAddress
+      }
       underlyingAssets={underlyingAssets}
       productType="concentrator"
     />
