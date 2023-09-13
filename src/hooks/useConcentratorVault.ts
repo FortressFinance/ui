@@ -1,7 +1,6 @@
 import { Address, useContractRead, useContractReads } from "wagmi"
 
 import { VaultType } from "@/lib/types"
-import { useApiConcentratorVault } from "@/hooks/lib/api/useApiConcentratorVault"
 import { useRegistryContract } from "@/hooks/lib/useRegistryContract"
 
 type ConcentratorVaultProps = {
@@ -17,22 +16,16 @@ export function useConcentratorVault({
   type,
   enabled,
 }: ConcentratorVaultProps) {
-  const apiQuery = useApiConcentratorVault({
-    targetAsset,
-    primaryAsset,
-    enabled,
-  })
-  const fallbackRequest = useContractRead({
+  return useContractRead({
     ...useRegistryContract(),
     functionName: "getConcentrator",
-    enabled: apiQuery.isError && enabled,
+    enabled,
     args: [type === "curve", targetAsset ?? "0x", primaryAsset ?? "0x"],
     select: (ybTokenAddress) => ({
       ybTokenAddress,
       rewardTokenAddress: targetAsset ?? "0x",
     }),
   })
-  return fallbackRequest.isSuccess ? fallbackRequest : apiQuery
 }
 
 export function useConcentratorVaultList({

@@ -1,6 +1,5 @@
 import { Address } from "wagmi"
 
-import { useApiConcentratorPrimaryAssets } from "@/hooks/lib/api/useApiConcentratorPrimaryAssets"
 import { useConcentratorPrimaryAssets } from "@/hooks/useConcentratorPrimaryAssets"
 
 type ListConcentratorsProps = {
@@ -12,13 +11,8 @@ export function useListConcentrators({
   concentratorTargetAssets,
   enabled,
 }: ListConcentratorsProps) {
-  const apiQuery = useApiConcentratorPrimaryAssets({
+  return useConcentratorPrimaryAssets({
     concentratorTargetAssets,
     enabled,
   })
-  const primaryAssets = useConcentratorPrimaryAssets({
-    concentratorTargetAssets,
-    enabled: apiQuery.isError && enabled,
-  })
-  return primaryAssets.isSuccess ? primaryAssets : apiQuery
 }

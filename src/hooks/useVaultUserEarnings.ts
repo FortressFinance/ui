@@ -12,13 +12,4 @@ export function useVaultUserEarnings({
     type,
     enabled: true,
   })
-
-  // const apiQuery = useApiVaultDynamic({ poolId, type })
-  // return {
-  //   ...apiQuery,
-  //   data: {
-  //     earned: apiQuery.data?.userShare.earned,
-  //     earnedUSD: apiQuery.data?.userShare.earnedUSD,
-  //   },
-  // }
 }
