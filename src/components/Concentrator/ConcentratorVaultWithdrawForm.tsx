@@ -21,7 +21,9 @@ export const ConcentratorVaultWithdrawForm: FC<VaultProps> = (props) => {
   return (
     <VaultWithdrawForm
       {...props}
-      initInputToken={concentrator?.data?.ybTokenAddress}
+      initInputToken={
+        !concentrator?.data ? "0x" : concentrator?.data.ybTokenAddress
+      }
       initOutputToken={props.vaultAddress}
       underlyingAssets={underlyingAssets}
       productType="concentrator"

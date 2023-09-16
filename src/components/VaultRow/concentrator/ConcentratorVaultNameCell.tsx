@@ -17,7 +17,7 @@ export const ConcentratorVaultNameCell: FC<VaultRowPropsWithProduct> = (
     enabled: true,
   })
   const [mainInputToken, secondInputToken] =
-    doubleTokens?.[ybTokenAddress] ?? []
+    doubleTokens?.[ybTokenAddress ?? "0x"] ?? []
   return (
     <>
       <AssetDoubleLogo
@@ -27,7 +27,7 @@ export const ConcentratorVaultNameCell: FC<VaultRowPropsWithProduct> = (
       />
 
       <span className="max-lg:mr-8">
-        <VaultName {...props} vaultAddress={ybTokenAddress} />
+        <VaultName {...props} vaultAddress={ybTokenAddress ?? "0x"} />
       </span>
     </>
   )

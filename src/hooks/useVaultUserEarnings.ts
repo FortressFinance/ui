@@ -1,20 +1,15 @@
 import { VaultProps } from "@/lib/types"
-import { useApiVaultDynamic } from "@/hooks/lib/api/useApiVaultDynamic"
-
-type UseVaultUserEarningsParams = Pick<VaultProps, "type"> & {
-  poolId?: number
-}
+import useVaultUserEarningsFallback from "@/hooks/lib/earnings/compounder/useVaultUserEarningsFallback"
 
 export function useVaultUserEarnings({
-  poolId,
+  asset,
+  vaultAddress,
   type,
-}: UseVaultUserEarningsParams) {
-  const apiQuery = useApiVaultDynamic({ poolId, type })
-  return {
-    ...apiQuery,
-    data: {
-      earned: apiQuery.data?.userShare.earned,
-      earnedUSD: apiQuery.data?.userShare.earnedUSD,
-    },
-  }
+}: VaultProps) {
+  return useVaultUserEarningsFallback({
+    asset,
+    vaultAddress,
+    type,
+    enabled: true,
+  })
 }

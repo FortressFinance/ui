@@ -1,58 +1,15 @@
 import { Address } from "wagmi"
 
 import { convertToApy } from "@/lib/api/vaults/convertToApy"
-import { VaultType } from "@/lib/types"
-import { useApiConcentratorDynamic } from "@/hooks/lib/api/useApiConcentratorDynamic"
 import { useConcentratorTokenVaultTotalApr } from "@/hooks/lib/apr/concentrator/useConcentratorTokenVaultTotalApy"
 import { useBalancerVaultTotalApr } from "@/hooks/lib/apr/useBalancerVaultTotalApy"
 import { useCurveVaultTotalApr } from "@/hooks/lib/apr/useCurveVaultTotalApy"
-import { useConcentratorId } from "@/hooks/useConcentratorId"
-import { useConcentratorTargetAssetId } from "@/hooks/useConcentratorTargetAssetId"
 import {
   useShouldUseCurveFallback,
   useShouldUseTokenFallback,
 } from "@/hooks/useVaultTypes"
 
-export type ConcentratorApyProps = {
-  targetAsset: Address
-  primaryAsset: Address
-  type: VaultType
-}
-
-export function useConcentratorApy({
-  targetAsset,
-  primaryAsset,
-  type,
-}: ConcentratorApyProps) {
-  const shouldCurveFallback = useShouldUseCurveFallback(targetAsset)
-  const shouldTokenFallback = useShouldUseTokenFallback(targetAsset)
-  const { data: targetAssetId, isLoading: targetAssetIdIsLoading } =
-    useConcentratorTargetAssetId({ targetAsset, enabled: true })
-  const { data: concentratorId, isLoading: concentratorIdIsLoading } =
-    useConcentratorId({
-      targetAsset,
-      primaryAsset,
-      enabled: true,
-    })
-
-  const apiQuery = useApiConcentratorDynamic({
-    targetAssetId,
-    concentratorId,
-    type,
-  })
-
-  const isCurveFallbackEnabled =
-    (apiQuery.isError || !apiQuery.data?.APY.compounderAPY) &&
-    shouldCurveFallback &&
-    !shouldTokenFallback
-  const isBalancerFallbackEnabled =
-    (apiQuery.isError || !apiQuery.data?.APY.compounderAPY) &&
-    !shouldCurveFallback &&
-    !shouldTokenFallback
-  const isTokenFallbackEnabled =
-    (apiQuery.isError || !apiQuery.data?.APY.compounderAPY) &&
-    shouldTokenFallback
-
+export function useConcentratorApy({ targetAsset }: { targetAsset: Address }) {
   const fallbackApr = useConcentratorFallbackApr({ targetAsset })
 
   if (targetAsset === "0x") {
@@ -62,22 +19,9 @@ export function useConcentratorApy({
     }
   }
 
-  if (
-    isCurveFallbackEnabled ||
-    isBalancerFallbackEnabled ||
-    isTokenFallbackEnabled
-  ) {
-    return {
-      ...fallbackApr,
-      data: convertToApy(fallbackApr.data),
-    }
-  }
-
   return {
-    ...apiQuery,
-    isLoading:
-      targetAssetIdIsLoading || concentratorIdIsLoading || apiQuery.isLoading,
-    data: apiQuery.data?.APY.compounderAPY,
+    ...fallbackApr,
+    data: convertToApy(fallbackApr.data),
   }
 }
 

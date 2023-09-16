@@ -1,7 +1,6 @@
 import { zeroAddress } from "viem"
 import { Address, useContractRead } from "wagmi"
 
-import { useApiConcentratorTargetAssets } from "@/hooks/lib/api/useApiConcentratorTargetAssets"
 import { useRegistryContract } from "@/hooks/lib/useRegistryContract"
 
 ///
@@ -13,14 +12,12 @@ export function useConcentratorTargetAssets(
     enabled?: boolean
   } = {}
 ) {
-  const apiQuery = useApiConcentratorTargetAssets(options)
-  const targetAssets = useContractRead({
+  return useContractRead({
     ...useRegistryContract(),
     functionName: "concentratorTargetAssets",
     select: (data) =>
       Array.from(new Set(data.filter((x) => x !== zeroAddress))),
     onSuccess: options.onSuccess,
-    enabled: apiQuery.isError && options.enabled,
+    enabled: options.enabled,
   })
-  return targetAssets.isSuccess ? targetAssets : apiQuery
 }

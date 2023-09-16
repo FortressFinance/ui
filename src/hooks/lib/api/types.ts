@@ -1,6 +1,5 @@
 import { Address } from "wagmi"
 
-import { PreviewData } from "@/lib/api/vaults"
 import { VaultProps } from "@/lib/types"
 
 import { VaultRowPropsWithProduct } from "@/components/VaultRow"
@@ -10,8 +9,6 @@ type PreviewTransactionArgs = {
   token?: Address
   amount: string
   enabled?: boolean
-  onSuccess?: (data: PreviewData) => void
-  onError?: (err: unknown) => void
 }
 
 export type PreviewTransactionBaseArgs = VaultRowPropsWithProduct &

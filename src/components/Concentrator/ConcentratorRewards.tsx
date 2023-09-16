@@ -13,7 +13,6 @@ import {
   useConcentratorPendingReward,
   useConcentratorTargetAssets,
   useConcentratorVaultList,
-  useFirstConcentrator,
   useListConcentrators,
   useTokenOrNative,
 } from "@/hooks"
@@ -130,15 +129,9 @@ const ConcentratorRewardsApy: FC<ConcentratorRewardsProps> = ({
     concentratorTargetAssets,
     enabled: true,
   })
-  const firstConcentrator = useFirstConcentrator({
-    concentratorsList,
-    concentratorTargetAsset,
-  })
 
   const totalApy = useConcentratorApy({
     targetAsset: concentratorTargetAsset,
-    primaryAsset: firstConcentrator?.vaultAssetAddress ?? "0x",
-    type: firstConcentrator?.vaultType ?? "balancer",
   })
 
   return (

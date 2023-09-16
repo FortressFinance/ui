@@ -7,24 +7,16 @@ import { VaultProps } from "@/lib/types"
 import {
   useTokenOrNative,
   useTokenPriceUsd,
-  useVaultPoolId,
   useVaultUserEarnings,
 } from "@/hooks"
 
 import Skeleton from "@/components/Skeleton"
 
 export const VaultUserEarnings: FC<VaultProps> = (props) => {
-  const poolId = useVaultPoolId({
-    ...props,
-    enabled: true,
-  })
-  const earnings = useVaultUserEarnings({
-    poolId: poolId.data,
-    type: props.type,
-  })
+  const earnings = useVaultUserEarnings(props)
   const token = useTokenOrNative({ address: props.asset })
   const { isConnected } = useAccount()
-  const isLoading = poolId.isLoading || earnings.isLoading
+  const isLoading = earnings.isLoading
   const { data: tokenPriceUsd, isLoading: isLoadingTokenPriceUsd } =
     useTokenPriceUsd({ asset: props.asset })
 
@@ -42,7 +34,7 @@ export const VaultUserEarnings: FC<VaultProps> = (props) => {
       <div className="max-lg:hidden">
         <Skeleton isLoading={isLoading || isLoadingTokenPriceUsd}>
           {formatCurrencyUnits({
-            amountWei: earnings.data.earned,
+            amountWei: earnings.data.earned.toString(),
             decimals: token.data?.decimals,
             maximumFractionDigits: 2,
           })}

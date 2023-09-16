@@ -71,7 +71,7 @@ const ConcentratorHoldingsTable: FC = () => {
           ) => (
             <HoldingsRow
               key={`concentrator-${i}`}
-              targetAsset={concentratorTargetAsset}
+              targetAsset={concentratorTargetAsset ?? "0x"}
               type={vaultType}
               primaryAsset={primaryAsset}
             />
@@ -117,7 +117,9 @@ const HoldingsRow: FC<HoldingsRowProps> = ({
       type: type,
       vaultAddress: primaryAsset,
       productType: "concentrator",
-      ybTokenAddress: concentrator.data.ybTokenAddress,
+      ybTokenAddress: !concentrator.data
+        ? "0x"
+        : concentrator.data.ybTokenAddress,
     })
   }
 

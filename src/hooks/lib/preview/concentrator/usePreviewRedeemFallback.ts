@@ -27,7 +27,7 @@ export default function usePreviewRedeemFallback({
   })
 
   const preview = useContractRead({
-    ...useVaultContract(ybTokenAddress),
+    ...useVaultContract(ybTokenAddress ?? "0x"),
     enabled: !isUnderlyingAsset && !!ybTokenAddress && enabled,
     functionName: "previewRedeem",
     args: [BigInt(amount)],
