@@ -1,7 +1,7 @@
 {
   "name": "fortress-finance-ui",
   "license": "MIT",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
